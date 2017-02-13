@@ -63,7 +63,7 @@ int LCaloCalManager::Devel(int pmtnum, int ntoloop)
 {
 
 // for debug ----------
-TH1D *e1 = new TH1D("","ADC",2000,0,2000);// counts 
+//TH1D *e1 = new TH1D("","ADC",2000,0,2000);// counts 
 //---------------------
 
   LEvRec0 cev;
@@ -88,30 +88,23 @@ return 0;}
 
 //---------------------------------------------------------------------------
 
-int LCaloCalManager::EvalPMTsPeds(TString inFileROOT)
+int LCaloCalManager::PMTsMeanRms(const char *fileInp , double *HGmean, double *HGrms,  double *LGmean, double *LGrms)
 {
 
-	const Int_t npmt = 64;
-	std::vector<double> meanHG(npmt,0), rmsHG(npmt, 0), meanLG(npmt, 0),
-rmsLG(npmt, 0);
-
-         LEvRec0 cev;
-         int sum=0;
-         calRunFile->SetTheEventPointer(cev);
-         int nEvents=calRunFile->GetEntries();
-
+        std::vector<double> meanHG(NPMT,0), rmsHG(NPMT, 0), meanLG(NPMT, 0),rmsLG(NPMT, 0);
+        
+        LEvRec0 cev;        
+        calRunFile->SetTheEventPointer(cev);
+        int nEvents=calRunFile->GetEntries();
 
 	std::cout << "Events to be processed: " << nEvents << std::endl;
-	std::cout << "Events processed: " << std::setprecision(2) << std::setw(2)
-<< 0 << "%" << std::flush;
+	std::cout << "Events processed: " << std::setprecision(2) << std::setw(2) << 0 << "%" << std::flush;
 
 	for (int iEv = 0; iEv < nEvents; iEv++)// Event loop
 	{
-
-		std::cout << "\b\b\b" << std::setprecision(2) << std::setw(2) <<
-int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
+		std::cout << "\b\b\b" << std::setprecision(2) << std::setw(2) << int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
 		calRunFile->GetEntry(iEv);
-		for (int ch = 0; ch < npmt; ch++)// PMT channel loop
+		for (int ch = 0; ch < NPMT; ch++)// PMT channel loop
 		{
 			meanHG[ch] += cev.pmt_high[ch];
 			rmsHG[ch] += cev.pmt_high[ch] * cev.pmt_high[ch];
@@ -120,10 +113,8 @@ int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
 		}
 	}
 
-
-
 	std::cout << std::endl;
-	for (int iCh = 0; iCh < npmt; iCh++)
+	for (int iCh = 0; iCh < NPMT; iCh++)
 	{
 		meanHG[iCh] /= nEvents;
 		rmsHG[iCh] /= nEvents;
@@ -134,18 +125,25 @@ int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
 		rmsLG[iCh] -= meanLG[iCh] * meanLG[iCh];
 		rmsLG[iCh] = sqrt(rmsLG[iCh]);
 	}
-
+// output
 	std::ofstream outHG("debugHG.txt");
 	std::ofstream outLG("debugLG.txt");
 
-	for (int i = 0; i < npmt; i++)
+	for (int i = 0; i < NPMT; i++)
 	{
 		outHG << i << " " << meanHG[i] << " " << rmsHG[i] << std::endl;
 		outLG << i << " " << meanLG[i] << " " << rmsLG[i] << std::endl;
+                HGmean[i] =  meanHG[i];
+                HGrms[i]  =  rmsHG[i];
+                LGmean[i] =  meanLG[i];
+                LGrms[i]  =  rmsLG[i];
 	}
+
 	outHG.close();
 	outLG.close();
 	return 0;
+        
+
 }
 
 //---------------------------------------------------------------------------
