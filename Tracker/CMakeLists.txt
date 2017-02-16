@@ -14,10 +14,13 @@ find_package( ROOT REQUIRED COMPONENTS RIO Net Tree Hist )
 #---Define useful ROOT functions and macros (e.g. ROOT_GENERATE_DICTIONARY)
 include(${ROOT_USE_FILE})
 
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 #ROOT_GENERATE_DICTIONARY(G__Event Event.h LINKDEF EventLinkDef.h)
 #to take into account also the objects inside the src folder
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
+
+#set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../exe)
 
 #---Create a shared library with geneated dictionary
 #add_library(Event SHARED ${SOURCES})
