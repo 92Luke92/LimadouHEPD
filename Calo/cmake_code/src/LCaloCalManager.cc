@@ -88,6 +88,96 @@ return 0;}
 
 //---------------------------------------------------------------------------
 
+int LCaloCalManager::PMTsMomenta34(const char *fileInp, double *HGm3, double *HGm4,  double *LGm3, double *LGm4)
+{
+
+        std::vector<double> meanHG(NPMT, 0), meanHG2(NPMT, 0), meanHG3(NPMT, 0), meanHG4(NPMT, 0), 
+						meanLG(NPMT, 0), meanLG2(NPMT, 0), meanLG3(NPMT, 0), meanLG4(NPMT, 0),
+						sigmaHG(NPMT, 0), skewHG(NPMT, 0), kurtHG(NPMT, 0),
+						sigmaLG(NPMT, 0), skewLG(NPMT, 0), kurtLG(NPMT, 0);
+        LEvRec0 cev;        
+        calRunFile->SetTheEventPointer(cev);
+        int nEvents=calRunFile->GetEntries();
+
+	std::cout << "Events to be processed: " << nEvents << std::endl;
+	std::cout << "Events processed: " << std::setprecision(2) << std::setw(2) << 0 << "%" << std::flush;
+
+	for (int iEv = 0; iEv < nEvents; iEv++)// Event loop
+	{
+		std::cout << "\b\b\b" << std::setprecision(2) << std::setw(2) << int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
+		calRunFile->GetEntry(iEv);
+		for (int ch = 0; ch < NPMT; ch++)// PMT channel loop
+		{
+			double xHG = cev.pmt_high[ch];
+			double xLG = cev.pmt_low[ch];
+
+			meanHG[ch]  += xHG;
+			meanHG2[ch] += xHG*xHG;
+			meanHG3[ch] += xHG*xHG*xHG;
+			meanHG4[ch] += xHG*xHG*xHG*xHG;
+			
+			meanLG[ch]  += xLG;
+			meanLG2[ch] += xLG*xLG;
+			meanLG3[ch] += xLG*xLG*xLG;
+			meanLG4[ch] += xLG*xLG*xLG*xLG;
+
+
+
+
+		}
+	}
+
+	std::cout << std::endl;
+	for (int iCh = 0; iCh < NPMT; iCh++)
+	{
+		meanHG[iCh]  /= nEvents;
+		meanHG2[iCh] /= nEvents;
+		meanHG3[iCh] /= nEvents;
+		meanHG4[iCh] /= nEvents;
+		
+		meanLG[iCh]  /= nEvents;
+		meanLG2[iCh] /= nEvents;
+		meanLG3[iCh] /= nEvents;
+		meanLG4[iCh] /= nEvents;
+	}
+// output
+	double sigmaSkew = sqrt(6. / static_cast<double>(nEvents));
+	double sigmaKurt = sqrt(24. / static_cast<double>(nEvents));
+	for (int iCh = 0; iCh < NPMT; iCh++)
+	{
+		double m2 = meanHG2[iCh] - meanHG[iCh] * meanHG[iCh];
+		double m3 = meanHG3[iCh] - 3 * meanHG2[iCh] * meanHG[iCh] + 2 * meanHG[iCh] * meanHG[iCh] * meanHG[iCh];
+		double m4 = meanHG4[iCh] - 4 * meanHG3[iCh] * meanHG[iCh] + 6 * meanHG2[iCh] * meanHG[iCh] * meanHG[iCh] - 3 * meanHG[iCh] * meanHG[iCh] * meanHG[iCh] * meanHG[iCh];
+		sigmaHG[iCh] = sqrt(m2);
+		skewHG[iCh]  = m3/(m2*sqrt(m2)); HGm3[iCh]=skewHG[iCh];
+		kurtHG[iCh]  = m4 / (m2*m2) -3;  HGm4[iCh]=kurtHG[iCh];
+		
+		m2 = meanLG2[iCh] - meanLG[iCh] * meanLG[iCh];
+		m3 = meanLG3[iCh] - 3 * meanLG2[iCh] * meanLG[iCh] + 2 * meanLG[iCh] * meanLG[iCh] * meanLG[iCh];
+		m4 = meanLG4[iCh] - 4 * meanLG3[iCh] * meanLG[iCh] + 6 * meanLG2[iCh] * meanLG[iCh] * meanLG[iCh] - 3 * meanLG[iCh] * meanLG[iCh] * meanLG[iCh] * meanLG[iCh];
+		sigmaLG[iCh] = sqrt(m2); 
+		skewLG[iCh]  = m3 / (m2*sqrt(m2)); LGm3[iCh]=skewLG[iCh];
+		kurtLG[iCh]  = m4 / (m2*m2) - 3;   LGm4[iCh]=kurtLG[iCh];
+	}
+
+
+// out 
+	std::ofstream outmHG("MomDebugHG.txt");
+	std::ofstream outmLG("MomDebugLG.txt");
+
+	for (int i = 0; i < NPMT; i++)
+	{
+		outmHG << i << " " << skewHG[i] << " " << skewHG[i] / sigmaSkew << " " << kurtHG[i] << " " << kurtHG[i]/sigmaKurt << std::endl;
+		outmLG << i << " " << skewLG[i] << " " << skewLG[i] / sigmaSkew << " " << kurtLG[i] << " " << kurtLG[i]/sigmaKurt << std::endl;
+	}
+	outmHG.close();
+	outmLG.close();
+
+	return 0;
+}
+
+//---------------------------------------------------------------------------
+
 int LCaloCalManager::PMTsMeanRms(const char *fileInp , double *HGmean, double *HGrms,  double *LGmean, double *LGrms)
 {
 
@@ -147,8 +237,6 @@ int LCaloCalManager::PMTsMeanRms(const char *fileInp , double *HGmean, double *H
 }
 
 //---------------------------------------------------------------------------
-
-
 
 
 LCaloCalManager::~LCaloCalManager() {
