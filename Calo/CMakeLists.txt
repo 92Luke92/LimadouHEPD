@@ -1,24 +1,34 @@
 # CMakeLists.txt for event package. It creates a library with dictionary and a main program
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-project(event)
+project(Calo)
 
 # You need to tell CMake where to find the ROOT installation. This can be done in a number of ways:
 #   - ROOT built with classic configure/make use the provided $ROOTSYS/etc/cmake/FindROOT.cmake
 #   - ROOT built with CMake. Add in CMAKE_PREFIX_PATH the installation prefix for ROOT
 
-        EXECUTE_PROCESS(COMMAND root-config --cflags OUTPUT_VARIABLE ROOT_CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ROOT_CXX_FLAGS}")
-        EXECUTE_PROCESS(COMMAND root-config --libs OUTPUT_VARIABLE ROOT_LD_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-        set(CMAKE_EXE_LINKER_FLAGS ${ROOT_LD_FLAGS})
 
-message (${CMAKE_EXE_LINKER_FLAGS})
-
+#E. root configuration (For tests!)
+list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
+find_package( ROOT REQUIRED COMPONENTS RIO Net Tree Hist )
+include(${ROOT_USE_FILE})
 
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+#        EXECUTE_PROCESS(COMMAND root-config --cflags OUTPUT_VARIABLE ROOT_CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ROOT_CXX_FLAGS}")
+#        EXECUTE_PROCESS(COMMAND root-config --libs OUTPUT_VARIABLE ROOT_LD_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+#        set(CMAKE_EXE_LINKER_FLAGS ${ROOT_LD_FLAGS})
+
+#message (${CMAKE_EXE_LINKER_FLAGS})
+
+
+
+include_directories(Calo SHARED IMPORTED ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/../Common/include)
 #ROOT_GENERATE_DICTIONARY(G__Event Event.h LINKDEF EventLinkDef.h)
 #to take into account also the objects inside the src folder
-file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
+file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc ${PROJECT_SOURCE_DIR}/../Common/src/*.cc)
+
+#include_directories(${Common_SOURCE_DIR})
+#file(GLOB commonsources ${Common_SOURCE_DIR}/src/*.cc)
 
 #---Create a shared library with geneated dictionary
 #add_library(Event SHARED ${SOURCES})
@@ -30,9 +40,10 @@ file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 
 add_definitions( -std=c++11)
 
-add_executable(main.cc ${sources})
+add_executable(Calo main.cc ${sources})
 
-target_link_libraries(main ${ROOT_LIBRARIES})
+target_link_libraries(Calo ${ROOT_LIBRARIES})
+
 
 
 
