@@ -84,6 +84,100 @@ int LCaloCalManager::Devel(int pmtnum, int ntoloop)
  std::cout << " mean on " << ntoloop << " events =  " << (double)sum/ntoloop << std::endl;
 return 0;}
 
+//---------------------------------------------------------------------------
+
+
+int LCaloCalManager::PMTsWindowedRmsHG(int pmt, double old_mean, double old_rms,  double *res, int *cntssxdx)
+{
+
+        std::vector<double> calc(2,0);
+        int outcnts[2]={0};
+
+        LEvRec0 cev;        
+        calRunFile->SetTheEventPointer(cev);
+        int nEvents=calRunFile->GetEntries();
+
+        double sizew=2.0;
+        double maxv = old_mean + (sizew*old_rms);
+        double minv = old_mean - (sizew*old_rms);
+        int nEventsU=0;
+ 
+	for (int iEv = 0; iEv < nEvents; iEv++)// Event loop
+	{
+		
+		calRunFile->GetEntry(iEv);
+		        if( minv < cev.pmt_high[pmt] && cev.pmt_high[pmt] < maxv){
+			calc[0] += cev.pmt_high[pmt];
+			calc[1] += cev.pmt_high[pmt] * cev.pmt_high[pmt];
+ 			nEventsU++;}
+                         
+                        if(cev.pmt_high[pmt] < minv && cev.pmt_high[pmt]!=0 ){outcnts[0]++;}		
+                        if(cev.pmt_high[pmt] > maxv  ){outcnts[1]++;}	
+	}
+
+	std::cout << std::endl;
+	
+		calc[0] /= nEventsU;
+		calc[1] /= nEventsU;
+		calc[1] -= calc[0] * calc[0];
+		calc[1] = sqrt(calc[1]);
+		
+// output
+   
+       res[0]=calc[0]; res[1]=calc[1]; cntssxdx[0]=outcnts[0]; 	cntssxdx[1]=outcnts[1]; 
+
+
+	return 0;
+        
+}
+
+//---------------------------------------------------------------------------
+
+
+int LCaloCalManager::PMTsWindowedRmsLG(int pmt, double old_mean, double old_rms,  double *res, int *cntssxdx)
+{
+
+        std::vector<double> calc(2,0);
+        int outcnts[2]={0};
+
+        LEvRec0 cev;        
+        calRunFile->SetTheEventPointer(cev);
+        int nEvents=calRunFile->GetEntries();
+
+        double sizew=2.0;
+        double maxv = old_mean + (sizew*old_rms);
+        double minv = old_mean - (sizew*old_rms);
+        int nEventsU=0;
+ 
+	for (int iEv = 0; iEv < nEvents; iEv++)// Event loop
+	{
+		
+		calRunFile->GetEntry(iEv);
+		        if( minv < cev.pmt_high[pmt] && cev.pmt_high[pmt] < maxv){
+			calc[0] += cev.pmt_high[pmt];
+			calc[1] += cev.pmt_high[pmt] * cev.pmt_high[pmt];
+ 			nEventsU++;}
+                         
+                        if(cev.pmt_high[pmt] < minv && cev.pmt_high[pmt]!=0 ){outcnts[0]++;}		
+                        if(cev.pmt_high[pmt] > maxv  ){outcnts[1]++;}	
+	}
+
+	std::cout << std::endl;
+	
+		calc[0] /= nEventsU;
+		calc[1] /= nEventsU;
+		calc[1] -= calc[0] * calc[0];
+		calc[1] = sqrt(calc[1]);
+		
+// output
+   
+       res[0]=calc[0]; res[1]=calc[1]; cntssxdx[0]=outcnts[0]; 	cntssxdx[1]=outcnts[1]; 
+
+
+	return 0;
+        
+}
+
 
 
 //---------------------------------------------------------------------------
@@ -235,6 +329,12 @@ int LCaloCalManager::PMTsMeanRms(const char *fileInp , double *HGmean, double *H
         
 
 }
+
+//---------------------------------------------------------------------------
+
+
+
+
 
 //---------------------------------------------------------------------------
 

@@ -14,6 +14,9 @@ public:
   void SetTargetRuns(const int InitialRun, const int FinalRun=-1);
   int PMTsMeanRms(const char *fileInp, double *HGmean, double *HGrms,  double *LGmean, double *LGrms);
   int PMTsMomenta34(const char *fileInp, double *HGm3, double *HGm4,  double *LGm3, double *LGm4);
+  int PMTsWindowedRmsHG(int pmt, double old_mean, double old_rms,  double *res, int *cntssxdx);// res contains: new_mean, new_sigma;
+                                                                // cntssxdx cointains: out-of-distribution counts (sx,dx)
+  int PMTsWindowedRmsLG(int pmt, double old_mean, double old_rms,  double *res, int *cntssxdx);
   int Devel(int pmtnum, int ntoloop );// give pmt num and num of events to be used
  
 
