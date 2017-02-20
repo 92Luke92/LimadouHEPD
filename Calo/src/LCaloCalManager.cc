@@ -151,13 +151,13 @@ int LCaloCalManager::PMTsWindowedRmsLG(int pmt, double old_mean, double old_rms,
 	{
 		
 		calRunFile->GetEntry(iEv);
-		        if( minv < cev.pmt_high[pmt] && cev.pmt_high[pmt] < maxv){
-			calc[0] += cev.pmt_high[pmt];
-			calc[1] += cev.pmt_high[pmt] * cev.pmt_high[pmt];
+		        if( minv < cev.pmt_low[pmt] && cev.pmt_low[pmt] < maxv){
+			calc[0] += cev.pmt_low[pmt];
+			calc[1] += cev.pmt_low[pmt] * cev.pmt_low[pmt];
  			nEventsU++;}
                          
-                        if(cev.pmt_high[pmt] < minv && cev.pmt_high[pmt]!=0 ){outcnts[0]++;}		
-                        if(cev.pmt_high[pmt] > maxv  ){outcnts[1]++;}	
+                        if(cev.pmt_low[pmt] < minv && cev.pmt_low[pmt]!=0 ){outcnts[0]++;}		
+                        if(cev.pmt_low[pmt] > maxv  ){outcnts[1]++;}	
 	}
 
 	std::cout << std::endl;
