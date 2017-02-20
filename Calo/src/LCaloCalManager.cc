@@ -177,7 +177,6 @@ int LCaloCalManager::PMTsWindowedRmsLG(int pmt, double old_mean, double old_rms,
 }
 
 
-
 //---------------------------------------------------------------------------
 
 int LCaloCalManager::PMTsMomenta34(const char *fileInp, double *HGm3, double *HGm4,  double *LGm3, double *LGm4)
