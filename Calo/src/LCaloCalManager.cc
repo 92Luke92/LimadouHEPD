@@ -132,8 +132,6 @@ int LCaloCalManager::PMTsWindowedRmsHG(int pmt, double old_mean, double old_rms,
 }
 
 //---------------------------------------------------------------------------
-
-
 int LCaloCalManager::PMTsWindowedRmsLG(int pmt, double old_mean, double old_rms,  double *res, int *cntssxdx)
 {
 
