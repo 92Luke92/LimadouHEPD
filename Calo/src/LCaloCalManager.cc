@@ -179,7 +179,7 @@ int LCaloCalManager::PMTsWindowedRmsLG(int pmt, double old_mean, double old_rms,
 
 //---------------------------------------------------------------------------
 
-int LCaloCalManager::PMTsMomenta34(const char *fileInp, double *HGm3, double *HGm4,  double *LGm3, double *LGm4)
+int LCaloCalManager::PMTsMomenta34(double *HGm3, double *HGm4,  double *LGm3, double *LGm4)
 {
 
         std::vector<double> meanHG(NPMT, 0), meanHG2(NPMT, 0), meanHG3(NPMT, 0), meanHG4(NPMT, 0), 
@@ -269,7 +269,7 @@ int LCaloCalManager::PMTsMomenta34(const char *fileInp, double *HGm3, double *HG
 
 //---------------------------------------------------------------------------
 
-int LCaloCalManager::PMTsMeanRms(const char *fileInp , double *HGmean, double *HGrms,  double *LGmean, double *LGrms)
+int LCaloCalManager::PMTsMeanRms(double *HGmean, double *HGrms,  double *LGmean, double *LGrms)
 {
 
         std::vector<double> meanHG(NPMT,0), rmsHG(NPMT, 0), meanLG(NPMT, 0),rmsLG(NPMT, 0);
