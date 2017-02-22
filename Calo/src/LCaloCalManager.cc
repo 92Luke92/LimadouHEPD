@@ -97,7 +97,7 @@ int LCaloCalManager::PMTsWindowedRmsHG(int pmt, double old_mean, double old_rms,
         calRunFile->SetTheEventPointer(cev);
         int nEvents=calRunFile->GetEntries();
 
-        double sizew=2.0;
+        double sizew=3.0;
         double maxv = old_mean + (sizew*old_rms);
         double minv = old_mean - (sizew*old_rms);
         int nEventsU=0;
@@ -142,7 +142,7 @@ int LCaloCalManager::PMTsWindowedRmsLG(int pmt, double old_mean, double old_rms,
         calRunFile->SetTheEventPointer(cev);
         int nEvents=calRunFile->GetEntries();
 
-        double sizew=2.0;
+        double sizew=3.0;
         double maxv = old_mean + (sizew*old_rms);
         double minv = old_mean - (sizew*old_rms);
         int nEventsU=0;
