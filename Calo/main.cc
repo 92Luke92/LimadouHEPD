@@ -15,7 +15,7 @@ int main(int argc,char *argv[]){
  
  double mean0[NPMT]; double rms0[NPMT]; double mean1[NPMT]; double rms1[NPMT];
  
- LCaloCalManager::GetInstance().PMTsMeanRms(argv[1], mean0, rms0, mean1, rms1);
+ LCaloCalManager::GetInstance().PMTsMeanRms( mean0, rms0, mean1, rms1);
  
 
 
