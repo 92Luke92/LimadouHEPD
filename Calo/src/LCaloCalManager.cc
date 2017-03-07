@@ -8,7 +8,6 @@
 #include <fstream>
 
 
-
 LCaloCalManager::LCaloCalManager() {
   calRunFile=0;
   InitialTargetRun=-1;
@@ -57,38 +56,75 @@ void LCaloCalManager::SetTargetRuns(const int InitialRun, const int FinalRun) {
 }
 
 
+
+
 //---------------------------------------------------------------------------
 
-int LCaloCalManager::Devel(int pmtnum, int ntoloop)
+double LCaloCalManager::GetPeak(int pmtnum)
 {
-
-// for debug ----------
-//TH1D *e1 = new TH1D("","ADC",2000,0,2000);// counts 
-//---------------------
-
+  int spectrum[500]={0}, cursor=0;
+  double peakpos=-1;
   LEvRec0 cev;
-  int sum=0;
   calRunFile->SetTheEventPointer(cev);
   int nEvents=calRunFile->GetEntries();
-  std::cout << "Num of Events on File " << nEvents << std::endl;
+  //std::cout << "Num of Events on File " << nEvents << std::endl;
   
-  // get maximum possible events
-  if (ntoloop>nEvents){ ntoloop=nEvents;}
+  // fill spectrum
    
-  for(int loop=0; loop< ntoloop; loop++){ 
+  for(int loop=0; loop< nEvents; loop++){ 
   calRunFile->GetEntry(loop);
-  sum = sum + cev.pmt_high[pmtnum];
-
+  if(cev.pmt_high[pmtnum]<500 && cev.trigger_flag[pmtnum]==0){
+  cursor=(int)cev.pmt_high[pmtnum];
+  spectrum[cursor]++;}
   };// end loop
+ 
+  //search maximum
+  double maxval=0;
+  for (int loop1=0; loop1<500;loop1++){
+  if(spectrum[loop1]>maxval){maxval=spectrum[loop1];peakpos=loop1;}
+  }
+ 
+  
 
- std::cout << " mean on " << ntoloop << " events =  " << (double)sum/ntoloop << std::endl;
-return 0;}
+return (double)peakpos;}
+
+//---------------------------------------------------------------------------
+
+double LCaloCalManager::GetPeakLG(int pmtnum)
+{
+  int spectrum[450]={0}, cursor=0;
+  double peakpos=-1;
+  LEvRec0 cev;
+  calRunFile->SetTheEventPointer(cev);
+  int nEvents=calRunFile->GetEntries();
+  //std::cout << "Num of Events on File " << nEvents << std::endl;
+  
+  // fill spectrum: for LG limted to 400 adc_cts
+   
+  for(int loop=0; loop< nEvents; loop++){ 
+  calRunFile->GetEntry(loop);
+  if(cev.pmt_low[pmtnum]<450 && cev.trigger_flag[pmtnum]==0){
+  cursor=(int)cev.pmt_low[pmtnum];
+  spectrum[cursor]++;}
+  };// end loop
+ 
+  //search maximum: for LG limted to 400 adc_cts
+  double maxval=0;
+  for (int loop1=0; loop1<450;loop1++){
+  if(spectrum[loop1]>maxval){maxval=spectrum[loop1];peakpos=loop1;}
+  }
+ 
+  
+
+return (double)peakpos;}
 
 //---------------------------------------------------------------------------
 
 
 int LCaloCalManager::PMTsWindowedRmsHG(int pmt, double old_mean, double old_rms,  double *res, int *cntssxdx)
 {
+
+
 
         std::vector<double> calc(2,0);
         int outcnts[2]={0};
@@ -97,16 +133,21 @@ int LCaloCalManager::PMTsWindowedRmsHG(int pmt, double old_mean, double old_rms,
         calRunFile->SetTheEventPointer(cev);
         int nEvents=calRunFile->GetEntries();
 
-        double sizew=3.0;
+        double sizew=3.;
         double maxv = old_mean + (sizew*old_rms);
         double minv = old_mean - (sizew*old_rms);
         int nEventsU=0;
  
+
 	for (int iEv = 0; iEv < nEvents; iEv++)// Event loop
 	{
 		
 		calRunFile->GetEntry(iEv);
-		        if( minv < cev.pmt_high[pmt] && cev.pmt_high[pmt] < maxv){
+		        if( 
+                        minv < cev.pmt_high[pmt] && 
+                        cev.pmt_high[pmt] < maxv  &&
+                        cev.trigger_flag[pmt]==0)
+                        {
 			calc[0] += cev.pmt_high[pmt];
 			calc[1] += cev.pmt_high[pmt] * cev.pmt_high[pmt];
  			nEventsU++;}
@@ -115,7 +156,7 @@ int LCaloCalManager::PMTsWindowedRmsHG(int pmt, double old_mean, double old_rms,
                         if(cev.pmt_high[pmt] > maxv  ){outcnts[1]++;}	
 	}
 
-	std::cout << std::endl;
+	//std::cout << std::endl;
 	
 		calc[0] /= nEventsU;
 		calc[1] /= nEventsU;
@@ -127,7 +168,7 @@ int LCaloCalManager::PMTsWindowedRmsHG(int pmt, double old_mean, double old_rms,
        res[0]=calc[0]; res[1]=calc[1]; cntssxdx[0]=outcnts[0]; 	cntssxdx[1]=outcnts[1]; 
 
 
-	return 0;
+	return nEventsU; // number on used events
         
 }
 
@@ -160,7 +201,7 @@ int LCaloCalManager::PMTsWindowedRmsLG(int pmt, double old_mean, double old_rms,
                         if(cev.pmt_low[pmt] > maxv  ){outcnts[1]++;}	
 	}
 
-	std::cout << std::endl;
+	//std::cout << std::endl;
 	
 		calc[0] /= nEventsU;
 		calc[1] /= nEventsU;
@@ -218,7 +259,7 @@ int LCaloCalManager::PMTsMomenta34(double *HGm3, double *HGm4,  double *LGm3, do
 		}
 	}
 
-	std::cout << std::endl;
+	//std::cout << std::endl;
 	for (int iCh = 0; iCh < NPMT; iCh++)
 	{
 		meanHG[iCh]  /= nEvents;
@@ -272,7 +313,7 @@ int LCaloCalManager::PMTsMomenta34(double *HGm3, double *HGm4,  double *LGm3, do
 int LCaloCalManager::PMTsMeanRms(double *HGmean, double *HGrms,  double *LGmean, double *LGrms)
 {
 
-        std::vector<double> meanHG(NPMT,0), rmsHG(NPMT, 0), meanLG(NPMT, 0),rmsLG(NPMT, 0);
+        std::vector<double> meanHG(NPMT,0), rmsHG(NPMT, 0), meanLG(NPMT, 0),rmsLG(NPMT, 0), usedEVTS(NPMT,0);
         
         LEvRec0 cev;        
         calRunFile->SetTheEventPointer(cev);
@@ -281,28 +322,35 @@ int LCaloCalManager::PMTsMeanRms(double *HGmean, double *HGrms,  double *LGmean,
 	std::cout << "Events to be processed: " << nEvents << std::endl;
 	std::cout << "Events processed: " << std::setprecision(2) << std::setw(2) << 0 << "%" << std::flush;
 
+
+
 	for (int iEv = 0; iEv < nEvents; iEv++)// Event loop
 	{
 		std::cout << "\b\b\b" << std::setprecision(2) << std::setw(2) << int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
 		calRunFile->GetEntry(iEv);
 		for (int ch = 0; ch < NPMT; ch++)// PMT channel loop
 		{
-			meanHG[ch] += cev.pmt_high[ch];
-			rmsHG[ch] += cev.pmt_high[ch] * cev.pmt_high[ch];
-			meanLG[ch] += cev.pmt_low[ch];
-			rmsLG[ch] += cev.pmt_low[ch] * cev.pmt_low[ch];
+                        double s_high = cev.pmt_high[ch]; 
+                        double s_low  = cev.pmt_low[ch];
+			if(cev.trigger_flag[ch]==0 ){
+                        
+                        usedEVTS[ch]++;
+                        meanHG[ch] += s_high;
+			rmsHG[ch] +=  s_high * s_high;
+			meanLG[ch] += s_low;
+			rmsLG[ch] +=  s_low * s_low;}
 		}
 	}
 
-	std::cout << std::endl;
+	//std::cout << std::endl;
 	for (int iCh = 0; iCh < NPMT; iCh++)
 	{
-		meanHG[iCh] /= nEvents;
-		rmsHG[iCh] /= nEvents;
+		meanHG[iCh] /= usedEVTS[iCh];
+		rmsHG[iCh] /= usedEVTS[iCh];
 		rmsHG[iCh] -= meanHG[iCh] * meanHG[iCh];
 		rmsHG[iCh] = sqrt(rmsHG[iCh]);
-		meanLG[iCh] /= nEvents;
-		rmsLG[iCh] /= nEvents;
+		meanLG[iCh] /= usedEVTS[iCh];
+		rmsLG[iCh] /= usedEVTS[iCh];
 		rmsLG[iCh] -= meanLG[iCh] * meanLG[iCh];
 		rmsLG[iCh] = sqrt(rmsLG[iCh]);
 	}
@@ -322,12 +370,59 @@ int LCaloCalManager::PMTsMeanRms(double *HGmean, double *HGrms,  double *LGmean,
 
 	outHG.close();
 	outLG.close();
+  // debug
+
+ 
 	return 0;
         
 
 }
 
 //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+
+int LCaloCalManager::PMTsMeanRmsData(int pmt, double *res)
+{
+
+        std::vector<double> calc(2,0);
+        int outcnts[2]={0};
+
+        LEvRec0 cev;        
+        calRunFile->SetTheEventPointer(cev);
+        int nEvents=calRunFile->GetEntries();
+
+        
+        double maxv = 450;
+        double minv = 230;
+        int nEventsU=0;
+ 
+	for (int iEv = 0; iEv < nEvents; iEv++)// Event loop
+	{
+		
+		calRunFile->GetEntry(iEv);
+                double signal=cev.pmt_high[pmt];
+		        if( minv < signal && signal < maxv && cev.trigger_flag[pmt]==0){
+			calc[0] += signal;
+			calc[1] += signal * signal;
+ 			nEventsU++;}
+                       	
+	}
+
+	//std::cout << std::endl;
+	
+		calc[0] /= nEventsU;
+		calc[1] /= nEventsU;
+		calc[1] -= calc[0] * calc[0];
+		calc[1] = sqrt(calc[1]);
+		
+// output
+   
+       res[0]=calc[0]; res[1]=calc[1]; 
+
+
+	return 0;
+        
+}
 
 
 

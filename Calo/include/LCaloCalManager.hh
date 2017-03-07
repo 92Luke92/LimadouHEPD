@@ -4,7 +4,6 @@
 
 #include "LEvRec0File.hh"
 
-
 class LCaloCalManager {
 
 public:
@@ -17,8 +16,9 @@ public:
   int PMTsWindowedRmsHG(int pmt, double old_mean, double old_rms,  double *res, int *cntssxdx);// res contains: new_mean, new_sigma;
                                                                            // cntssxdx cointains: out-of-distribution counts (sx,dx)
   int PMTsWindowedRmsLG(int pmt, double old_mean, double old_rms,  double *res, int *cntssxdx);
-  int Devel(int pmtnum, int ntoloop );// give pmt num and num of events to be used
- 
+  int PMTsMeanRmsData(int pmt, double *res);
+  double GetPeak(int pmtnum);
+  double GetPeakLG(int pmtnum);
 
 private:
   LEvRec0File *calRunFile;  // pointer to the run used for calibration
