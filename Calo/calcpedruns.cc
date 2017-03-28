@@ -1,5 +1,5 @@
 #include "LEvRec0File.hh"
-#include "LCaloCalManager.hh"          	
+#include "LCaloCalibrationManager.hh"          	
 #include <iostream>
 #include <fstream>
 #include <iomanip> 
@@ -25,17 +25,17 @@ std::ofstream out2("pedcalc.LG.txt");
  // getting the file
 
 
- LCaloCalManager::GetInstance().LoadRun(argv[1]);
+ LCaloCalibrationManager::GetInstance().LoadRun(argv[1]);
  
  // HG 
  for (int pmtu=0; pmtu<NPMT; pmtu++){
  
- double hgseed = LCaloCalManager::GetInstance().GetPeak(pmtu);
+ double hgseed = LCaloCalibrationManager::GetInstance().GetPeak(pmtu);
 
- LCaloCalManager::GetInstance().PMTsWindowedRmsHG(pmtu,hgseed,5., corr, outcounts);
+ LCaloCalibrationManager::GetInstance().PMTsWindowedRmsHG(pmtu,hgseed,5., corr, outcounts);
  corr[1]=corr[1]*fac3h;
  
- LCaloCalManager::GetInstance().PMTsWindowedRmsHG(pmtu,corr[0],corr[1], corr, outcounts);
+ LCaloCalibrationManager::GetInstance().PMTsWindowedRmsHG(pmtu,corr[0],corr[1], corr, outcounts);
  corr[1]=corr[1]*fac3h;
 
  
@@ -49,12 +49,12 @@ std::ofstream out2("pedcalc.LG.txt");
 
 for (int pmtu=0; pmtu<NPMT; pmtu++){
  
- double lgseed = LCaloCalManager::GetInstance().GetPeakLG(pmtu);
+ double lgseed = LCaloCalibrationManager::GetInstance().GetPeakLG(pmtu);
 
- LCaloCalManager::GetInstance().PMTsWindowedRmsLG(pmtu,lgseed,5., corr1, outcounts);
+ LCaloCalibrationManager::GetInstance().PMTsWindowedRmsLG(pmtu,lgseed,5., corr1, outcounts);
  corr1[1]=corr1[1]*fac3l;
  
- LCaloCalManager::GetInstance().PMTsWindowedRmsLG(pmtu,corr1[0],corr1[1], corr1, outcounts);
+ LCaloCalibrationManager::GetInstance().PMTsWindowedRmsLG(pmtu,corr1[0],corr1[1], corr1, outcounts);
  corr1[1]=corr1[1]*fac3l;
 
  

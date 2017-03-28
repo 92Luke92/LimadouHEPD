@@ -1,5 +1,5 @@
 #include "LEvRec0File.hh"
-#include "LCaloCalManager.hh"          	
+#include "LCaloCalibrationManager.hh"          	
 #include <iostream>
 
 
@@ -11,11 +11,11 @@ int main(int argc,char *argv[]){
 
 // getting pedestals with LCaloManager class
 
- LCaloCalManager::GetInstance().LoadRun(argv[1]);
+ LCaloCalibrationManager::GetInstance().LoadRun(argv[1]);
  
  double mean0[NPMT]; double rms0[NPMT]; double mean1[NPMT]; double rms1[NPMT];
  
- LCaloCalManager::GetInstance().PMTsMeanRms( mean0, rms0, mean1, rms1);
+ LCaloCalibrationManager::GetInstance().PMTsMeanRms( mean0, rms0, mean1, rms1);
  
 
 

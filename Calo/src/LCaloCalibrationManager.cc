@@ -1,4 +1,4 @@
-#include "LCaloCalManager.hh"
+#include "LCaloCalibrationManager.hh"
 #include "LEvRec0File.hh"
 #include "LEvRec0.hh"
 
@@ -8,7 +8,7 @@
 #include <fstream>
 
 
-LCaloCalManager::LCaloCalManager() {
+LCaloCalibrationManager::LCaloCalibrationManager() {
   calRunFile=0;
   InitialTargetRun=-1;
   FinalTargetRun=-1;
@@ -16,8 +16,8 @@ LCaloCalManager::LCaloCalManager() {
 }
 
 
-LCaloCalManager& LCaloCalManager::GetInstance() {
-  static LCaloCalManager instance; // Guaranteed to be destroyed.
+LCaloCalibrationManager& LCaloCalibrationManager::GetInstance() {
+  static LCaloCalibrationManager instance; // Guaranteed to be destroyed.
                                               // Instantiated on first use.
   return instance;
 }
@@ -26,7 +26,7 @@ LCaloCalManager& LCaloCalManager::GetInstance() {
 //---------------------------------------------------------------------------
 
 
-int LCaloCalManager::LoadRun(const char *fileInp) {
+int LCaloCalibrationManager::LoadRun(const char *fileInp) {
   // Reset previous loaded runs
   if(calRunFile) {
     if(calRunFile->IsOpen()) calRunFile->Close();
@@ -49,7 +49,7 @@ int LCaloCalManager::LoadRun(const char *fileInp) {
 
 //---------------------------------------------------------------------------
 
-void LCaloCalManager::SetTargetRuns(const int InitialRun, const int FinalRun) {
+void LCaloCalibrationManager::SetTargetRuns(const int InitialRun, const int FinalRun) {
   InitialTargetRun=InitialRun;
   FinalTargetRun=FinalRun;
   return;
@@ -60,7 +60,7 @@ void LCaloCalManager::SetTargetRuns(const int InitialRun, const int FinalRun) {
 
 //---------------------------------------------------------------------------
 
-double LCaloCalManager::GetPeak(int pmtnum)
+double LCaloCalibrationManager::GetPeak(int pmtnum)
 {
   int spectrum[500]={0}, cursor=0;
   double peakpos=-1;
@@ -90,7 +90,7 @@ return (double)peakpos;}
 
 //---------------------------------------------------------------------------
 
-double LCaloCalManager::GetPeakLG(int pmtnum)
+double LCaloCalibrationManager::GetPeakLG(int pmtnum)
 {
   int spectrum[450]={0}, cursor=0;
   double peakpos=-1;
@@ -121,7 +121,7 @@ return (double)peakpos;}
 //---------------------------------------------------------------------------
 
 
-int LCaloCalManager::PMTsWindowedRmsHG(int pmt, double old_mean, double old_rms,  double *res, int *cntssxdx)
+int LCaloCalibrationManager::PMTsWindowedRmsHG(int pmt, double old_mean, double old_rms,  double *res, int *cntssxdx)
 {
 
 
@@ -173,7 +173,7 @@ int LCaloCalManager::PMTsWindowedRmsHG(int pmt, double old_mean, double old_rms,
 }
 
 //---------------------------------------------------------------------------
-int LCaloCalManager::PMTsWindowedRmsLG(int pmt, double old_mean, double old_rms,  double *res, int *cntssxdx)
+int LCaloCalibrationManager::PMTsWindowedRmsLG(int pmt, double old_mean, double old_rms,  double *res, int *cntssxdx)
 {
 
         std::vector<double> calc(2,0);
@@ -220,7 +220,7 @@ int LCaloCalManager::PMTsWindowedRmsLG(int pmt, double old_mean, double old_rms,
 
 //---------------------------------------------------------------------------
 
-int LCaloCalManager::PMTsMomenta34(double *HGm3, double *HGm4,  double *LGm3, double *LGm4)
+int LCaloCalibrationManager::PMTsMomenta34(double *HGm3, double *HGm4,  double *LGm3, double *LGm4)
 {
 
         std::vector<double> meanHG(NPMT, 0), meanHG2(NPMT, 0), meanHG3(NPMT, 0), meanHG4(NPMT, 0), 
@@ -310,7 +310,7 @@ int LCaloCalManager::PMTsMomenta34(double *HGm3, double *HGm4,  double *LGm3, do
 
 //---------------------------------------------------------------------------
 
-int LCaloCalManager::PMTsMeanRms(double *HGmean, double *HGrms,  double *LGmean, double *LGrms)
+int LCaloCalibrationManager::PMTsMeanRms(double *HGmean, double *HGrms,  double *LGmean, double *LGrms)
 {
 
         std::vector<double> meanHG(NPMT,0), rmsHG(NPMT, 0), meanLG(NPMT, 0),rmsLG(NPMT, 0), usedEVTS(NPMT,0);
@@ -381,7 +381,7 @@ int LCaloCalManager::PMTsMeanRms(double *HGmean, double *HGrms,  double *LGmean,
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 
-int LCaloCalManager::PMTsMeanRmsData(int pmt, double *res)
+int LCaloCalibrationManager::PMTsMeanRmsData(int pmt, double *res)
 {
 
         std::vector<double> calc(2,0);
@@ -431,7 +431,7 @@ int LCaloCalManager::PMTsMeanRmsData(int pmt, double *res)
 //---------------------------------------------------------------------------
 
 
-LCaloCalManager::~LCaloCalManager() {
+LCaloCalibrationManager::~LCaloCalibrationManager() {
   // do not care about singleton destructor
 }
 

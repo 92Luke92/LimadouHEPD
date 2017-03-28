@@ -1,13 +1,13 @@
-#ifndef __LCaloCalManager__
-#define __LCaloCalManager__ 1
+#ifndef __LCALOCALIBRATIONMANAGER__
+#define __LCALOCALIBRATIONMANAGER__ 1
 
 
 #include "LEvRec0File.hh"
 
-class LCaloCalManager {
+class LCaloCalibrationManager {
 
 public:
-  static LCaloCalManager& GetInstance();
+  static LCaloCalibrationManager& GetInstance();
   
   int LoadRun(const char *fileInp);
   void SetTargetRuns(const int InitialRun, const int FinalRun=-1);
@@ -24,9 +24,9 @@ private:
   LEvRec0File *calRunFile;  // pointer to the run used for calibration
   int InitialTargetRun;
   int FinalTargetRun;
-  LCaloCalManager();
+  LCaloCalibrationManager();
   
-  ~LCaloCalManager();
+  ~LCaloCalibrationManager();
 
   bool verboseFLAG;
 
@@ -47,8 +47,8 @@ private:
   // We can use the better technique of deleting the methods
   // we don't want.
 public:
-  LCaloCalManager(LCaloCalManager const&) = delete;
-  void operator=(LCaloCalManager const&) = delete;
+  LCaloCalibrationManager(LCaloCalibrationManager const&) = delete;
+  void operator=(LCaloCalibrationManager const&) = delete;
   // */
 };
 
