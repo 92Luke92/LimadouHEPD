@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <typeinfo>
 
 struct steerEntry {
   std::string type;
