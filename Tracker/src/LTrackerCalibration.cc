@@ -10,10 +10,16 @@ void LTrackerCalibration::Add(const LTrackerCalibrationSlot *lcal) {
 }
 
 LTrackerCalibration::LTrackerCalibration() {
+  Reset();
+}
+
+
+void LTrackerCalibration::Reset(void) {
   RunId=-99999;
   nSlots=0;
   InitialTargetRun=-99999;
   FinalTargetRun=-99999;
+  calarray.resize(0);
 }
 
 LTrackerCalibration::LTrackerCalibration(const int RunIdINP,  const int InitialTargetRunINP, const int FinalTargetRunINP) {

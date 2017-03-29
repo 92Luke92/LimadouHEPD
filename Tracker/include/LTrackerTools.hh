@@ -3,6 +3,9 @@
 
 #include <vector>
 #include "LTrackerCluster.hh"
+#include "LTrackerSignal.hh"
+#include "LEvRec0.hh"
+#include "LCalibration.hh"
 
 int ChanToLadder(const int nStrip);
 int ChanToADC(const int nStrip);
@@ -15,9 +18,9 @@ int ChanToLadderPlane (const int nChan); // return 0,1,....11
 bool SameLadderPlane(const int Chan1, const int Chan2);
 int ChanToLadderChan(const int Chan); // channel inside the ladder
 int ChanToSideChan(const int Chan); // channel inside the side
-std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigma, const bool *mask);
-inline std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigma){return GetClusters(cont, sigma, 0);};
+std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigma, const bool *mask=0);
 void ComputeCN(const short *counts, const double *pedestal, const bool *CN_mask, double *CN);
+LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal);
 
 
 template<class T> T* Symmetrise(const int inpsize, const T* inp) {

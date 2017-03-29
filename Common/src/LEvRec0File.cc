@@ -1,34 +1,55 @@
 #include "LEvRec0File.hh"
 
+LEvRec0File::LEvRec0File() {
+  fFile=0;
+  fTree=0;
+  RunId=-999;
+}
 
 LEvRec0File::LEvRec0File(const char *inpFile) {
-  inputCalib=TFile::Open(inpFile, "READ");
+  Open(inpFile);
+}
+
+
+void LEvRec0File::Open(const char *inpFile) {
+  fFile=TFile::Open(inpFile, "READ");
   //calibration run processing...
-  treeCalib=(TTree*)inputCalib->Get("T");
-  TTree *Tmd = (TTree*)inputCalib->Get("Tmd");
+  fTree=(TTree*)fFile->Get("T");
+  TTree *Tmd = (TTree*)fFile->Get("Tmd");
   unsigned short run_id;
   Tmd->SetBranchAddress("run_id",&run_id);
   Tmd->GetEntry(0);
   RunId = static_cast<int>(run_id);
+
+  return;
 }
 
+void LEvRec0File::Reset() {
+  if(fFile) {
+    fTree=0;
+    fFile->Close();
+  }
+  RunId=-999;
+  
+  return;
+}
 
 int LEvRec0File::SetTheEventPointer(LEvRec0 &ev) {
-  treeCalib->SetBranchAddress("strip[4608]",&ev.strip);
-  treeCalib->SetBranchAddress("trigger_index", &ev.trigger_index);
-  treeCalib->SetBranchAddress("hepd_time", &ev.hepd_time);
-  treeCalib->SetBranchAddress("event_index", &ev.event_index);
-  treeCalib->SetBranchAddress("event_length", &ev.event_length);
-  treeCalib->SetBranchAddress("pmt_high[64]", &ev.pmt_high);
-  treeCalib->SetBranchAddress("pmt_low[64]", &ev.pmt_low);
-  treeCalib->SetBranchAddress("rate_meter[9]", &ev.rate_meter);
-  treeCalib->SetBranchAddress("trigger_flag[64]", &ev.trigger_flag);
-  treeCalib->SetBranchAddress("alive_time", &ev.alive_time);
-  treeCalib->SetBranchAddress("dead_time", &ev.dead_time);
+  fTree->SetBranchAddress("strip[4608]",&ev.strip);
+  fTree->SetBranchAddress("trigger_index", &ev.trigger_index);
+  fTree->SetBranchAddress("hepd_time", &ev.hepd_time);
+  fTree->SetBranchAddress("event_index", &ev.event_index);
+  fTree->SetBranchAddress("event_length", &ev.event_length);
+  fTree->SetBranchAddress("pmt_high[64]", &ev.pmt_high);
+  fTree->SetBranchAddress("pmt_low[64]", &ev.pmt_low);
+  fTree->SetBranchAddress("rate_meter[9]", &ev.rate_meter);
+  fTree->SetBranchAddress("trigger_flag[64]", &ev.trigger_flag);
+  fTree->SetBranchAddress("alive_time", &ev.alive_time);
+  fTree->SetBranchAddress("dead_time", &ev.dead_time);
 
-  treeCalib->SetBranchStatus("*",kFALSE);
-  treeCalib->SetBranchStatus("strip[4608]",kTRUE);
-  treeCalib->SetBranchStatus("event_index",kTRUE);
+  fTree->SetBranchStatus("*",kFALSE);
+  fTree->SetBranchStatus("strip[4608]",kTRUE);
+  fTree->SetBranchStatus("event_index",kTRUE);
 
   return 0;
 }
@@ -36,30 +57,23 @@ int LEvRec0File::SetTheEventPointer(LEvRec0 &ev) {
 
 
 int LEvRec0File::GetEntry(int iEntry) {
-  treeCalib->GetEntry(iEntry);
+  fTree->GetEntry(iEntry);
   return 0;
 }
 
 
 
 int LEvRec0File::GetEntries() {
-  return treeCalib->GetEntries();
+  return fTree->GetEntries();
 }
 
 void LEvRec0File::Close() {
-  if(inputCalib) {
-    treeCalib=0;
-    inputCalib->Close();
-    inputCalib=0;
-  }
+  Reset();
   return;
 }
 
 
 
 LEvRec0File::~LEvRec0File() {
-  if(inputCalib) {
-    treeCalib=0;
-    inputCalib->Close();
-  }
+  Reset();
 }

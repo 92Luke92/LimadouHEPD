@@ -14,7 +14,8 @@ public:
   LTrackerCluster();
   LTrackerCluster(const int inpSeed, const double *inpCont, const double *inpSigma);
   void Dump();
-
+  void FillRandom(void);
+  
   int seed;
   double count[CLUSTERCHANNELS];
   double sigma[CLUSTERCHANNELS];

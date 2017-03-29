@@ -10,6 +10,9 @@ const int NADC = 4096;
 const int NPMT = 64;
 const int NRATEMETER = 9; // ?????????????
 const int NTRIGSCINT=6;
+const int NSCINTPLANES=16;
+const int NVETOSCINT=5;
+const int NLYSOCRYSTALS=9;
 const int N_VA=NCHAN/VA_CHAN;
 
 const int N_SIDES=2;

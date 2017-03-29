@@ -1,5 +1,17 @@
 #include "LTrackerCalibrationSlot.hh"
 
+void LTrackerCalibrationSlot::Reset() {
+  StartEvent=-999;
+  StopEvent=-999;
+  for(int iChan=0; iChan<NCHAN; ++iChan) {
+    pedestal[iChan]=0;
+    sigma[iChan]=0;
+    ngindex[iChan]=0;
+    CN_mask[iChan]=0;
+  }
+  return;
+}
+
 LTrackerCalibrationSlot::LTrackerCalibrationSlot(int StartE, int StopE, double *ped, double *sig, double *ngi, bool *cnm) {
   StartEvent=StartE;
   StopEvent=StopE;

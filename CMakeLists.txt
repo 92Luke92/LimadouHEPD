@@ -4,5 +4,9 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 add_subdirectory(Common)
 add_subdirectory(Tracker)
 add_subdirectory(Calo)
+add_subdirectory(exe)
+
+add_definitions( -std=c++11)
+
 
 #other cmakelists to be added here when written

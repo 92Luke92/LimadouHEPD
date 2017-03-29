@@ -1,7 +1,6 @@
 #include "LTrackerTools.hh"
 #include "detector_const.hh"
 #include "LTrackerCluster.hh"
-#include "LTrackerMask.hh"
 #include <algorithm>
 #include <math.h>
 #include <iostream>
@@ -63,7 +62,7 @@ int ChanToSideChan(const int Chan) {
 }
 
 
-std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigma, const bool *maskIn=0) {
+std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigma, const bool *maskIn) {
   
   auto result= new std::vector<LTrackerCluster>;
   double sn[NCHAN];
@@ -130,6 +129,15 @@ std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigm
     //ich=maxindex1-2; // already explored up there.
   } // end of the main loop:: Warning, possible overlap between clusters' boundaries
 
+  return result;
+}
+
+LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal) {
+  double cont[NCHAN];
+  for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich])-cal.tracker.GetPedestal(0)[ich];
+  std::vector<LTrackerCluster> *tmp = GetClusters(cont, cal.tracker.GetSigma(0));
+  LTrackerSignal result;
+  for(auto tmpit : *tmp) result.push_back(tmpit);
   return result;
 }
 

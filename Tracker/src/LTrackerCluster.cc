@@ -5,6 +5,8 @@
 #include "LTrackerCluster.hh"
 #include <iostream>
 #include <cmath>
+#include <random>
+#include <chrono>
 
 double LTrackerCluster::ComputeEta() {
   int seedIndex=CLUSTERCHANNELS/2;
@@ -25,7 +27,7 @@ double LTrackerCluster::ComputeEta() {
 double LTrackerCluster::ComputeEta3() {
   int seedIndex=CLUSTERCHANNELS/2;
   
-   double numerator=/*0*count[seedIndex-1]+*/count[seedIndex]+2*count[seedIndex+1];
+  double numerator=/*0*count[seedIndex-1]+*/count[seedIndex]+2*count[seedIndex+1];
   double denominator=count[seedIndex-1]+count[seedIndex]+count[seedIndex+1];
 
   eta = numerator/denominator;
@@ -128,10 +130,27 @@ void LTrackerCluster::Dump() {
   std::cout << "***************" << std::endl
             <<"\t seed " << seed << " (side " << ChanToSide(seed) << ", ladder " << ChanToLadder(seed) << ")" << std::endl
             <<"\t eta " << eta << std::endl << "\t";
-for(int i = 0; i < CLUSTERCHANNELS; ++i)  std::cout << count[i] << " ";
-std::cout << std::endl << "\t";
-for(int i = 0; i < CLUSTERCHANNELS; ++i)  std::cout << sn[i] << " ";
- 
+  for(int i = 0; i < CLUSTERCHANNELS; ++i)  std::cout << count[i] << " ";
+  std::cout << std::endl << "\t";
+  for(int i = 0; i < CLUSTERCHANNELS; ++i)  std::cout << sn[i] << " ";
+  
   std::cout << std::endl << "***************" << std::endl;
+  return;
+}
+
+
+void LTrackerCluster::FillRandom(void) {
+  unsigned rseed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine generator(rseed);
+  const double pedestal = 1365.;
+  const double sigmaIN=5.46;
+  std::normal_distribution<double> distribution(pedestal,sigmaIN);
+  
+  seed = 234;
+  for(int i=0; i<CLUSTERCHANNELS; ++i) {
+    count[i]=distribution(generator);
+    sigma[i]=sigmaIN;
+    sn[i]=count[i]/sigmaIN;
+  }
   return;
 }
