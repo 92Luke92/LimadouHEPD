@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-project(Calo)
+#project(Calo)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package( ROOT REQUIRED COMPONENTS RIO Net Tree Hist )

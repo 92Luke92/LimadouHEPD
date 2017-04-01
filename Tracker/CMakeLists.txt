@@ -1,6 +1,6 @@
 # CMakeLists.txt for event package. It creates a library with dictionary and a main program
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-project(Tracker)
+#project(Tracker)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package( ROOT REQUIRED COMPONENTS RIO Net Tree Hist )

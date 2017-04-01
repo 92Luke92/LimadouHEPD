@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-project(Common)
+#project(Common)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
