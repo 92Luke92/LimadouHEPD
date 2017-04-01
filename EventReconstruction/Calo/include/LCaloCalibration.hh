@@ -1,37 +1,46 @@
 #ifndef __LCALOCALIBRATION__
 #define __LCALOCALIBRATION__ 1
 
-//#include "LCaloCalibrationSlot.hh"
+#include "detector_const.hh"
 #include <vector>
+#include <fstream>
 
 
 class LCaloCalibration {
 public:
-  LCaloCalibration(){;};
-  /*  LCaloCalibration(const int RunIdINP, const int InitialTargetRunINP, const int FinalTargetRun);
-  void Add(const LCaloCalibrationSlot *lcal);
-  void Write(const char *fileOut);
+  LCaloCalibration();
+  LCaloCalibration(const int RunIdINP,
+		   const int InitialTargetRunINP, const int FinalTargetRunINP,
+		   const double* ped, const double *rms); // outliers? momenta 3-4?
+  //               const int* outliers,
+  //               const double* skewness, const double* kurtosis);
+  void Write(const char *fileOut) const;
+  void Write(std::ofstream *fileOut) const;
   static LCaloCalibration* Read(const char *fileIn);
-  inline int GetNSlots() const {return nSlots;};
+  static LCaloCalibration* Read(std::ifstream *fileIn);
   inline int GetRunId() const {return RunId;};
   inline int GetInitialTargetRun() const {return InitialTargetRun;};
   inline int GetFinalTargetRun() const {return FinalTargetRun;};
-  inline const double* GetPedestal(const int nSlot) const {return calarray.at(nSlot).GetPedestal();};
-  inline const double* GetSigma(const int nSlot) const {return calarray.at(nSlot).GetSigma();};
-  inline const double* GetNGIndex(const int nSlot) const {return calarray.at(nSlot).GetNGIndex();};
-  inline const bool* GetCNMask(const int nSlot) const {return calarray.at(nSlot).GetCNMask();};
-  inline LCaloMask GetMaskOnSigma(const int nSlot, const double sigmaMin, const double sigmaMax){return calarray.at(nSlot).GetMaskOnSigma(sigmaMin, sigmaMax);};
-  inline LCaloMask GetMaskOnNGI(const int nSlot, const double ngiMin, const double ngiMax){return calarray.at(nSlot).GetMaskOnNGI(ngiMin, ngiMax);};
+  inline const double* GetPedestal() const {return pedestal;};
+  inline const double* GetSigma() const {return sigma;};
+  //inline const int* GetOutliers() const {return outliers;};
+  //  LCaloMask GetMaskOnSigma(const double sigmaMin, const double sigmaMax);
+  //LCaloMask GetMaskOnOutliers(const int outliersMin, const int outliersMax);
   
 private:
   // Calib infos
   int RunId;
-  int nSlots;
   int InitialTargetRun;
   int FinalTargetRun;
-  std::vector<LCaloCalibrationSlot> calarray;
 
-  void Reset();*/
+  double pedestal[NPMT];
+  double sigma[NPMT];
+  /*  int outliers[NPMT];
+  double skewness[NPMT];
+  double kurtosis[NPMT];
+  */
+
+  void Reset();
 };
 
 
