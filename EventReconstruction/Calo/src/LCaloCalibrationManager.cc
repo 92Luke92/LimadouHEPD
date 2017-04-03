@@ -43,7 +43,8 @@ int LCaloCalibrationManager::LoadRun(const char *fileInp) {
   
   calRunFile = new LEvRec0File(fileInp);
   if(!calRunFile || !(calRunFile->IsOpen())) {
-    std::cerr << "Error! Attempt to load a calibration run, but the file cannot be opened."
+    std::cerr << __LCALOCALIBRATIONMANAGER__
+	      << "Error! Attempt to load a calibration run, but the file cannot be opened."
 	      << std::endl;
     calRunFile = 0;
     return -999;
@@ -111,12 +112,15 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum, const int PeakFinderWind
     if(cursor<PeakFinderWindowWidth && cev.trigger_flag[pmtnum]==0){
       ++spectrum[cursor];
     }
-  };// end loop
- 
+  }// end loop
+  
   //search maximum
   int maxval=0;
   for (int loop1=0; loop1<PeakFinderWindowWidth; ++loop1){
-    if(spectrum[loop1]>maxval){maxval=spectrum[loop1];peakpos=loop1;}
+    if(spectrum[loop1]>maxval){
+      maxval=spectrum[loop1];
+      peakpos=loop1;
+    }
   }
 
   return peakpos;
@@ -412,7 +416,8 @@ void LCaloCalibrationManager::PMTsMeanRmsData(const int pmt, double *res) const 
 LCaloCalibration* LCaloCalibrationManager::Calibrate(const bool isHG, const int nEvents, const int skipEvents) {
   
   if(calRunFile==0 || !(calRunFile->IsOpen())) {
-    std::cerr << "Error! Attempt to call the \"Calibrate\" method, but no calibration run loaded."
+    std::cerr << __LCALOCALIBRATIONMANAGER__ 
+	      << "Error! Attempt to call the \"Calibrate\" method, but no calibration run loaded."
 	      << std::endl;
     return 0;
   }
@@ -424,9 +429,13 @@ LCaloCalibration* LCaloCalibrationManager::Calibrate(const bool isHG, const int 
   if(skipEvents==-1) __skipEv=0;
 
   if(nEntries<__skipEv+__nEv) {
-    std::cerr << "Impossible to go ahead: nEntries < __skipEv+__nEv" << std::endl;
+    std::cerr << __LCALOCALIBRATIONMANAGER__
+	      << "Impossible to go ahead: nEntries < __skipEv+__nEv" << std::endl;
     return 0;
   }
+
+  if(verboseFLAG)  std::cout << __LCALOCALIBRATIONMANAGER__ 
+			     << (isHG ? "High gain " : "Low gain ") << "calibration started" << std::endl;
 
   // Pedestals and sigmas
   double ped0[NPMT], sigma0[NPMT]; // zero approximation
@@ -435,20 +444,49 @@ LCaloCalibration* LCaloCalibrationManager::Calibrate(const bool isHG, const int 
   int outliers[NPMT];
   //double skewness[NPMT], kurtosis[NPMT];
   
-  // Zero approzimation initialization
+  // Zero approximation initialization
   if(isHG) {
     int *peaks = GetPeaksHG();
     for(int iCh=0; iCh<NPMT; ++iCh) ped0[iCh] = static_cast<double>(peaks[iCh]);
     for(int iCh=0; iCh<NPMT; ++iCh) sigma0[iCh] = STARTINGSIGMA;
-    
+    if(verboseFLAG)  std::cout << __LCALOCALIBRATIONMANAGER__ 
+			       << " 0th approx. done" << std::endl;
+
     // First approximation
     PMTsWindowedRmsHG(ped0, sigma0, ped1, sigma1, outliers);
+    if(verboseFLAG)  std::cout << __LCALOCALIBRATIONMANAGER__ 
+			       << " 1th approx. done" << std::endl;
   
     // Second approximation
     PMTsWindowedRmsHG(ped1, sigma1, ped, sigma, outliers);
+    if(verboseFLAG)  std::cout << __LCALOCALIBRATIONMANAGER__ 
+			       << " 2th approx. done" << std::endl;
     
     // 3-4 Momenta
     //    PMTsMomenta34HG(ped, sigma, skewness, kurtosis);
+    //    if(verboseFLAG)  std::cout << __LCALOCALIBRATIONMANAGER__ 
+    //			       << " 3-4 momenta done" << std::endl;
+  } else  {
+    int *peaks = GetPeaksLG();
+    for(int iCh=0; iCh<NPMT; ++iCh) ped0[iCh] = static_cast<double>(peaks[iCh]);
+    for(int iCh=0; iCh<NPMT; ++iCh) sigma0[iCh] = STARTINGSIGMA;
+    if(verboseFLAG)  std::cout << __LCALOCALIBRATIONMANAGER__ 
+			       << " 0th approx. done" << std::endl;
+    
+    // First approximation
+    PMTsWindowedRmsLG(ped0, sigma0, ped1, sigma1, outliers);
+    if(verboseFLAG)  std::cout << __LCALOCALIBRATIONMANAGER__ 
+			       << " 1th approx. done" << std::endl;
+  
+    // Second approximation
+    PMTsWindowedRmsLG(ped1, sigma1, ped, sigma, outliers);
+    if(verboseFLAG)  std::cout << __LCALOCALIBRATIONMANAGER__ 
+			       << " 2th approx. done" << std::endl;
+    
+    // 3-4 Momenta
+    //    PMTsMomenta34LG(ped, sigma, skewness, kurtosis);
+    //    if(verboseFLAG)  std::cout << __LCALOCALIBRATIONMANAGER__ 
+    //			       << " 3-4 momenta done" << std::endl;
   }
   
   int RunId = calRunFile->GetRunId();

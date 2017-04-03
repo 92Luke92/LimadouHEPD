@@ -1,5 +1,5 @@
 #ifndef __LCALOCALIBRATIONMANAGER__
-#define __LCALOCALIBRATIONMANAGER__ 1
+#define __LCALOCALIBRATIONMANAGER__ "LCaloCalibrationManager   # "
 
 #include "LCaloCalibration.hh"
 #include "LEvRec0File.hh"
@@ -25,6 +25,7 @@ public:
   void SetTargetRuns(const int InitialRun, const int FinalRun=-1);
   inline LCaloCalibration* CalibrateHG(const int nEvents=-1, const int skipEvents=-1){return Calibrate(true, nEvents, skipEvents);};
   inline LCaloCalibration* CalibrateLG(const int nEvents=-1, const int skipEvents=-1){return Calibrate(false, nEvents, skipEvents);};
+  inline bool SetVerbosity(const bool boolFLAG) {verboseFLAG=boolFLAG;};
   
 private:
   LEvRec0File *calRunFile;  // pointer to the run used for calibration

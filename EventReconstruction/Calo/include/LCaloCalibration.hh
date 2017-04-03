@@ -1,5 +1,5 @@
 #ifndef __LCALOCALIBRATION__
-#define __LCALOCALIBRATION__ 1
+#define __LCALOCALIBRATION__ "LCaloCalibration  ######### "
 
 #include "detector_const.hh"
 #include <vector>

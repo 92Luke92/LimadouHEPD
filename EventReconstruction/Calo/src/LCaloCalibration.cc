@@ -39,15 +39,19 @@ LCaloCalibration::LCaloCalibration(const int RunIdINP,
 
 
 void LCaloCalibration::Write(std::ofstream *output) const {
+  std::cout << __LCALOCALIBRATION__ << "Calibration file writing..." << std::endl;
+
   *output << RunId << std::endl;
   *output << InitialTargetRun << " " << FinalTargetRun << std::endl;
-  for(int iChan=0; iChan<NPMT; ++iChan)
+  for(int iChan=0; iChan<NPMT; ++iChan) {
     *output << pedestal[iChan] << " " << sigma[iChan] << " "
       /*	   << outliers[iChan] << " "
 	   << skewness[iChan] << " "
 	   << kurtosis[iChan] */
 	   << std::endl;
+  }
   *output << std::endl;
+  std::cout << __LCALOCALIBRATION__ << "Calibration file written." << std::endl;
   
   return;
 }
@@ -73,14 +77,17 @@ LCaloCalibration* LCaloCalibration::Read(std::ifstream *input) {
   *input >> RunIdST;
   *input >> InitialTargetRunST >> FinalTargetRunST;
 
-  for(int iChan=0; iChan<NCHAN; ++iChan) {
+  for(int iChan=0; iChan<NPMT; ++iChan) {
     *input >> pedestalST[iChan] >>  sigmaST[iChan];
     /*	  >> outliersST[iChan] 
 	  >> skewnessST[iChan] 
 	  >> kurtosisST[iChan];*/
   }
+  std::cout << __LCALOCALIBRATION__ << "Calibration file read." << std::endl << std::flush;;
+
   LCaloCalibration *result = new LCaloCalibration(RunIdST, InitialTargetRunST, FinalTargetRunST,
 						  pedestalST, sigmaST);//, outliersST, skewnessST, kurtosisST);
+  std::cout << __LCALOCALIBRATION__ << "Calo calibration created (" << &result << ")" << std::endl << std::flush;
 
   return result;
 }

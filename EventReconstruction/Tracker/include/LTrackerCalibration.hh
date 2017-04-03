@@ -1,5 +1,5 @@
 #ifndef __LTRACKERCALIBRATION__
-#define __LTRACKERCALIBRATION__ 1
+#define __LTRACKERCALIBRATION__ "LTrackerCalibration  ###### "
 
 #include "LTrackerCalibrationSlot.hh"
 #include <vector>

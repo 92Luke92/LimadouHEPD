@@ -16,6 +16,16 @@ LCalibrationManager& LCalibrationManager::GetInstance() {
 
 //---------------------------------------------------------------------------
 
+bool LCalibrationManager::SetVerbosity(const bool boolFLAG) {
+  verboseFLAG=boolFLAG;
+  LTrackerCalibrationManager::GetInstance().SetVerbosity(boolFLAG);
+  LCaloCalibrationManager::GetInstance().SetVerbosity(boolFLAG);
+  return boolFLAG;
+}
+
+
+//---------------------------------------------------------------------------
+
 
 int LCalibrationManager::LoadRun(const char *fileInp) {
   LTrackerCalibrationManager::GetInstance().LoadRun(fileInp);
@@ -38,9 +48,9 @@ void LCalibrationManager::SetTargetRuns(const int InitialRun, const int FinalRun
 
 LCalibration* LCalibrationManager::Calibrate(const int nEvents, const int skipEvents) {
 
-  LTrackerCalibration *track_cal = LTrackerCalibrationManager::GetInstance().Calibrate(nEvents, skipEvents);
   LCaloCalibration *caloHG_cal = LCaloCalibrationManager::GetInstance().CalibrateHG(nEvents, skipEvents);
   LCaloCalibration *caloLG_cal = LCaloCalibrationManager::GetInstance().CalibrateLG(nEvents, skipEvents);
+  LTrackerCalibration *track_cal = LTrackerCalibrationManager::GetInstance().Calibrate(nEvents, skipEvents);
 
   LCalibration *result = new LCalibration(caloHG_cal, caloLG_cal, track_cal);
   return result;

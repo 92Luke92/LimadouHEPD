@@ -168,7 +168,7 @@ void LTrackerCalibrationManager::ComputeCNMask(const double *sigma1, bool *CN_ma
   }  
   
   if(verboseFLAG) {
-    std::cout << "CNmask computed" << std::endl;
+    std::cout << __LTRACKERCALIBRATIONMANAGER__ << "CNmask computed" << std::endl;
   }
   return;
 }
@@ -203,7 +203,7 @@ void LTrackerCalibrationManager::RawMeanSigma(const int StartEntry, const int St
     sigma0[iChan]=sqrt(sumsq0[iChan]/counter0[iChan]-mean0[iChan]*mean0[iChan]);
   }
   
-  if(verboseFLAG) std::cout << "RawMeanSigma computed" << std::endl;
+  if(verboseFLAG) std::cout << __LTRACKERCALIBRATIONMANAGER__ << "RawMeanSigma computed" << std::endl;
   return;
 }
 
@@ -240,7 +240,7 @@ void LTrackerCalibrationManager::CleanedMeanSigma(const int StartEntry, const in
     sigma1[iChan]=sqrt(sumsq1[iChan]/counter1[iChan]-mean1[iChan]*mean1[iChan]);
   }
   
-  if(verboseFLAG) std::cout << "CleanedMeanSigma computed" << std::endl;
+  if(verboseFLAG) std::cout << __LTRACKERCALIBRATIONMANAGER__ << "CleanedMeanSigma computed" << std::endl;
   return;
 }
 
@@ -280,7 +280,7 @@ void LTrackerCalibrationManager::CNCorrectedSigma(const int StartEntry, const in
     sigma2[iChan]=sqrt(sumsq2[iChan]/counter2[iChan]-mean2[iChan]*mean2[iChan]);
   }
   
-  if(verboseFLAG) std::cout << "CNCorrectedSigma computed" << std::endl;
+  if(verboseFLAG) std::cout << __LTRACKERCALIBRATIONMANAGER__ << "CNCorrectedSigma computed" << std::endl;
   return;
 }
 
@@ -314,7 +314,7 @@ void LTrackerCalibrationManager::GaussianityIndex(const int StartEntry, const in
     ngindex[iChan]=(delta/significance);
   }
   
-  if(verboseFLAG) std::cout << "GaussianityIndex computed" << std::endl;
+  if(verboseFLAG) std::cout << __LTRACKERCALIBRATIONMANAGER__ << "GaussianityIndex computed" << std::endl;
   return;
 }
 

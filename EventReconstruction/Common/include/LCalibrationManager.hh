@@ -1,5 +1,5 @@
-#ifndef __LCALOMANAGER__
-#define __LCALOMANAGER__ 1
+#ifndef __LCALIBRATIONMANAGER__
+#define __LCALIBRATIONMANAGER__ 1
 
 #include "LCalibration.hh"
 
@@ -11,7 +11,8 @@ public:
   int LoadRun(const char *fileInp);
   void SetTargetRuns(const int InitialRun, const int FinalRun=-1);
   LCalibration* Calibrate(const int nEvents=-1, const int skipEvents=-1);
-  
+  bool SetVerbosity(const bool boolFLAG);
+
 private:
   LCalibrationManager(){;};
   ~LCalibrationManager();

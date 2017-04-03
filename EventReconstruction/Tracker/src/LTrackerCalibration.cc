@@ -4,7 +4,7 @@
 void LTrackerCalibration::Add(const LTrackerCalibrationSlot *lcal) {
   calarray.push_back(*lcal);
   ++nSlots;
-  std::cout << "LTrackerCalibration: " << "current slot number " << nSlots << std::endl;;
+  std::cout << __LTRACKERCALIBRATION__ << "Current slot number " << nSlots << std::endl;;
   return;
 }
 

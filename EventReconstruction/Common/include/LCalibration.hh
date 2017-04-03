@@ -1,5 +1,5 @@
 #ifndef __LCALIBRATION__
-#define __LCALIBRATION__ 1
+#define __LCALIBRATION__ "LCalibration   ############ "
 
 #include "LTrackerCalibration.hh"
 #include "LCaloCalibration.hh"

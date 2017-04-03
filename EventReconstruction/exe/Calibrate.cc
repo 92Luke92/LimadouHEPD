@@ -3,7 +3,7 @@
 #include "LTrackerMask.hh"
 
 int main(int argc, char *argv[]) {
-  if(argc!=3) {
+  /*if(argc!=3) {
     std::cerr << "Error! Usage:    ./Calibrate <calRunFile> <calOutFile>" << std::endl;
     std::cerr << "Aborted." << std::endl;
     return -999;
@@ -13,14 +13,14 @@ int main(int argc, char *argv[]) {
   LCalibrationManager::GetInstance().LoadRun(argv[1]);
   LCalibration *cal = LCalibrationManager::GetInstance().Calibrate();
   cal->Write(argv[2]);
-
-  /*
-  // Test read-write
-  LCalibration *cal=LCalibration::Read(argv[2]);
-  cal->Write("ciccio.cal");
-  */
-
+*/
   
+  // Test read-write
+  LCalibration *cal2=LCalibration::Read(argv[2]);
+  cal2->Write("ciccio.cal");
+  
+
+  /*  
   // Test LTrackerMask
   auto ms = cal->GetTrackerCalibration()->GetMaskOnSigma(0, 4.,6.);
   ms.Dump();
@@ -28,6 +28,6 @@ int main(int argc, char *argv[]) {
   mngi.Dump();
   auto mtot = ms&&mngi;
   mtot.Dump();
-  
+  */
   return 0;
 }

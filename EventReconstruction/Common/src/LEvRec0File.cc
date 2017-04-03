@@ -47,7 +47,7 @@ int LEvRec0File::SetTheEventPointer(LEvRec0 &ev) {
   fTree->SetBranchAddress("alive_time", &ev.alive_time);
   fTree->SetBranchAddress("dead_time", &ev.dead_time);
 
-  fTree->SetBranchStatus("*",kFALSE);
+  //  fTree->SetBranchStatus("*",kFALSE);
   fTree->SetBranchStatus("strip[4608]",kTRUE);
   fTree->SetBranchStatus("event_index",kTRUE);
 

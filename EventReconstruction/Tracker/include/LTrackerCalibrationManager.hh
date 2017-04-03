@@ -1,5 +1,5 @@
 #ifndef __LTRACKERCALIBRATIONMANAGER__
-#define __LTRACKERCALIBRATIONMANAGER__ 1
+#define __LTRACKERCALIBRATIONMANAGER__ "LTrackerCalibrationManager# "
 
 #include "LTrackerCalibration.hh"
 #include "LEvRec0File.hh"
@@ -22,6 +22,7 @@ public:
   int LoadRun(const char *fileInp);
   void SetTargetRuns(const int InitialRun, const int FinalRun=-1);
   LTrackerCalibration* Calibrate(const int nEvents=-1, const int skipEvents=-1);
+  inline bool SetVerbosity(const bool boolFLAG) {verboseFLAG=boolFLAG;};
   
 private:
   LEvRec0File *calRunFile;  // pointer to the run used for calibration

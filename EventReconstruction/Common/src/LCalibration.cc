@@ -1,4 +1,5 @@
 #include "LCalibration.hh"
+#include <iostream>
 
 LCalibration::LCalibration() {
   Reset();
@@ -29,6 +30,7 @@ LCalibration::LCalibration(LCaloCalibration *calo_HG_IN,
 }
   
 void LCalibration::Write(const char *fileOut) const {
+  std::cout << __LCALIBRATION__ << "Writing calibration file " << fileOut << "..." << std::endl;
   std::ofstream output(fileOut, std::ofstream::out); 
   Write(&output);
   output.close();
@@ -44,16 +46,24 @@ void LCalibration::Write(std::ofstream *fileOut) const {
 
 
 LCalibration* LCalibration::Read(const char *fileIn) {
+  std::cout << __LCALIBRATION__ << "Reading calibration file " << fileIn << "..." << std::endl;
   std::ifstream input(fileIn, std::ifstream::in); 
   LCalibration *result = Read(&input);
   input.close();
+  std::cout << __LCALIBRATION__ << "Calibration file read." << std::endl;
   return result;
 }
 
 LCalibration* LCalibration::Read(std::ifstream *fileIn) {
+  std::cout << __LCALIBRATION__ << "Reading calo_HG... " << std::endl;
   LCaloCalibration *calo_HG_read = LCaloCalibration::Read(fileIn);
+  std::cout << __LCALIBRATION__ << "calo_HG read. " << std::endl << std::flush;
+  std::cout << __LCALIBRATION__ << "Reading calo_LG... " << std::endl;
   LCaloCalibration *calo_LG_read = LCaloCalibration::Read(fileIn);
+  std::cout << __LCALIBRATION__ << "calo_LG read. " << std::endl;
+  std::cout << __LCALIBRATION__ << "Reading tracker... " << std::endl;
   LTrackerCalibration* tracker_read = LTrackerCalibration::Read(fileIn);
+  std::cout << __LCALIBRATION__ << "tracker read. " << std::endl;
   LCalibration *result = new LCalibration(calo_HG_read, calo_LG_read, tracker_read);
   return result;
 }
