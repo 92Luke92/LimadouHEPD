@@ -89,6 +89,7 @@ LCaloCalibration* LCaloCalibration::Read(const char *fileIn) {
   
   std::ifstream input(fileIn, std::ifstream::in); 
   LCaloCalibration *result = Read(&input);
-  input.close();  return result;
+  input.close();  
+  return result;
 }
  
