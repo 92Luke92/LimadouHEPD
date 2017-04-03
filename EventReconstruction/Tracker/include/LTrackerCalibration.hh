@@ -3,6 +3,7 @@
 
 #include "LTrackerCalibrationSlot.hh"
 #include <vector>
+#include <fstream>
 
 
 class LTrackerCalibration {
@@ -10,8 +11,10 @@ public:
   LTrackerCalibration();
   LTrackerCalibration(const int RunIdINP, const int InitialTargetRunINP, const int FinalTargetRun);
   void Add(const LTrackerCalibrationSlot *lcal);
-  void Write(const char *fileOut);
+  void Write(const char *fileOut) const;
+  void Write(std::ofstream *fileOut) const;
   static LTrackerCalibration* Read(const char *fileIn);
+  static LTrackerCalibration* Read(std::ifstream *fileIn);
   inline int GetNSlots() const {return nSlots;};
   inline int GetRunId() const {return RunId;};
   inline int GetInitialTargetRun() const {return InitialTargetRun;};

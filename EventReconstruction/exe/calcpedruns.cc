@@ -30,9 +30,9 @@ int main(int argc,char *argv[]){
   // HG 
   for (int pmtu=0; pmtu<NPMT; pmtu++){
     
-    double hgseed = LCaloCalibrationManager::GetInstance().GetPeak(pmtu);
+    int hgseed = LCaloCalibrationManager::GetInstance().GetPeak(pmtu, HGPEAKFINDERWINDOW);
     
-    LCaloCalibrationManager::GetInstance().PMTsWindowedRmsHG(pmtu,hgseed,5., corr, outcounts);
+    LCaloCalibrationManager::GetInstance().PMTsWindowedRmsHG(pmtu,static_cast<double>(hgseed), 5., corr, outcounts);
     corr[1]=corr[1]*fac3h;
     
     LCaloCalibrationManager::GetInstance().PMTsWindowedRmsHG(pmtu,corr[0],corr[1], corr, outcounts);
@@ -49,9 +49,9 @@ int main(int argc,char *argv[]){
   
   for (int pmtu=0; pmtu<NPMT; pmtu++){
     
-    double lgseed = LCaloCalibrationManager::GetInstance().GetPeakLG(pmtu);
+    int lgseed = LCaloCalibrationManager::GetInstance().GetPeak(pmtu, LGPEAKFINDERWINDOW);
     
-    LCaloCalibrationManager::GetInstance().PMTsWindowedRmsLG(pmtu,lgseed,5., corr1, outcounts);
+    LCaloCalibrationManager::GetInstance().PMTsWindowedRmsLG(pmtu,static_cast<double>(lgseed),5., corr1, outcounts);
     corr1[1]=corr1[1]*fac3l;
     
     LCaloCalibrationManager::GetInstance().PMTsWindowedRmsLG(pmtu,corr1[0],corr1[1], corr1, outcounts);

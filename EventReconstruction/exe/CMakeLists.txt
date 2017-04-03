@@ -17,11 +17,13 @@ file(GLOB_RECURSE sources ${CMAKE_SOURCE_DIR}/*/src/*.cc)
 
 add_executable(CalibrateTracker CalibrateTracker.cc ${sources})
 add_executable(CalibrateCalo CalibrateCalo.cc ${sources})
+add_executable(Calibrate Calibrate.cc ${sources})
 add_executable(Reco01 Reco01.cc ${sources})
 
 
 target_link_libraries(CalibrateTracker ${ROOT_LIBRARIES})
 target_link_libraries(CalibrateCalo ${ROOT_LIBRARIES})
+target_link_libraries(Calibrate ${ROOT_LIBRARIES})
 target_link_libraries(Reco01 ${ROOT_LIBRARIES})
 
 

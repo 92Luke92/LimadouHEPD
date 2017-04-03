@@ -1,5 +1,4 @@
 #include "LTrackerCalibration.hh"
-#include <fstream>
 #include <iostream>
 
 void LTrackerCalibration::Add(const LTrackerCalibrationSlot *lcal) {
@@ -20,6 +19,7 @@ void LTrackerCalibration::Reset(void) {
   InitialTargetRun=-99999;
   FinalTargetRun=-99999;
   calarray.resize(0);
+  return;
 }
 
 LTrackerCalibration::LTrackerCalibration(const int RunIdINP,  const int InitialTargetRunINP, const int FinalTargetRunINP) {
@@ -29,38 +29,47 @@ LTrackerCalibration::LTrackerCalibration(const int RunIdINP,  const int InitialT
   FinalTargetRun=FinalTargetRunINP;
 }
 
-void LTrackerCalibration::Write(const char *fileOut) {
-  std::ofstream output(fileOut, std::ofstream::out); 
-  
-  output << RunId << std::endl;
-  output << InitialTargetRun << " " << FinalTargetRun << std::endl;
-  output << nSlots << std::endl;
+void LTrackerCalibration::Write(std::ofstream *output) const {
+  *output << RunId << std::endl;
+  *output << InitialTargetRun << " " << FinalTargetRun << std::endl;
+  *output << nSlots << std::endl;
 
-  for(auto cslotit : calarray) cslotit.Write(&output);
+  for(auto cslotit : calarray) cslotit.Write(output);
   
-  output << std::endl;
-  output.close();
-  
+  *output << std::endl;
+    
   return;
 }
 
 
-LTrackerCalibration* LTrackerCalibration::Read(const char *fileIn) {
-  
-  std::ifstream input(fileIn, std::ifstream::in); 
+void LTrackerCalibration::Write(const char *fileOut) const {
+  std::ofstream output(fileOut, std::ofstream::out); 
+  Write(&output);
+  output.close();
+  return;
+}
+
+
+LTrackerCalibration* LTrackerCalibration::Read(std::ifstream *input) {
   
   int RunIdST, InitialTargetRunST, FinalTargetRunST, nSlotsST;
 
-  input >> RunIdST;
-  input >> InitialTargetRunST >> FinalTargetRunST;
+  *input >> RunIdST;
+  *input >> InitialTargetRunST >> FinalTargetRunST;
 
   LTrackerCalibration *result = new LTrackerCalibration(RunIdST, InitialTargetRunST, FinalTargetRunST);
 
-  input >> nSlotsST;
-  for(int is=0; is<nSlotsST; ++is) result->Add(LTrackerCalibrationSlot::Read(&input));
+  *input >> nSlotsST;
+  for(int is=0; is<nSlotsST; ++is) result->Add(LTrackerCalibrationSlot::Read(input));
+
+  return result;
+}
+ 
+LTrackerCalibration* LTrackerCalibration::Read(const char *fileIn) {
   
+  std::ifstream input(fileIn, std::ifstream::in); 
+  LTrackerCalibration *result = Read(&input);
   input.close();
-  
 
   return result;
 }
