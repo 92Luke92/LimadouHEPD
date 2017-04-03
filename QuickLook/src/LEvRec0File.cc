@@ -1,11 +1,28 @@
 #include "LEvRec0File.hh"
+#include <stdio.h>
+#include <iostream>
+
 
 
 LEvRec0File::LEvRec0File(const char *inpFile) {
   inputCalib=TFile::Open(inpFile, "READ");
+
   // calibration run processing...
+
   treeCalib=(TTree*)inputCalib->Get("T");
   Tmd = (TTree*)inputCalib->Get("Tmd");
+
+  unsigned short runid;
+  Tmd->SetBranchAddress("run_id", &runid);
+
+  int entries = Tmd->GetEntries();
+  RunId = new unsigned short[entries];
+  
+  for (int i = 0; i < entries; i++)
+   {
+      Tmd->GetEntry(i);
+      RunId[i] = runid;
+   }
 }
 
 
@@ -48,7 +65,7 @@ int LEvRec0File::SetTmdPointer(LEvRec0Md &metaData) {
    Tmd->SetBranchAddress("PMT_mask[64]", &metaData.PMT_mask[0]);
    Tmd->SetBranchAddress("HV_mask[12]", &metaData.HV_mask[12]);
    Tmd->SetBranchAddress("HV_value[10]", &metaData.HV_value[0]);
-   Tmd->SetBranchAddress("gen_trig_mask[4]", &metaData.gen_trig_mask[0]);
+   Tmd->SetBranchAddress("gen_trig_mask[17]", &metaData.gen_trig_mask[0]);
 
    // broadcasta data
    Tmd->SetBranchAddress("OBDH_info", &metaData.broadcast.OBDH.sec);
@@ -78,6 +95,10 @@ int LEvRec0File::SetTmdPointer(LEvRec0Md &metaData) {
 
 int LEvRec0File::GetEntry(int iEntry) {
   treeCalib->GetEntry(iEntry);
+  return 0;
+}
+
+int LEvRec0File::GetTmdEntry(int iEntry) {
   Tmd->GetEntry(iEntry);
   return 0;
 }
@@ -92,19 +113,15 @@ int LEvRec0File::GetTmdEntries() {
 }
 
 
-unsigned short LEvRec0File::GetRunID(int iEntry) {
-   unsigned short runID;
-   Tmd->SetBranchAddress("run_id", &runID);
-   Tmd->GetEntry(iEntry);
-   return runID;
+int LEvRec0File::RunIDtoEntry(unsigned short runid) {
+   int ret = -1;
+   
+   for (int i = 0; i < Tmd->GetEntries(); i++)
+      if (RunId[i] == runid)
+	 return i;
+   return ret;
 }
 
-unsigned short LEvRec0File::GetBootNr(int iEntry) {
-   unsigned short  bootNr;
-   Tmd->SetBranchAddress("boot_nr", &bootNr);
-   Tmd->GetEntry(iEntry);
-   return bootNr;
-}
 
 void LEvRec0File::Close() {
   if(inputCalib) {
@@ -123,4 +140,3 @@ LEvRec0File::~LEvRec0File() {
     inputCalib->Close();
   }
 }
-

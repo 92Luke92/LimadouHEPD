@@ -79,8 +79,9 @@ void PMTScan(TString rootname)
   ss << nEvents;
   TString numEvents = ss.str(); 
   ss.str("");
-  ss << metaData.boot_nr;  
-  TString bootNR = ss.str();
+  rootfile.GetTmdEntry(0);
+  ss << metaData.boot_nr;
+    TString bootNR = ss.str();
   ss.str("");
   ss << first_run_nr;
   TString FirstRunNR = ss.str();
