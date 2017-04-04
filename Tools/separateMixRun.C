@@ -39,7 +39,7 @@ void separateMixedRun(TString rootname);
 void separateMixedRun(TString rootname)
 {
 
-   header_run_t head_run;
+   tail_run_t tail_run;
 
    //T Tree
    UShort_t run_type;
@@ -62,7 +62,7 @@ void separateMixedRun(TString rootname)
 
    bool   pmt_mask[64];
    bool   hv_mask[12];
-   bool   generic_trig_mask[17];
+   bool   generic_trig_mask[18];
 
    UShort_t PMT_rate_meter[65];
    Short_t CPU_temp[2];
@@ -74,30 +74,26 @@ void separateMixedRun(TString rootname)
    TFile *rootfile = new TFile(rootname,"read");
 
    TTree* Tmd = (TTree*)rootfile->Get("Tmd");
-   Tmd->SetBranchAddress("boot_nr", &head_run.boot_nr);
-   Tmd->SetBranchAddress("run_id", &head_run.run_id);
-   Tmd->SetBranchAddress("run_type", &head_run.run_type);
-   Tmd->SetBranchAddress("run_duration", &head_run.run_duration);
-   Tmd->SetBranchAddress("orbitZone", &head_run.orbit_Zone);
+   Tmd->SetBranchAddress("boot_nr", &tail_run.boot_nr);
+   Tmd->SetBranchAddress("run_id", &tail_run.run_id);
+   Tmd->SetBranchAddress("run_type", &tail_run.run_type);
+   Tmd->SetBranchAddress("run_duration", &tail_run.run_duration);
+   Tmd->SetBranchAddress("orbitZone", &tail_run.orbit_Zone);
 
-   Tmd->SetBranchAddress("silConfiguration", &head_run.silConfig.ladder_on);// ,
-	       // "ladder_on/b:ladder_mask/b:plane_HV[2]/s:adj_strip/s"
-	       // ":zero_supp_thrd/s:thrd_CN_HIGH/b:thrd_CN_LOW/b:calib_event_CN/s"
-	       // ":calib_event_ped/s:calib_event_RMS/s:calib_event_gauss/s:gauss_check/s");
-   
+   Tmd->SetBranchAddress("silConfiguration", &tail_run.silConfig.ladder_on);
 
-   Tmd->SetBranchAddress("trigger_mask[2]", &head_run.trigger_mask[2]);
-   Tmd->SetBranchAddress("easiroc[118]", &head_run.easiroc_config[0]); // todo: fix header/tail size
+   Tmd->SetBranchAddress("trigger_mask[2]", &tail_run.trigger_mask[2]);
+   Tmd->SetBranchAddress("easiroc_conf[60]", &tail_run.easiroc_config[0]); // todo: fix header/tail size
    Tmd->SetBranchAddress("PMT_mask[64]", &pmt_mask[0]);
    Tmd->SetBranchAddress("HV_mask[12]", &hv_mask[0]);
-   Tmd->SetBranchAddress("HV_value[10]", &head_run.HV_value[0]);
-   Tmd->SetBranchAddress("gen_trig_mask[17]", &generic_trig_mask[0]);
+   Tmd->SetBranchAddress("HV_value[10]", &tail_run.HV_value[0]);
+   Tmd->SetBranchAddress("gen_trig_mask[18]", &generic_trig_mask[0]);
 
    // broadcasta data
-   Tmd->SetBranchAddress("OBDH_info", &head_run.broadcast.OBDH.sec);
-   Tmd->SetBranchAddress("GPS_info", &head_run.broadcast.GPS.sec);
-   Tmd->SetBranchAddress("AOCC_info", &head_run.broadcast.AOCC.sec);
-   Tmd->SetBranchAddress("star_sensor_info", &head_run.broadcast.star_sensor.sec_ss11);
+   Tmd->SetBranchAddress("OBDH_info", &tail_run.broadcast.OBDH.sec);
+   Tmd->SetBranchAddress("GPS_info", &tail_run.broadcast.GPS.sec);
+   Tmd->SetBranchAddress("AOCC_info", &tail_run.broadcast.AOCC.sec);
+   Tmd->SetBranchAddress("star_sensor_info", &tail_run.broadcast.star_sensor.sec_ss11);
    
    // scinentific packet
    Tmd->SetBranchAddress("PMT_rate_meter[65]", &PMT_rate_meter[0]);
@@ -106,10 +102,10 @@ void separateMixedRun(TString rootname)
    Tmd->SetBranchAddress("CPU_time_start_stop_Run[2]", &CPU_time[0]);
    
    // timestamp CPU
-   Tmd->SetBranchAddress("CPU_timestamp", &head_run.timestamp.OBDH);
+   Tmd->SetBranchAddress("CPU_timestamp", &tail_run.timestamp.OBDH);
    
    // board status
-   Tmd->SetBranchAddress("status_register", &head_run.status_reg.statusDAQ);
+   Tmd->SetBranchAddress("status_register", &tail_run.status_reg.statusDAQ);
    
    
    TTree* T = (TTree*)rootfile->Get("T");
@@ -149,6 +145,7 @@ void separateMixedRun(TString rootname)
    TFile *newfile2 = new TFile(outnameVIRGIN,"recreate");
    TTree *virtree = T->CloneTree(0);
    TTree *newtmdv = Tmd->CloneTree(0);
+   
    TFile *newfile1 = new TFile(outnameCOMP,"recreate");
    TTree *newtmdc = Tmd->CloneTree(0);
    TTree *comptree = T->CloneTree(0);

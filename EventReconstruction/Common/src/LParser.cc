@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <stdlib.h>
+#include <algorithm>
 
 LParser::LParser(void)
 {}
@@ -65,7 +66,7 @@ void LParser::remove_tabs(void)
 {
   std::vector< std::string >::iterator it;
   for(it=mylines.begin(); it!=mylines.end(); it++){
-    std::replace(it->begin(), it->end(), '\t', ' ');
+     std::replace(it->begin(), it->end(), '\t', ' ');
   }
 
   return;

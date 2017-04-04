@@ -34,9 +34,11 @@
 #define SiBLOCK                  384
 #define STRIPNUM                 7
 #define TRIG_CONFIG_NUM          9
+#define EASIROC_CONFIG_HEAD      59 // (word)
+#define EASIROC_CONFIG_TAIL      60 // (word)
 
 #define PMT_RATE_METER_SIZE      65
-#define GEN_TRIG_MASK_SIZE       17
+#define GEN_TRIG_MASK_SIZE       18
 
 #define CRC_SEED                 0xffffffffUL
 #define RUNID_STRING_LEN         6                    
@@ -152,14 +154,6 @@ struct calib_s
 } ;
 typedef struct calib_s calib_t;
 
-
-
-/* 같같같같같같같같같같같같같같같같같같같같같같같*/
-struct EASIROC_s
-{
-   unsigned char    config[116];
-};
-typedef struct EASIROC_s EASIROC_t;
 
 
 /* 같같같같같같같같같같같같같같같같같같같같같같같*/
@@ -338,7 +332,7 @@ struct header_run_s  // 0x1D6 bytes (Tail = 0x1D8 bytes)
    unsigned short     orbit_Zone;
    silicon_config_t   silConfig;
    unsigned char      trigger_mask[4]; // 38 bytes
-   unsigned char      easiroc_config[118];
+   unsigned short     easiroc_config[EASIROC_CONFIG_HEAD];
    unsigned int       PMT_mask[2]; // 1 = excluded
    unsigned int       HV_mask; // 1 = OFF, 0 = ON
    unsigned short     HV_value[10]; // 10 bits for each of the 10 power supply
@@ -362,7 +356,7 @@ struct tail_run_s  // Tail = 0x1D8 bytes
    unsigned short     orbit_Zone;
    silicon_config_t   silConfig;
    unsigned char      trigger_mask[4]; // 38 bytes
-   unsigned char      easiroc_config[120];
+   unsigned short     easiroc_config[EASIROC_CONFIG_TAIL];
    unsigned int       PMT_mask[2]; // 1 = excluded
    unsigned int       HV_mask; // 0 = ON, 1 = OFF
    unsigned short     HV_value[10]; // 10 bits for each of the 10 power supply

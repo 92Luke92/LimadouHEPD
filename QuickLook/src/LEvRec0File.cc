@@ -61,11 +61,11 @@ int LEvRec0File::SetTmdPointer(LEvRec0Md &metaData) {
    Tmd->SetBranchAddress("silConfiguration", &metaData.silConfig.ladder_on);
 
    Tmd->SetBranchAddress("trigger_mask[2]", &metaData.trigger_mask[2]);
-   Tmd->SetBranchAddress("easiroc[118]", &metaData.easiroc_config[0]);
+   Tmd->SetBranchAddress("easiroc_conf[60]", &metaData.easiroc_config[0]);
    Tmd->SetBranchAddress("PMT_mask[64]", &metaData.PMT_mask[0]);
    Tmd->SetBranchAddress("HV_mask[12]", &metaData.HV_mask[12]);
    Tmd->SetBranchAddress("HV_value[10]", &metaData.HV_value[0]);
-   Tmd->SetBranchAddress("gen_trig_mask[17]", &metaData.gen_trig_mask[0]);
+   Tmd->SetBranchAddress("gen_trig_mask[18]", &metaData.gen_trig_mask[0]);
 
    // broadcasta data
    Tmd->SetBranchAddress("OBDH_info", &metaData.broadcast.OBDH.sec);
@@ -73,7 +73,7 @@ int LEvRec0File::SetTmdPointer(LEvRec0Md &metaData) {
    Tmd->SetBranchAddress("AOCC_info", &metaData.broadcast.AOCC.sec);
    Tmd->SetBranchAddress("star_sensor_info", &metaData.broadcast.star_sensor.sec_ss11);
 
-   // scinentific packet
+   // scientific packet
    Tmd->SetBranchAddress("PMT_rate_meter[65]", &metaData.PMT_rate_meter[0]);
    Tmd->SetBranchAddress("CPU_temp_start_stop_Run[2]", &metaData.CPU_temp[0]);
    Tmd->SetBranchAddress("PMT_temp_start_stop_Run[2]", &metaData.PMT_temp[0]);

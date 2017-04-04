@@ -62,8 +62,8 @@ int TrackerQuickLook(std::string namefile){
   input.SetTmdPointer(metaData);
   input.GetEntry(0);
 
-  //if (!ev.IsVirgin())
-  // return -1;
+  if (!ev.IsVirgin())
+     return -1;
   
   for(int side=0;side<N_SIDES;++side){
     char plan=(side ? 'n' : 'p');
