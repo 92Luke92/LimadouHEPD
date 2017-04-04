@@ -50,7 +50,11 @@ int LEvRec0File::SetTheEventPointer(LEvRec0 &ev) {
   //  fTree->SetBranchStatus("*",kFALSE);
   fTree->SetBranchStatus("strip[4608]",kTRUE);
   fTree->SetBranchStatus("event_index",kTRUE);
-
+  fTree->SetBranchStatus("pmt_high[64]",kTRUE);
+  fTree->SetBranchStatus("pmt_low[64]",kTRUE);
+  
+  
+  
   return 0;
 }
 
