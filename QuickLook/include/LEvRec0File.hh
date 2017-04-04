@@ -15,14 +15,15 @@ public:
 
    // bool GetEntry(int iEntry, LEvRec0 &event); // for future... NO ROOT!
    int GetEntry(int iEntry);
+   int GetTmdEntry(int iEntry);
    int GetEntries();
    int GetTmdEntries();
+   
    void Close();
    inline bool IsOpen() {return inputCalib->IsOpen();}
-   //inline int GetRunId(){return RunId;}; // todo: to be removed?
-
-   unsigned short GetRunID(int iEntry) ;
-   unsigned short GetBootNr(int iEntry) ;
+   
+   inline int GetRunID(int iEntry){return RunId[iEntry];}; 
+   int RunIDtoEntry(unsigned short runid);
 
 
    
@@ -32,8 +33,7 @@ private:
    TFile *inputCalib;
    TTree *treeCalib;
    TTree *Tmd;
-   unsigned short RunId;
-   
+   unsigned short *RunId;
 };
 
 

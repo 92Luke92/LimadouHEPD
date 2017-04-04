@@ -74,7 +74,7 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
    cout << "Number of Tmd entries: " << Tmd_entries << endl;
    for(int j=0;j<Tmd_entries;j++)
    {
-      rootfile.GetEntry(j);   
+      rootfile.GetTmdEntry(j);   
       outputFile << "<BROADCAST>\n";
       outputFile2 << "<BROADCAST2>\n";
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
@@ -155,7 +155,7 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 
   for(int j=0;j<Tmd_entries;j++)
     {
-       rootfile.GetEntry(j);   
+       rootfile.GetTmdEntry(j);   
        
       if(j%2!=0)
 	{
@@ -284,7 +284,7 @@ void HVPSConfigToXML(TString rootname, TString xslPath = "")
   
   for(int j=0;j<Tmd_entries;j++)
   {
-     rootfile.GetEntry(j);   
+     rootfile.GetTmdEntry(j);   
      for(int h=0;h<10;h++)
      {
 	HV_value_table[h]=(double)(metaData.HV_value[h]+1)/1024*1200;
@@ -425,7 +425,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
    for(int j=0;j<Tmd_entries;j++)
    {
 
-      rootfile.GetEntry(j);   
+      rootfile.GetTmdEntry(j);   
 
       run_type_vect[j] = metaData.run_type;
       run_duration_vect[j] = metaData.run_duration;
@@ -502,7 +502,7 @@ void ScintConfigToXML(TString rootname, TString xslPath = "")
   
   for(int j=0;j<Tmd_entries;j++)
     {
-       rootfile.GetEntry(j);   
+       rootfile.GetTmdEntry(j);   
        
        if(j%2 == 0){
 
@@ -661,7 +661,7 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
 
   for(int j=0;j<Tmd_entries;j++)
     {
-       rootfile.GetEntry(j);   
+       rootfile.GetTmdEntry(j);   
 
       ladder_on_vect[j] = (short)metaData.silConfig.ladder_on;
       ladder_mask_vect[j] = (short)metaData.silConfig.ladder_mask;
@@ -838,7 +838,7 @@ void TelemetryToXML(TString rootname, TString xslPath = "")
    
   for(int j=0;j<Tmd_entries;j++)
     {
-       rootfile.GetEntry(j);   
+       rootfile.GetTmdEntry(j);   
 
 
       if(j%2 == 0){    

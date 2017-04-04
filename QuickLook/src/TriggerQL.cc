@@ -72,6 +72,8 @@ void TriggerScan(TString rootname)
 
    first_run_nr = rootfile.GetRunID(0);
    last_run_nr = rootfile.GetRunID(Tmd_entries-1);
+   // cout << "First run id: " << first_run_nr << endl;
+   // cout << "Last run id: " <<  last_run_nr << endl;
 
    // Events
    int nEvents = rootfile.GetEntries();
@@ -81,7 +83,8 @@ void TriggerScan(TString rootname)
    ss << nEvents;
    TString numEvents = ss.str(); 
    ss.str("");
-   ss << rootfile.GetBootNr(0);  
+   rootfile.GetTmdEntry(0);
+   ss << metaData.boot_nr;
    TString bootNR = ss.str();
    ss.str("");
    ss << first_run_nr;
@@ -187,24 +190,27 @@ void TriggerScan(TString rootname)
       h_pmt_rate_meter[kk]->GetYaxis()->SetTitleOffset(1.5);
    }
 
-   cout << "first RUN ID: " << first_run_nr << endl;
    Int_t cpu_startRunTime_vect[100];
+
    for(int j=1; j<Tmd_entries; j+=2) //Tmd loop
    {
-      rootfile.GetEntry(j); 
+      rootfile.GetTmdEntry(j); 
       cpu_startRunTime_vect[(j-1)/2] = metaData.CPU_time[0];
    }      
 
-   Int_t temprun = first_run_nr;
+   
+
+   
    for(int i = 0; i < nEvents; i++) //Event loop
    {
-      rootfile.GetEntry(i);   
-      
+      rootfile.GetEntry(i);
+
       if (ev.run_id > last_run_nr) // to avoid processing run without tail
 	 break;
       
       if(metaData.run_type == 0x634E) // to skip mixed virgin event
 	 continue;
+
       
       event_time = cpu_startRunTime_vect[ev.run_id - first_run_nr] + ev.hepd_time/1e+2; //unit = ms
        

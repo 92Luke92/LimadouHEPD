@@ -191,7 +191,7 @@ public:
    bool               PMT_mask[64]; 
    bool               HV_mask[12]; 
    unsigned short     HV_value[10]; 
-   unsigned char      gen_trig_mask[4];
+   bool               gen_trig_mask[17];
 
    BroadCast_t        broadcast;  
    CPUtimestamp_t     timestamp;  
