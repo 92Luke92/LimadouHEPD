@@ -1,0 +1,25 @@
+#include "LEvRec1File.hh"
+#include <iostream>
+
+int main(int argc, char **argv) {
+  if(argc!=2) {
+    std::cerr << "************ Usage:" << std::endl
+	      << "************ ~user> ./Reco01 <inputFile>" << std::endl
+	      << "************ aborting."
+	      << std::endl;
+    return -999;
+  }
+  
+  LEvRec1File inputFile(argv[1],"READ");
+  LEvRec1 cev;
+  inputFile.SetTheEventPointer(cev);
+  int nentries=inputFile.GetEntries();
+  for(int ie=0; ie<nentries; ++ie) {
+    inputFile.GetEntry(ie);
+    if(ie%1000==0)cev.Dump();
+  }
+
+  inputFile.Close();
+
+  return 0;
+}

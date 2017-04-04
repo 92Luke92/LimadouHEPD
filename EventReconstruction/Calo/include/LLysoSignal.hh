@@ -9,7 +9,7 @@ class LLysoSignal : public LCaloSignal{
 public:
   LLysoSignal();
   ~ LLysoSignal();
-  void Dump();
+  void Dump() const;
 };
 
 

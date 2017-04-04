@@ -37,6 +37,30 @@ LCaloSignal::LCaloSignal(const LCaloSignal &cs) {
 }
 
 
+LCaloSignal& LCaloSignal::operator=(const LCaloSignal& cs) {  // copy assignment
+  if (this != &cs) { // self-assignment check expected
+    nunits = cs.GetNUnits();
+    npmts = cs.GetNPMTs();
+    cont_hg = new double*[nunits];
+    sn_hg = new double*[nunits];
+    cont_lg = new double*[nunits];
+    sn_lg = new double*[nunits];
+    for(int iu=0; iu<nunits; ++iu) {
+      cont_hg[iu] = new double[npmts];
+      sn_hg[iu] = new double[npmts];
+      cont_lg[iu] = new double[npmts];
+      sn_lg[iu] = new double[npmts];
+      for(int ip=0; ip<npmts; ++ip) {
+	cont_hg[iu][ip] = cs.cont_hg[iu][ip];
+	sn_hg[iu][ip] = cs.sn_hg[iu][ip];
+	cont_lg[iu][ip] = cs.cont_lg[iu][ip];
+	sn_lg[iu][ip] = cs.sn_lg[iu][ip];
+      }
+    }
+  }
+  return *this;
+}
+
 LCaloSignal::~LCaloSignal() {
   if(cont_hg) {
     for(int iu=0; iu<nunits; ++iu) if(cont_hg[iu]) delete[] cont_hg[iu];
@@ -87,7 +111,7 @@ void LCaloSignal::CreateContainers() {
 }
 
 
-void LCaloSignal::DumpModule(double** inp, const char *string) {
+void LCaloSignal::DumpModule(double** inp, const char *string) const {
   std::cout << string << std::endl;
   for(int iu=0; iu<nunits; ++iu) {
     std::cout << "  Unit " << iu << ": ";
@@ -97,7 +121,7 @@ void LCaloSignal::DumpModule(double** inp, const char *string) {
   std::cout << std::endl;
 }
 
-void LCaloSignal::DumpAll() {
+void LCaloSignal::DumpAll() const {
   if(!(nunits>0)) return;
   DumpModule(cont_hg, "HIGH GAIN counts");
   DumpModule(sn_hg, "HIGH GAIN signal to noise");

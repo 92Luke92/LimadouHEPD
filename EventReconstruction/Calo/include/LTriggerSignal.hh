@@ -9,7 +9,7 @@ class LTriggerSignal : public LCaloSignal{
 public:
   LTriggerSignal();
   ~LTriggerSignal();
-  void Dump();
+  void Dump() const;
 };
 
 

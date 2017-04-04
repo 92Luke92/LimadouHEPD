@@ -13,7 +13,7 @@ class LTrackerCluster {
 public:
   LTrackerCluster();
   LTrackerCluster(const int inpSeed, const double *inpCont, const double *inpSigma);
-  void Dump();
+  void Dump() const;
   void FillRandom(void);
   
   int seed;

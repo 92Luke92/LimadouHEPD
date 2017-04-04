@@ -12,7 +12,7 @@ LVetoSignal::~LVetoSignal() {
 
 }
 
-void LVetoSignal::Dump() {
+void LVetoSignal::Dump() const {
   std::cout << "############# Veto signal dumping." << std::endl;
   DumpAll();
   return;

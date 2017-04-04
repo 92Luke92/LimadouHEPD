@@ -126,7 +126,7 @@ int LTrackerCluster::ClusterSize(const double SideThreshold){
   return size;
 }
 
-void LTrackerCluster::Dump() {
+void LTrackerCluster::Dump() const {
   std::cout << "***************" << std::endl
             <<"\t seed " << seed << " (side " << ChanToSide(seed) << ", ladder " << ChanToLadder(seed) << ")" << std::endl
             <<"\t eta " << eta << std::endl << "\t";

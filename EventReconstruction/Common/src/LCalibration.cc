@@ -87,13 +87,6 @@ int LCalibration::GetFinalTargetRun() const {
 }
 
 bool LCalibration::CheckStatus(void) const {
-  if(calo_HG==0 || calo_LG==0 || tracker ==0 ) return false;
-  if(calo_HG->GetRunId() != calo_LG->GetRunId() ||
-     calo_LG->GetRunId() != tracker->GetRunId()) return false;
-  if(calo_HG->GetInitialTargetRun() != calo_LG->GetInitialTargetRun() ||
-     calo_LG->GetInitialTargetRun() != tracker->GetInitialTargetRun()) return false;
-  if(calo_HG->GetFinalTargetRun() != calo_LG->GetFinalTargetRun() ||
-     calo_LG->GetFinalTargetRun() != tracker->GetFinalTargetRun()) return false;
-  
+  if(&calo_HG==0 || &calo_LG==0 || &tracker ==0 ) return false;
   return true;
 }

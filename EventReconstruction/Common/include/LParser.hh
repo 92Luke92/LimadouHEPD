@@ -13,6 +13,7 @@ public:
   void read_file(const std::string inp);
   void remove_comments(const std::string comment);
   void remove_multi_blanks(void);
+  void remove_tabs(void);
   void remove_initial_blanks(void);
   void remove_final_blanks(void);
   void remove_blank_lines(void);

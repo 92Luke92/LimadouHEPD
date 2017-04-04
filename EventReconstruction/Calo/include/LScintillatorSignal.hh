@@ -9,7 +9,7 @@ class LScintillatorSignal : public LCaloSignal{
 public:
   LScintillatorSignal();
   ~LScintillatorSignal();
-  void Dump();
+  void Dump() const;
 };
 
 

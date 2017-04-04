@@ -12,8 +12,9 @@ LTriggerSignal::~LTriggerSignal() {
 
 }
 
-void LTriggerSignal::Dump() {
+void LTriggerSignal::Dump() const {
   std::cout << "############# Trigger signal dumping." << std::endl;
   DumpAll();
   return;
 }
+

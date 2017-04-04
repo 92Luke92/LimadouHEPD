@@ -29,18 +29,19 @@ void LEvRec1::Reset(){
 }
 
 
-void LEvRec1::Dump() {
+void LEvRec1::Dump() const {
   DumpTracker();
   DumpCalo();
   return;
 }
 
-void LEvRec1::DumpTracker() {
+void LEvRec1::DumpTracker() const {
+  std::cout << "############# Tracker signal dumping." << std::endl;
   for(auto it : tracker.cls) it.Dump();
   return;
 }
 
-void LEvRec1::DumpCalo() {
+void LEvRec1::DumpCalo() const {
   DumpTrigger();
   DumpScintillator();
   DumpVeto();
@@ -48,22 +49,22 @@ void LEvRec1::DumpCalo() {
   return;
 }
 
-void LEvRec1::DumpTrigger() {
+void LEvRec1::DumpTrigger() const {
   trig.Dump();
   return;
 }
 
-void LEvRec1::DumpScintillator() {
+void LEvRec1::DumpScintillator() const {
   scint.Dump();
   return;
 }
 
-void LEvRec1::DumpVeto() {
+void LEvRec1::DumpVeto() const {
   veto.Dump();
   return;
 }
 
-void LEvRec1::DumpLyso() {
+void LEvRec1::DumpLyso() const {
   lyso.Dump();
   return;
 }

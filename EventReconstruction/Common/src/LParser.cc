@@ -61,6 +61,16 @@ void LParser::remove_multi_blanks(void)
   return;
 }
 
+void LParser::remove_tabs(void)
+{
+  std::vector< std::string >::iterator it;
+  for(it=mylines.begin(); it!=mylines.end(); it++){
+    std::replace(it->begin(), it->end(), '\t', ' ');
+  }
+
+  return;
+}
+
 void LParser::remove_initial_blanks(void)
 {
   std::vector< std::string >::iterator it;

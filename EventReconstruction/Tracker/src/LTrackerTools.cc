@@ -134,8 +134,10 @@ std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigm
 
 LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal) {
   double cont[NCHAN];
-  for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich])-cal.GetTrackerCalibration()->GetPedestal(0)[ich];
-  std::vector<LTrackerCluster> *tmp = GetClusters(cont, cal.GetTrackerCalibration()->GetSigma(0));
+  const double *ped = cal.GetTrackerCalibration()->GetPedestal(0);
+  const double *sigma = cal.GetTrackerCalibration()->GetSigma(0);
+  for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich])-ped[ich];
+  std::vector<LTrackerCluster> *tmp = GetClusters(cont, sigma);
   LTrackerSignal result;
   for(auto tmpit : *tmp) result.push_back(tmpit);
   return result;

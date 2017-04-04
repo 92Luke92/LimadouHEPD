@@ -8,6 +8,7 @@
 #include "LCalibration.hh"
 
 const int MINL0EVENTS=100;
+const int PRINTOUTEVENTS=1000;
 
 class LReco01Manager {
 
@@ -25,13 +26,13 @@ private:
   int LoadInpFileList(void);
   bool CheckInputFile(const std::string fname) const;
   void NewOutFile(void);
-  LEvRec1 L0ToL1(const LEvRec0 lev0, const LCalibration cal);
+  LEvRec1 L0ToL1(const LEvRec0 lev0, const LCalibration *cal);
   std::string L0NameToL1Name(void);
   
   std::string steerFile;
 
   std::string calFileName;
-  LCalibration cal;
+  LCalibration *cal;
   std::string inpFileList;
   std::string outDirectory;
   int maxEvents; // max events to be processed in total

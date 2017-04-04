@@ -5,7 +5,6 @@
 #include <vector>
 #include <fstream>
 
-
 class LTrackerCalibration {
 public:
   LTrackerCalibration();

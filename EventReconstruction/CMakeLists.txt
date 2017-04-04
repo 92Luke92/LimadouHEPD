@@ -3,8 +3,8 @@ project("Limadou event reconstruction")
 
 # The project version number.
 set(VERSION_MAJOR   0   CACHE STRING "Project major version number.")
-set(VERSION_MINOR   0   CACHE STRING "Project minor version number.")
-set(VERSION_PATCH   2   CACHE STRING "LCaloCalibration definietely aligned.")
+set(VERSION_MINOR   1   CACHE STRING "Project minor version number.")
+set(VERSION_PATCH   0   CACHE STRING "LCaloCalibration definietely aligned.")
 mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
 
 

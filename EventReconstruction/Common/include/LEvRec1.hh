@@ -20,13 +20,13 @@ public:
   LEvRec1();
   ~LEvRec1();
   inline int GetNOfTrackerClusters(void) const {return static_cast<int>(tracker.GetSize());};
-  void Dump(void);
-  void DumpTracker(void);
-  void DumpCalo(void);
-  void DumpTrigger(void);
-  void DumpScintillator(void);
-  void DumpVeto(void);
-  void DumpLyso(void);
+  void Dump(void) const;
+  void DumpTracker(void) const;
+  void DumpCalo(void) const;
+  void DumpTrigger(void) const;
+  void DumpScintillator(void) const;
+  void DumpVeto(void) const;
+  void DumpLyso(void) const;
   void FillRandom(void);
   void CopyFromLEvRec1Stream(const LEvRec1Stream evstr);
   

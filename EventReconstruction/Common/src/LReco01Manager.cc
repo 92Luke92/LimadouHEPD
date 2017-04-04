@@ -1,13 +1,13 @@
 #include "LReco01Manager.hh"
 #include "LSteeringManager.hh"
 #include "LTrackerTools.hh"
+#include "LCaloTools.hh"
 
 #include <iostream>
 #include <fstream>
 
 LReco01Manager::LReco01Manager() {
-  verboseFLAG=true;
-  steeringLoadedFLAG=false;
+  Reset();
 }
 
 
@@ -21,7 +21,7 @@ void LReco01Manager::LoadSteering(const char* steerFileIN) {
   steer.Load(steerFile);
   // Load calibration
   calFileName = steer.GetParameter<std::string>("CALBFILE");
-  cal.Read(calFileName.c_str());
+  cal = LCalibration::Read(calFileName.c_str());
   // Input file list
   inpFileList = steer.GetParameter<std::string>("INPLIST");
   // Output folder
@@ -32,9 +32,9 @@ void LReco01Manager::LoadSteering(const char* steerFileIN) {
   maxFileEvents = steer.GetParameter<int>("MAXFEVTS");
   // Verbosity 
   verboseFLAG = steer.GetParameter<bool>("VERBOSE");
-  std::cout << __LRECO01MANAGER__ << "done." << std::endl;
+  std::cout << __LRECO01MANAGER__ << "Steering file loaded." << std::endl;
   steeringLoadedFLAG=true;
-
+  
   if(!CheckLoadedSteering()) Reset();
   
   return;
@@ -49,7 +49,8 @@ void LReco01Manager::Reset(void) {
   maxFileEvents=0;
   verboseFLAG=true;
   steeringLoadedFLAG=false;
-  cal.Reset();
+  if(cal) cal->Reset();
+  cal=0;
   L0fname.resize(0);
   inFile=0;
   outFile=0;
@@ -63,7 +64,10 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
     std::cout << __LRECO01MANAGER__ << "steering file never loaded." << std::endl;
     result=false;
   }
-  if(cal.CheckStatus()==false) result=false;
+  if(cal->CheckStatus()==false) {
+    std::cout << __LRECO01MANAGER__ << "calibration status bad." << std::endl;
+    result=false;
+  }
   std::ifstream istr(inpFileList, std::ifstream::in);
   if(istr.good()==false) result=false; 
   istr.close();
@@ -101,13 +105,17 @@ void LReco01Manager::Run(void) {
   int totevtcounter=0;
   for(auto fin : L0fname) {
     int fevtcounter=0;
-    std::cout << __LRECO01MANAGER__ << "Reading L0 file" << fin << std::endl;
+    std::cout << __LRECO01MANAGER__ << "Reading L0 file " << fin << std::endl;
     inFile = new LEvRec0File(fin.c_str());
     LEvRec0 lev0;
     inFile->SetTheEventPointer(lev0);
     int nentries=inFile->GetEntries();
     std::cout << __LRECO01MANAGER__ << "Looping on file " << fin << " (" << nentries << " entries)" << std::endl;
     for(int i0=0; i0<nentries; ++i0){
+      if(i0%PRINTOUTEVENTS==0) {
+	std::cout << __LRECO01MANAGER__
+		  <<"event " << i0 << "/" <<nentries;
+      }
       inFile->GetEntry(i0);
       if(i0==0) NewOutFile();
       outFile->Fill(L0ToL1(lev0,cal));
@@ -116,6 +124,7 @@ void LReco01Manager::Run(void) {
       ++totevtcounter;
       if(maxEvents!=-1 && totevtcounter>maxEvents-1) break;
     }
+    std::cout << __LRECO01MANAGER__ << std::endl;
     inFile->Close();
     delete inFile;
     if(maxEvents!=-1 && totevtcounter>maxEvents-1) break;
@@ -130,7 +139,7 @@ void LReco01Manager::Run(void) {
 
 void LReco01Manager::NewOutFile(void) {
   if(!inFile) {
-    std::cout << __LRECO01MANAGER__ << "No input file to get the output name from." << std::endl;
+    std::cout << __LRECO01MANAGER__ << "No input file to get the output name from." << std::endl << std::flush;
     return;
   }
   if(outFile!=0 && outFile->IsOpen()) {
@@ -138,7 +147,7 @@ void LReco01Manager::NewOutFile(void) {
     outFile->Close();
     delete outFile;
   }
-
+  
   // Set the new name
   std::string l1name = L0NameToL1Name();
   outFile = new LEvRec1File(l1name.c_str(),"WRITE");
@@ -149,18 +158,30 @@ void LReco01Manager::NewOutFile(void) {
 
 std::string LReco01Manager::L0NameToL1Name(void) { // Naming convention needed!
   std::string l0name=inFile->GetName();
+  size_t last_slash = l0name.find_last_of('/'); 
+  if(last_slash==std::string::npos) last_slash=0;
+  size_t last_dot =  l0name.find_last_of('.'); 
+  if(last_dot==std::string::npos) {
+    std::cerr << __LRECO01MANAGER__ << "Error: file \"" << l0name << "\" has not suffix." << std::endl;
+    return 0;
+  }
   std::string l1name=outDirectory + "/"
-    + l0name.substr(l0name.find_last_of('/'),l0name.find_last_of("."))
+    + l0name.substr(last_slash,last_dot)
     + "_L1.root";
+  std::cout << __LRECO01MANAGER__ << "Output file name \"" << l1name << "\"" << std::endl;
   return l1name;
 }
 
 
-LEvRec1 LReco01Manager::L0ToL1(const LEvRec0 lev0, const LCalibration cal) {
+LEvRec1 LReco01Manager::L0ToL1(const LEvRec0 lev0IN, const LCalibration *calIN) {
   LEvRec1 result;
-  result.tracker=GetTrackerSignal(lev0, cal);
-  // ...
-  //  result.FillRandom();
+
+  result.tracker=GetTrackerSignal(lev0IN, *calIN);
+  result.trig=GetTriggerSignal(lev0IN, *calIN);
+  result.scint=GetScintillatorSignal(lev0IN, *calIN);
+  result.veto=GetVetoSignal(lev0IN, *calIN);
+  result.lyso=GetLysoSignal(lev0IN, *calIN);
+
   return result;
 }
 

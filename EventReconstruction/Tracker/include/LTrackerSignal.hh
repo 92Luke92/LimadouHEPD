@@ -5,7 +5,7 @@
 #include <vector>
 #include <cstddef>
 
-const int MAXNCLUSTERS=20;
+const int MAXNCLUSTERS=200;
 
 
 class LTrackerSignal {

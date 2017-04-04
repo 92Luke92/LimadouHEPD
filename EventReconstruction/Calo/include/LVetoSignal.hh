@@ -9,7 +9,7 @@ class LVetoSignal : public LCaloSignal{
 public:
   LVetoSignal();
   ~LVetoSignal();
-  void Dump();
+  void Dump() const;
 };
 
 

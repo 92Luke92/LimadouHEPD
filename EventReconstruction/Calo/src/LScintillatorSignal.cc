@@ -12,7 +12,7 @@ LScintillatorSignal::~LScintillatorSignal() {
 
 }
 
-void LScintillatorSignal::Dump() {
+void LScintillatorSignal::Dump() const {
   std::cout << "############# Scintillator signal dumping." << std::endl;
   DumpAll();
   return;

@@ -7,13 +7,13 @@ class LCaloSignal {
 public:
   LCaloSignal();
   LCaloSignal(const LCaloSignal &cs);
+  LCaloSignal& operator=(const LCaloSignal& other); // copy assignment
   ~LCaloSignal();
-  virtual void Dump()=0;
+  virtual void Dump() const =0;
   void Reset();
   void FillRandom(void);
   inline int GetNUnits() const {return nunits;};
   inline int GetNPMTs() const {return npmts;};
-  
   double **cont_hg;
   double **sn_hg;
   double **cont_lg;
@@ -21,8 +21,8 @@ public:
 
 protected:
   void CreateContainers(void);
-  void DumpModule(double** inp, const char *string);
-  void DumpAll();
+  void DumpModule(double** inp, const char *string) const;
+  void DumpAll() const;
   int nunits;
   int npmts;
 
