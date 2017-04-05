@@ -95,7 +95,7 @@ int LCaloCalibrationManager::GetPeakLG(const int pmtnum) const {
 //---------------------------------------------------------------------------
 
 int LCaloCalibrationManager::FindPeak(const int pmtnum, const int PeakFinderWindowWidth, const bool isHG) const {
-  int spectrum[PeakFinderWindowWidth];
+  int spectrum = new int[PeakFinderWindowWidth];
   for(int i=0; i<PeakFinderWindowWidth; ++i) spectrum[i]=0;
   int cursor=0;
   int peakpos=-1;
@@ -122,6 +122,8 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum, const int PeakFinderWind
       peakpos=loop1;
     }
   }
+
+  delete[] spectrum;
 
   return peakpos;
 }
