@@ -10,6 +10,9 @@ public:
   LLysoSignal();
   ~ LLysoSignal();
   void Dump() const;
+  double GetX(const int iu, const int ipmt=0) const;
+  double GetY(const int iu, const int ipmt=0) const;
+  double GetZ(const int iu, const int ipmt=0) const;
 };
 
 

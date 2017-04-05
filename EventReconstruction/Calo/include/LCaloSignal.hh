@@ -18,7 +18,10 @@ public:
   double **sn_hg;
   double **cont_lg;
   double **sn_lg;
-
+  virtual double GetX(const int iu, const int ipmt) const =0;
+  virtual double GetY(const int iu, const int ipmt) const =0;
+  virtual double GetZ(const int iu, const int ipmt) const =0;
+  
 protected:
   void CreateContainers(void);
   void DumpModule(double** inp, const char *string) const;

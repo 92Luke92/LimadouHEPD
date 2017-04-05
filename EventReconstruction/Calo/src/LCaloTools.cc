@@ -11,7 +11,7 @@ LTriggerSignal GetTriggerSignal(const LEvRec0 lev0, const LCalibration cal) {
 
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-      int index = OFFSET+iu*npmts+32*ipmt;
+      int index = OFFSET+iu*npmts+32*ipmt; // even ipmt is east, odd ipmt is west
       result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestal[index];
       result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigma[index];
       result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestal[index];
@@ -33,7 +33,7 @@ LScintillatorSignal GetScintillatorSignal(const LEvRec0 lev0, const LCalibration
 
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-      int index = OFFSET+iu*npmts+32*ipmt;
+      int index = OFFSET+iu*npmts+32*ipmt;  // (even,even)=SouthEast (even,odd)=NorthWest (odd,even)=SouthWest (odd,odd)=NorthEast
       result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestal[index];
       result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigma[index];
       result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestal[index];
@@ -53,9 +53,9 @@ LVetoSignal GetVetoSignal(const LEvRec0 lev0, const LCalibration cal) {
   const double *pedestal = cal.GetCaloHGCalibration()->GetPedestal();
   const double *sigma = cal.GetCaloHGCalibration()->GetSigma();
 
-  for(int iu=0; iu<nunits; ++iu) {
-    for(int ipmt=0; ipmt<npmts; ++ipmt) {
-      int index = OFFSET+iu*npmts+32*ipmt;
+  for(int iu=0; iu<nunits; ++iu) { // iu: north, east, south, west, bottom
+    for(int ipmt=0; ipmt<npmts; ++ipmt) { // pmt even: up, odd: down   ---   for bottom(iu=4) even:NorthEast, odd:SouthWest
+      int index = OFFSET+iu*npmts+32*ipmt; 
       result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestal[index];
       result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigma[index];
       result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestal[index];
@@ -77,7 +77,7 @@ LLysoSignal GetLysoSignal(const LEvRec0 lev0, const LCalibration cal) {
 
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-      int index = (iu<5 ? OFFSET+iu*npmts+32*ipmt : OFFSET+(iu-5)*npmts+32);
+      int index = (iu<5 ? OFFSET+iu*npmts+32*ipmt : OFFSET+(iu-5)*npmts+32); //9-7-1-8-5   and 3-2-6-4
       result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestal[index];
       result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigma[index];
       result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestal[index];
