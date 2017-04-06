@@ -44,8 +44,8 @@
 	       <td>
 		 <table border="1">
 		   <tr>
-	              <td width="100" height="60" align="center"><xsl:value-of select="BOOT_NR"/>        </td>
-	              <td width="100" height="60" align="center"><xsl:value-of select="RUN_NR"/>         </td>
+	              <td width="100" height="30" align="center"><xsl:value-of select="BOOT_NR"/>        </td>
+	              <td width="100" height="30" align="center"><xsl:value-of select="RUN_NR"/>         </td>
 		   </tr>
 		 </table>
 	       </td>

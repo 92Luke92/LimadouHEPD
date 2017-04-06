@@ -73,8 +73,8 @@
 	       <td>
 		 <table border="1">
 		   <tr>
-	              <td width="100" height="60" align="center"><xsl:value-of select="BOOT_NR"/>        </td>
-	              <td width="100" height="60" align="center"><xsl:value-of select="RUN_NR"/>         </td>
+	              <td width="100" height="30" align="center"><xsl:value-of select="BOOT_NR"/>        </td>
+	              <td width="100" height="30" align="center"><xsl:value-of select="RUN_NR"/>         </td>
 		   </tr>
 		 </table>
 	       </td>
@@ -85,19 +85,19 @@
 
 		     <xsl:choose>
 		       <xsl:when test="LADDER_MASK_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="60" align="center"> <xsl:value-of select="CURRENT_SD"/> </td>
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="CURRENT_SD"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="60" align="center"><xsl:value-of select="CURRENT_SD"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="CURRENT_SD"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 
 		      <xsl:choose>
 		       <xsl:when test="LADDER_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="60" align="center"> <xsl:value-of select="LADDERS_LV"/> </td>
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="LADDERS_LV"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="60" align="center"><xsl:value-of select="LADDERS_LV"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="LADDERS_LV"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 		    
@@ -111,82 +111,82 @@
 
 		      <xsl:choose>
 		       <xsl:when test="ADJ_STRIP_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="60" align="center"> <xsl:value-of select="ADIACENT_STRIP"/> </td>
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="ADIACENT_STRIP"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="60" align="center"><xsl:value-of select="ADIACENT_STRIP"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="ADIACENT_STRIP"/>        </td>
 		       </xsl:otherwise>
 		      </xsl:choose>
 
 		      <xsl:choose>
 		       <xsl:when test="ZERO_SUPP_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="60" align="center"> <xsl:value-of select="ZERO_SUPP_THRD"/> </td>
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="ZERO_SUPP_THRD"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="60" align="center"><xsl:value-of select="ZERO_SUPP_THRD"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="ZERO_SUPP_THRD"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 		      
 		     <xsl:choose>
 		       <xsl:when test="CN_HIGH_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="60" align="center"> <xsl:value-of select="THRD_CN_HIGH"/> </td>
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="THRD_CN_HIGH"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="60" align="center"><xsl:value-of select="THRD_CN_HIGH"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="THRD_CN_HIGH"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 
 		      <xsl:choose>
 		       <xsl:when test="CN_LOW_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="60" align="center"> <xsl:value-of select="THRD_CN_LOW"/> </td>
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="THRD_CN_LOW"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="60" align="center"><xsl:value-of select="THRD_CN_LOW"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="THRD_CN_LOW"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 		      
 		        <xsl:choose>
 		       <xsl:when test="EVENT_RMS_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="60" align="center"> <xsl:value-of select="CALIB_EVENT_RMS"/> </td>
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="CALIB_EVENT_RMS"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="60" align="center"><xsl:value-of select="CALIB_EVENT_RMS"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="CALIB_EVENT_RMS"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 
 		      <xsl:choose>
 		       <xsl:when test="EVENT_PED_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="60" align="center"> <xsl:value-of select="CALIB_EVENT_PED"/> </td>
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="CALIB_EVENT_PED"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="60" align="center"><xsl:value-of select="CALIB_EVENT_PED"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="CALIB_EVENT_PED"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 
 		      <xsl:choose>
 		       <xsl:when test="EVENT_GAUSS_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="60" align="center"> <xsl:value-of select="CALIB_EVENT_GAUSS"/> </td>
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="CALIB_EVENT_GAUSS"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="60" align="center"><xsl:value-of select="CALIB_EVENT_GAUSS"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="CALIB_EVENT_GAUSS"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 		       
 		      <xsl:choose>
 		       <xsl:when test="EVENT_CN_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="60" align="center"> <xsl:value-of select="CALIB_EVENT_CN"/> </td>
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="CALIB_EVENT_CN"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="60" align="center"><xsl:value-of select="CALIB_EVENT_CN"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="CALIB_EVENT_CN"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 
 		      <xsl:choose>
 		       <xsl:when test="GAUSS_CHECK_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="60" align="center"> <xsl:value-of select="GAUSS_CHECK"/> </td>
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="GAUSS_CHECK"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="60" align="center"><xsl:value-of select="GAUSS_CHECK"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="GAUSS_CHECK"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 		       
