@@ -3,13 +3,10 @@
 *
 * Created by Francesco Palma @ INFN Roma2: francesco.palma@roma2.infn.it
 *
-* FILENAME:       PMTScan.C
+* FILENAME:       ScintQL.cc
 *
 * DESCRIPTION:    Script to generate Scintillator Quicklook pdf file starting 
 *                 from HEPD L0 ROOT file 
-*
-* INSTRUCTIONS:   g++ -Wall PMTScan.C -o PMTScan `root-config --cflags --libs`
-*                 ./PMTScan [ROOT file name]  
 *
 * DATE:           March 10, 2017
 *     

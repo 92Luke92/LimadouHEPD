@@ -1,17 +1,16 @@
 /**
  * =============================================================================
  *
- * Created by Francesco Palma @ INFN Roma2: francesco.palma@roma2.infn.it
+ * Created by Francesco Palma & Luca Carfora @ INFN Roma2:
+ * francesco.palma@roma2.infn.it
  *
- * FILENAME:       TriggerScan.C
+ * FILENAME:       TriggerQL.cc
  *
  * DESCRIPTION:    Script to generate Trigger Quicklook pdf file starting 
  *                 from HEPD L0 ROOT file 
  *
- * INSTRUCTIONS:   g++ -Wall TriggerScan.C -o TriggerScan `root-config --cflags --libs`
- *                 ./TriggerScan [ROOT file name]  
  *
- * DATE:           March 10, 2017
+ * DATE:          April 6, 2017
  *     
  * =============================================================================
  **/
@@ -20,6 +19,7 @@
 #include <TFile.h>
 #include <TROOT.h>
 #include <TH2D.h>
+#include <TGraph.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,11 +46,9 @@ using namespace std;
 
 void TriggerScan(TString rootname)
 {
-  
-   TString outname = rootname;
-   TString outnameStart;
-   TString outnameEnd;
-   outname.ReplaceAll(".root", 5, "_TriggerQL.pdf", 14);
+
+  TString outname = rootname;
+  outname.ReplaceAll(".root", 5, "_TriggerQL.pdf", 14);
   
  
    UShort_t first_run_nr;
@@ -72,8 +70,6 @@ void TriggerScan(TString rootname)
 
    first_run_nr = rootfile.GetRunID(0);
    last_run_nr = rootfile.GetRunID(Tmd_entries-1);
-   // cout << "First run id: " << first_run_nr << endl;
-   // cout << "Last run id: " <<  last_run_nr << endl;
 
    // Events
    int nEvents = rootfile.GetEntries();
@@ -105,27 +101,18 @@ void TriggerScan(TString rootname)
    pt->AddText("Number of events: ");
    pt->AddText(numEvents);
    pt->Draw();
-   outnameStart = outname+"(";
-   Run->Print(outnameStart); 
-  
-  
-   TH2I *h_lost_triggers_vs_event = new TH2I("h_lost_triggers_vs_event","Lost triggers vs event time",1000,0,2000000,1000,0,5);
-   h_lost_triggers_vs_event->GetXaxis()->SetTitle("Event time (ms)");
-   h_lost_triggers_vs_event->GetYaxis()->SetTitle("Lost triggers");
-   //h_lost_triggers_vs_event->GetYaxis()->SetTitleOffset(1.5);
-  
-   TH2D *h_alive_time_vs_event = new TH2D("h_alive_time","Alive time vs event time",
-					  1000,0,2000000,100,0,5000);
-   h_alive_time_vs_event->GetXaxis()->SetTitle("Event time (ms)");
-   h_alive_time_vs_event->GetYaxis()->SetTitle("Alive time (ms)");
-   h_alive_time_vs_event->GetYaxis()->SetTitleOffset(1.5);
-  
-   TH2D *h_dead_time_vs_event = new TH2D("h_dead_time","Dead time vs event time",
-					 1000,0,2000000,100,0,10);
-   h_dead_time_vs_event->GetXaxis()->SetTitle("Event time (ms)");
-   h_dead_time_vs_event->GetYaxis()->SetTitle("Dead time (ms)");
-   h_dead_time_vs_event->GetYaxis()->SetTitleOffset(1.5);
-  
+   TString header = "1_header.png";
+   Run->SaveAs(header);
+
+   TGraph *lost_triggers_vs_time = new TGraph();
+   lost_triggers_vs_time->SetTitle("Lost triggers vs event time;Event time (ms); Lost triggers");
+   
+   TGraph *alive_time_vs_time = new TGraph();
+   alive_time_vs_time->SetTitle("Alive time vs event time; Event time (ms); Alive time (ms)");
+   
+   TGraph *dead_time_vs_time = new TGraph();
+   dead_time_vs_time->SetTitle("Dead time vs event time; Event time (ms); Dead time (ms)");
+   
    const char *subdetector[EASIROC_CH] = {"T1e","T2e","T3e","T4e","T5e","T6e",
 					  "P1se","P2sw","P3se","P4sw","P5se","P6sw",
 					  "P7se","P8sw","P9se","P10sw","P11se","P12sw",
@@ -141,113 +128,105 @@ void TriggerScan(TString rootname)
   
    TH1D *h_FlagCount_vs_Ch =
      new TH1D("TrigFlag1Count vs Ch","Counts for trigger flag = 1 vs PMT channel",64,0,64);
-  
+   
    for(int fl=0;fl<EASIROC_CH;fl++)
       h_FlagCount_vs_Ch->GetXaxis()->SetBinLabel(fl+1,subdetector[fl]);
-  
-   TH2D *h_rate_meter[9];
-   TString hname_rate_meter;
-  
+   
+   TGraph *rate_meter_vs_time[9];
+   const char *name_rate_meter;
+   
    for(int kk=0;kk<9;kk++) {
+
+      rate_meter_vs_time[kk] = new TGraph();
+     
       if (kk==0)
-	 hname_rate_meter = "Trigger MASK 0 [T]";
+	 name_rate_meter = "Trigger MASK 0 [T]";
       if (kk==1)
-	 hname_rate_meter = "Trigger MASK 1 [T & P1]";
+	 name_rate_meter = "Trigger MASK 1 [T & P1]";
       if (kk==2)
-	 hname_rate_meter = "Trigger MASK 2 [T & (P1 || P2)]";
+	 name_rate_meter = "Trigger MASK 2 [T & (P1 || P2)]";
       if (kk==3)
-	 hname_rate_meter = "Trigger MASK 3 [(T3 || T4) & (P1 || P2)]";
+	 name_rate_meter = "Trigger MASK 3 [(T3 || T4) & (P1 || P2)]";
       if (kk==4)
-	 hname_rate_meter = "Trigger MASK 4 [T & P1 & P2]";
+	 name_rate_meter = "Trigger MASK 4 [T & P1 & P2]";
       if (kk==5)
-	 hname_rate_meter = "Trigger MASK 5 [T & P1 & P2 & P3]";
+	 name_rate_meter = "Trigger MASK 5 [T & P1 & P2 & P3]";
       if (kk==6)
-	 hname_rate_meter = "Trigger MASK 6 [T & (P1 & P2) & (P15 || P16)]";
+	 name_rate_meter = "Trigger MASK 6 [T & (P1 & P2) & (P15 || P16)]";
       if (kk==7)
-	 hname_rate_meter = "Trigger MASK 7 [T & (P1 || P2) & L]";
+	 name_rate_meter = "Trigger MASK 7 [T & (P1 || P2) & L]";
       if (kk==8)
-	 hname_rate_meter = "Trigger MASK 8 [Generic Trigger Mask]";
-    
-      h_rate_meter[kk] = new TH2D("",hname_rate_meter,1000,0,2000000,100,0,200);
-    
-      // TString hname_rate_meter = "Rate Meter of Trigger Mask ";
-      // hname_rate_meter += kk;
-      // h_rate_meter[kk] = new TH2D("",hname_rate_meter,100,0,500,100,0,200);
-      h_rate_meter[kk]->GetXaxis()->SetTitle("Event time (ms)");
-      h_rate_meter[kk]->GetYaxis()->SetTitle("Rate meter (Hz)");
-      h_rate_meter[kk]->GetYaxis()->SetTitleOffset(1.5);
-      // h_rate_meter[kk]->SetTitleSize(0.1);
+	 name_rate_meter = "Trigger MASK 8 [Generic Trigger Mask]";
+
+      rate_meter_vs_time[kk]->SetTitle(Form("%s; Event time (ms); Rate meter (Hz)", name_rate_meter));
    }
- 
-   TH2D *h_pmt_rate_meter[65];
-   TString hname_pmt_rate_meter;
+
+   TGraph *pmt_rate_meter_vs_time[65];
+   const char *name_pmt_rate_meter;
    for(int kk=0;kk<65;kk++) {
-      TString hname_pmt_rate_meter = "Rate Meter of PMT ";
-      hname_pmt_rate_meter += kk;
-      h_pmt_rate_meter[kk] = new TH2D("",hname_pmt_rate_meter,1000,0,2000000,100,0,50);
-      h_pmt_rate_meter[kk]->GetXaxis()->SetTitle("Event time (ms)");
-      h_pmt_rate_meter[kk]->GetYaxis()->SetTitle("PMT rate meter (Hz)");
-      h_pmt_rate_meter[kk]->GetYaxis()->SetTitleOffset(1.5);
+      pmt_rate_meter_vs_time[kk] = new TGraph();
+      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of PMT %i; Event time (ms); PMT rate meter (Hz)", kk+1));
    }
-
+   
    Int_t cpu_startRunTime_vect[100];
-
+   
    for(int j=1; j<Tmd_entries; j+=2) //Tmd loop
    {
       rootfile.GetTmdEntry(j); 
       cpu_startRunTime_vect[(j-1)/2] = metaData.CPU_time[0];
    }      
-
    
-
    
    for(int i = 0; i < nEvents; i++) //Event loop
    {
       rootfile.GetEntry(i);
-
+      
       if (ev.run_id > last_run_nr) // to avoid processing run without tail
 	 break;
       
       if(metaData.run_type == 0x634E) // to skip mixed virgin event
 	 continue;
-
       
       event_time = cpu_startRunTime_vect[ev.run_id - first_run_nr] + ev.hepd_time/1e+2; //unit = ms
-       
-      h_lost_triggers_vs_event->Fill(event_time, ev.lost_trigger);
-      h_alive_time_vs_event->Fill(event_time, ev.alive_time*0.005);
-      h_dead_time_vs_event->Fill(event_time, ev.dead_time*0.005);
-	
-      for(int kk=0;kk<9;kk++) 
-	 h_rate_meter[kk]->Fill(event_time, ev.rate_meter[kk]);
+      
+      
+      lost_triggers_vs_time->SetPoint(i, event_time, ev.lost_trigger);
+      alive_time_vs_time->SetPoint(i, event_time, ev.alive_time*0.005);
+      dead_time_vs_time->SetPoint(i, event_time, ev.dead_time*0.005);
 
-      for(int kk=0;kk<65;kk++) 
-	 h_pmt_rate_meter[kk]->Fill(event_time, metaData.PMT_rate_meter[kk]);
-	 
       for(int ch=0;ch<EASIROC_CH;ch++) //PMT channel loop ch[0-63]
       {
 	 if(ev.trigger_flag[ch]>0) h_FlagCount_vs_Ch->Fill(ch);
       }
 	
+      for(int kk=0;kk<9;kk++)
+	rate_meter_vs_time[kk]->SetPoint(i, event_time, ev.rate_meter[kk]);
+
+      for(int kk=0; kk<65; kk++)
+	pmt_rate_meter_vs_time[kk]->SetPoint(i, event_time, metaData.PMT_rate_meter[kk]);
+      
    } //End of event loop
-     
-  
+   
+   
    TCanvas *c_lost_triggers = new TCanvas("c_lost_triggers","",1200,600);
    gPad->SetGrid();
-   h_lost_triggers_vs_event->SetMarkerStyle(20);
-   h_lost_triggers_vs_event->Draw();
-   c_lost_triggers->Print(outname);
+   lost_triggers_vs_time->SetMarkerStyle(7);
+   TString lost_trig_fig = "2_lost_triggers.png"; 
+   lost_triggers_vs_time->Draw("AP");
+   c_lost_triggers->SaveAs(lost_trig_fig);
  
    TCanvas *c_alive_dead_time = new TCanvas("c_alive_dead_time","",1200,600);
    c_alive_dead_time->Divide(2,1);
    c_alive_dead_time->cd(1);
    gPad->SetGrid();
-
-   h_alive_time_vs_event->Draw();
+   alive_time_vs_time->SetMarkerStyle(7);
+   alive_time_vs_time->Draw("AP");
    c_alive_dead_time->cd(2);
    gPad->SetGrid();
-   h_dead_time_vs_event->Draw();
-   c_alive_dead_time->Print(outname);
+   dead_time_vs_time->SetMarkerStyle(7);
+   dead_time_vs_time->Draw("AP");
+   TString alive_dead_time_fig = "3_alive_dead_time.png";    
+   c_alive_dead_time->SaveAs(alive_dead_time_fig);
   
    TCanvas *c_trig_flag= new TCanvas("c_trig_flag"," ",1200,600);
    c_trig_flag->cd();
@@ -264,8 +243,11 @@ void TriggerScan(TString rootname)
    line->SetLineColor(2);
    line->SetLineWidth(2);
    line->Draw("same");
-   c_trig_flag->Print(outname);
-  
+   TString trig_flag_fig = "4_trigger_flag.png";    
+   c_trig_flag->SaveAs(trig_flag_fig);
+
+
+   // Rate meter trigger mask
    TCanvas* c_rate_meter_trig_mask_0_3 = new TCanvas("c_rate_meter_trig_mask_0_3"," ",
 						     1200,600);
    c_rate_meter_trig_mask_0_3->Divide(3,1);
@@ -273,10 +255,11 @@ void TriggerScan(TString rootname)
    for(int p=0;p<3;p++) {
       c_rate_meter_trig_mask_0_3->cd(p+1);
       gPad->SetGrid();
-      h_rate_meter[p]->Draw();
-    
+      rate_meter_vs_time[p]->SetMarkerStyle(7);
+      rate_meter_vs_time[p]->Draw("AP");
    }
-   c_rate_meter_trig_mask_0_3->Print(outname);
+   TString rate_meter_trig_mask_0_3_fig = "5_rate_meter_trig_mask_0_3.png";    
+   c_rate_meter_trig_mask_0_3->SaveAs(rate_meter_trig_mask_0_3_fig); 
   
    TCanvas* c_rate_meter_trig_mask_4_6 = new TCanvas("c_rate_meter_trig_mask_4_6"," ",
 						     1200,600);
@@ -285,10 +268,11 @@ void TriggerScan(TString rootname)
    for(int p=3;p<6;p++) {
       c_rate_meter_trig_mask_4_6->cd(p-2);
       gPad->SetGrid();
-      h_rate_meter[p]->Draw();
-    
+      rate_meter_vs_time[p]->SetMarkerStyle(7);
+      rate_meter_vs_time[p]->Draw("AP");
    }
-   c_rate_meter_trig_mask_4_6->Print(outname);
+   TString rate_meter_trig_mask_4_6_fig = "6_rate_meter_trig_mask_4_6.png";    
+   c_rate_meter_trig_mask_4_6->SaveAs(rate_meter_trig_mask_4_6_fig); 
   
    TCanvas* c_rate_meter_trig_mask_7_9 = new TCanvas("c_rate_meter_trig_mask_7_9"," ",
 						     1200,600);
@@ -298,30 +282,130 @@ void TriggerScan(TString rootname)
    {
       c_rate_meter_trig_mask_7_9->cd(p-5);
       gPad->SetGrid();
-      h_rate_meter[p]->Draw();
-      
-      if(p==8)   
-      {   
-	 outnameEnd = outname+")";
-	 c_rate_meter_trig_mask_7_9->Print(outnameEnd);
-      }   
+      rate_meter_vs_time[p]->SetMarkerStyle(7);
+      rate_meter_vs_time[p]->Draw("AP");
    }
-   //c_rate_meter_trig_mask_7_9->Print(outname);
+
+   TString rate_meter_trig_mask_7_9_fig = "7_rate_meter_trig_mask_7_9.png";    
+   c_rate_meter_trig_mask_7_9->SaveAs(rate_meter_trig_mask_7_9_fig);
+
    
-   // TCanvas* c_rate_meter_pmt_0_8 = new TCanvas("c_rate_meter_pmt_0_8"," ",1200,600);
-   // c_rate_meter_pmt_0_8->Divide(3,3);
+   //PMT rate meter
+   TCanvas* c_rate_meter_pmt_1_9 = new TCanvas("c_rate_meter_pmt_1_9"," ",1200,600);
+   c_rate_meter_pmt_1_9->Divide(3,3);
   
-   // for(int p=0;p<9;p++)
-   // {
-   //    c_rate_meter_pmt_0_8->cd(p+1);
-   //    gPad->SetGrid();
-   //    h_pmt_rate_meter[p]->Draw();
+   for(int p=0;p<9;p++)
+   {
+      c_rate_meter_pmt_1_9->cd(p+1);
+      gPad->SetGrid();
+      pmt_rate_meter_vs_time[p]->SetMarkerStyle(7);
+      pmt_rate_meter_vs_time[p]->Draw("AP");
+   }
+
+   TString rate_meter_pmt_1_9 = "8_pmt_rate_meter_1_9.png";
+   c_rate_meter_pmt_1_9->SaveAs(rate_meter_pmt_1_9);
+
+   TCanvas* c_rate_meter_pmt_10_18 = new TCanvas("c_rate_meter_pmt_10_18"," ",1200,600);
+   c_rate_meter_pmt_10_18->Divide(3,3);
   
-   //    if(p==8)   
-   //    {   
-   // 	 outnameEnd = outname+")";
-   // 	 c_rate_meter_pmt_0_8->Print(outnameEnd);
-   //    }
-   // }
+   for(int p=9;p<18;p++)
+   {
+      c_rate_meter_pmt_10_18->cd(p-8);
+      gPad->SetGrid();
+      pmt_rate_meter_vs_time[p]->SetMarkerStyle(7);
+      pmt_rate_meter_vs_time[p]->Draw("AP");
+   }
+
+   TString rate_meter_pmt_10_18 = "9_pmt_rate_meter_10_18.png";
+   c_rate_meter_pmt_10_18->SaveAs(rate_meter_pmt_10_18);
+
+   TCanvas* c_rate_meter_pmt_19_27 = new TCanvas("c_rate_meter_pmt_19_27"," ",1200,600);
+   c_rate_meter_pmt_19_27->Divide(3,3);
+  
+   for(int p=18;p<27;p++)
+   {
+      c_rate_meter_pmt_19_27->cd(p-17);
+      gPad->SetGrid();
+      pmt_rate_meter_vs_time[p]->SetMarkerStyle(7);
+      pmt_rate_meter_vs_time[p]->Draw("AP");
+   }
+
+   TString rate_meter_pmt_19_27 = "10_pmt_rate_meter_19_27.png";
+   c_rate_meter_pmt_19_27->SaveAs(rate_meter_pmt_19_27);
+
+   TCanvas* c_rate_meter_pmt_28_36 = new TCanvas("c_rate_meter_pmt_28_36"," ",1200,600);
+   c_rate_meter_pmt_28_36->Divide(3,3);
+  
+   for(int p=27;p<36;p++)
+   {
+      c_rate_meter_pmt_28_36->cd(p-26);
+      gPad->SetGrid();
+      pmt_rate_meter_vs_time[p]->SetMarkerStyle(7);
+      pmt_rate_meter_vs_time[p]->Draw("AP");
+   }
+
+   TString rate_meter_pmt_28_36 = "11_pmt_rate_meter_28_36.png";
+   c_rate_meter_pmt_28_36->SaveAs(rate_meter_pmt_28_36);
+
+   TCanvas* c_rate_meter_pmt_37_45 = new TCanvas("c_rate_meter_pmt_37_45"," ",1200,600);
+   c_rate_meter_pmt_37_45->Divide(3,3);
+  
+   for(int p=36;p<45;p++)
+   {
+      c_rate_meter_pmt_37_45->cd(p-35);
+      gPad->SetGrid();
+      pmt_rate_meter_vs_time[p]->SetMarkerStyle(7);
+      pmt_rate_meter_vs_time[p]->Draw("AP");
+   }
+
+   TString rate_meter_pmt_37_45 = "12_pmt_rate_meter_37_45.png";
+   c_rate_meter_pmt_37_45->SaveAs(rate_meter_pmt_37_45);
+
+   TCanvas* c_rate_meter_pmt_46_54 = new TCanvas("c_rate_meter_pmt_46_54"," ",1200,600);
+   c_rate_meter_pmt_46_54->Divide(3,3);
+  
+   for(int p=45;p<54;p++)
+   {
+      c_rate_meter_pmt_46_54->cd(p-44);
+      gPad->SetGrid();
+      pmt_rate_meter_vs_time[p]->SetMarkerStyle(7);
+      pmt_rate_meter_vs_time[p]->Draw("AP");
+   }
+
+   TString rate_meter_pmt_46_54 = "13_pmt_rate_meter_46_54.png";
+   c_rate_meter_pmt_46_54->SaveAs(rate_meter_pmt_46_54);
+
+   TCanvas* c_rate_meter_pmt_55_63 = new TCanvas("c_rate_meter_pmt_55_63"," ",1200,600);
+   c_rate_meter_pmt_55_63->Divide(3,3);
+  
+   for(int p=54;p<63;p++)
+   {
+      c_rate_meter_pmt_55_63->cd(p-53);
+      gPad->SetGrid();
+      pmt_rate_meter_vs_time[p]->SetMarkerStyle(7);
+      pmt_rate_meter_vs_time[p]->Draw("AP");
+   }
+
+   TString rate_meter_pmt_55_63 = "14_pmt_rate_meter_55_63.png";
+   c_rate_meter_pmt_55_63->SaveAs(rate_meter_pmt_55_63);
+
+   TCanvas* c_rate_meter_pmt_64_65 = new TCanvas("c_rate_meter_pmt_64_65"," ",1200,600);
+   c_rate_meter_pmt_64_65->Divide(3,3);
+   c_rate_meter_pmt_64_65->cd(1);
+   gPad->SetGrid();
+   pmt_rate_meter_vs_time[63]->SetMarkerStyle(7);
+   pmt_rate_meter_vs_time[63]->Draw("AP");
+   c_rate_meter_pmt_64_65->cd(2);
+   gPad->SetGrid();
+   pmt_rate_meter_vs_time[64]->SetMarkerStyle(7);
+   pmt_rate_meter_vs_time[64]->Draw("AP");
+   
+   TString rate_meter_pmt_64_65 = "15_pmt_rate_meter_64_65.png";
+   c_rate_meter_pmt_64_65->SaveAs(rate_meter_pmt_64_65);
+
+   
+   const char *char_outname = outname;
+   gROOT->ProcessLine(Form(".!convert `ls -v *.png` %s",char_outname));
+   gROOT->ProcessLine(".!rm *.png");
    
 }
