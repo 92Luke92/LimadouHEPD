@@ -1,9 +1,13 @@
 #include "LTrackerTools.hh"
 #include "detector_const.hh"
 #include "LTrackerCluster.hh"
+#include "LTrackerMask.hh"
+#include "analysis_const.hh"
 #include <algorithm>
 #include <math.h>
 #include <iostream>
+
+
 
 int ChanToLadder(const int nStrip) {
   if(nStrip<0 || nStrip>=NCHAN)
@@ -61,12 +65,13 @@ int ChanToSideChan(const int Chan) {
   return result;
 }
 
-std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigma, const bool *maskIn){
+std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigma, const bool *maskIn, const bool __emulateOnline){
   auto result= new std::vector<LTrackerCluster>;
   double sn[NCHAN];
   for(int ich=0; ich<NCHAN; ++ich){
-    sn[ich]=cont[ich]/sigma[ich]; 
-    sn[ich]=static_cast<double>(static_cast<int>(sn[ich]));
+    if(sigma[ich]==0.) sn[ich]=-999.;
+    else sn[ich]=cont[ich]/sigma[ich]; 
+    if(__emulateOnline==true) sn[ich]=static_cast<double>(static_cast<int>(sn[ich]));
   }
   
   // Prepare mask even for default case
@@ -193,8 +198,19 @@ LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal) {
   double cont[NCHAN];
   const double *ped = cal.GetTrackerCalibration()->GetPedestal(0);
   const double *sigma = cal.GetTrackerCalibration()->GetSigma(0);
-  for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich])-ped[ich];
-  std::vector<LTrackerCluster> *tmp = GetClusters(cont, sigma);
+  LTrackerMask hotmask=cal.GetTrackerCalibration()->GetMaskOnSigma(0,COLDSIGMA,HOTSIGMA);//set the variables!!!
+  LTrackerMask ngmask=cal.GetTrackerCalibration()->GetMaskOnNGI(0,NGILOW,NGIHIGH);//set the variables!!!
+  bool *evmask=(hotmask&&ngmask).GetBool();
+
+  //CN calculation
+  LTrackerMask cnmask=cal.GetTrackerCalibration()->GetCNMask(0);
+  double CN[N_VA];
+  for (int iva=0;iva<N_VA;++iva) CN[iva]=0.; 
+  ComputeCN(lev0.strip,ped,cnmask.GetBool(),CN);
+  
+  for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich])-ped[ich]-CN[ChanToVA(ich)];
+  std::vector<LTrackerCluster> *tmp = GetClusters(cont, sigma,evmask);
+      
   LTrackerSignal result;
   for(auto tmpit : *tmp) result.push_back(tmpit);
   return result;
