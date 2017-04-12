@@ -165,7 +165,7 @@ void TriggerScan(TString rootname)
    const char *name_pmt_rate_meter;
    for(int kk=0;kk<65;kk++) {
       pmt_rate_meter_vs_time[kk] = new TGraph();
-      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of PMT %i; Event time (ms); PMT rate meter (Hz)", kk+1));
+      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of PMT %i; Run time (ms); PMT rate meter (Hz)", kk+1));
    }
    
    Int_t cpu_startRunTime_vect[100];
@@ -174,6 +174,10 @@ void TriggerScan(TString rootname)
    {
       rootfile.GetTmdEntry(j); 
       cpu_startRunTime_vect[(j-1)/2] = metaData.CPU_time[0];
+
+      for(int kk=0; kk<65; kk++)
+	pmt_rate_meter_vs_time[kk]->SetPoint(j, metaData.CPU_time[0], metaData.PMT_rate_meter[kk]);
+      
    }      
    
    
@@ -201,9 +205,6 @@ void TriggerScan(TString rootname)
 	
       for(int kk=0;kk<9;kk++)
 	rate_meter_vs_time[kk]->SetPoint(i, event_time, ev.rate_meter[kk]);
-
-      for(int kk=0; kk<65; kk++)
-	pmt_rate_meter_vs_time[kk]->SetPoint(i, event_time, metaData.PMT_rate_meter[kk]);
       
    } //End of event loop
    

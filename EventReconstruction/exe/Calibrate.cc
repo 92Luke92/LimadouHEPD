@@ -14,6 +14,11 @@ int main(int argc, char *argv[2]) {
   LCalibrationManager::GetInstance().Run();
     
   /*
+  LCalibrationManager::GetInstance().LoadRun(argv[1]);
+  LCalibration *cal = LCalibrationManager::GetInstance().Calibrate();
+  cal->Write(argv[2]);
+
+  /*  
   // Test read-write
   LCalibration *cal2=LCalibration::Read(argv[2]);
   cal2->Write("ciccio.cal");

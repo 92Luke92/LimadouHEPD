@@ -7,7 +7,7 @@ const double MAX_SIGMA2=300.;
 
 const double CLFINDTHRESHOLD=3.;
 const double CLSNTHRESHOLD=4.5;//
-const int CLSNTHRESHOLD1CHAN=3;
+const double CLSNTHRESHOLD1CHAN=3.;
 
 
 

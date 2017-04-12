@@ -138,16 +138,95 @@
 		   
 		   <tr>
 
-		       <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT0"/>        </td>
-		       <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT1"/>        </td>
-		       <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT2"/>        </td>
-		       <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT3"/>        </td>
-		       <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT4"/>        </td>
-		       <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT5"/>        </td>
-		       <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT6"/>        </td>
-		       <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT7"/>        </td>
-		       <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT8"/>        </td>
-		       <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT9"/>        </td>
+		      <xsl:choose>
+		       <xsl:when test="HV_PMT0_error &gt;'0'">
+			 <td  bgcolor="#ff0000" width="80" height="30" align="center"> <xsl:value-of select="HV_PMT0"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT0"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		     <xsl:choose>
+		       <xsl:when test="HV_PMT1_error &gt;'0'">
+			 <td  bgcolor="#ff0000" width="80" height="30" align="center"> <xsl:value-of select="HV_PMT1"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT1"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		     <xsl:choose>
+		       <xsl:when test="HV_PMT2_error &gt;'0'">
+			 <td  bgcolor="#ff0000" width="80" height="30" align="center"> <xsl:value-of select="HV_PMT2"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT2"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		    <xsl:choose>
+		       <xsl:when test="HV_PMT3_error &gt;'0'">
+			 <td  bgcolor="#ff0000" width="80" height="30" align="center"> <xsl:value-of select="HV_PMT3"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT3"/>        </td>
+		       </xsl:otherwise>
+		    </xsl:choose>
+
+		    <xsl:choose>
+		       <xsl:when test="HV_PMT4_error &gt;'0'">
+			 <td  bgcolor="#ff0000" width="80" height="30" align="center"> <xsl:value-of select="HV_PMT4"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT4"/>        </td>
+		       </xsl:otherwise>
+		    </xsl:choose>
+
+		    <xsl:choose>
+		       <xsl:when test="HV_PMT5_error &gt;'0'">
+			 <td  bgcolor="#ff0000" width="80" height="30" align="center"> <xsl:value-of select="HV_PMT5"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT5"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		     <xsl:choose>
+		       <xsl:when test="HV_PMT6_error &gt;'0'">
+			 <td  bgcolor="#ff0000" width="80" height="30" align="center"> <xsl:value-of select="HV_PMT6"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT6"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		     <xsl:choose>
+		       <xsl:when test="HV_PMT7_error &gt;'0'">
+			 <td  bgcolor="#ff0000" width="80" height="30" align="center"> <xsl:value-of select="HV_PMT7"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT7"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		     <xsl:choose>
+		       <xsl:when test="HV_PMT8_error &gt;'0'">
+			 <td  bgcolor="#ff0000" width="80" height="30" align="center"> <xsl:value-of select="HV_PMT8"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT8"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		     <xsl:choose>
+		       <xsl:when test="HV_PMT9_error &gt;'0'">
+			 <td  bgcolor="#ff0000" width="80" height="30" align="center"> <xsl:value-of select="HV_PMT9"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="80" height="30" align="center"><xsl:value-of select="HV_PMT9"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
 
 		   </tr>
 		 </table>
@@ -164,11 +243,26 @@
 
 		   </tr>
 
-	      
 		   <tr>
-		    		       
-		       <td width="100" height="30" align="center"><xsl:value-of select="HV_PLANE_A"/>        </td>
-		       <td width="100" height="30" align="center"><xsl:value-of select="HV_PLANE_B"/>        </td>
+
+		     <xsl:choose>
+		       <xsl:when test="HV_PLANE_A_error &gt;'0'">
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="HV_PLANE_A"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="100" height="30" align="center"><xsl:value-of select="HV_PLANE_A"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		      <xsl:choose>
+		       <xsl:when test="HV_PLANE_B_error &gt;'0'">
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="HV_PLANE_B"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="100" height="30" align="center"><xsl:value-of select="HV_PLANE_B"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+		     
 	          </tr>
 		 </table>
 	       </td>
