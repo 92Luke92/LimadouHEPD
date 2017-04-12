@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sys/stat.h>
 
 LReco01Manager::LReco01Manager() {
   Reset();
@@ -68,6 +69,11 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
     std::cout << __LRECO01MANAGER__ << "calibration status bad." << std::endl;
     result=false;
   }
+
+  struct stat odir;
+  int status = stat(outDirectory.c_str(), &odir);
+  if(status!=0) result=false;
+
   std::ifstream istr(inpFileList, std::ifstream::in);
   if(istr.good()==false) result=false; 
   istr.close();
@@ -93,7 +99,7 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
 void LReco01Manager::Run(void) {
   if(steeringLoadedFLAG==false) {
     std::cout << __LRECO01MANAGER__ << "How to run? Steering file never loaded!" << std::endl;
-    return;;
+    return;
   }
   int nFiles=LoadInpFileList();
   if(nFiles==0) {

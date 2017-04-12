@@ -296,10 +296,60 @@ void HVPSConfigToXML(TString rootname, TString xslPath = "")
 	}
 
       outputFile << "<HVPSCONFIG>\n";
+
+      outputFile << "\t<HV_PLANE_A_error>"  <<  0 << "</HV_PLANE_A_error>\n";
+      outputFile << "\t<HV_PLANE_B_error>"  <<  0 << "</HV_PLANE_B_error>\n";
+      outputFile << "\t<HV_PMT0_error>"  <<  0 << "</HV_PMT0_error>\n";
+      outputFile << "\t<HV_PMT1_error>"  <<  0 << "</HV_PMT1_error>\n";
+      outputFile << "\t<HV_PMT2_error>"  <<  0 << "</HV_PMT2_error>\n";
+      outputFile << "\t<HV_PMT3_error>"  <<  0 << "</HV_PMT3_error>\n";
+      outputFile << "\t<HV_PMT4_error>"  <<  0 << "</HV_PMT4_error>\n";
+      outputFile << "\t<HV_PMT5_error>"  <<  0 << "</HV_PMT5_error>\n";
+      outputFile << "\t<HV_PMT6_error>"  <<  0 << "</HV_PMT6_error>\n";
+      outputFile << "\t<HV_PMT7_error>"  <<  0 << "</HV_PMT7_error>\n";
+      outputFile << "\t<HV_PMT8_error>"  <<  0 << "</HV_PMT8_error>\n";
+      outputFile << "\t<HV_PMT9_error>"  <<  0 << "</HV_PMT9_error>\n"; 
       
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
       outputFile << "\t<RUN_NR>"  << metaData.run_id  << "</RUN_NR>\n";
-     
+
+      if (Plane_value_table[0]<0 || Plane_value_table[0]>150.8)
+	outputFile << "\t<HV_PLANE_A_error>"  <<  1   << "</HV_PLANE_A_error>\n";
+
+      if (Plane_value_table[1]<0 || Plane_value_table[1]>150.8)
+	 outputFile << "\t<HV_PLANE_B_error>"  <<  1  << "</HV_PLANE_B_error>\n";
+
+      if (HV_value_table[0]<0 || HV_value_table[0]>1200)
+	 outputFile << "\t<HV_PMT0_error>"  <<  1 << "</HV_PMT0_error>\n";
+
+      if (HV_value_table[1]<0 || HV_value_table[1]>1200)
+	 outputFile << "\t<HV_PMT1_error>"  <<  1 << "</HV_PMT1_error>\n";
+
+      if (HV_value_table[2]<0 || HV_value_table[2]>1200)
+	 outputFile << "\t<HV_PMT2_error>"  <<  1 << "</HV_PMT2_error>\n";
+
+      if (HV_value_table[3]<0 || HV_value_table[3]>1200)
+	 outputFile << "\t<HV_PMT3_error>"  <<  1 << "</HV_PMT3_error>\n";
+
+      if (HV_value_table[4]<0 || HV_value_table[4]>1200)
+	 outputFile << "\t<HV_PMT4_error>"  <<  1 << "</HV_PMT4_error>\n";
+
+      if (HV_value_table[5]<0 || HV_value_table[5]>1200)
+	 outputFile << "\t<HV_PMT5_error>"  <<  1 << "</HV_PMT5_error>\n";
+
+      if (HV_value_table[6]<0 || HV_value_table[6]>1200)
+	 outputFile << "\t<HV_PMT6_error>"  <<  1 << "</HV_PMT6_error>\n";
+
+      if (HV_value_table[7]<0 || HV_value_table[7]>1200)
+	 outputFile << "\t<HV_PMT7_error>"  <<  1 << "</HV_PMT7_error>\n";
+
+      if (HV_value_table[8]<0 || HV_value_table[8]>1200)
+	 outputFile << "\t<HV_PMT8_error>"  <<  1 << "</HV_PMT8_error>\n";
+
+      if (HV_value_table[9]<0 || HV_value_table[9]>1200)
+	 outputFile << "\t<HV_PMT9_error>"  <<  1 << "</HV_PMT9_error>\n";
+
+      
       outputFile << setprecision(3) << "\t<HV_PLANE_A>"  << Plane_value_table[0]
 		 << "</HV_PLANE_A>\n";
       outputFile << setprecision(3) << "\t<HV_PLANE_B>"  << Plane_value_table[1]

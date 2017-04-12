@@ -2,23 +2,27 @@
 #include "LCalibrationManager.hh"
 #include "LTrackerMask.hh"
 
-int main(int argc, char *argv[]) {
-  /*if(argc!=3) {
-    std::cerr << "Error! Usage:    ./Calibrate <calRunFile> <calOutFile>" << std::endl;
+int main(int argc, char *argv[2]) {
+  if(argc!=2) {
+    std::cerr << "Error! Usage:    ./Calibrate <steeringFile>" << std::endl;
     std::cerr << "Aborted." << std::endl;
     return -999;
   }
   
   
+  LCalibrationManager::GetInstance().LoadSteering(argv[1]);
+  LCalibrationManager::GetInstance().Run();
+    
+  /*
   LCalibrationManager::GetInstance().LoadRun(argv[1]);
   LCalibration *cal = LCalibrationManager::GetInstance().Calibrate();
   cal->Write(argv[2]);
-*/
-  
+
+  /*  
   // Test read-write
   LCalibration *cal2=LCalibration::Read(argv[2]);
   cal2->Write("ciccio.cal");
-  
+  */
 
   /*  
   // Test LTrackerMask

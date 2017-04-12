@@ -1,0 +1,15 @@
+// Steering file for the Limadou event calibration
+// R. Iuppa April 8th, 2017
+// roberto.iuppa@unitn.it
+
+std::string    INPLIST   inpRuns.list
+std::string    RUNMODE   virgin
+std::string    OUTFOLD   test_dir
+int            SKIPEVTS  -1
+int            SKIPFEVTS -1
+int            MAXEVTS   -1
+int            MAXFEVTS  -1
+int            SLOTEVTS  -1
+int            INITRUN   -1
+int            FINRUN    -1
+bool           VERBOSE   true

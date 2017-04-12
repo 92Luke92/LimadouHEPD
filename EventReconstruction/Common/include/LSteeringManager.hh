@@ -32,7 +32,7 @@ private:
 template<typename RetType> RetType LSteeringManager::GetParameter(const char* parName) const {
   if(!IsThereParameter(parName)) return 0;
   if(!IsRetTypeCorrect<RetType>(parName)) return 0;
-  RetType result;
+  RetType result; // =0 would silence warnings, but string would crash;
   for(auto pit : parameters) {
     if(pit.name.compare(parName)==0) {
       std::istringstream istr(pit.value);

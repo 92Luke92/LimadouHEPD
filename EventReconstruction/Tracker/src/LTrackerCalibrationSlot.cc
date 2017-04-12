@@ -1,4 +1,6 @@
 #include "LTrackerCalibrationSlot.hh"
+#include <algorithm>
+#include <math.h>
 
 void LTrackerCalibrationSlot::Reset() {
   StartEvent=-999;
@@ -61,3 +63,57 @@ LTrackerMask LTrackerCalibrationSlot::GetMaskOnNGI(const double ngiMin, const do
   return result;
 }
 
+
+LTrackerCalibrationSlot& LTrackerCalibrationSlot::operator=(const LTrackerCalibrationSlot& other) {
+  for(int ichan=0; ichan<NCHAN; ++ichan) {
+    pedestal[ichan] = other.GetPedestal()[ichan];
+    sigma[ichan] = other.GetSigma()[ichan];
+    ngindex[ichan] = other.GetNGIndex()[ichan];
+    CN_mask[ichan] = other.GetCNMask()[ichan];
+  }
+
+  // event info
+  StartEvent = other.GetStartEvent();
+  StopEvent = other.GetStopEvent();
+
+  return *this;
+}
+
+LTrackerCalibrationSlot& LTrackerCalibrationSlot::operator+=(const LTrackerCalibrationSlot& rhs) // compound assignment (does not need to be a member,
+{                           // but often is, to modify the private members)
+  
+  for(int ichan=0; ichan<NCHAN; ++ichan) {
+    pedestal[ichan] += (rhs.GetPedestal()[ichan]);
+    double tmp = rhs.GetSigma()[ichan];
+    double var = tmp*tmp + sigma[ichan]*sigma[ichan] ;
+    sigma[ichan] = sqrt(var);
+    tmp = (rhs.GetNGIndex()[ichan]);
+    var = tmp*tmp + ngindex[ichan]*ngindex[ichan];
+    ngindex[ichan] += sqrt(var);
+    CN_mask[ichan] = (CN_mask[ichan]||rhs.GetCNMask()[ichan]);
+  }
+
+  // event info
+  StartEvent = std::min(StartEvent,rhs.GetStartEvent());
+  StopEvent = std::max(StopEvent,rhs.GetStopEvent());
+
+  return *this; // return the result by reference
+}
+ 
+LTrackerCalibrationSlot operator+(LTrackerCalibrationSlot lhs,        // passing lhs by value helps optimize chained a+b+c
+		   const LTrackerCalibrationSlot& rhs) // otherwise, both parameters may be const references
+{
+  lhs += rhs; // reuse compound assignment
+  return lhs; // return the result by value (uses move constructor)
+}
+
+
+LTrackerCalibrationSlot& LTrackerCalibrationSlot::operator/=(const double& rhs) {
+  for(int ichan=0; ichan<NCHAN; ++ichan) {
+    pedestal[ichan] /= rhs;
+    sigma[ichan] /= sqrt(rhs);
+    ngindex[ichan] /= sqrt(rhs);
+  }
+
+  return *this; // return the result by reference
+}

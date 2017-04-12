@@ -1,5 +1,7 @@
 #include "LTrackerCalibration.hh"
 #include <iostream>
+#include <algorithm>
+#include <math.h>
 
 void LTrackerCalibration::Add(const LTrackerCalibrationSlot *lcal) {
   calarray.push_back(*lcal);
@@ -72,5 +74,72 @@ LTrackerCalibration* LTrackerCalibration::Read(const char *fileIn) {
   input.close();
 
   return result;
+}
+ 
+
+
+LTrackerCalibration& LTrackerCalibration::operator=(const LTrackerCalibration& other) {
+  calarray.resize(0);
+  
+  // slots
+  for(int is=0; is<other.GetNSlots(); ++is) {
+    calarray.push_back(other.GetTrackerCalibrationSlot(is));
+  }
+  // In/out run info
+  RunId = other.GetRunId();
+  InitialTargetRun = other.GetInitialTargetRun();
+  FinalTargetRun = other.GetFinalTargetRun();
+
+  return *this;
+}
+
+LTrackerCalibration& LTrackerCalibration::operator+=(const LTrackerCalibration& rhs) // compound assignment (does not need to be a member,
+{                           // but often is, to modify the private members)
+  calarray.resize(0);
+  
+  // slots
+  // Firstly, sum up all slots of this
+  LTrackerCalibrationSlot tmpSlot;
+  int cntSlot=0;
+  for(int is=0; is<nSlots; ++is) {
+    tmpSlot+=(GetTrackerCalibrationSlot(is));
+    ++cntSlot;
+  }
+  tmpSlot/=(static_cast<double>(cntSlot));
+  // Secondly, sum up all the rest
+  LTrackerCalibrationSlot tmpSlot2;
+  int cntSlot2=0;
+  for(int is=0; is<rhs.GetNSlots(); ++is) {
+    tmpSlot2+=(rhs.GetTrackerCalibrationSlot(is));
+    ++cntSlot2;
+  }
+  tmpSlot2/=(static_cast<double>(cntSlot2));
+
+  LTrackerCalibrationSlot *toAdd = new LTrackerCalibrationSlot();
+  *toAdd = tmpSlot+tmpSlot2;
+  Add(toAdd);
+  nSlots=1;
+
+  // In/out run info
+  RunId = rhs.GetRunId();
+  InitialTargetRun = rhs.GetInitialTargetRun();
+  FinalTargetRun = rhs.GetFinalTargetRun();
+
+  
+  return *this; // return the result by reference
+}
+ 
+LTrackerCalibration operator+(LTrackerCalibration lhs,        // passing lhs by value helps optimize chained a+b+c
+		   const LTrackerCalibration& rhs) // otherwise, both parameters may be const references
+{
+  lhs += rhs; // reuse compound assignment
+  return lhs; // return the result by value (uses move constructor)
+}
+
+
+LTrackerCalibration& LTrackerCalibration::operator/=(const double& rhs) 
+{
+  for(auto pslot : calarray) pslot/=rhs;
+  return *this; // return the result by reference
 }
  

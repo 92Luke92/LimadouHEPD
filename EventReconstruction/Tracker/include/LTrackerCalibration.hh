@@ -14,6 +14,7 @@ public:
   void Write(std::ofstream *fileOut) const;
   static LTrackerCalibration* Read(const char *fileIn);
   static LTrackerCalibration* Read(std::ifstream *fileIn);
+  inline LTrackerCalibrationSlot GetTrackerCalibrationSlot(const int nSlot) const {return calarray.at(nSlot);};
   inline int GetNSlots() const {return nSlots;};
   inline int GetRunId() const {return RunId;};
   inline int GetInitialTargetRun() const {return InitialTargetRun;};
@@ -24,7 +25,12 @@ public:
   inline const bool* GetCNMask(const int nSlot) const {return calarray.at(nSlot).GetCNMask();};
   inline LTrackerMask GetMaskOnSigma(const int nSlot, const double sigmaMin, const double sigmaMax){return calarray.at(nSlot).GetMaskOnSigma(sigmaMin, sigmaMax);};
   inline LTrackerMask GetMaskOnNGI(const int nSlot, const double ngiMin, const double ngiMax){return calarray.at(nSlot).GetMaskOnNGI(ngiMin, ngiMax);};
-  
+  LTrackerCalibration& operator=(const LTrackerCalibration& other);
+  LTrackerCalibration& operator+=(const LTrackerCalibration& rhs); // compound assignment (does not need to be a member,
+  friend LTrackerCalibration operator+(LTrackerCalibration lhs,        // passing lhs by value helps optimize chained a+b+c
+		     const LTrackerCalibration& rhs);// otherwise, both parameters may be const references 
+  LTrackerCalibration& operator/=(const double& rhs);
+
 private:
   // Calib infos
   int RunId;
