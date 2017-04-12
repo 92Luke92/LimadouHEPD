@@ -1,5 +1,7 @@
 #include "LCaloCalibration.hh"
 #include <iostream>
+#include <algorithm>
+#include <math.h>
 
 LCaloCalibration::LCaloCalibration() {
   Reset();
@@ -98,5 +100,86 @@ LCaloCalibration* LCaloCalibration::Read(const char *fileIn) {
   LCaloCalibration *result = Read(&input);
   input.close();  
   return result;
+}
+ 
+
+LCaloCalibration& LCaloCalibration::operator=(const LCaloCalibration& other) {
+  for(int ipmt=0; ipmt<NPMT; ++ipmt) {
+    pedestal[ipmt] = other.GetPedestal()[ipmt];
+    sigma[ipmt] = other.GetSigma()[ipmt];
+    /* outliers[ipmt] = other.GetOutliers()[ipmt]; 
+       skewness[ipmt] = other.GetSkewness()[ipmt];
+       kurtosis[ipmt] = other.GetKurtosis()[ipmt];*/
+  }
+
+  // In/out run info
+  RunId = other.GetRunId();
+  InitialTargetRun = other.GetInitialTargetRun();
+  FinalTargetRun = other.GetFinalTargetRun();
+
+  return *this;
+}
+
+LCaloCalibration& LCaloCalibration::operator+=(const LCaloCalibration& rhs) // compound assignment (does not need to be a member,
+{                           // but often is, to modify the private members)
+  
+  std::vector<double> ped(NPMT,0.);
+  std::vector<double> var(NPMT,0.);
+  std::vector<int> outl(NPMT,0.);
+  std::vector<double> skew(NPMT,0.);
+  std::vector<double> kurt(NPMT,0.);
+  
+  for(int ipmt=0; ipmt<NPMT; ++ipmt) {
+    double tmp = rhs.GetPedestal()[ipmt];
+    ped[ipmt] = pedestal[ipmt]+tmp;
+    double tmpsig = rhs.GetSigma()[ipmt];
+    var[ipmt] = sigma[ipmt]*sigma[ipmt]+tmpsig*tmpsig;
+    /* tmp = rhs.GetOutliers()[ipmt]; 
+       outl[ipmt] = outliers[ipmt] + tmp; 
+       tmp = other.GetSkewness()[ipmt];
+       skew[ipmt] = (skewness[ipmt]*sigma[ipmt]*sigma[ipmt]*sigma[ipmt] + tmp*tmpsig*tmpsig*tmpsig)/
+       (sigma[ipmt]*sigma[ipmt]*sigma[ipmt]+tmpsig*tmpsig*tmpsig);  // correlations neglected!!!
+       tmp = other.GetKurtosis()[ipmt];
+       kurt[ipmt] = (kurtosis[ipmt]*sigma[ipmt]*sigma[ipmt]*sigma[ipmt]*sigma[ipmt] + tmp*tmpsig*tmpsig*tmpsig*tmpsig)/
+       (sigma[ipmt]*sigma[ipmt]*sigma[ipmt]*sigma[ipmt]+tmpsig*tmpsig*tmpsig*tmpsig);  // correlations neglected!!!
+    */
+  }
+  for(int ipmt=0; ipmt<NPMT; ++ipmt) {
+    pedestal[ipmt] = ped.at(ipmt);
+    sigma[ipmt] = sqrt(var.at(ipmt));
+    /*  outliers[ipmt] = outl[ipmt];
+    skewness[ipmt] = skew[ipmt];
+    kurtosis[ipmt] = kurt[ipmt];
+    */
+  }
+  
+  // In/out run info
+  RunId = std::min(RunId, rhs.GetRunId());
+  InitialTargetRun = std::min(InitialTargetRun, rhs.GetInitialTargetRun());
+  FinalTargetRun = std::max(FinalTargetRun, rhs.GetFinalTargetRun());
+
+  return *this; // return the result by reference
+}
+ 
+LCaloCalibration operator+(LCaloCalibration lhs,        // passing lhs by value helps optimize chained a+b+c
+		   const LCaloCalibration& rhs) // otherwise, both parameters may be const references
+{
+  lhs += rhs; // reuse compound assignment
+  return lhs; // return the result by value (uses move constructor)
+}
+
+
+LCaloCalibration& LCaloCalibration::operator/=(const double& rhs) {
+  
+  for(int ipmt=0; ipmt<NPMT; ++ipmt) {
+    pedestal[ipmt] /= rhs;
+    sigma[ipmt] /= sqrt(rhs);
+    /*  outliers[ipmt] = static_cast<int>(outliers[ipmt]/rhs);
+    skewness[ipmt] /= rhs;
+    kurtosis[ipmt] /= rhs;
+    */
+  }
+  
+  return *this; // return the result by reference
 }
  

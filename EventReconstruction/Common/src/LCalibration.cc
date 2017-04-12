@@ -1,5 +1,9 @@
 #include "LCalibration.hh"
 #include <iostream>
+#include <sstream>
+#include <algorithm>
+
+const int DEFAULT=-1;
 
 LCalibration::LCalibration() {
   Reset();
@@ -18,6 +22,10 @@ void LCalibration::Reset() {
     delete calo_LG;
     calo_LG=0;
   }
+  InitialRunId = DEFAULT;
+  FinalRunId = DEFAULT;
+  InitialTargetRun = DEFAULT;
+  FinalTargetRun = DEFAULT;
   return;
 }
 
@@ -27,6 +35,10 @@ LCalibration::LCalibration(LCaloCalibration *calo_HG_IN,
   calo_HG = calo_HG_IN;
   calo_LG = calo_LG_IN;
   tracker = tracker_IN;
+  InitialRunId = calo_HG_IN->GetRunId();
+  FinalRunId = calo_HG_IN->GetRunId();
+  InitialTargetRun = DEFAULT;
+  FinalTargetRun = DEFAULT;
 }
   
 void LCalibration::Write(const char *fileOut) const {
@@ -69,24 +81,82 @@ LCalibration* LCalibration::Read(std::ifstream *fileIn) {
 }
 
 
-int LCalibration::GetRunId() const {
-  if(CheckStatus()==false) return -999;
-  // Take calo_HG as reference
-  return calo_HG->GetRunId();
-}
-
-int LCalibration::GetInitialTargetRun() const {
-  if(CheckStatus()==false) return -999;
-  // Take calo_HG as reference
-  return calo_HG->GetInitialTargetRun();
-}
-int LCalibration::GetFinalTargetRun() const {
-  if(CheckStatus()==false) return -999;
-  // Take calo_HG as reference
-  return calo_HG->GetFinalTargetRun();
-}
-
 bool LCalibration::CheckStatus(void) const {
-  if(&calo_HG==0 || &calo_LG==0 || &tracker ==0 ) return false;
+  if(calo_HG==0 || calo_LG==0 || tracker ==0 ) return false;
   return true;
 }
+
+
+LCalibration& LCalibration::operator=(const LCalibration& other) {
+  InitialRunId = other.GetInitialRunId();
+  FinalRunId = other.GetFinalRunId();
+  InitialTargetRun = other.GetInitialTargetRun();
+  FinalTargetRun = other.GetFinalTargetRun();
+
+  calo_HG = new LCaloCalibration();
+  (*calo_HG) = (*other.GetCaloHGCalibration());
+  calo_LG = new LCaloCalibration();
+  (*calo_LG) = (*other.GetCaloLGCalibration());
+  tracker = new LTrackerCalibration();
+  (*tracker) = (*other.GetTrackerCalibration());
+
+  return *this;
+}
+
+LCalibration& LCalibration::operator+=(const LCalibration& rhs) // compound assignment (does not need to be a member,
+{                           // but often is, to modify the private members)
+  
+  if(rhs.CheckStatus() == false) {
+    std::cerr << __LCALIBRATION__ << "Error in += call. Returning this unchanged" << std::endl; 
+    return *this;
+  }
+  
+  (*calo_HG) += (*rhs.GetCaloHGCalibration());
+  (*calo_LG) += (*rhs.GetCaloLGCalibration());
+  (*tracker) += (*rhs.GetTrackerCalibration());
+
+  // In/out run info
+  InitialRunId = std::min(InitialRunId, rhs.GetInitialRunId());
+  FinalRunId = std::max(FinalRunId, rhs.GetFinalRunId());
+  InitialTargetRun = std::min(InitialTargetRun, rhs.GetInitialTargetRun());
+  FinalTargetRun = std::max(FinalTargetRun, rhs.GetFinalTargetRun());
+
+  return *this; // return the result by reference
+}
+ 
+
+LCalibration operator+(LCalibration lhs,        // passing lhs by value helps optimize chained a+b+c
+		   const LCalibration& rhs) // otherwise, both parameters may be const references
+{
+  lhs += rhs; // reuse compound assignment
+  return lhs; // return the result by value (uses move constructor)
+}
+
+
+LCalibration& LCalibration::operator/=(const double& rhs) {
+  
+  (*calo_HG) /= rhs;
+  (*calo_LG) /= rhs;
+  (*tracker) /= rhs;
+
+  return *this; // return the result by reference
+}
+
+
+
+std::string LCalibration::GetWriteOutNameBase(void) {
+  std::ostringstream ostr;
+  ostr << "CalPar___Runs_";
+  if(GetInitialRunId()==DEFAULT) ostr << "DEF"; else  ostr << GetInitialRunId(); 
+  ostr << "_";
+  if(GetFinalRunId()==DEFAULT) ostr << "DEF"; else ostr << GetFinalRunId();
+  ostr << "___target_";
+  if(GetInitialTargetRun()==DEFAULT) ostr << "DEF"; else ostr << GetInitialTargetRun();
+  ostr << "_";
+  if(GetFinalTargetRun()==DEFAULT) ostr << "DEF"; else ostr << GetFinalTargetRun();
+  // no suffix!
+  std::string result=ostr.str();
+  return result;
+}
+
+ 

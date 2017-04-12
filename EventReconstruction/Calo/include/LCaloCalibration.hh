@@ -24,8 +24,15 @@ public:
   inline const double* GetPedestal() const {return pedestal;};
   inline const double* GetSigma() const {return sigma;};
   //inline const int* GetOutliers() const {return outliers;};
+  //inline const double* GetSkewness() const {return skewness;};
+  //inline const double* GetKurtosis() const {return kurtosis;};
   //  LCaloMask GetMaskOnSigma(const double sigmaMin, const double sigmaMax);
   //LCaloMask GetMaskOnOutliers(const int outliersMin, const int outliersMax);
+  LCaloCalibration& operator=(const LCaloCalibration& other);
+  LCaloCalibration& operator+=(const LCaloCalibration& rhs); // compound assignment (does not need to be a member,
+  friend LCaloCalibration operator+(LCaloCalibration lhs,        // passing lhs by value helps optimize chained a+b+c
+		     const LCaloCalibration& rhs);// otherwise, both parameters may be const references 
+  LCaloCalibration& operator/=(const double& rhs);
   
 private:
   // Calib infos

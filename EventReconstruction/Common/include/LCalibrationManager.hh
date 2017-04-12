@@ -1,5 +1,5 @@
 #ifndef __LCALIBRATIONMANAGER__
-#define __LCALIBRATIONMANAGER__ 1
+#define __LCALIBRATIONMANAGER__ "LCalibrationManager   ##### "
 
 #include "LCalibration.hh"
 
@@ -7,18 +7,29 @@ class LCalibrationManager {
   
 public:
   static LCalibrationManager& GetInstance();
-  
-  int LoadRun(const char *fileInp);
-  void SetTargetRuns(const int InitialRun, const int FinalRun=-1);
+  void LoadSteering(const char *steerFileIN);
   LCalibration* Calibrate(const int nEvents=-1, const int skipEvents=-1);
+  void Run();
   bool SetVerbosity(const bool boolFLAG);
 
 private:
-  LCalibrationManager(){;};
-  ~LCalibrationManager();
-
+  std::string steerFile;
   bool verboseFLAG;
+  bool steeringLoadedFLAG;
 
+  // Loaded from steering file
+  std::string inpFileList;
+  std::string inpRunMode;
+  std::string outDirectory;
+  int skipEvents, skipFileEvents, maxEvents, maxFileEvents, trackerSlotEvents;
+  int InitialTargetRun, FinalTargetRun;
+    
+  void LoadRun(const char *fileInp);
+  void SetTargetRuns(const int InitialRun, const int FinalRun=-1);
+  LCalibrationManager();
+  ~LCalibrationManager();
+  void Reset();
+  bool CheckLoadedSteering(void) const;
 
 
   /*  

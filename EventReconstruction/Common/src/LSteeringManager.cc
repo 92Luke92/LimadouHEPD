@@ -44,6 +44,8 @@ void LSteeringManager::Load(const char* inputFile) {
   myparser.dump();
 
   std::vector< std::vector< std::string > > mylines_parsed=myparser.get_lines();
+
+  std::cout << __LSTEERINGMANAGER__ << "Input file read. Interpreting..." << std::endl;
   
   // Interpret the file
   const unsigned char NOfTokensPerLine=3; // type name value
@@ -64,6 +66,8 @@ void LSteeringManager::Load(const char* inputFile) {
     ent.value = iit->at(2);
     parameters.push_back(ent);
   }  
+
+  std::cout << __LSTEERINGMANAGER__ << "Input file interpreted too." << std::endl;
 
   return;
 }

@@ -130,8 +130,11 @@ void LTrackerCluster::Dump() const {
   std::cout << "***************" << std::endl
             <<"\t seed " << seed << " (side " << ChanToSide(seed) << ", ladder " << ChanToLadder(seed) << ")" << std::endl
             <<"\t eta " << eta << std::endl << "\t";
+  std::cout << "\t counts ";
   for(int i = 0; i < CLUSTERCHANNELS; ++i)  std::cout << count[i] << " ";
-  std::cout << std::endl << "\t";
+  std::cout << std::endl << "\t sigma  ";
+  for(int i = 0; i < CLUSTERCHANNELS; ++i)  std::cout << sigma[i] << " ";
+  std::cout << std::endl << "\t sn     ";
   for(int i = 0; i < CLUSTERCHANNELS; ++i)  std::cout << sn[i] << " ";
   
   std::cout << std::endl << "***************" << std::endl;

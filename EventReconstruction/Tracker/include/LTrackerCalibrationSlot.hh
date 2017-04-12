@@ -20,6 +20,11 @@ public:
   LTrackerMask GetMaskOnSigma(const double sigmaMin, const double sigmaMax);
   LTrackerMask GetMaskOnNGI(const double NGIMin, const double NGIMax);
   void Reset();
+  LTrackerCalibrationSlot& operator=(const LTrackerCalibrationSlot& other);
+  LTrackerCalibrationSlot& operator+=(const LTrackerCalibrationSlot& rhs); // compound assignment (does not need to be a member,
+  friend LTrackerCalibrationSlot operator+(LTrackerCalibrationSlot lhs,        // passing lhs by value helps optimize chained a+b+c
+		     const LTrackerCalibrationSlot& rhs);// otherwise, both parameters may be const references 
+  LTrackerCalibrationSlot& operator/=(const double& rhs);
 private:
   // Calib infos
   int StartEvent;
