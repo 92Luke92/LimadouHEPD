@@ -493,7 +493,8 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
       
     outputFile << "\t<RUN_TYPE_error>"<< 0 << "</RUN_TYPE_error>\n";
     outputFile << "\t<RUN_DURATION_error>"<< 0 << "</RUN_DURATION_error>\n";
-    outputFile << "\t<ORBIT_error>"<< 0 << "</ORBIT_error>\n";
+    outputFile << dec << "\t<ORBIT_error>"<< 0 << "</ORBIT_error>\n";
+    outputFile << dec << "\t<ORBIT_error_yellow>"<< 0 << "</ORBIT_error_yellow>\n";
        
     if (t%2==0){
 	
@@ -505,8 +506,12 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 	outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";
 	  
 	   	         
-      if (orbitZone_vect[t]!=orbitZone_vect[t+1]) 
-	outputFile << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";	    	  
+      if (orbitZone_vect[t] >> 8 != 0 && orbitZone_vect[t] >> 8 != 1 && orbitZone_vect[t] >> 8 != 2 && orbitZone_vect[t] >> 8 != 3 && orbitZone_vect[t] >> 8 != 4 && orbitZone_vect[t] >> 8 != 5) 
+	outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
+      
+      if (orbitZone_vect[t] & 0x00FF == 170) 
+	outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";
+      
     }
       
     if (t%2!=0){
@@ -517,8 +522,11 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
       if (run_duration_vect[t]!=run_duration_vect[t-1]) 
 	outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";  
 	         
-      if (orbitZone_vect[t]!=orbitZone_vect[t-1])
-	outputFile << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";	  
+     if (orbitZone_vect[t] >> 8 != 0 && orbitZone_vect[t] >> 8 != 1 && orbitZone_vect[t] >> 8 != 2 && orbitZone_vect[t] >> 8 != 3 && orbitZone_vect[t] >> 8 != 4 && orbitZone_vect[t] >> 8 != 5) 
+	outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
+
+         if (orbitZone_vect[t] & 0x00FF != 170) 
+	outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";
     }
       
       
@@ -526,7 +534,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
     outputFile << "\t<RUN_NR>"     << run_id_vect[t]  << "</RUN_NR>\n";
     outputFile << "\t<RUN_TYPE>"   << run_type_vect[t]  << "</RUN_TYPE>\n";
     outputFile << "\t<RUN_DURATION>" << run_duration_vect[t] << "</RUN_DURATION>\n";
-    outputFile << "\t<ORBIT_ZONE>"   << orbitZone_vect[t]  << "</ORBIT_ZONE>\n";
+    outputFile << showbase << hex << uppercase << "\t<ORBIT_ZONE>"   << orbitZone_vect[t]  << "</ORBIT_ZONE>\n";
 
     outputFile << "</RUN_INFO>\n";
       
