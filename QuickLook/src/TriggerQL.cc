@@ -165,7 +165,7 @@ void TriggerScan(TString rootname)
    const char *name_pmt_rate_meter;
    for(int kk=0;kk<65;kk++) {
       pmt_rate_meter_vs_time[kk] = new TGraph();
-      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of PMT %i; Run time (ms); PMT rate meter (Hz)", kk+1));
+      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of PMT %i - %s; Run time (ms); PMT rate meter (Hz)", kk+1, subdetector[kk]));
    }
    
    Int_t cpu_startRunTime_vect[100];
@@ -376,33 +376,27 @@ void TriggerScan(TString rootname)
    TString rate_meter_pmt_46_54 = "13_pmt_rate_meter_46_54.png";
    c_rate_meter_pmt_46_54->SaveAs(rate_meter_pmt_46_54);
 
-   TCanvas* c_rate_meter_pmt_55_63 = new TCanvas("c_rate_meter_pmt_55_63"," ",1200,600);
-   c_rate_meter_pmt_55_63->Divide(3,3);
+   TCanvas* c_rate_meter_pmt_55_64 = new TCanvas("c_rate_meter_pmt_55_64"," ",1200,600);
+   c_rate_meter_pmt_55_64->Divide(3,3);
   
-   for(int p=54;p<63;p++)
+   for(int p=54;p<59;p++)
    {
-      c_rate_meter_pmt_55_63->cd(p-53);
+      c_rate_meter_pmt_55_64->cd(p-53);
+      gPad->SetGrid();
+      pmt_rate_meter_vs_time[p]->SetMarkerStyle(7);
+      pmt_rate_meter_vs_time[p]->Draw("AP");
+   }
+  
+   for(int p=59;p<63;p++)
+   {
+      c_rate_meter_pmt_55_64->cd(p-54);
       gPad->SetGrid();
       pmt_rate_meter_vs_time[p]->SetMarkerStyle(7);
       pmt_rate_meter_vs_time[p]->Draw("AP");
    }
 
-   TString rate_meter_pmt_55_63 = "14_pmt_rate_meter_55_63.png";
-   c_rate_meter_pmt_55_63->SaveAs(rate_meter_pmt_55_63);
-
-   TCanvas* c_rate_meter_pmt_64_65 = new TCanvas("c_rate_meter_pmt_64_65"," ",1200,600);
-   c_rate_meter_pmt_64_65->Divide(3,3);
-   c_rate_meter_pmt_64_65->cd(1);
-   gPad->SetGrid();
-   pmt_rate_meter_vs_time[63]->SetMarkerStyle(7);
-   pmt_rate_meter_vs_time[63]->Draw("AP");
-   c_rate_meter_pmt_64_65->cd(2);
-   gPad->SetGrid();
-   pmt_rate_meter_vs_time[64]->SetMarkerStyle(7);
-   pmt_rate_meter_vs_time[64]->Draw("AP");
-   
-   TString rate_meter_pmt_64_65 = "15_pmt_rate_meter_64_65.png";
-   c_rate_meter_pmt_64_65->SaveAs(rate_meter_pmt_64_65);
+   TString rate_meter_pmt_55_64 = "14_pmt_rate_meter_55_64.png";
+   c_rate_meter_pmt_55_64->SaveAs(rate_meter_pmt_55_64);
 
    
    const char *char_outname = outname;
