@@ -95,6 +95,7 @@ int LCaloCalibrationManager::GetPeakLG(const int pmtnum) const {
 //---------------------------------------------------------------------------
 
 int LCaloCalibrationManager::FindPeak(const int pmtnum, const int PeakFinderWindowWidth, const bool isHG) const {
+  std::cout << __LCALOCALIBRATIONMANAGER__ << "Finding peak for pmt number " << pmtnum << std::endl;
   int *spectrum = new int[PeakFinderWindowWidth];
   for(int i=0; i<PeakFinderWindowWidth; ++i) spectrum[i]=0;
   int cursor=0;
