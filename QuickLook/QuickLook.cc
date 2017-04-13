@@ -9,7 +9,7 @@ int main(int argc, char **argv){
    std::cout << "Running quicklook: " << std::endl;
 
    TString xslPath = "./";
-   TString outDir = "./";
+   //TString outPath = "./";
    
    TString broad1;
    TString broad2;
@@ -49,29 +49,32 @@ int main(int argc, char **argv){
 	    continue;
 	 }
       }
-      // if (!strcmp(argv[i], "-o"))
-      // {
-      // 	 if (++i >= argc)
-      // 	 {
-      // 	    std::cout <<  "\n-o needs arguments." << std::endl;
-      // 	    PrintHelp();
-      // 	    return -1;
-      // 	 } else {
-      // 	    outDir = argv[i];
-      // 	    continue;
-      // 	 }
-      // }
-
+      /*if (!strcmp(argv[i], "-o"))
+      {
+      	 if (++i >= argc)
+      	 {
+      	    std::cout <<  "\n-o needs arguments." << std::endl;
+      	    PrintHelp();
+      	    return -1;
+      	 } else {
+      	    outPath = argv[i];
+      	    continue;
+      	 }
+       }
+      */
    }
 
    std::cout << "xsl path = " << xslPath << std::endl;
-   std::cout << "output dir = " << outDir << std::endl;
+   //std::cout << "output path = " << outPath << std::endl;
 
    if (TrackerQuickLook(argv[1]) == -1 )
       std::cout << "Not Virgin run: " << std::endl;
-   
+
    TriggerScan(argv[1]);
    PMTScan(argv[1]);
+   
+   //TriggerScan(argv[1],outPath);
+   //PMTScan(argv[1],outPath);
 
    broad1 = xslPath+"TimeBroadcastTemplate.xsl";
    broad2 = xslPath+"GPSBroadcastTemplate.xsl";
@@ -98,7 +101,7 @@ int main(int argc, char **argv){
 
 void PrintHelp(void)
 {
-   std::cout << "\nUsage: ./QuickLook <root file directory>  -x <xsl folder>\n" << std::endl;
+   std::cout << "\nUsage: ./QuickLook <root file directory>  -x <xsl folder> -o <output folder>\n" << std::endl;
    std::cout <<  "\t -h or --help print this help and exit \n" << std::endl;
    std::cout << "\t -x <path> set the path to xsl template files [default ./] "
 	     << std::endl;

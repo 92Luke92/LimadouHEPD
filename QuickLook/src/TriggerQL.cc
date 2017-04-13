@@ -165,7 +165,7 @@ void TriggerScan(TString rootname)
    const char *name_pmt_rate_meter;
    for(int kk=0;kk<65;kk++) {
       pmt_rate_meter_vs_time[kk] = new TGraph();
-      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of PMT %i - %s; Run time (ms); PMT rate meter (Hz)", kk+1, subdetector[kk]));
+      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (CH%i); Run time (ms); PMT rate meter (Hz)", subdetector[kk], kk));
    }
    
    Int_t cpu_startRunTime_vect[100];
@@ -402,5 +402,8 @@ void TriggerScan(TString rootname)
    const char *char_outname = outname;
    gROOT->ProcessLine(Form(".!convert `ls -v *.png` %s",char_outname));
    gROOT->ProcessLine(".!rm *.png");
+
+   //const char *char_outPath = outPath;
+   //gROOT->ProcessLine(Form(".!mv %s %s", char_outname, char_outPath));
    
 }
