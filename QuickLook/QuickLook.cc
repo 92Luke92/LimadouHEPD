@@ -2,6 +2,7 @@
 #include "LTrackerQuicklook.hh"
 #include <stdlib.h>
 #include <TSystem.h>
+#include <TROOT.h>
 
 
 int main(int argc, char **argv){
@@ -9,7 +10,7 @@ int main(int argc, char **argv){
    std::cout << "Running quicklook: " << std::endl;
 
    TString xslPath = "./";
-   //TString outPath = "./";
+   TString outPath = "./";
    
    TString broad1;
    TString broad2;
@@ -49,7 +50,7 @@ int main(int argc, char **argv){
 	    continue;
 	 }
       }
-      /*if (!strcmp(argv[i], "-o"))
+      if (!strcmp(argv[i], "-o"))
       {
       	 if (++i >= argc)
       	 {
@@ -61,20 +62,17 @@ int main(int argc, char **argv){
       	    continue;
       	 }
        }
-      */
+      
    }
 
    std::cout << "xsl path = " << xslPath << std::endl;
-   //std::cout << "output path = " << outPath << std::endl;
+   std::cout << "output path = " << outPath << std::endl;
 
    if (TrackerQuickLook(argv[1]) == -1 )
       std::cout << "Not Virgin run: " << std::endl;
-
+   
    TriggerScan(argv[1]);
    PMTScan(argv[1]);
-   
-   //TriggerScan(argv[1],outPath);
-   //PMTScan(argv[1],outPath);
 
    broad1 = xslPath+"TimeBroadcastTemplate.xsl";
    broad2 = xslPath+"GPSBroadcastTemplate.xsl";
@@ -93,6 +91,9 @@ int main(int argc, char **argv){
    ScintConfigToXML(argv[1], scint);
    SilConfigToXML(argv[1], sil);
    TelemetryToXML(argv[1], tel);
+
+   const char *char_outPath = outPath;
+   gROOT->ProcessLine(Form(".!mv *.pdf *xml %s", char_outPath));
            
    
   return 0; 

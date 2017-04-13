@@ -863,9 +863,5 @@ void PMTScan(TString rootname)
       }
   }
 
-  const char *char_outname = outname;
-  //const char *char_outPath = outPath;
-  //gROOT->ProcessLine(Form(".!mv %s %s", char_outname, char_outPath));
-
   
 }

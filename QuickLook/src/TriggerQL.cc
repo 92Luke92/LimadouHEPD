@@ -402,8 +402,5 @@ void TriggerScan(TString rootname)
    const char *char_outname = outname;
    gROOT->ProcessLine(Form(".!convert `ls -v *.png` %s",char_outname));
    gROOT->ProcessLine(".!rm *.png");
-
-   //const char *char_outPath = outPath;
-   //gROOT->ProcessLine(Form(".!mv %s %s", char_outname, char_outPath));
    
 }
