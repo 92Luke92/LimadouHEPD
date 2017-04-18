@@ -491,7 +491,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
        
     outputFile << "<RUN_INFO>\n";
       
-    outputFile << "\t<RUN_TYPE_error>"<< 0 << "</RUN_TYPE_error>\n";
+    outputFile <<  dec << "\t<RUN_TYPE_error>"<< 0 << "</RUN_TYPE_error>\n";
     outputFile << "\t<RUN_DURATION_error>"<< 0 << "</RUN_DURATION_error>\n";
     outputFile << dec << "\t<ORBIT_error>"<< 0 << "</ORBIT_error>\n";
     outputFile << dec << "\t<ORBIT_error_yellow>"<< 0 << "</ORBIT_error_yellow>\n";
@@ -499,41 +499,42 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
     if (t%2==0){
 	
       if (run_type_vect[t]!=run_type_vect[t+1]) 
-	outputFile << "\t<RUN_TYPE_error>"<< 1 << "</RUN_TYPE_error>\n";
+	outputFile << dec << "\t<RUN_TYPE_error>"<< 1 << "</RUN_TYPE_error>\n";
 	    
     	    
       if (run_duration_vect[t]!=run_duration_vect[t+1]) 
 	outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";
 	  
-	   	         
-      if (orbitZone_vect[t] >> 8 != 0 && orbitZone_vect[t] >> 8 != 1 && orbitZone_vect[t] >> 8 != 2 && orbitZone_vect[t] >> 8 != 3 && orbitZone_vect[t] >> 8 != 4 && orbitZone_vect[t] >> 8 != 5) 
+         
+      if (orbitZone_vect[t] & 0x00FF != 0 && orbitZone_vect[t] & 0x00FF != 1 && orbitZone_vect[t] & 0x00FF != 2 && orbitZone_vect[t] & 0x00FF != 3 && orbitZone_vect[t] & 0x00FF != 4 && orbitZone_vect[t]  & 0x00FF != 5) 
 	outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
-      
-      if (orbitZone_vect[t] & 0x00FF == 170) 
-	outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";
+          
+      if (orbitZone_vect[t] >> 8 == 170) 
+	outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";   
       
     }
       
     if (t%2!=0){
 	
       if (run_type_vect[t]!=run_type_vect[t-1]) 
-	outputFile << "\t<RUN_TYPE_error>"<< 1 << "</RUN_TYPE_error>\n";
+	outputFile << dec << "\t<RUN_TYPE_error>"<< 1 << "</RUN_TYPE_error>\n";
 	   	    
       if (run_duration_vect[t]!=run_duration_vect[t-1]) 
 	outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";  
 	         
-     if (orbitZone_vect[t] >> 8 != 0 && orbitZone_vect[t] >> 8 != 1 && orbitZone_vect[t] >> 8 != 2 && orbitZone_vect[t] >> 8 != 3 && orbitZone_vect[t] >> 8 != 4 && orbitZone_vect[t] >> 8 != 5) 
+ if (orbitZone_vect[t] & 0x00FF != 0 && orbitZone_vect[t] & 0x00FF != 1 && orbitZone_vect[t] & 0x00FF != 2 && orbitZone_vect[t] & 0x00FF != 3 && orbitZone_vect[t] & 0x00FF != 4 && orbitZone_vect[t]  & 0x00FF != 5) 
 	outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
-
-         if (orbitZone_vect[t] & 0x00FF != 170) 
+          
+      if (orbitZone_vect[t] >> 8 == 170) 
 	outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";
+	 
     }
       
       
-    outputFile << "\t<BOOT_NR>"    << boot_nr_vect[t]  << "</BOOT_NR>\n";
-    outputFile << "\t<RUN_NR>"     << run_id_vect[t]  << "</RUN_NR>\n";
-    outputFile << "\t<RUN_TYPE>"   << run_type_vect[t]  << "</RUN_TYPE>\n";
-    outputFile << "\t<RUN_DURATION>" << run_duration_vect[t] << "</RUN_DURATION>\n";
+    outputFile << dec << "\t<BOOT_NR>"    << boot_nr_vect[t]  << "</BOOT_NR>\n";
+    outputFile << dec << "\t<RUN_NR>"     << run_id_vect[t]  << "</RUN_NR>\n";
+    outputFile << showbase << hex << "\t<RUN_TYPE>"   << run_type_vect[t]  << "</RUN_TYPE>\n";
+    outputFile << dec << "\t<RUN_DURATION>" << run_duration_vect[t] << "</RUN_DURATION>\n";
     outputFile << showbase << hex << uppercase << "\t<ORBIT_ZONE>"   << orbitZone_vect[t]  << "</ORBIT_ZONE>\n";
 
     outputFile << "</RUN_INFO>\n";
@@ -595,95 +596,95 @@ void ScintConfigToXML(TString rootname, TString xslPath = "")
 		   << "</VETO_CONFIG>\n";
 	outputFile << "\t<CURRENT_TRIGGER_MASK>" << (short)metaData.trigger_mask[1]
 		   << "</CURRENT_TRIGGER_MASK>\n";
-	outputFile << "\t<EASIROC_1>" << (short)metaData.easiroc_config[0]
+	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_1>" << (short)metaData.easiroc_config[0]
 		   << "</EASIROC_1>\n";
-	outputFile << "\t<EASIROC_2>" << (short)metaData.easiroc_config[60]
+	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_2>" << (short)metaData.easiroc_config[60]
 		   << "</EASIROC_2>\n";
 
        
-	outputFile << "/<MASK_PMT_0>" << metaData.PMT_mask[0] << "</MASK_PMT_0>/n";
-	outputFile << "/<MASK_PMT_1>" << metaData.PMT_mask[1] << "</MASK_PMT_1>/n";
-	outputFile << "/<MASK_PMT_2>" << metaData.PMT_mask[2] << "</MASK_PMT_2>/n";
-	outputFile << "/<MASK_PMT_3>" << metaData.PMT_mask[3] << "</MASK_PMT_3>/n";
-	outputFile << "/<MASK_PMT_4>" << metaData.PMT_mask[4] << "</MASK_PMT_4>/n";
-	outputFile << "/<MASK_PMT_5>" << metaData.PMT_mask[5] << "</MASK_PMT_5>/n";
-	outputFile << "/<MASK_PMT_6>" << metaData.PMT_mask[6]  << "</MASK_PMT_6>/n";
-	outputFile << "/<MASK_PMT_7>" << metaData.PMT_mask[7] << "</MASK_PMT_7>/n";
-	outputFile << "/<MASK_PMT_8>" << metaData.PMT_mask[8]  << "</MASK_PMT_8>/n";
-	outputFile << "/<MASK_PMT_9>" << metaData.PMT_mask[9]  << "</MASK_PMT_9>/n";
-	outputFile << "/<MASK_PMT_10>" << metaData.PMT_mask[10]  << "</MASK_PMT_10>/n";
-	outputFile << "/<MASK_PMT_11>" << metaData.PMT_mask[11]  << "</MASK_PMT_11>/n";
-	outputFile << "/<MASK_PMT_12>" << metaData.PMT_mask[12]  << "</MASK_PMT_12>/n";
-	outputFile << "/<MASK_PMT_13>" << metaData.PMT_mask[13]  << "</MASK_PMT_13>/n";
-	outputFile << "/<MASK_PMT_14>" << metaData.PMT_mask[14]  << "</MASK_PMT_14>/n";
-	outputFile << "/<MASK_PMT_15>" << metaData.PMT_mask[15]  << "</MASK_PMT_15>/n";
-	outputFile << "/<MASK_PMT_16>" << metaData.PMT_mask[16]  << "</MASK_PMT_16>/n";
-	outputFile << "/<MASK_PMT_17>" << metaData.PMT_mask[17]  << "</MASK_PMT_17>/n";
-	outputFile << "/<MASK_PMT_18>" << metaData.PMT_mask[18]  << "</MASK_PMT_18>/n";
-	outputFile << "/<MASK_PMT_19>" << metaData.PMT_mask[19]  << "</MASK_PMT_19>/n";
-	outputFile << "/<MASK_PMT_20>" << metaData.PMT_mask[20]  << "</MASK_PMT_20>/n";
-	outputFile << "/<MASK_PMT_21>" << metaData.PMT_mask[21] << "</MASK_PMT_21>/n";
-	outputFile << "/<MASK_PMT_22>" << metaData.PMT_mask[22] << "</MASK_PMT_22>/n";
-	outputFile << "/<MASK_PMT_23>" << metaData.PMT_mask[23] << "</MASK_PMT_23>/n";
-	outputFile << "/<MASK_PMT_24>" << metaData.PMT_mask[24] << "</MASK_PMT_24>/n";
-	outputFile << "/<MASK_PMT_25>" << metaData.PMT_mask[25] << "</MASK_PMT_25>/n";
-	outputFile << "/<MASK_PMT_26>" << metaData.PMT_mask[26]  << "</MASK_PMT_26>/n";
-	outputFile << "/<MASK_PMT_27>" << metaData.PMT_mask[27]  << "</MASK_PMT_27>/n";
-	outputFile << "/<MASK_PMT_28>" << metaData.PMT_mask[28] << "</MASK_PMT_28>/n";
-	outputFile << "/<MASK_PMT_29>" << metaData.PMT_mask[29] << "</MASK_PMT_29>/n";
-	outputFile << "/<MASK_PMT_30>" << metaData.PMT_mask[30]  << "</MASK_PMT_30>/n";
-	outputFile << "/<MASK_PMT_31>" << metaData.PMT_mask[31]  << "</MASK_PMT_31>/n";
+	outputFile << dec <<  "/<MASK_PMT_0>" << metaData.PMT_mask[0] << "</MASK_PMT_0>/n";
+	outputFile << dec << "/<MASK_PMT_1>" << metaData.PMT_mask[1] << "</MASK_PMT_1>/n";
+	outputFile << dec << "/<MASK_PMT_2>" << metaData.PMT_mask[2] << "</MASK_PMT_2>/n";
+	outputFile << dec <<"/<MASK_PMT_3>" << metaData.PMT_mask[3] << "</MASK_PMT_3>/n";
+	outputFile << dec <<"/<MASK_PMT_4>" << metaData.PMT_mask[4] << "</MASK_PMT_4>/n";
+	outputFile << dec <<"/<MASK_PMT_5>" << metaData.PMT_mask[5] << "</MASK_PMT_5>/n";
+	outputFile << dec <<"/<MASK_PMT_6>" << metaData.PMT_mask[6]  << "</MASK_PMT_6>/n";
+	outputFile << dec <<"/<MASK_PMT_7>" << metaData.PMT_mask[7] << "</MASK_PMT_7>/n";
+	outputFile << dec <<"/<MASK_PMT_8>" << metaData.PMT_mask[8]  << "</MASK_PMT_8>/n";
+	outputFile << dec <<"/<MASK_PMT_9>" << metaData.PMT_mask[9]  << "</MASK_PMT_9>/n";
+	outputFile << dec <<"/<MASK_PMT_10>" << metaData.PMT_mask[10]  << "</MASK_PMT_10>/n";
+	outputFile << dec <<"/<MASK_PMT_11>" << metaData.PMT_mask[11]  << "</MASK_PMT_11>/n";
+	outputFile << dec <<"/<MASK_PMT_12>" << metaData.PMT_mask[12]  << "</MASK_PMT_12>/n";
+	outputFile << dec <<"/<MASK_PMT_13>" << metaData.PMT_mask[13]  << "</MASK_PMT_13>/n";
+	outputFile << dec <<"/<MASK_PMT_14>" << metaData.PMT_mask[14]  << "</MASK_PMT_14>/n";
+	outputFile << dec <<"/<MASK_PMT_15>" << metaData.PMT_mask[15]  << "</MASK_PMT_15>/n";
+	outputFile << dec <<"/<MASK_PMT_16>" << metaData.PMT_mask[16]  << "</MASK_PMT_16>/n";
+	outputFile << dec <<"/<MASK_PMT_17>" << metaData.PMT_mask[17]  << "</MASK_PMT_17>/n";
+	outputFile << dec <<"/<MASK_PMT_18>" << metaData.PMT_mask[18]  << "</MASK_PMT_18>/n";
+	outputFile << dec <<"/<MASK_PMT_19>" << metaData.PMT_mask[19]  << "</MASK_PMT_19>/n";
+	outputFile << dec <<"/<MASK_PMT_20>" << metaData.PMT_mask[20]  << "</MASK_PMT_20>/n";
+	outputFile << dec <<"/<MASK_PMT_21>" << metaData.PMT_mask[21] << "</MASK_PMT_21>/n";
+	outputFile << dec <<"/<MASK_PMT_22>" << metaData.PMT_mask[22] << "</MASK_PMT_22>/n";
+	outputFile << dec <<"/<MASK_PMT_23>" << metaData.PMT_mask[23] << "</MASK_PMT_23>/n";
+	outputFile << dec <<"/<MASK_PMT_24>" << metaData.PMT_mask[24] << "</MASK_PMT_24>/n";
+	outputFile << dec <<"/<MASK_PMT_25>" << metaData.PMT_mask[25] << "</MASK_PMT_25>/n";
+	outputFile << dec <<"/<MASK_PMT_26>" << metaData.PMT_mask[26]  << "</MASK_PMT_26>/n";
+	outputFile << dec <<"/<MASK_PMT_27>" << metaData.PMT_mask[27]  << "</MASK_PMT_27>/n";
+	outputFile << dec <<"/<MASK_PMT_28>" << metaData.PMT_mask[28] << "</MASK_PMT_28>/n";
+	outputFile << dec <<"/<MASK_PMT_29>" << metaData.PMT_mask[29] << "</MASK_PMT_29>/n";
+	outputFile << dec <<"/<MASK_PMT_30>" << metaData.PMT_mask[30]  << "</MASK_PMT_30>/n";
+	outputFile << dec <<"/<MASK_PMT_31>" << metaData.PMT_mask[31]  << "</MASK_PMT_31>/n";
 
-	outputFile << "/<MASK2_PMT_0>" << metaData.PMT_mask[32] << "</MASK2_PMT_0>/n";
-	outputFile << "/<MASK2_PMT_1>" << metaData.PMT_mask[33] << "</MASK2_PMT_1>/n";
-	outputFile << "/<MASK2_PMT_2>" << metaData.PMT_mask[34] << "</MASK2_PMT_2>/n";
-	outputFile << "/<MASK2_PMT_3>" << metaData.PMT_mask[35] << "</MASK2_PMT_3>/n";
-	outputFile << "/<MASK2_PMT_4>" << metaData.PMT_mask[36] << "</MASK2_PMT_4>/n";
-	outputFile << "/<MASK2_PMT_5>" << metaData.PMT_mask[37] << "</MASK2_PMT_5>/n";
-	outputFile << "/<MASK2_PMT_6>" << metaData.PMT_mask[38] << "</MASK2_PMT_6>/n";
-	outputFile << "/<MASK2_PMT_7>" << metaData.PMT_mask[39] << "</MASK2_PMT_7>/n";
-	outputFile << "/<MASK2_PMT_8>" << metaData.PMT_mask[40] << "</MASK2_PMT_8>/n";
-	outputFile << "/<MASK2_PMT_9>" << metaData.PMT_mask[41] << "</MASK2_PMT_9>/n";
-	outputFile << "/<MASK2_PMT_10>" << metaData.PMT_mask[42]  << "</MASK2_PMT_10>/n";
-	outputFile << "/<MASK2_PMT_11>" << metaData.PMT_mask[43]  << "</MASK2_PMT_11>/n";
-	outputFile << "/<MASK2_PMT_12>" << metaData.PMT_mask[44] << "</MASK2_PMT_12>/n";
-	outputFile << "/<MASK2_PMT_13>" << metaData.PMT_mask[45] << "</MASK2_PMT_13>/n";
-	outputFile << "/<MASK2_PMT_14>" << metaData.PMT_mask[46]  << "</MASK2_PMT_14>/n";
-	outputFile << "/<MASK2_PMT_15>" << metaData.PMT_mask[47] << "</MASK2_PMT_15>/n";
-	outputFile << "/<MASK2_PMT_16>" << metaData.PMT_mask[48]  << "</MASK2_PMT_16>/n";
-	outputFile << "/<MASK2_PMT_17>" << metaData.PMT_mask[49]  << "</MASK2_PMT_17>/n";
-	outputFile << "/<MASK2_PMT_18>" << metaData.PMT_mask[50] << "</MASK2_PMT_18>/n";
-	outputFile << "/<MASK2_PMT_19>" << metaData.PMT_mask[51] << "</MASK2_PMT_19>/n";
-	outputFile << "/<MASK2_PMT_20>" << metaData.PMT_mask[52] << "</MASK2_PMT_20>/n";
-	outputFile << "/<MASK2_PMT_21>" << metaData.PMT_mask[53] << "</MASK2_PMT_21>/n";
-	outputFile << "/<MASK2_PMT_22>" << metaData.PMT_mask[54]  << "</MASK2_PMT_22>/n";
-	outputFile << "/<MASK2_PMT_23>" << metaData.PMT_mask[55] << "</MASK2_PMT_23>/n";
-	outputFile << "/<MASK2_PMT_24>" << metaData.PMT_mask[56] << "</MASK2_PMT_24>/n";
-	outputFile << "/<MASK2_PMT_25>" << metaData.PMT_mask[57] << "</MASK2_PMT_25>/n";
-	outputFile << "/<MASK2_PMT_26>" << metaData.PMT_mask[58] << "</MASK2_PMT_26>/n";
-	outputFile << "/<MASK2_PMT_27>" << metaData.PMT_mask[59] << "</MASK2_PMT_27>/n";
-	outputFile << "/<MASK2_PMT_28>" << metaData.PMT_mask[60] << "</MASK2_PMT_28>/n";
-	outputFile << "/<MASK2_PMT_29>" << metaData.PMT_mask[61] << "</MASK2_PMT_29>/n";
-	outputFile << "/<MASK2_PMT_30>" << metaData.PMT_mask[62]  << "</MASK2_PMT_30>/n";
+	outputFile << dec <<"/<MASK2_PMT_0>" << metaData.PMT_mask[32] << "</MASK2_PMT_0>/n";
+	outputFile << dec <<"/<MASK2_PMT_1>" << metaData.PMT_mask[33] << "</MASK2_PMT_1>/n";
+	outputFile << dec <<"/<MASK2_PMT_2>" << metaData.PMT_mask[34] << "</MASK2_PMT_2>/n";
+	outputFile << dec <<"/<MASK2_PMT_3>" << metaData.PMT_mask[35] << "</MASK2_PMT_3>/n";
+	outputFile << dec <<"/<MASK2_PMT_4>" << metaData.PMT_mask[36] << "</MASK2_PMT_4>/n";
+	outputFile << dec <<"/<MASK2_PMT_5>" << metaData.PMT_mask[37] << "</MASK2_PMT_5>/n";
+	outputFile << dec <<"/<MASK2_PMT_6>" << metaData.PMT_mask[38] << "</MASK2_PMT_6>/n";
+	outputFile << dec <<"/<MASK2_PMT_7>" << metaData.PMT_mask[39] << "</MASK2_PMT_7>/n";
+	outputFile << dec <<"/<MASK2_PMT_8>" << metaData.PMT_mask[40] << "</MASK2_PMT_8>/n";
+	outputFile << dec <<"/<MASK2_PMT_9>" << metaData.PMT_mask[41] << "</MASK2_PMT_9>/n";
+	outputFile << dec <<"/<MASK2_PMT_10>" << metaData.PMT_mask[42]  << "</MASK2_PMT_10>/n";
+	outputFile << dec <<"/<MASK2_PMT_11>" << metaData.PMT_mask[43]  << "</MASK2_PMT_11>/n";
+	outputFile << dec <<"/<MASK2_PMT_12>" << metaData.PMT_mask[44] << "</MASK2_PMT_12>/n";
+	outputFile << dec <<"/<MASK2_PMT_13>" << metaData.PMT_mask[45] << "</MASK2_PMT_13>/n";
+	outputFile << dec <<"/<MASK2_PMT_14>" << metaData.PMT_mask[46]  << "</MASK2_PMT_14>/n";
+	outputFile << dec <<"/<MASK2_PMT_15>" << metaData.PMT_mask[47] << "</MASK2_PMT_15>/n";
+	outputFile << dec <<"/<MASK2_PMT_16>" << metaData.PMT_mask[48]  << "</MASK2_PMT_16>/n";
+	outputFile << dec <<"/<MASK2_PMT_17>" << metaData.PMT_mask[49]  << "</MASK2_PMT_17>/n";
+	outputFile << dec <<"/<MASK2_PMT_18>" << metaData.PMT_mask[50] << "</MASK2_PMT_18>/n";
+	outputFile << dec <<"/<MASK2_PMT_19>" << metaData.PMT_mask[51] << "</MASK2_PMT_19>/n";
+	outputFile << dec <<"/<MASK2_PMT_20>" << metaData.PMT_mask[52] << "</MASK2_PMT_20>/n";
+	outputFile << dec <<"/<MASK2_PMT_21>" << metaData.PMT_mask[53] << "</MASK2_PMT_21>/n";
+	outputFile << dec <<"/<MASK2_PMT_22>" << metaData.PMT_mask[54]  << "</MASK2_PMT_22>/n";
+	outputFile << dec <<"/<MASK2_PMT_23>" << metaData.PMT_mask[55] << "</MASK2_PMT_23>/n";
+	outputFile << dec <<"/<MASK2_PMT_24>" << metaData.PMT_mask[56] << "</MASK2_PMT_24>/n";
+	outputFile << dec <<"/<MASK2_PMT_25>" << metaData.PMT_mask[57] << "</MASK2_PMT_25>/n";
+	outputFile << dec <<"/<MASK2_PMT_26>" << metaData.PMT_mask[58] << "</MASK2_PMT_26>/n";
+	outputFile << dec <<"/<MASK2_PMT_27>" << metaData.PMT_mask[59] << "</MASK2_PMT_27>/n";
+	outputFile << dec <<"/<MASK2_PMT_28>" << metaData.PMT_mask[60] << "</MASK2_PMT_28>/n";
+	outputFile << dec <<"/<MASK2_PMT_29>" << metaData.PMT_mask[61] << "</MASK2_PMT_29>/n";
+	outputFile << dec <<"/<MASK2_PMT_30>" << metaData.PMT_mask[62]  << "</MASK2_PMT_30>/n";
 
-        outputFile << "/<GEN_TRIG_MASK_0>" << metaData.gen_trig_mask[0]  << "</GEN_TRIG_MASK_0>/n";
-	outputFile << "/<GEN_TRIG_MASK_1>" << metaData.gen_trig_mask[1]  << "</GEN_TRIG_MASK_1>/n";
-	outputFile << "/<GEN_TRIG_MASK_2>" << metaData.gen_trig_mask[2]  << "</GEN_TRIG_MASK_2>/n";
-	outputFile << "/<GEN_TRIG_MASK_3>" << metaData.gen_trig_mask[3]  << "</GEN_TRIG_MASK_3>/n";
-	outputFile << "/<GEN_TRIG_MASK_4>" << metaData.gen_trig_mask[4]  << "</GEN_TRIG_MASK_4>/n";
-	outputFile << "/<GEN_TRIG_MASK_5>" << metaData.gen_trig_mask[5]  << "</GEN_TRIG_MASK_5>/n";
-	outputFile << "/<GEN_TRIG_MASK_6>" << metaData.gen_trig_mask[6]  << "</GEN_TRIG_MASK_6>/n";
-	outputFile << "/<GEN_TRIG_MASK_7>" << metaData.gen_trig_mask[7]  << "</GEN_TRIG_MASK_7>/n";
-	outputFile << "/<GEN_TRIG_MASK_8>" << metaData.gen_trig_mask[8]  << "</GEN_TRIG_MASK_8>/n";
-	outputFile << "/<GEN_TRIG_MASK_9>" << metaData.gen_trig_mask[9]  << "</GEN_TRIG_MASK_9>/n";
-	outputFile << "/<GEN_TRIG_MASK_10>" << metaData.gen_trig_mask[10]  << "</GEN_TRIG_MASK_10>/n";
-	outputFile << "/<GEN_TRIG_MASK_11>" << metaData.gen_trig_mask[11]  << "</GEN_TRIG_MASK_11>/n";
-	outputFile << "/<GEN_TRIG_MASK_12>" << metaData.gen_trig_mask[12]  << "</GEN_TRIG_MASK_12>/n";
-	outputFile << "/<GEN_TRIG_MASK_13>" << metaData.gen_trig_mask[13]  << "</GEN_TRIG_MASK_13>/n";
-	outputFile << "/<GEN_TRIG_MASK_14>" << metaData.gen_trig_mask[14]  << "</GEN_TRIG_MASK_14>/n";
-	outputFile << "/<GEN_TRIG_MASK_15>" << metaData.gen_trig_mask[15]  << "</GEN_TRIG_MASK_15>/n";
-	outputFile << "/<GEN_TRIG_MASK_16>" << metaData.gen_trig_mask[16]  << "</GEN_TRIG_MASK_16>/n";
-	outputFile << "/<GEN_TRIG_MASK_17>" << metaData.gen_trig_mask[17]  << "</GEN_TRIG_MASK_17>/n";
+        outputFile << dec <<"/<GEN_TRIG_MASK_0>" << metaData.gen_trig_mask[0]  << "</GEN_TRIG_MASK_0>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_1>" << metaData.gen_trig_mask[1]  << "</GEN_TRIG_MASK_1>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_2>" << metaData.gen_trig_mask[2]  << "</GEN_TRIG_MASK_2>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_3>" << metaData.gen_trig_mask[3]  << "</GEN_TRIG_MASK_3>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_4>" << metaData.gen_trig_mask[4]  << "</GEN_TRIG_MASK_4>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_5>" << metaData.gen_trig_mask[5]  << "</GEN_TRIG_MASK_5>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_6>" << metaData.gen_trig_mask[6]  << "</GEN_TRIG_MASK_6>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_7>" << metaData.gen_trig_mask[7]  << "</GEN_TRIG_MASK_7>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_8>" << metaData.gen_trig_mask[8]  << "</GEN_TRIG_MASK_8>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_9>" << metaData.gen_trig_mask[9]  << "</GEN_TRIG_MASK_9>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_10>" << metaData.gen_trig_mask[10]  << "</GEN_TRIG_MASK_10>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_11>" << metaData.gen_trig_mask[11]  << "</GEN_TRIG_MASK_11>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_12>" << metaData.gen_trig_mask[12]  << "</GEN_TRIG_MASK_12>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_13>" << metaData.gen_trig_mask[13]  << "</GEN_TRIG_MASK_13>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_14>" << metaData.gen_trig_mask[14]  << "</GEN_TRIG_MASK_14>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_15>" << metaData.gen_trig_mask[15]  << "</GEN_TRIG_MASK_15>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_16>" << metaData.gen_trig_mask[16]  << "</GEN_TRIG_MASK_16>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_17>" << metaData.gen_trig_mask[17]  << "</GEN_TRIG_MASK_17>/n";
 
 	outputFile << "</SCINTCONFIG>\n";
       }   
