@@ -20,8 +20,8 @@ int main(int argc, char **argv){
    TString scint;
    TString sil;
    TString tel;
-
-
+   
+   
    if (argc < 2)
    {
       PrintHelp();
@@ -93,7 +93,8 @@ int main(int argc, char **argv){
    TelemetryToXML(argv[1], tel);
 
    const char *char_outPath = outPath;
-   gROOT->ProcessLine(Form(".!mv *.pdf *xml %s", char_outPath));
+   gROOT->ProcessLine(Form(".!mkdir -p %s",char_outPath));
+   gROOT->ProcessLine(Form(".!mv *.pdf *.xml %s", char_outPath));
            
    
   return 0; 
@@ -106,6 +107,6 @@ void PrintHelp(void)
    std::cout <<  "\t -h or --help print this help and exit \n" << std::endl;
    std::cout << "\t -x <path> set the path to xsl template files [default ./] "
 	     << std::endl;
-   //std::cout << "\t -o <path> set the path for the output files [default ./]" << std::endl;
+   std::cout << "\t -o <path> set the path for the output files [default ./]" << std::endl;
 }
 
