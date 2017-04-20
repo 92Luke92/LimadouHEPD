@@ -116,7 +116,8 @@ std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigm
     }
     */
     LTrackerCluster mycl(maxindex1, cont, sigma);
-    result->push_back(mycl);
+    if(maskIn[maxindex1]&&maskIn[maxindex1-1]&&maskIn[maxindex1+1])
+      result->push_back(mycl);
     ich=maxindex1+2; // already explored up there.
     //ich=maxindex1-2; // already explored up there.
   } // end of the main loop:: Warning, possible overlap between clusters' boundaries

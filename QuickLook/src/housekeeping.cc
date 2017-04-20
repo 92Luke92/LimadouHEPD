@@ -7,7 +7,7 @@
  *
  * DESCRIPTION:  Script to generate Housekeeping Quicklook xml files   
  *                 
- * DATE:           April 05, 2017
+ * DATE:           April 14, 2017
  *     
  *
  =============================================================================
@@ -317,37 +317,37 @@ void HVPSConfigToXML(TString rootname, TString xslPath = "")
 	outputFile << "\t<HV_PLANE_A_error>"  <<  1   << "</HV_PLANE_A_error>\n";
 
       if (Plane_value_table[1]<0 || Plane_value_table[1]>150.8)
-	 outputFile << "\t<HV_PLANE_B_error>"  <<  1  << "</HV_PLANE_B_error>\n";
+	outputFile << "\t<HV_PLANE_B_error>"  <<  1  << "</HV_PLANE_B_error>\n";
 
       if (HV_value_table[0]<0 || HV_value_table[0]>1200)
-	 outputFile << "\t<HV_PMT0_error>"  <<  1 << "</HV_PMT0_error>\n";
+	outputFile << "\t<HV_PMT0_error>"  <<  1 << "</HV_PMT0_error>\n";
 
       if (HV_value_table[1]<0 || HV_value_table[1]>1200)
-	 outputFile << "\t<HV_PMT1_error>"  <<  1 << "</HV_PMT1_error>\n";
+	outputFile << "\t<HV_PMT1_error>"  <<  1 << "</HV_PMT1_error>\n";
 
       if (HV_value_table[2]<0 || HV_value_table[2]>1200)
-	 outputFile << "\t<HV_PMT2_error>"  <<  1 << "</HV_PMT2_error>\n";
+	outputFile << "\t<HV_PMT2_error>"  <<  1 << "</HV_PMT2_error>\n";
 
       if (HV_value_table[3]<0 || HV_value_table[3]>1200)
-	 outputFile << "\t<HV_PMT3_error>"  <<  1 << "</HV_PMT3_error>\n";
+	outputFile << "\t<HV_PMT3_error>"  <<  1 << "</HV_PMT3_error>\n";
 
       if (HV_value_table[4]<0 || HV_value_table[4]>1200)
-	 outputFile << "\t<HV_PMT4_error>"  <<  1 << "</HV_PMT4_error>\n";
+	outputFile << "\t<HV_PMT4_error>"  <<  1 << "</HV_PMT4_error>\n";
 
       if (HV_value_table[5]<0 || HV_value_table[5]>1200)
-	 outputFile << "\t<HV_PMT5_error>"  <<  1 << "</HV_PMT5_error>\n";
+	outputFile << "\t<HV_PMT5_error>"  <<  1 << "</HV_PMT5_error>\n";
 
       if (HV_value_table[6]<0 || HV_value_table[6]>1200)
-	 outputFile << "\t<HV_PMT6_error>"  <<  1 << "</HV_PMT6_error>\n";
+	outputFile << "\t<HV_PMT6_error>"  <<  1 << "</HV_PMT6_error>\n";
 
       if (HV_value_table[7]<0 || HV_value_table[7]>1200)
-	 outputFile << "\t<HV_PMT7_error>"  <<  1 << "</HV_PMT7_error>\n";
+	outputFile << "\t<HV_PMT7_error>"  <<  1 << "</HV_PMT7_error>\n";
 
       if (HV_value_table[8]<0 || HV_value_table[8]>1200)
-	 outputFile << "\t<HV_PMT8_error>"  <<  1 << "</HV_PMT8_error>\n";
+	outputFile << "\t<HV_PMT8_error>"  <<  1 << "</HV_PMT8_error>\n";
 
       if (HV_value_table[9]<0 || HV_value_table[9]>1200)
-	 outputFile << "\t<HV_PMT9_error>"  <<  1 << "</HV_PMT9_error>\n";
+	outputFile << "\t<HV_PMT9_error>"  <<  1 << "</HV_PMT9_error>\n";
 
       
       outputFile << setprecision(3) << "\t<HV_PLANE_A>"  << Plane_value_table[0]
@@ -460,7 +460,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
   outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
   outputFile << "<!-- Prologo XML -->\n";
 
-  outputFile << "<?xml-stylesheet type='text/xsl' href='" << xslPath.Data() << "'?>\n";
+  outputFile << "<?xml-stylesheet type='text/xsl' href='"<< xslPath.Data()<<"'?>\n";
   outputFile << "<ROOT_SOURCE>\n";
   
   // Metadata
@@ -470,7 +470,9 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
   UShort_t run_type_vect[Tmd_entries];
   UShort_t run_duration_vect[Tmd_entries];
   UShort_t orbitZone_vect[Tmd_entries];
-  
+  UShort_t run_id_vect[Tmd_entries];
+  UShort_t boot_nr_vect[Tmd_entries];
+
   
   for(int j=0;j<Tmd_entries;j++)
     {
@@ -480,35 +482,65 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
       run_type_vect[j] = metaData.run_type;
       run_duration_vect[j] = metaData.run_duration;
       orbitZone_vect[j] = metaData.orbit_Zone;
-       
-      outputFile << "<RUN_INFO>\n";
-      
-      outputFile << "\t<RUN_TYPE_error>"<< 0 << "</RUN_TYPE_error>\n";
-      outputFile << "\t<RUN_DURATION_error>"<< 0 << "</RUN_DURATION_error>\n";
-      outputFile << "\t<ORBIT_error>"<< 0 << "</ORBIT_error>\n";
-       
-      if (j%2!=0)
-	{
-	  if (run_type_vect[j]!=run_type_vect[j-1])
-	    outputFile << "\t<RUN_TYPE_error>"<< 1 << "</RUN_TYPE_error>\n";
-	  
-	  if (run_duration_vect[j]!=run_duration_vect[j-1])
-	    outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";
-	         
-	  if (orbitZone_vect[j]!=orbitZone_vect[j-1])
-	    outputFile << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
-	}	     
-     
-      outputFile << "\t<BOOT_NR>"    << metaData.boot_nr  << "</BOOT_NR>\n";
-      outputFile << "\t<RUN_NR>"     << metaData.run_id   << "</RUN_NR>\n";
-      outputFile << "\t<RUN_TYPE>"   << run_type_vect[j]  << "</RUN_TYPE>\n";
-      outputFile << "\t<RUN_DURATION>" << metaData.run_duration << "</RUN_DURATION>\n";
-      outputFile << "\t<ORBIT_ZONE>"   << metaData.orbit_Zone  << "</ORBIT_ZONE>\n";
-
-      outputFile << "</RUN_INFO>\n";
-      
+      run_id_vect[j]=metaData.run_id;
+      boot_nr_vect[j]=metaData.boot_nr;
       
     }
+
+  for(int t=0;t<Tmd_entries;t++) {
+       
+    outputFile << "<RUN_INFO>\n";
+      
+    outputFile <<  dec << "\t<RUN_TYPE_error>"<< 0 << "</RUN_TYPE_error>\n";
+    outputFile << "\t<RUN_DURATION_error>"<< 0 << "</RUN_DURATION_error>\n";
+    outputFile << dec << "\t<ORBIT_error>"<< 0 << "</ORBIT_error>\n";
+    outputFile << dec << "\t<ORBIT_error_yellow>"<< 0 << "</ORBIT_error_yellow>\n";
+       
+    if (t%2==0){
+	
+      if (run_type_vect[t]!=run_type_vect[t+1]) 
+	outputFile << dec << "\t<RUN_TYPE_error>"<< 1 << "</RUN_TYPE_error>\n";
+	    
+    	    
+      if (run_duration_vect[t]!=run_duration_vect[t+1]) 
+	outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";
+	  
+         
+      if (orbitZone_vect[t] & 0x00FF != 0 && orbitZone_vect[t] & 0x00FF != 1 && orbitZone_vect[t] & 0x00FF != 2 && orbitZone_vect[t] & 0x00FF != 3 && orbitZone_vect[t] & 0x00FF != 4 && orbitZone_vect[t]  & 0x00FF != 5) 
+	outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
+          
+      if (orbitZone_vect[t] >> 8 == 170) 
+	outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";   
+      
+    }
+      
+    if (t%2!=0){
+	
+      if (run_type_vect[t]!=run_type_vect[t-1]) 
+	outputFile << dec << "\t<RUN_TYPE_error>"<< 1 << "</RUN_TYPE_error>\n";
+	   	    
+      if (run_duration_vect[t]!=run_duration_vect[t-1]) 
+	outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";  
+	         
+ if (orbitZone_vect[t] & 0x00FF != 0 && orbitZone_vect[t] & 0x00FF != 1 && orbitZone_vect[t] & 0x00FF != 2 && orbitZone_vect[t] & 0x00FF != 3 && orbitZone_vect[t] & 0x00FF != 4 && orbitZone_vect[t]  & 0x00FF != 5) 
+	outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
+          
+      if (orbitZone_vect[t] >> 8 == 170) 
+	outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";
+	 
+    }
+      
+      
+    outputFile << dec << "\t<BOOT_NR>"    << boot_nr_vect[t]  << "</BOOT_NR>\n";
+    outputFile << dec << "\t<RUN_NR>"     << run_id_vect[t]  << "</RUN_NR>\n";
+    outputFile << showbase << hex << "\t<RUN_TYPE>"   << run_type_vect[t]  << "</RUN_TYPE>\n";
+    outputFile << dec << "\t<RUN_DURATION>" << run_duration_vect[t] << "</RUN_DURATION>\n";
+    outputFile << showbase << hex << uppercase << "\t<ORBIT_ZONE>"   << orbitZone_vect[t]  << "</ORBIT_ZONE>\n";
+
+    outputFile << "</RUN_INFO>\n";
+      
+      
+  }  
    
   outputFile << "</ROOT_SOURCE>\n";
  
@@ -564,95 +596,95 @@ void ScintConfigToXML(TString rootname, TString xslPath = "")
 		   << "</VETO_CONFIG>\n";
 	outputFile << "\t<CURRENT_TRIGGER_MASK>" << (short)metaData.trigger_mask[1]
 		   << "</CURRENT_TRIGGER_MASK>\n";
-	outputFile << "\t<EASIROC_1>" << (short)metaData.easiroc_config[0]
+	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_1>" << (short)metaData.easiroc_config[0]
 		   << "</EASIROC_1>\n";
-	outputFile << "\t<EASIROC_2>" << (short)metaData.easiroc_config[60]
+	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_2>" << (short)metaData.easiroc_config[60]
 		   << "</EASIROC_2>\n";
 
        
-	outputFile << "/<MASK_PMT_0>" << metaData.PMT_mask[0] << "</MASK_PMT_0>/n";
-	outputFile << "/<MASK_PMT_1>" << metaData.PMT_mask[1] << "</MASK_PMT_1>/n";
-	outputFile << "/<MASK_PMT_2>" << metaData.PMT_mask[2] << "</MASK_PMT_2>/n";
-	outputFile << "/<MASK_PMT_3>" << metaData.PMT_mask[3] << "</MASK_PMT_3>/n";
-	outputFile << "/<MASK_PMT_4>" << metaData.PMT_mask[4] << "</MASK_PMT_4>/n";
-	outputFile << "/<MASK_PMT_5>" << metaData.PMT_mask[5] << "</MASK_PMT_5>/n";
-	outputFile << "/<MASK_PMT_6>" << metaData.PMT_mask[6]  << "</MASK_PMT_6>/n";
-	outputFile << "/<MASK_PMT_7>" << metaData.PMT_mask[7] << "</MASK_PMT_7>/n";
-	outputFile << "/<MASK_PMT_8>" << metaData.PMT_mask[8]  << "</MASK_PMT_8>/n";
-	outputFile << "/<MASK_PMT_9>" << metaData.PMT_mask[9]  << "</MASK_PMT_9>/n";
-	outputFile << "/<MASK_PMT_10>" << metaData.PMT_mask[10]  << "</MASK_PMT_10>/n";
-	outputFile << "/<MASK_PMT_11>" << metaData.PMT_mask[11]  << "</MASK_PMT_11>/n";
-	outputFile << "/<MASK_PMT_12>" << metaData.PMT_mask[12]  << "</MASK_PMT_12>/n";
-	outputFile << "/<MASK_PMT_13>" << metaData.PMT_mask[13]  << "</MASK_PMT_13>/n";
-	outputFile << "/<MASK_PMT_14>" << metaData.PMT_mask[14]  << "</MASK_PMT_14>/n";
-	outputFile << "/<MASK_PMT_15>" << metaData.PMT_mask[15]  << "</MASK_PMT_15>/n";
-	outputFile << "/<MASK_PMT_16>" << metaData.PMT_mask[16]  << "</MASK_PMT_16>/n";
-	outputFile << "/<MASK_PMT_17>" << metaData.PMT_mask[17]  << "</MASK_PMT_17>/n";
-	outputFile << "/<MASK_PMT_18>" << metaData.PMT_mask[18]  << "</MASK_PMT_18>/n";
-	outputFile << "/<MASK_PMT_19>" << metaData.PMT_mask[19]  << "</MASK_PMT_19>/n";
-	outputFile << "/<MASK_PMT_20>" << metaData.PMT_mask[20]  << "</MASK_PMT_20>/n";
-	outputFile << "/<MASK_PMT_21>" << metaData.PMT_mask[21] << "</MASK_PMT_21>/n";
-	outputFile << "/<MASK_PMT_22>" << metaData.PMT_mask[22] << "</MASK_PMT_22>/n";
-	outputFile << "/<MASK_PMT_23>" << metaData.PMT_mask[23] << "</MASK_PMT_23>/n";
-	outputFile << "/<MASK_PMT_24>" << metaData.PMT_mask[24] << "</MASK_PMT_24>/n";
-	outputFile << "/<MASK_PMT_25>" << metaData.PMT_mask[25] << "</MASK_PMT_25>/n";
-	outputFile << "/<MASK_PMT_26>" << metaData.PMT_mask[26]  << "</MASK_PMT_26>/n";
-	outputFile << "/<MASK_PMT_27>" << metaData.PMT_mask[27]  << "</MASK_PMT_27>/n";
-	outputFile << "/<MASK_PMT_28>" << metaData.PMT_mask[28] << "</MASK_PMT_28>/n";
-	outputFile << "/<MASK_PMT_29>" << metaData.PMT_mask[29] << "</MASK_PMT_29>/n";
-	outputFile << "/<MASK_PMT_30>" << metaData.PMT_mask[30]  << "</MASK_PMT_30>/n";
-	outputFile << "/<MASK_PMT_31>" << metaData.PMT_mask[31]  << "</MASK_PMT_31>/n";
+	outputFile << dec <<  "/<MASK_PMT_0>" << metaData.PMT_mask[0] << "</MASK_PMT_0>/n";
+	outputFile << dec << "/<MASK_PMT_1>" << metaData.PMT_mask[1] << "</MASK_PMT_1>/n";
+	outputFile << dec << "/<MASK_PMT_2>" << metaData.PMT_mask[2] << "</MASK_PMT_2>/n";
+	outputFile << dec <<"/<MASK_PMT_3>" << metaData.PMT_mask[3] << "</MASK_PMT_3>/n";
+	outputFile << dec <<"/<MASK_PMT_4>" << metaData.PMT_mask[4] << "</MASK_PMT_4>/n";
+	outputFile << dec <<"/<MASK_PMT_5>" << metaData.PMT_mask[5] << "</MASK_PMT_5>/n";
+	outputFile << dec <<"/<MASK_PMT_6>" << metaData.PMT_mask[6]  << "</MASK_PMT_6>/n";
+	outputFile << dec <<"/<MASK_PMT_7>" << metaData.PMT_mask[7] << "</MASK_PMT_7>/n";
+	outputFile << dec <<"/<MASK_PMT_8>" << metaData.PMT_mask[8]  << "</MASK_PMT_8>/n";
+	outputFile << dec <<"/<MASK_PMT_9>" << metaData.PMT_mask[9]  << "</MASK_PMT_9>/n";
+	outputFile << dec <<"/<MASK_PMT_10>" << metaData.PMT_mask[10]  << "</MASK_PMT_10>/n";
+	outputFile << dec <<"/<MASK_PMT_11>" << metaData.PMT_mask[11]  << "</MASK_PMT_11>/n";
+	outputFile << dec <<"/<MASK_PMT_12>" << metaData.PMT_mask[12]  << "</MASK_PMT_12>/n";
+	outputFile << dec <<"/<MASK_PMT_13>" << metaData.PMT_mask[13]  << "</MASK_PMT_13>/n";
+	outputFile << dec <<"/<MASK_PMT_14>" << metaData.PMT_mask[14]  << "</MASK_PMT_14>/n";
+	outputFile << dec <<"/<MASK_PMT_15>" << metaData.PMT_mask[15]  << "</MASK_PMT_15>/n";
+	outputFile << dec <<"/<MASK_PMT_16>" << metaData.PMT_mask[16]  << "</MASK_PMT_16>/n";
+	outputFile << dec <<"/<MASK_PMT_17>" << metaData.PMT_mask[17]  << "</MASK_PMT_17>/n";
+	outputFile << dec <<"/<MASK_PMT_18>" << metaData.PMT_mask[18]  << "</MASK_PMT_18>/n";
+	outputFile << dec <<"/<MASK_PMT_19>" << metaData.PMT_mask[19]  << "</MASK_PMT_19>/n";
+	outputFile << dec <<"/<MASK_PMT_20>" << metaData.PMT_mask[20]  << "</MASK_PMT_20>/n";
+	outputFile << dec <<"/<MASK_PMT_21>" << metaData.PMT_mask[21] << "</MASK_PMT_21>/n";
+	outputFile << dec <<"/<MASK_PMT_22>" << metaData.PMT_mask[22] << "</MASK_PMT_22>/n";
+	outputFile << dec <<"/<MASK_PMT_23>" << metaData.PMT_mask[23] << "</MASK_PMT_23>/n";
+	outputFile << dec <<"/<MASK_PMT_24>" << metaData.PMT_mask[24] << "</MASK_PMT_24>/n";
+	outputFile << dec <<"/<MASK_PMT_25>" << metaData.PMT_mask[25] << "</MASK_PMT_25>/n";
+	outputFile << dec <<"/<MASK_PMT_26>" << metaData.PMT_mask[26]  << "</MASK_PMT_26>/n";
+	outputFile << dec <<"/<MASK_PMT_27>" << metaData.PMT_mask[27]  << "</MASK_PMT_27>/n";
+	outputFile << dec <<"/<MASK_PMT_28>" << metaData.PMT_mask[28] << "</MASK_PMT_28>/n";
+	outputFile << dec <<"/<MASK_PMT_29>" << metaData.PMT_mask[29] << "</MASK_PMT_29>/n";
+	outputFile << dec <<"/<MASK_PMT_30>" << metaData.PMT_mask[30]  << "</MASK_PMT_30>/n";
+	outputFile << dec <<"/<MASK_PMT_31>" << metaData.PMT_mask[31]  << "</MASK_PMT_31>/n";
 
-	outputFile << "/<MASK2_PMT_0>" << metaData.PMT_mask[32] << "</MASK2_PMT_0>/n";
-	outputFile << "/<MASK2_PMT_1>" << metaData.PMT_mask[33] << "</MASK2_PMT_1>/n";
-	outputFile << "/<MASK2_PMT_2>" << metaData.PMT_mask[34] << "</MASK2_PMT_2>/n";
-	outputFile << "/<MASK2_PMT_3>" << metaData.PMT_mask[35] << "</MASK2_PMT_3>/n";
-	outputFile << "/<MASK2_PMT_4>" << metaData.PMT_mask[36] << "</MASK2_PMT_4>/n";
-	outputFile << "/<MASK2_PMT_5>" << metaData.PMT_mask[37] << "</MASK2_PMT_5>/n";
-	outputFile << "/<MASK2_PMT_6>" << metaData.PMT_mask[38] << "</MASK2_PMT_6>/n";
-	outputFile << "/<MASK2_PMT_7>" << metaData.PMT_mask[39] << "</MASK2_PMT_7>/n";
-	outputFile << "/<MASK2_PMT_8>" << metaData.PMT_mask[40] << "</MASK2_PMT_8>/n";
-	outputFile << "/<MASK2_PMT_9>" << metaData.PMT_mask[41] << "</MASK2_PMT_9>/n";
-	outputFile << "/<MASK2_PMT_10>" << metaData.PMT_mask[42]  << "</MASK2_PMT_10>/n";
-	outputFile << "/<MASK2_PMT_11>" << metaData.PMT_mask[43]  << "</MASK2_PMT_11>/n";
-	outputFile << "/<MASK2_PMT_12>" << metaData.PMT_mask[44] << "</MASK2_PMT_12>/n";
-	outputFile << "/<MASK2_PMT_13>" << metaData.PMT_mask[45] << "</MASK2_PMT_13>/n";
-	outputFile << "/<MASK2_PMT_14>" << metaData.PMT_mask[46]  << "</MASK2_PMT_14>/n";
-	outputFile << "/<MASK2_PMT_15>" << metaData.PMT_mask[47] << "</MASK2_PMT_15>/n";
-	outputFile << "/<MASK2_PMT_16>" << metaData.PMT_mask[48]  << "</MASK2_PMT_16>/n";
-	outputFile << "/<MASK2_PMT_17>" << metaData.PMT_mask[49]  << "</MASK2_PMT_17>/n";
-	outputFile << "/<MASK2_PMT_18>" << metaData.PMT_mask[50] << "</MASK2_PMT_18>/n";
-	outputFile << "/<MASK2_PMT_19>" << metaData.PMT_mask[51] << "</MASK2_PMT_19>/n";
-	outputFile << "/<MASK2_PMT_20>" << metaData.PMT_mask[52] << "</MASK2_PMT_20>/n";
-	outputFile << "/<MASK2_PMT_21>" << metaData.PMT_mask[53] << "</MASK2_PMT_21>/n";
-	outputFile << "/<MASK2_PMT_22>" << metaData.PMT_mask[54]  << "</MASK2_PMT_22>/n";
-	outputFile << "/<MASK2_PMT_23>" << metaData.PMT_mask[55] << "</MASK2_PMT_23>/n";
-	outputFile << "/<MASK2_PMT_24>" << metaData.PMT_mask[56] << "</MASK2_PMT_24>/n";
-	outputFile << "/<MASK2_PMT_25>" << metaData.PMT_mask[57] << "</MASK2_PMT_25>/n";
-	outputFile << "/<MASK2_PMT_26>" << metaData.PMT_mask[58] << "</MASK2_PMT_26>/n";
-	outputFile << "/<MASK2_PMT_27>" << metaData.PMT_mask[59] << "</MASK2_PMT_27>/n";
-	outputFile << "/<MASK2_PMT_28>" << metaData.PMT_mask[60] << "</MASK2_PMT_28>/n";
-	outputFile << "/<MASK2_PMT_29>" << metaData.PMT_mask[61] << "</MASK2_PMT_29>/n";
-	outputFile << "/<MASK2_PMT_30>" << metaData.PMT_mask[62]  << "</MASK2_PMT_30>/n";
+	outputFile << dec <<"/<MASK2_PMT_0>" << metaData.PMT_mask[32] << "</MASK2_PMT_0>/n";
+	outputFile << dec <<"/<MASK2_PMT_1>" << metaData.PMT_mask[33] << "</MASK2_PMT_1>/n";
+	outputFile << dec <<"/<MASK2_PMT_2>" << metaData.PMT_mask[34] << "</MASK2_PMT_2>/n";
+	outputFile << dec <<"/<MASK2_PMT_3>" << metaData.PMT_mask[35] << "</MASK2_PMT_3>/n";
+	outputFile << dec <<"/<MASK2_PMT_4>" << metaData.PMT_mask[36] << "</MASK2_PMT_4>/n";
+	outputFile << dec <<"/<MASK2_PMT_5>" << metaData.PMT_mask[37] << "</MASK2_PMT_5>/n";
+	outputFile << dec <<"/<MASK2_PMT_6>" << metaData.PMT_mask[38] << "</MASK2_PMT_6>/n";
+	outputFile << dec <<"/<MASK2_PMT_7>" << metaData.PMT_mask[39] << "</MASK2_PMT_7>/n";
+	outputFile << dec <<"/<MASK2_PMT_8>" << metaData.PMT_mask[40] << "</MASK2_PMT_8>/n";
+	outputFile << dec <<"/<MASK2_PMT_9>" << metaData.PMT_mask[41] << "</MASK2_PMT_9>/n";
+	outputFile << dec <<"/<MASK2_PMT_10>" << metaData.PMT_mask[42]  << "</MASK2_PMT_10>/n";
+	outputFile << dec <<"/<MASK2_PMT_11>" << metaData.PMT_mask[43]  << "</MASK2_PMT_11>/n";
+	outputFile << dec <<"/<MASK2_PMT_12>" << metaData.PMT_mask[44] << "</MASK2_PMT_12>/n";
+	outputFile << dec <<"/<MASK2_PMT_13>" << metaData.PMT_mask[45] << "</MASK2_PMT_13>/n";
+	outputFile << dec <<"/<MASK2_PMT_14>" << metaData.PMT_mask[46]  << "</MASK2_PMT_14>/n";
+	outputFile << dec <<"/<MASK2_PMT_15>" << metaData.PMT_mask[47] << "</MASK2_PMT_15>/n";
+	outputFile << dec <<"/<MASK2_PMT_16>" << metaData.PMT_mask[48]  << "</MASK2_PMT_16>/n";
+	outputFile << dec <<"/<MASK2_PMT_17>" << metaData.PMT_mask[49]  << "</MASK2_PMT_17>/n";
+	outputFile << dec <<"/<MASK2_PMT_18>" << metaData.PMT_mask[50] << "</MASK2_PMT_18>/n";
+	outputFile << dec <<"/<MASK2_PMT_19>" << metaData.PMT_mask[51] << "</MASK2_PMT_19>/n";
+	outputFile << dec <<"/<MASK2_PMT_20>" << metaData.PMT_mask[52] << "</MASK2_PMT_20>/n";
+	outputFile << dec <<"/<MASK2_PMT_21>" << metaData.PMT_mask[53] << "</MASK2_PMT_21>/n";
+	outputFile << dec <<"/<MASK2_PMT_22>" << metaData.PMT_mask[54]  << "</MASK2_PMT_22>/n";
+	outputFile << dec <<"/<MASK2_PMT_23>" << metaData.PMT_mask[55] << "</MASK2_PMT_23>/n";
+	outputFile << dec <<"/<MASK2_PMT_24>" << metaData.PMT_mask[56] << "</MASK2_PMT_24>/n";
+	outputFile << dec <<"/<MASK2_PMT_25>" << metaData.PMT_mask[57] << "</MASK2_PMT_25>/n";
+	outputFile << dec <<"/<MASK2_PMT_26>" << metaData.PMT_mask[58] << "</MASK2_PMT_26>/n";
+	outputFile << dec <<"/<MASK2_PMT_27>" << metaData.PMT_mask[59] << "</MASK2_PMT_27>/n";
+	outputFile << dec <<"/<MASK2_PMT_28>" << metaData.PMT_mask[60] << "</MASK2_PMT_28>/n";
+	outputFile << dec <<"/<MASK2_PMT_29>" << metaData.PMT_mask[61] << "</MASK2_PMT_29>/n";
+	outputFile << dec <<"/<MASK2_PMT_30>" << metaData.PMT_mask[62]  << "</MASK2_PMT_30>/n";
 
-        outputFile << "/<GEN_TRIG_MASK_0>" << metaData.gen_trig_mask[0]  << "</GEN_TRIG_MASK_0>/n";
-	outputFile << "/<GEN_TRIG_MASK_1>" << metaData.gen_trig_mask[1]  << "</GEN_TRIG_MASK_1>/n";
-	outputFile << "/<GEN_TRIG_MASK_2>" << metaData.gen_trig_mask[2]  << "</GEN_TRIG_MASK_2>/n";
-	outputFile << "/<GEN_TRIG_MASK_3>" << metaData.gen_trig_mask[3]  << "</GEN_TRIG_MASK_3>/n";
-	outputFile << "/<GEN_TRIG_MASK_4>" << metaData.gen_trig_mask[4]  << "</GEN_TRIG_MASK_4>/n";
-	outputFile << "/<GEN_TRIG_MASK_5>" << metaData.gen_trig_mask[5]  << "</GEN_TRIG_MASK_5>/n";
-	outputFile << "/<GEN_TRIG_MASK_6>" << metaData.gen_trig_mask[6]  << "</GEN_TRIG_MASK_6>/n";
-	outputFile << "/<GEN_TRIG_MASK_7>" << metaData.gen_trig_mask[7]  << "</GEN_TRIG_MASK_7>/n";
-	outputFile << "/<GEN_TRIG_MASK_8>" << metaData.gen_trig_mask[8]  << "</GEN_TRIG_MASK_8>/n";
-	outputFile << "/<GEN_TRIG_MASK_9>" << metaData.gen_trig_mask[9]  << "</GEN_TRIG_MASK_9>/n";
-	outputFile << "/<GEN_TRIG_MASK_10>" << metaData.gen_trig_mask[10]  << "</GEN_TRIG_MASK_10>/n";
-	outputFile << "/<GEN_TRIG_MASK_11>" << metaData.gen_trig_mask[11]  << "</GEN_TRIG_MASK_11>/n";
-	outputFile << "/<GEN_TRIG_MASK_12>" << metaData.gen_trig_mask[12]  << "</GEN_TRIG_MASK_12>/n";
-	outputFile << "/<GEN_TRIG_MASK_13>" << metaData.gen_trig_mask[13]  << "</GEN_TRIG_MASK_13>/n";
-	outputFile << "/<GEN_TRIG_MASK_14>" << metaData.gen_trig_mask[14]  << "</GEN_TRIG_MASK_14>/n";
-	outputFile << "/<GEN_TRIG_MASK_15>" << metaData.gen_trig_mask[15]  << "</GEN_TRIG_MASK_15>/n";
-	outputFile << "/<GEN_TRIG_MASK_16>" << metaData.gen_trig_mask[16]  << "</GEN_TRIG_MASK_16>/n";
-	outputFile << "/<GEN_TRIG_MASK_17>" << metaData.gen_trig_mask[17]  << "</GEN_TRIG_MASK_17>/n";
+        outputFile << dec <<"/<GEN_TRIG_MASK_0>" << metaData.gen_trig_mask[0]  << "</GEN_TRIG_MASK_0>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_1>" << metaData.gen_trig_mask[1]  << "</GEN_TRIG_MASK_1>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_2>" << metaData.gen_trig_mask[2]  << "</GEN_TRIG_MASK_2>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_3>" << metaData.gen_trig_mask[3]  << "</GEN_TRIG_MASK_3>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_4>" << metaData.gen_trig_mask[4]  << "</GEN_TRIG_MASK_4>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_5>" << metaData.gen_trig_mask[5]  << "</GEN_TRIG_MASK_5>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_6>" << metaData.gen_trig_mask[6]  << "</GEN_TRIG_MASK_6>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_7>" << metaData.gen_trig_mask[7]  << "</GEN_TRIG_MASK_7>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_8>" << metaData.gen_trig_mask[8]  << "</GEN_TRIG_MASK_8>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_9>" << metaData.gen_trig_mask[9]  << "</GEN_TRIG_MASK_9>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_10>" << metaData.gen_trig_mask[10]  << "</GEN_TRIG_MASK_10>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_11>" << metaData.gen_trig_mask[11]  << "</GEN_TRIG_MASK_11>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_12>" << metaData.gen_trig_mask[12]  << "</GEN_TRIG_MASK_12>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_13>" << metaData.gen_trig_mask[13]  << "</GEN_TRIG_MASK_13>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_14>" << metaData.gen_trig_mask[14]  << "</GEN_TRIG_MASK_14>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_15>" << metaData.gen_trig_mask[15]  << "</GEN_TRIG_MASK_15>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_16>" << metaData.gen_trig_mask[16]  << "</GEN_TRIG_MASK_16>/n";
+	outputFile << dec <<"/<GEN_TRIG_MASK_17>" << metaData.gen_trig_mask[17]  << "</GEN_TRIG_MASK_17>/n";
 
 	outputFile << "</SCINTCONFIG>\n";
       }   
@@ -708,6 +740,8 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
   UShort_t event_gauss_vect[Tmd_entries];
   UShort_t event_CN_vect[Tmd_entries];
   UShort_t gauss_check_vect[Tmd_entries];
+  UShort_t run_id_vect[Tmd_entries];
+  UShort_t boot_nr_vect[Tmd_entries];
 
   for(int j=0;j<Tmd_entries;j++)
     {
@@ -724,95 +758,136 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
       event_gauss_vect[j] = metaData.silConfig.calib_event_gauss;
       event_CN_vect[j] = metaData.silConfig.calib_event_CN;
       gauss_check_vect[j] = metaData.silConfig.gauss_check;
-
-	
-      outputFile << "<SILCONFIG>\n";
+      run_id_vect[j]=metaData.run_id;
+      boot_nr_vect[j]=metaData.boot_nr;
       
-      outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
-      outputFile << "\t<RUN_NR>"  << metaData.run_id  << "</RUN_NR>\n";
-
-
-      outputFile << "\t<LADDER_error>"<< 0 << "</LADDER_error>\n";
-      outputFile << "\t<LADDER_MASK_error>"<< 0 << "</LADDER_MASK_error>\n";
-      outputFile << "\t<ADJ_STRIP_error>"<< 0 << "</ADJ_STRIP_error>\n";
-      outputFile << "\t<ZERO_SUPP_error>"<< 0 << "</ZERO_SUPP_error>\n";
-      outputFile << "\t<CN_HIGH_error>"<< 0 << "</CN_HIGH_error>\n";
-      outputFile << "\t<CN_LOW_error>"<< 0 << "</CN_LOW_error>\n";
-      outputFile << "\t<EVENT_RMS_error>"<< 0 << "</EVENT_RMS_error>\n";
-      outputFile << "\t<EVENT_PED_error>"<< 0 << "</EVENT_PED_error>\n";
-      outputFile << "\t<EVENT_GAUSS_error>"<< 0 << "</EVENT_GAUSS_error>\n";
-      outputFile << "\t<EVENT_CN_error>"<< 0 << "</EVENT_CN_error>\n";
-      outputFile << "\t<GAUSS_CHECK_error>"<< 0 << "</GAUSS_CHECK_error>\n";
-       
-       
-      if (j%2!=0)
-	{
-	  if (ladder_on_vect[j]!=ladder_on_vect[j-1])
-	    outputFile << "\t<LADDER_error>"<< 1 << "</LADDER_error>\n";
-
-	  if (ladder_mask_vect[j]!=ladder_mask_vect[j-1])
-	    outputFile << "\t<LADDER_MASK_error>"<< 1 << "</LADDER_MASK_error>\n";
-	   
-	  if (adj_strip_vect[j]!=adj_strip_vect[j-1])
-	    outputFile << "\t<ADJ_STRIP_error>"<< 1 << "</ADJ_STRIP_error>\n";
-
-	  if (zero_supp_vect[j]!=zero_supp_vect[j-1])
-	    outputFile << "\t<ZERO_SUPP_error>"<< 1 << "</ZERO_SUPP_error>\n";
-
-	  if (CN_high_vect[j]!=CN_high_vect[j-1])
-	    outputFile << "\t<CN_HIGH_error>"<< 1 << "</CN_HIGH_error>\n";
-
-	  if (CN_low_vect[j]!=CN_low_vect[j-1])
-	    outputFile << "\t<CN_LOW_error>"<< 1 << "</CN_LOW_error>\n";
-
-	  if (event_RMS_vect[j]!=event_RMS_vect[j-1])
-	    outputFile << "\t<EVENT_RMS_error>"<< 1 << "</EVENT_RMS_error>\n";
-
-	  if (event_ped_vect[j]!=event_ped_vect[j-1])
-	    outputFile << "\t<EVENT_PED_error>"<< 1 << "</EVENT_PED_error>\n";
-
-	  if (event_gauss_vect[j]!=event_gauss_vect[j-1])
-	    outputFile << "\t<EVENT_GAUSS_error>"<< 1 << "</EVENT_GAUSS_error>\n";
-
-	  if (event_CN_vect[j]!=event_CN_vect[j-1])
-	    outputFile << "\t<EVENT_CN_error>"<< 1 << "</EVENT_CN_error>\n";
-
-	  if (gauss_check_vect[j]!=gauss_check_vect[j-1])
-	    outputFile << "\t<GAUSS_CHECK_error>"<< 1 << "</GAUSS_CHECK_error>\n";
-	}
-	           
-
-      if((short)metaData.silConfig.ladder_on == 0)
-	outputFile << "\t<LADDERS_LV>" << "OFF" << "</LADDERS_LV>\n";
-
-      if((short)metaData.silConfig.ladder_on == 1)
-	outputFile << "\t<LADDERS_LV>" << "ON" << "</LADDERS_LV>\n";
-      
-      outputFile << "\t<CURRENT_SD>" << (short)metaData.silConfig.ladder_mask
-		 << "</CURRENT_SD>\n";
-      
-      outputFile << "\t<ADIACENT_STRIP>" << metaData.silConfig.adj_strip
-		 << "</ADIACENT_STRIP>\n";
-      outputFile << "\t<ZERO_SUPP_THRD>" << metaData.silConfig.zero_supp_thrd
-		 << "</ZERO_SUPP_THRD>\n";
-      outputFile << "\t<THRD_CN_HIGH>"  << (short)metaData.silConfig.thrd_CN_HIGH
-		 << "</THRD_CN_HIGH>\n";
-      outputFile << "\t<THRD_CN_LOW>"   << (short)metaData.silConfig.thrd_CN_LOW
-		 << "</THRD_CN_LOW>\n";
-      outputFile << "\t<CALIB_EVENT_RMS>" << metaData.silConfig.calib_event_RMS
-		 << "</CALIB_EVENT_RMS>\n";
-      outputFile << "\t<CALIB_EVENT_PED>" << metaData.silConfig.calib_event_ped
-		 << "</CALIB_EVENT_PED>\n";
-      outputFile << "\t<CALIB_EVENT_GAUSS>" << metaData.silConfig.calib_event_gauss
-		 << "</CALIB_EVENT_GAUSS>\n";
-      outputFile << "\t<CALIB_EVENT_CN>" << metaData.silConfig.calib_event_CN
-		 << "</CALIB_EVENT_CN>\n";
-      outputFile << "\t<GAUSS_CHECK>" << metaData.silConfig.gauss_check
-		 << "</GAUSS_CHECK>\n";
-
-      outputFile << "</SILCONFIG>\n";    
-  
     }
+
+  for(int t=0;t<Tmd_entries;t++) {
+         
+    outputFile << "<SILCONFIG>\n";
+      
+    outputFile << "\t<LADDER_error>"<< 0 << "</LADDER_error>\n";
+    outputFile << "\t<LADDER_MASK_error>"<< 0 << "</LADDER_MASK_error>\n";
+    outputFile << "\t<ADJ_STRIP_error>"<< 0 << "</ADJ_STRIP_error>\n";
+    outputFile << "\t<ZERO_SUPP_error>"<< 0 << "</ZERO_SUPP_error>\n";
+    outputFile << "\t<CN_HIGH_error>"<< 0 << "</CN_HIGH_error>\n";
+    outputFile << "\t<CN_LOW_error>"<< 0 << "</CN_LOW_error>\n";
+    outputFile << "\t<EVENT_RMS_error>"<< 0 << "</EVENT_RMS_error>\n";
+    outputFile << "\t<EVENT_PED_error>"<< 0 << "</EVENT_PED_error>\n";
+    outputFile << "\t<EVENT_GAUSS_error>"<< 0 << "</EVENT_GAUSS_error>\n";
+    outputFile << "\t<EVENT_CN_error>"<< 0 << "</EVENT_CN_error>\n";
+    outputFile << "\t<GAUSS_CHECK_error>"<< 0 << "</GAUSS_CHECK_error>\n";
+
+    if (t%2==0){
+	
+      if (ladder_on_vect[t]!=ladder_on_vect[t+1])
+	outputFile << "\t<LADDER_error>"<< 1 << "</LADDER_error>\n";
+
+      if (ladder_mask_vect[t]!=ladder_mask_vect[t+1])
+	outputFile << "\t<LADDER_MASK_error>"<< 1 << "</LADDER_MASK_error>\n";
+	   
+      if (adj_strip_vect[t]!=adj_strip_vect[t+1])
+	outputFile << "\t<ADJ_STRIP_error>"<< 1 << "</ADJ_STRIP_error>\n";
+
+      if (zero_supp_vect[t]!=zero_supp_vect[t+1])
+	outputFile << "\t<ZERO_SUPP_error>"<< 1 << "</ZERO_SUPP_error>\n";
+
+      if (CN_high_vect[t]!=CN_high_vect[t+1])
+	outputFile << "\t<CN_HIGH_error>"<< 1 << "</CN_HIGH_error>\n";
+
+      if (CN_low_vect[t]!=CN_low_vect[t+1])
+	outputFile << "\t<CN_LOW_error>"<< 1 << "</CN_LOW_error>\n";
+
+      if (event_RMS_vect[t]!=event_RMS_vect[t+1])
+	outputFile << "\t<EVENT_RMS_error>"<< 1 << "</EVENT_RMS_error>\n";
+
+      if (event_ped_vect[t]!=event_ped_vect[t+1])
+	outputFile << "\t<EVENT_PED_error>"<< 1 << "</EVENT_PED_error>\n";
+
+      if (event_gauss_vect[t]!=event_gauss_vect[t+1])
+	outputFile << "\t<EVENT_GAUSS_error>"<< 1 << "</EVENT_GAUSS_error>\n";
+
+      if (event_CN_vect[t]!=event_CN_vect[t+1])
+	outputFile << "\t<EVENT_CN_error>"<< 1 << "</EVENT_CN_error>\n";
+
+      if (gauss_check_vect[t]!=gauss_check_vect[t+1])
+	outputFile << "\t<GAUSS_CHECK_error>"<< 1 << "</GAUSS_CHECK_error>\n";
+	  
+    }
+       
+       
+    if (t%2!=0)
+      {
+	if (ladder_on_vect[t]!=ladder_on_vect[t-1])
+	  outputFile << "\t<LADDER_error>"<< 1 << "</LADDER_error>\n";
+
+	if (ladder_mask_vect[t]!=ladder_mask_vect[t-1])
+	  outputFile << "\t<LADDER_MASK_error>"<< 1 << "</LADDER_MASK_error>\n";
+	   
+	if (adj_strip_vect[t]!=adj_strip_vect[t-1])
+	  outputFile << "\t<ADJ_STRIP_error>"<< 1 << "</ADJ_STRIP_error>\n";
+
+	if (zero_supp_vect[t]!=zero_supp_vect[t-1])
+	  outputFile << "\t<ZERO_SUPP_error>"<< 1 << "</ZERO_SUPP_error>\n";
+
+	if (CN_high_vect[t]!=CN_high_vect[t-1])
+	  outputFile << "\t<CN_HIGH_error>"<< 1 << "</CN_HIGH_error>\n";
+
+	if (CN_low_vect[t]!=CN_low_vect[t-1])
+	  outputFile << "\t<CN_LOW_error>"<< 1 << "</CN_LOW_error>\n";
+
+	if (event_RMS_vect[t]!=event_RMS_vect[t-1])
+	  outputFile << "\t<EVENT_RMS_error>"<< 1 << "</EVENT_RMS_error>\n";
+
+	if (event_ped_vect[t]!=event_ped_vect[t-1])
+	  outputFile << "\t<EVENT_PED_error>"<< 1 << "</EVENT_PED_error>\n";
+
+	if (event_gauss_vect[t]!=event_gauss_vect[t-1])
+	  outputFile << "\t<EVENT_GAUSS_error>"<< 1 << "</EVENT_GAUSS_error>\n";
+
+	if (event_CN_vect[t]!=event_CN_vect[t-1])
+	  outputFile << "\t<EVENT_CN_error>"<< 1 << "</EVENT_CN_error>\n";
+
+	if (gauss_check_vect[t]!=gauss_check_vect[t-1])
+	  outputFile << "\t<GAUSS_CHECK_error>"<< 1 << "</GAUSS_CHECK_error>\n";
+      }
+
+
+    outputFile << "\t<BOOT_NR>" << boot_nr_vect[t] << "</BOOT_NR>\n";
+    outputFile << "\t<RUN_NR>"  << run_id_vect[t]  << "</RUN_NR>\n";
+
+    if(ladder_on_vect[t] == 0)
+      outputFile << "\t<LADDERS_LV>" << "OFF" << "</LADDERS_LV>\n";
+
+    if(ladder_on_vect[t] == 1)
+      outputFile << "\t<LADDERS_LV>" << "ON" << "</LADDERS_LV>\n";
+      
+    outputFile << "\t<CURRENT_SD>" << ladder_mask_vect[t]
+	       << "</CURRENT_SD>\n";
+      
+    outputFile << "\t<ADIACENT_STRIP>" << adj_strip_vect[t]
+	       << "</ADIACENT_STRIP>\n";
+    outputFile << "\t<ZERO_SUPP_THRD>" << zero_supp_vect[t]
+	       << "</ZERO_SUPP_THRD>\n";
+    outputFile << "\t<THRD_CN_HIGH>"  << CN_high_vect[t]
+	       << "</THRD_CN_HIGH>\n";
+    outputFile << "\t<THRD_CN_LOW>"   << CN_low_vect[t]
+	       << "</THRD_CN_LOW>\n";
+    outputFile << "\t<CALIB_EVENT_RMS>" << event_RMS_vect[t]
+	       << "</CALIB_EVENT_RMS>\n";
+    outputFile << "\t<CALIB_EVENT_PED>" << event_ped_vect[t]
+	       << "</CALIB_EVENT_PED>\n";
+    outputFile << "\t<CALIB_EVENT_GAUSS>" << event_gauss_vect[t]
+	       << "</CALIB_EVENT_GAUSS>\n";
+    outputFile << "\t<CALIB_EVENT_CN>" << event_CN_vect[t]
+	       << "</CALIB_EVENT_CN>\n";
+    outputFile << "\t<GAUSS_CHECK>" << gauss_check_vect[t]
+	       << "</GAUSS_CHECK>\n";
+
+    outputFile << "</SILCONFIG>\n";    
+  
+  }
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
 }
@@ -980,10 +1055,10 @@ void TelemetryToXML(TString rootname, TString xslPath = "")
       TString goodstatus;
  
       if(PMT_Status.Length() == 3)
-	  goodstatus=PMT_Status(1,2);
+	goodstatus=PMT_Status(1,2);
       
       if(PMT_Status.Length() == 4)
-	  goodstatus=PMT_Status(2,2);
+	goodstatus=PMT_Status(2,2);
     
       ss.str("");
    

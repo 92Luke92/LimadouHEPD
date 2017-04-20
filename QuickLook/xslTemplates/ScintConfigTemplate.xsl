@@ -653,7 +653,7 @@
 	  
 	  <table border="1">
 	    <tr bgcolor="#999999">
-	      <td  width="300" height="30" align="center"> <strong> Generic Trigger Mask  </strong></td> 
+	      <td  width="300" height="30" align="center"> <strong> Generic Trigger Mask (1 include, 0 exclude) </strong></td> 
 	    </tr>
 	  </table>
 	  

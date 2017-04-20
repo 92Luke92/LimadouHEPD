@@ -4,7 +4,7 @@
 int main(int argc, char **argv) {
   if(argc!=2) {
     std::cerr << "************ Usage:" << std::endl
-	      << "************ ~user> ./Reco01 <inputFile>" << std::endl
+	      << "************ ~user> ./L1Reader <inputFile>" << std::endl
 	      << "************ aborting."
 	      << std::endl;
     return -999;

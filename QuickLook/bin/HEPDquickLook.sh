@@ -32,11 +32,15 @@ MERGEDFILE="${NAME%???????????}"
 MERGEDFILE=$MERGEDFILE$EXT
 XSLPATH=$2
 
-hadd $MERGEDFILE *.root 
+hadd $MERGEDFILE *.root
 
 #QuickLook $MERGEDFILE -x "/home/fool/LIMADOU/Data_Acquisition/bin2root/HEPD_Quicklook/Housekeeping_QL"
 
-QuickLook $MERGEDFILE -x "xslTemplates/"
+QuickLook $MERGEDFILE -x "xslTemplates/" -o "outdir/"
+
+#mkdir ../../outdir
+
+#mv *.pdf *.xml ../../outdir
 
 #mkdir $OUTDIR
-#mv *.pdf *.xml  $OUTDIR 
+#mv *.pdf *.xml  $OUTDIR

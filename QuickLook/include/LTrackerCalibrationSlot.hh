@@ -7,13 +7,14 @@
 
 class LTrackerCalibrationSlot {
 public:
-  LTrackerCalibrationSlot(int StartE, int StopE, double *ped, double *sig, double *ngi, bool *cnm);;
+  LTrackerCalibrationSlot(int StartE, int StopE, double* rawsig, double *ped, double *sig, double *ngi, bool *cnm);
   void Write(std::ofstream *output);
   static LTrackerCalibrationSlot* Read(std::ifstream *input);
   inline int GetStartEvent(){return StartEvent;};
   inline int GetStopEvent(){return StopEvent;};
   inline double* GetPedestal(){return pedestal;};
   inline double* GetSigma(){return sigma;};
+  inline double* GetSigmaRaw(){return sigmaraw;};
   inline double* GetNGIndex(){return ngindex;};
   inline bool* GetCNMask(){return CN_mask;};
   LTrackerMask GetMaskOnSigma(const double sigmaMin, const double sigmaMax);
@@ -23,6 +24,7 @@ private:
   // Calib infos
   int StartEvent;
   int StopEvent;
+  double sigmaraw[NCHAN];
   double pedestal[NCHAN];
   double sigma[NCHAN];
   double ngindex[NCHAN];

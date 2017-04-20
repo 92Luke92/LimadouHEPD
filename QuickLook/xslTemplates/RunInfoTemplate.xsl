@@ -72,11 +72,13 @@
 	       <xsl:when test="ORBIT_error &gt;'0'">
 	        <td  bgcolor="#ff0000" width="150" height="30" align="center"> <xsl:value-of select="ORBIT_ZONE"/> </td>
 	       </xsl:when>
+	        <xsl:when test="ORBIT_error_yellow &gt;'0'">
+	        <td  bgcolor="#ffff00" width="150" height="30" align="center"> <xsl:value-of select="ORBIT_ZONE"/> </td>
+	       </xsl:when>
 	       <xsl:otherwise>
 		 <td width="150" height="30" align="center"><xsl:value-of select="ORBIT_ZONE"/>        </td>
 	       </xsl:otherwise>
-	       </xsl:choose>
-	      
+		</xsl:choose>
 	       
 	     </tr>	
 

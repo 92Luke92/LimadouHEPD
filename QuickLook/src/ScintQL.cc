@@ -1,14 +1,16 @@
 /**
 * =============================================================================
 *
-* Created by Francesco Palma @ INFN Roma2: francesco.palma@roma2.infn.it
+* Created by Francesco Palma & Luca Carfora @ INFN Roma2:
+* francesco.palma@roma2.infn.it
 *
 * FILENAME:       ScintQL.cc
 *
 * DESCRIPTION:    Script to generate Scintillator Quicklook pdf file starting 
 *                 from HEPD L0 ROOT file 
 *
-* DATE:           March 10, 2017
+*
+* DATE:           April 6, 2017
 *     
 * =============================================================================
 **/
@@ -54,6 +56,7 @@ void PMTScan(TString rootname)
   UShort_t last_run_nr;
 
   Double_t max_c = 1000;
+  Double_t max_h = 99999;
   
    LEvRec0File rootfile(rootname.Data());
    LEvRec0 ev;
@@ -84,7 +87,8 @@ void PMTScan(TString rootname)
   TString FirstRunNR = ss.str();
   ss.str("");
   ss << last_run_nr;
-  TString LastRunNR = ss.str(); 
+  TString LastRunNR = ss.str();
+  
   
   TCanvas *Run = new TCanvas("Run");
   TPaveText *pt = new TPaveText(.25,.2,.75,.6);
@@ -113,12 +117,10 @@ void PMTScan(TString rootname)
   TProfile *prof_pmt_high = new TProfile("PMTProfHigh","PMT Profile - High Gain",64, 0, 64);
   prof_pmt_high->GetYaxis()->SetTitleOffset(1.5);  
   prof_pmt_high->GetYaxis()->SetTitle("ADC counts");
-  //prof_pmt_high->GetYaxis()->SetRangeUser(0,max_c); 
   
   TProfile *prof_pmt_low = new TProfile("PMTProfLow","PMT Profile - Low Gain",64, 0, 64);
   prof_pmt_low->GetYaxis()->SetTitleOffset(1.5);
   prof_pmt_low->GetYaxis()->SetTitle("ADC counts");
-  //prof_pmt_low->GetYaxis()->SetRangeUser(0,max_c);
   
   for(int fl=0;fl<EASIROC_CH;fl++){
     prof_pmt_high->GetXaxis()->SetBinLabel(fl+1,subdetector[fl]);
@@ -138,8 +140,8 @@ void PMTScan(TString rootname)
     hname1_high += kk+EASIROC_HALF_CH;
     hname1_high += " vs ";
     hname1_high += kk;
-    
-    h_pmt_comp_high[kk] = new TH2D("",hname1_high,100,0,5*max_c,100,0,5*max_c);
+
+    h_pmt_comp_high[kk] = new TH2D("",hname1_high,200,0,5*max_c,200,0,5*max_c);
     TString xt="Ch ";
     xt += kk;
     h_pmt_comp_high[kk]->GetXaxis()->SetTitle(xt);
@@ -147,8 +149,8 @@ void PMTScan(TString rootname)
     yt += kk+EASIROC_HALF_CH;
     h_pmt_comp_high[kk]->GetYaxis()->SetTitle(yt);
     h_pmt_comp_high[kk]->GetYaxis()->SetTitleOffset(1.5);
-    
-    h_pmt_comp_low[kk] = new TH2D("",hname1_low,100,0,max_c,100,0,max_c);
+
+    h_pmt_comp_low[kk] = new TH2D("",hname1_low,200,0,max_c,200,0,max_c);
     h_pmt_comp_low[kk]->GetXaxis()->SetTitle(xt);
     h_pmt_comp_low[kk]->GetYaxis()->SetTitle(yt);
     h_pmt_comp_low[kk]->GetYaxis()->SetTitleOffset(1.5);
@@ -162,8 +164,8 @@ void PMTScan(TString rootname)
     TString hname_high = "PMT High Gain Ch.";
     hname_low += k;
     hname_high += k;
-    h_pmt_low[k] = new TH1D("",hname_low, 500,0,max_c);
-    h_pmt_high[k] = new TH1D("",hname_high, 300,0,4*max_c);
+    h_pmt_low[k] = new TH1D("",hname_low, 10000,0,max_h);
+    h_pmt_high[k] = new TH1D("",hname_high, 5000,0,max_h);
   }
   
   TCanvas *c1 = new TCanvas("c1"," ",1200,600);
@@ -195,6 +197,18 @@ void PMTScan(TString rootname)
       
     } //End of event loop
   
+  for(int k=0;k<EASIROC_CH;k++) {
+    h_pmt_low[k]->GetXaxis()->SetRange((h_pmt_low[k]->FindFirstBinAbove())*0.7,(h_pmt_low[k]->FindLastBinAbove())*1.1);
+    h_pmt_high[k]->GetXaxis()->SetRange((h_pmt_high[k]->FindFirstBinAbove())*0.7,(h_pmt_high[k]->FindLastBinAbove())*1.1);
+    }
+
+    for(int k=0;k<TRIG_PAD+CALO_PL+VETO_PL;k++) {
+      h_pmt_comp_low[k]->GetXaxis()->SetRange((h_pmt_comp_low[k]->FindFirstBinAbove(0,1))*0.7,(h_pmt_comp_low[k]->FindLastBinAbove(0,1))*1.1);
+      h_pmt_comp_low[k]->GetYaxis()->SetRange((h_pmt_comp_low[k]->FindFirstBinAbove(0,2))*0.7,(h_pmt_comp_low[k]->FindLastBinAbove(0,2))*1.1);
+      h_pmt_comp_high[k]->GetXaxis()->SetRange((h_pmt_comp_high[k]->FindFirstBinAbove(0,1))*0.7,(h_pmt_comp_high[k]->FindLastBinAbove(0,1))*1.1);
+      h_pmt_comp_high[k]->GetYaxis()->SetRange((h_pmt_comp_high[k]->FindFirstBinAbove(0,2))*0.7,(h_pmt_comp_high[k]->FindLastBinAbove(0,2))*1.1);
+    }
+
   TCanvas *cp = new TCanvas("cp","",1200,600);
   gPad->SetGrid();
   
@@ -691,6 +705,7 @@ void PMTScan(TString rootname)
     c_lyso_high->cd(p+1);
     gPad->SetGrid();
     gPad->SetLogy();
+    gPad->SetLogx();
     if(p==0) h_pmt_high[p+27]->SetTitle("L9sw (CH27) - High Gain");
     if(p==1) h_pmt_high[p+27]->SetTitle("L7nw (CH28) - High Gain");
     if(p==2) h_pmt_high[p+27]->SetTitle("L1ne (CH29) - High Gain");
@@ -847,4 +862,6 @@ void PMTScan(TString rootname)
 	c_veto_corr_low->Print(outnameEnd);
       }
   }
+
+  
 }
