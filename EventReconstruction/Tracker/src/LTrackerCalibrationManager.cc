@@ -104,7 +104,7 @@ LTrackerCalibrationSlot* LTrackerCalibrationManager::CalibrateSlot(const int Sta
   // CNCorrectedSigma
   double mean2[NCHAN];
   double sigma2[NCHAN];
-  CNCorrectedSigma(StartEntry, StopEntry, mean1, sigma1, CN_mask, mean2, sigma2);
+  CNCorrectedSigma(StartEntry, StopEntry,  mean1, sigma1, CN_mask, mean2, sigma2);
   
   // Gaussianity
   double ngindex[NCHAN];
@@ -119,7 +119,7 @@ LTrackerCalibrationSlot* LTrackerCalibrationManager::CalibrateSlot(const int Sta
   int StopEvent=static_cast<int>(cev.event_index);
 
   // Result
-  LTrackerCalibrationSlot *result = new LTrackerCalibrationSlot(StartEvent, StopEvent, mean2, sigma2, ngindex, CN_mask);
+  LTrackerCalibrationSlot *result = new LTrackerCalibrationSlot(StartEvent, StopEvent, sigma0, mean2, sigma2, ngindex, CN_mask);
   return result;
 }
 

@@ -125,6 +125,12 @@ void LReco01Manager::Run(void) {
       inFile->GetEntry(i0);
       if(i0==0) NewOutFile();
       outFile->Fill(L0ToL1(lev0,cal));
+      /*
+      // *************** Check for cluster number ************ E.
+      for(int check=0;check<L0ToL1(lev0,cal).tracker.cls.size();++check){
+      L0ToL1(lev0,cal).tracker.cls. at(check).Dump();
+      }
+      */  
       ++fevtcounter;
       if(maxFileEvents!=-1 && fevtcounter>maxFileEvents-1) break;
       ++totevtcounter;
@@ -183,6 +189,12 @@ LEvRec1 LReco01Manager::L0ToL1(const LEvRec0 lev0IN, const LCalibration *calIN) 
   LEvRec1 result;
 
   result.tracker=GetTrackerSignal(lev0IN, *calIN);
+  /*
+  // *************** Check for cluster number ************ E.
+  for(int check=0;check<result.tracker.cls.size();++check){
+    result.tracker.cls. at(check).Dump();
+  }
+  */  
   result.trig=GetTriggerSignal(lev0IN, *calIN);
   result.scint=GetScintillatorSignal(lev0IN, *calIN);
   result.veto=GetVetoSignal(lev0IN, *calIN);
