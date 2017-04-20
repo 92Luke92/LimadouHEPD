@@ -69,6 +69,7 @@ int TrackerQuickLook(std::string namefile){
   
   if (!ev.IsVirgin())
      return -1;
+  
     for(int side=0;side<N_SIDES;++side){
     char plan=(side ? 'n' : 'p');
     for(int ld=0;ld<N_LADDER;++ld){
@@ -89,14 +90,12 @@ int TrackerQuickLook(std::string namefile){
       CN[side][ld]=new TH2D(
 	 Form("Common_Noise_%c_%d",plan,ld),
 	 Form("Common_Noise_%c_%d;VA;ADC",plan,ld),SIDE_VA,0,SIDE_VA,200,-100,100);
-      
       counts_clean[side][ld]=new TH2D(
 	 Form("Counts_clean_%c_%d",plan,ld),
 	 Form("Counts_clean_%c_%d;chan;ADC",plan,ld),SIDE_CHAN,0,SIDE_CHAN,200,-200,500);
      signal_noise[side][ld]=new TH2D(
 	Form("signal_noise_%c_%d",plan,ld),
 	Form("signal_noise_%c_%d;chan;S/N",plan,ld),SIDE_CHAN,0,SIDE_CHAN,100,-100,100);
-
      temp_map[side][ld]=new TH2D(
 	Form("Hotness_map_%c_%d",plan,ld),
 	Form("Hotness_map_%c_%d;channel;VA",plan,ld),VA_CHAN,0,VA_CHAN,SIDE_VA,0,SIDE_VA);
@@ -108,8 +107,8 @@ int TrackerQuickLook(std::string namefile){
 	Form("Clustersize_%c_%d",plan,ld),
 	Form("Clustersize_%c_%d;clustersize;counts",plan,ld),5,0,5);
      landau[side][ld]=new TH1D(
-	Form("Landau_distribution_%c_%d",plan,ld),
-	Form("Landau_distribution_%c_%d;ADC;counts",plan,ld),100,0,300);
+	Form("Eta_counts_distribution_%c_%d",plan,ld),
+	Form("Eta_counts_distribution_%c_%d;ADC;counts",plan,ld),100,0,300);
     }
   }
   
