@@ -9,15 +9,14 @@ const double CLFINDTHRESHOLD=3.;
 const double CLSNTHRESHOLD=4.5;//
 const double CLSNTHRESHOLD1CHAN=3.;
 
-
-
 class LTrackerCluster {
 public:
   LTrackerCluster();
   LTrackerCluster(const int inpSeed, const double *inpCont, const double *inpSigma);
   void Dump() const;
   void FillRandom(void);
-  
+  bool operator < (const LTrackerCluster& cl) const;
+  bool operator > (const LTrackerCluster& cl) const;
   int seed;
   double count[CLUSTERCHANNELS];
   double sigma[CLUSTERCHANNELS];
@@ -34,13 +33,14 @@ public:
   bool IsAtStopBorder();
   inline double GetEta(){return eta;};
   inline double GetEtaCounts(){return etaCounts;};
-
-  
-private:
+  inline double GetEtaSN(){return etaSN;};
   double ComputeEta();
   double ComputeEta3();
+  
+private:
   double eta;
   double etaCounts;
+  double etaSN;
 };
 
 

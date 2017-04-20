@@ -20,6 +20,7 @@ double LTrackerCluster::ComputeEta() {
  
   eta = numerator/denominator;
   etaCounts=denominator;
+  etaSN = sn[seedIndex]+sn[max2Index];
   
   return eta;
 }
@@ -32,6 +33,7 @@ double LTrackerCluster::ComputeEta3() {
 
   eta = numerator/denominator;
   etaCounts=denominator;
+  etaSN = sn[seedIndex]+sn[seedIndex-1]+sn[seedIndex+1];
   
   return eta;
 }
@@ -62,7 +64,7 @@ LTrackerCluster::LTrackerCluster(){
   }
   eta=-999.;
   etaCounts=-999.;
-  
+  etaSN=-999.;  
 }
 
 LTrackerCluster::LTrackerCluster(const int inpSeed, const double *inpCont, const double *inpSigma){
@@ -156,4 +158,15 @@ void LTrackerCluster::FillRandom(void) {
     sn[i]=count[i]/sigmaIN;
   }
   return;
+}
+
+
+bool LTrackerCluster::operator < (const LTrackerCluster& cl) const {
+  bool result = etaSN < cl.etaSN;
+  return result;
+}
+
+bool LTrackerCluster::operator > (const LTrackerCluster& cl) const {
+  bool result = etaSN > cl.etaSN;
+  return result;
 }
