@@ -4,10 +4,33 @@
 
 #include "TCanvas.h"
 #include "TH2.h"
+#include "TH1.h"
 #include "TROOT.h"
 #include "TRint.h"
 #include "TStyle.h"
 #include "TLine.h"
+
+TCanvas *drawing6_chan_1D(TH1D *ladder[N_LADDER],bool log){
+  TCanvas *display=new TCanvas();
+  display->Divide(3,2);
+  
+  int pad;
+  for(int i=0;i<N_LADDER;++i){
+    if (i==0) pad=1;
+    else if(i==1) pad=4;
+    else if(i==2) pad=2;
+    else if(i==3) pad=5;
+    else if(i==4) pad=3;
+    else if(i==5) pad=6;
+    
+    display->cd(pad);
+    gPad->cd(pad);
+    if(log) gPad->SetLogy();
+    ladder[i]->SetStats(0);
+    ladder[i]->Draw();
+  }
+  return display;
+}
 
 TCanvas *drawing6_chan_2D(TH2D *ladder[N_LADDER]){
   TCanvas *display=new TCanvas();
