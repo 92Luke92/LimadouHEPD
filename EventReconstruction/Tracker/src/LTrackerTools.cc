@@ -208,7 +208,6 @@ LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal) {
   double CN[N_VA];
   for (int iva=0;iva<N_VA;++iva) CN[iva]=0.; 
   ComputeCN(lev0.strip,ped,cnmask.GetBool(),CN);
-  
   for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich])-ped[ich]-CN[ChanToVA(ich)];
   std::vector<LTrackerCluster> *tmp = GetClusters(cont, sigma,evmask);
   // sorting on the eta SN
