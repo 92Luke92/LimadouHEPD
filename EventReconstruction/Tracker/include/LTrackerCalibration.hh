@@ -19,6 +19,7 @@ public:
   inline int GetRunId() const {return RunId;};
   inline int GetInitialTargetRun() const {return InitialTargetRun;};
   inline int GetFinalTargetRun() const {return FinalTargetRun;};
+  inline const double* GetSigmaRaw(const int nSlot) const {return calarray.at(nSlot).GetSigmaRaw();};
   inline const double* GetPedestal(const int nSlot) const {return calarray.at(nSlot).GetPedestal();};
   inline const double* GetSigma(const int nSlot) const {return calarray.at(nSlot).GetSigma();};
   inline const double* GetNGIndex(const int nSlot) const {return calarray.at(nSlot).GetNGIndex();};

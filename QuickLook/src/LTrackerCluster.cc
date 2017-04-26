@@ -5,8 +5,6 @@
 #include "LTrackerCluster.hh"
 #include <iostream>
 #include <cmath>
-#include <random>
-#include <chrono>
 
 double LTrackerCluster::ComputeEta() {
   int seedIndex=CLUSTERCHANNELS/2;
@@ -17,23 +15,30 @@ double LTrackerCluster::ComputeEta() {
   
   double denominator=count[seedIndex]+count[max2Index];
   double numerator=(max2Index>seedIndex ? count[max2Index] : count[seedIndex]);
- 
-  eta = numerator/denominator;
-  etaCounts=denominator;
-  etaSN = sn[seedIndex]+sn[max2Index];
   
+  /*
+  //eta calculation with sn instead counts
+  double dn=sqrt(0.5*(sigma[seedIndex]*sigma[seedIndex]+sigma[max2Index]*sigma[max2Index]));
+  double denominator= (count[seedIndex]+count[max2Index])/dn;
+  double numerator=(max2Index>seedIndex ? sn[max2Index] : sn[seedIndex]);
+  */
+  eta = numerator/denominator;
+  etaCounts= (count[seedIndex]+count[max2Index]);
+  etaSigma=sqrt(sigma[seedIndex]*sigma[seedIndex]+sigma[max2Index]*sigma[max2Index]);
   return eta;
 }
 
 double LTrackerCluster::ComputeEta3() {
   int seedIndex=CLUSTERCHANNELS/2;
   
-  double numerator=/*0*count[seedIndex-1]+*/count[seedIndex]+2*count[seedIndex+1];
+   double numerator=/*0*count[seedIndex-1]+*/count[seedIndex]+2*count[seedIndex+1];
   double denominator=count[seedIndex-1]+count[seedIndex]+count[seedIndex+1];
 
   eta = numerator/denominator;
   etaCounts=denominator;
-  etaSN = sn[seedIndex]+sn[seedIndex-1]+sn[seedIndex+1];
+  etaSigma=sqrt(sigma[seedIndex]*sigma[seedIndex]+sigma[seedIndex+1]*sigma[seedIndex+1]+sigma[seedIndex-1]*sigma[seedIndex-1]);
+
+
   
   return eta;
 }
@@ -64,7 +69,7 @@ LTrackerCluster::LTrackerCluster(){
   }
   eta=-999.;
   etaCounts=-999.;
-  etaSN=-999.;  
+  
 }
 
 LTrackerCluster::LTrackerCluster(const int inpSeed, const double *inpCont, const double *inpSigma){
@@ -90,7 +95,7 @@ LTrackerCluster::LTrackerCluster(const int inpSeed, const double *inpCont, const
     }
   }
   ComputeEta();
-  //ComputeEta3();
+
 }
 
 double LTrackerCluster::GetSides(const double SideThreshold){
@@ -128,45 +133,14 @@ int LTrackerCluster::ClusterSize(const double SideThreshold){
   return size;
 }
 
-void LTrackerCluster::Dump() const {
+void LTrackerCluster::Dump() {
   std::cout << "***************" << std::endl
             <<"\t seed " << seed << " (side " << ChanToSide(seed) << ", ladder " << ChanToLadder(seed) << ")" << std::endl
             <<"\t eta " << eta << std::endl << "\t";
-  std::cout << "\t counts ";
-  for(int i = 0; i < CLUSTERCHANNELS; ++i)  std::cout << count[i] << " ";
-  std::cout << std::endl << "\t sigma  ";
-  for(int i = 0; i < CLUSTERCHANNELS; ++i)  std::cout << sigma[i] << " ";
-  std::cout << std::endl << "\t sn     ";
-  for(int i = 0; i < CLUSTERCHANNELS; ++i)  std::cout << sn[i] << " ";
-  
+for(int i = 0; i < CLUSTERCHANNELS; ++i)  std::cout << count[i] << " ";
+std::cout << std::endl << "\t";
+for(int i = 0; i < CLUSTERCHANNELS; ++i)  std::cout << sn[i] << " ";
+ 
   std::cout << std::endl << "***************" << std::endl;
   return;
-}
-
-
-void LTrackerCluster::FillRandom(void) {
-  unsigned rseed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::default_random_engine generator(rseed);
-  const double pedestal = 1365.;
-  const double sigmaIN=5.46;
-  std::normal_distribution<double> distribution(pedestal,sigmaIN);
-  
-  seed = 234;
-  for(int i=0; i<CLUSTERCHANNELS; ++i) {
-    count[i]=distribution(generator);
-    sigma[i]=sigmaIN;
-    sn[i]=count[i]/sigmaIN;
-  }
-  return;
-}
-
-
-bool LTrackerCluster::operator < (const LTrackerCluster& cl) const {
-  bool result = etaSN < cl.etaSN;
-  return result;
-}
-
-bool LTrackerCluster::operator > (const LTrackerCluster& cl) const {
-  bool result = etaSN > cl.etaSN;
-  return result;
 }

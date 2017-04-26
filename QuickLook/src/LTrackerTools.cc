@@ -1,6 +1,6 @@
 #include "LTrackerTools.hh"
 #include "detector_const.hh"
-//#include "LTrackerCluster.hh"
+#include "LTrackerCluster.hh"
 #include "LTrackerMask.hh"
 #include <algorithm>
 #include <math.h>
@@ -63,6 +63,66 @@ int ChanToLadderChan(const int Chan) {
 
 int ChanToSideChan(const int Chan) {
   int result= ChanToLadderChan(Chan)%SIDE_CHAN;
+  return result;
+}
+
+std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigma, const bool *maskIn, const bool __emulateOnline){
+  auto result= new std::vector<LTrackerCluster>;
+  double sn[NCHAN];
+  for(int ich=0; ich<NCHAN; ++ich){
+    if(sigma[ich]==0.) sn[ich]=-999.;
+    else sn[ich]=cont[ich]/sigma[ich]; 
+    if(__emulateOnline==true) sn[ich]=static_cast<double>(static_cast<int>(sn[ich]));
+  }
+  
+  // Prepare mask even for default case
+  double mask[NCHAN];
+  if(maskIn==0) for(int ich=0; ich<NCHAN; ++ich) mask[ich]=true;
+  else for(int ich=0; ich<NCHAN; ++ich) mask[ich]=maskIn[ich];
+  // Apply the mask
+  for(int ich=0; ich<NCHAN; ++ich) sn[ich]*=(static_cast<double>(mask[ich]));
+  
+  // Main loop
+  for(int ich=0; ich<NCHAN; ++ich) {
+    //for(int ich=NCHAN-1; ich>-1; --ich) {
+    //if(sn[ich]<CLFINDTHRESHOLD) continue;
+    if(sn[ich]<CLSNTHRESHOLD1CHAN) continue;
+ 
+    int maxindex1=ich;
+    double max1 = sn[ich];
+    // Check if there's a higher maximum  - up to two chans ahead
+    int newmaxindex1 = maxindex1;
+    double newmax1 = max1;
+    while(1) {
+      int extentAhead=std::min(SIDE_CHAN-1-ChanToSideChan(maxindex1),2);
+      for(int index=1; index<=extentAhead; ++index) {
+	if(sn[maxindex1+index]>newmax1) {
+	  newmaxindex1=maxindex1+index;
+	  newmax1=sn[maxindex1+index];
+	}
+      } // Endl loop for newmax1
+      if(newmaxindex1 == maxindex1) {
+	break;
+      } else {
+	maxindex1 = newmaxindex1;
+	max1 = newmax1;
+      }
+    }
+    // Compare with the threshold
+    /*
+    if(maxindex1<CLSNTHRESHOLD1CHAN) {
+      ich+=2; // already explored up to ich+2
+      //ich-=2;
+      continue;
+    }
+    */
+    LTrackerCluster mycl(maxindex1, cont, sigma);
+    if(maskIn[maxindex1]&&maskIn[maxindex1-1]&&maskIn[maxindex1+1])
+      result->push_back(mycl);
+    ich=maxindex1+2; // already explored up there.
+    //ich=maxindex1-2; // already explored up there.
+  } // end of the main loop:: Warning, possible overlap between clusters' boundaries
+
   return result;
 }
 

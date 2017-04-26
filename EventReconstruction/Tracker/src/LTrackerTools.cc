@@ -116,7 +116,8 @@ std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigm
     }
     */
     LTrackerCluster mycl(maxindex1, cont, sigma);
-    result->push_back(mycl);
+    if(maskIn[maxindex1]&&maskIn[maxindex1-1]&&maskIn[maxindex1+1])
+      result->push_back(mycl);
     ich=maxindex1+2; // already explored up there.
     //ich=maxindex1-2; // already explored up there.
   } // end of the main loop:: Warning, possible overlap between clusters' boundaries
@@ -207,12 +208,14 @@ LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal) {
   double CN[N_VA];
   for (int iva=0;iva<N_VA;++iva) CN[iva]=0.; 
   ComputeCN(lev0.strip,ped,cnmask.GetBool(),CN);
-  
   for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich])-ped[ich]-CN[ChanToVA(ich)];
   std::vector<LTrackerCluster> *tmp = GetClusters(cont, sigma,evmask);
+  // sorting on the eta SN
+  std::sort(tmp->begin(), tmp->end(), std::greater<LTrackerCluster>());
       
   LTrackerSignal result;
   for(auto tmpit : *tmp) result.push_back(tmpit);
+
   return result;
 }
 

@@ -2,6 +2,7 @@
 #include "LTrackerQuicklook.hh"
 #include <stdlib.h>
 #include <TSystem.h>
+#include <TROOT.h>
 
 
 int main(int argc, char **argv){
@@ -9,7 +10,7 @@ int main(int argc, char **argv){
    std::cout << "Running quicklook: " << std::endl;
 
    TString xslPath = "./";
-   TString outDir = "./";
+   TString outPath = "./";
    
    TString broad1;
    TString broad2;
@@ -19,8 +20,8 @@ int main(int argc, char **argv){
    TString scint;
    TString sil;
    TString tel;
-
-
+   
+   
    if (argc < 2)
    {
       PrintHelp();
@@ -49,23 +50,23 @@ int main(int argc, char **argv){
 	    continue;
 	 }
       }
-      // if (!strcmp(argv[i], "-o"))
-      // {
-      // 	 if (++i >= argc)
-      // 	 {
-      // 	    std::cout <<  "\n-o needs arguments." << std::endl;
-      // 	    PrintHelp();
-      // 	    return -1;
-      // 	 } else {
-      // 	    outDir = argv[i];
-      // 	    continue;
-      // 	 }
-      // }
-
+      if (!strcmp(argv[i], "-o"))
+      {
+      	 if (++i >= argc)
+      	 {
+      	    std::cout <<  "\n-o needs arguments." << std::endl;
+      	    PrintHelp();
+      	    return -1;
+      	 } else {
+      	    outPath = argv[i];
+      	    continue;
+      	 }
+       }
+      
    }
 
    std::cout << "xsl path = " << xslPath << std::endl;
-   std::cout << "output dir = " << outDir << std::endl;
+   std::cout << "output path = " << outPath << std::endl;
 
    if (TrackerQuickLook(argv[1]) == -1 )
       std::cout << "Not Virgin run: " << std::endl;
@@ -90,6 +91,10 @@ int main(int argc, char **argv){
    ScintConfigToXML(argv[1], scint);
    SilConfigToXML(argv[1], sil);
    TelemetryToXML(argv[1], tel);
+
+   const char *char_outPath = outPath;
+   gROOT->ProcessLine(Form(".!mkdir -p %s",char_outPath));
+   gROOT->ProcessLine(Form(".!mv *.pdf *.xml %s", char_outPath));
            
    
   return 0; 
@@ -98,10 +103,10 @@ int main(int argc, char **argv){
 
 void PrintHelp(void)
 {
-   std::cout << "\nUsage: ./QuickLook <root file directory>  -x <xsl folder>\n" << std::endl;
+   std::cout << "\nUsage: ./QuickLook <root file directory>  -x <xsl folder> -o <output folder>\n" << std::endl;
    std::cout <<  "\t -h or --help print this help and exit \n" << std::endl;
    std::cout << "\t -x <path> set the path to xsl template files [default ./] "
 	     << std::endl;
-   //std::cout << "\t -o <path> set the path for the output files [default ./]" << std::endl;
+   std::cout << "\t -o <path> set the path for the output files [default ./]" << std::endl;
 }
 

@@ -92,6 +92,7 @@ void LEvRec1::CopyFromLEvRec1Stream(const LEvRec1Stream evstr) {
     cl.sigma[2] = evstr.count2[i]/evstr.sn2[i];
     cl.sigma[3] = evstr.count3[i]/evstr.sn3[i];
     cl.sigma[4] = evstr.count4[i]/evstr.sn4[i];
+    cl.ComputeEta();
     tracker.push_back(cl);
   }
 

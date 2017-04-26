@@ -6,6 +6,7 @@ const int ADC_CHAN=3*VA_CHAN;
 const int LADDER_CHAN=4*ADC_CHAN;
 const int SIDE_CHAN=LADDER_CHAN/2;
 const int NCHAN = 6*LADDER_CHAN;
+const int SIDE_VA=6;
 const int NADC = 4096;
 const int NPMT = 64;
 const int NRATEMETER = 9; // ?????????????

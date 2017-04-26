@@ -1,9 +1,10 @@
 #include "LTrackerCalibrationSlot.hh"
 
-LTrackerCalibrationSlot::LTrackerCalibrationSlot(int StartE, int StopE, double *ped, double *sig, double *ngi, bool *cnm) {
+LTrackerCalibrationSlot::LTrackerCalibrationSlot(int StartE, int StopE, double* rawsig, double *ped, double *sig, double *ngi, bool *cnm) {
   StartEvent=StartE;
   StopEvent=StopE;
   for(int iChan=0; iChan<NCHAN; ++iChan) {
+    sigmaraw[iChan]=rawsig[iChan];
     pedestal[iChan]=ped[iChan];
     sigma[iChan]=sig[iChan];
     ngindex[iChan]=ngi[iChan];
@@ -21,13 +22,13 @@ void LTrackerCalibrationSlot::Write(std::ofstream *output) {
 LTrackerCalibrationSlot* LTrackerCalibrationSlot::Read(std::ifstream *input) {
   char word[100];
   int StartEventST, StopEventST;
-  double pedestalST[NCHAN], sigmaST[NCHAN], ngindexST[NCHAN];
+  double sigmarawST[NCHAN], pedestalST[NCHAN], sigmaST[NCHAN], ngindexST[NCHAN];
   bool cnmST[NCHAN];
   *input >> word >> StartEventST >>  StopEventST;
   for(int iChan=0; iChan<NCHAN; ++iChan)
-    *input >> pedestalST[iChan] >>  sigmaST[iChan] >> ngindexST[iChan] >> cnmST[iChan];
+    *input >> sigmarawST[iChan] >> pedestalST[iChan] >>  sigmaST[iChan] >> ngindexST[iChan] >> cnmST[iChan];
   
-  LTrackerCalibrationSlot *result = new LTrackerCalibrationSlot(StartEventST, StopEventST, pedestalST, sigmaST, ngindexST, cnmST);
+  LTrackerCalibrationSlot *result = new LTrackerCalibrationSlot(StartEventST, StopEventST, sigmarawST, pedestalST, sigmaST, ngindexST, cnmST);
   return result;
 }
 

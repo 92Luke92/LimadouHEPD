@@ -6,21 +6,20 @@ const int NEV_WINDOW = CLUSTERCHANNELS+2;
 const double MAX_SIGMA2=300.;
 
 const double CLFINDTHRESHOLD=3.;
-const double CLSNTHRESHOLD=4.5;//
-const double CLSNTHRESHOLD1CHAN=3.;
+const double CLSNTHRESHOLD=4.2;//
+const int CLSNTHRESHOLD1CHAN=3;
 
 class LTrackerCluster {
 public:
   LTrackerCluster();
   LTrackerCluster(const int inpSeed, const double *inpCont, const double *inpSigma);
-  void Dump() const;
-  void FillRandom(void);
-  bool operator < (const LTrackerCluster& cl) const;
-  bool operator > (const LTrackerCluster& cl) const;
+  void Dump();
+
   int seed;
   double count[CLUSTERCHANNELS];
   double sigma[CLUSTERCHANNELS];
   double sn[CLUSTERCHANNELS];
+
   
   
 
@@ -33,14 +32,14 @@ public:
   bool IsAtStopBorder();
   inline double GetEta(){return eta;};
   inline double GetEtaCounts(){return etaCounts;};
-  inline double GetEtaSN(){return etaSN;};
-  double ComputeEta();
-  double ComputeEta3();
+  inline double GetEtaSigma(){return etaSigma;};
   
 private:
+  double ComputeEta();
+  double ComputeEta3();
   double eta;
   double etaCounts;
-  double etaSN;
+  double etaSigma;
 };
 
 
