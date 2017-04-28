@@ -28,7 +28,6 @@
 	       </tr>
 	     </td>
 
-	     
 	     <td>
 	     <table border="1">
 	       <tr  bgcolor="#1acd32">

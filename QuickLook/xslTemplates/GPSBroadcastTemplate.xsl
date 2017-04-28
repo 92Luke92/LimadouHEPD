@@ -20,6 +20,13 @@
 	 <h2>GPS and Velocity Broadcast</h2>
 	 <table border="1">
 	   <tr bgcolor="#1acd32">
+
+	     <td>
+	       <tr  bgcolor="#1acd32">
+	         <td></td>
+	       </tr>
+	     </td>
+	     
 	     <td>
 	     <table border="1">
 	       <tr  bgcolor="#1acd32">
@@ -82,6 +89,19 @@
 	   <xsl:for-each select="//BROADCAST2">
 
 	     <tr>
+	       <td>
+		   <tr>     
+		     <xsl:choose>
+		       <xsl:when test="HEADER &gt;'0'">
+			 <td  width="20" height="30" align="center"> <xsl:value-of select="HEADER_VAL"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="20" height="30" align="center"><xsl:value-of select="TAIL_VAL"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>	     
+		   </tr>
+	       </td>
+       
 	       <td>
 		 <table border="1">
 		   <tr>

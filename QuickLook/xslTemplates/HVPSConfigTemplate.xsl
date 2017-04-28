@@ -5,54 +5,32 @@
     
 <!--    
 =====================================================================================
- Stylesheet: RunHeaderTemplate.xsl
-    Version: 1.0 (2005-03-14)
-     Author: Maurizio Nagni
-     Descr.: Format the output of the RunHeaderToXml.c script to generate a human 
-             readble verion of the ArrDump packet
+
+
 =====================================================================================
 -->
-    
-<!--Contains some utility to converts dec/hex/bin numbers-->
-<!-- <xsl:include href="numberutils_lib.xsl"/> -->
 
-<!--Contains all the customer specific parameters-->
-<!--<xsl:include href="Configure.xsl"/>-->
-   
-   <!-- Define which a key called "varDes" 
-   	which will search inside the node "var" of the reference
-   	ArrDumpInfo.xml (or whatever file instead of the is used)
-	all values values of the node "idx" matching the valued passed when 
-	the key "fileName" is called -->
-   <!-- No xml file is defined here because the xsl:key is absolutely generic -->
-<!--   <xsl:key name="arrDes" match="arr" use="idx"/>
-
-   <xsl:template match="/" name="ArrDumpReference">
-     <xsl:param name="code"/>
-     <xsl:param name="arrval"/>
-     <xsl:for-each select="document('./compilationInfo/PRH_ParamHandler_INFN_auto.arr.xml')">
-       <xsl:for-each select="key('arrDes', $code)">
-	 <td> <th align="left"><xsl:value-of select="name"/><xsl:text>(</xsl:text><xsl:value-of select="idx"/><xsl:text>)</xsl:text> </th> </td>
-	 <td> <th align="left"><xsl:copy-of select="$arrval"/></th> </td>
-	 <td> <th align="left"><xsl:value-of select="comment"/></th> </td>
-       </xsl:for-each> 
-     </xsl:for-each>
-   </xsl:template>
--->
    <xsl:template match="/" name="ArrDumpTemplate">
      <html>
        <body STYLE="font-family:Arial, helvetica, sans-serif; font-size:12pt">
 	 <h2>HVPS Configuration </h2>
 	 <table border="1">
 	   <tr bgcolor="#1acd32">
+
+	     <td>
+	       <tr  bgcolor="#1acd32">
+	         <td></td>
+	       </tr>
+	     </td>
+
 	     <td>
 	     <table border="1">
 	       <tr  bgcolor="#1acd32">
 	         <td height="30" align="center" colspan="2"> Run ID </td>
 	       </tr>
 	       <tr>
-	         <td width="100" height="30" align="center">Boot Number</td>
-	         <td width="100" height="30" align="center">Run Number</td>
+	         <td width="100" height="60" align="center">Boot Number</td>
+	         <td width="100" height="60" align="center">Run Number</td>
 	       </tr>
 	     </table>
 	     </td>
@@ -94,6 +72,19 @@
 	   <xsl:for-each select="//HVPSCONFIG">
 
 	     <tr>
+	       <td>
+		   <tr>     
+		     <xsl:choose>
+		       <xsl:when test="HEADER &gt;'0'">
+			 <td  width="20" height="30" align="center"> <xsl:value-of select="HEADER_VAL"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="20" height="30" align="center"><xsl:value-of select="TAIL_VAL"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>	     
+		   </tr>
+	       </td>
+
 	       <td>
 		 <table border="1">
 		   <tr>

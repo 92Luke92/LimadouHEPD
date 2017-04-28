@@ -77,6 +77,23 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       rootfile.GetTmdEntry(j);   
       outputFile << "<BROADCAST>\n";
       outputFile2 << "<BROADCAST2>\n";
+      
+      outputFile << "\t<HEADER>"<< 0 << "</HEADER>\n";
+      outputFile2 << "\t<HEADER>"<< 0 << "</HEADER>\n";
+
+      if(j%2==0) 
+      outputFile << "\t<HEADER>" << 1 << "</HEADER>\n";
+
+      outputFile << "\t<HEADER_VAL>" << "H" << "</HEADER_VAL>\n";
+      outputFile << "\t<TAIL_VAL>" << "T" << "</TAIL_VAL>\n";
+
+      if(j%2==0) 
+      outputFile2 << "\t<HEADER>" << 1 << "</HEADER>\n";
+
+      outputFile2 << "\t<HEADER_VAL>" << "H" << "</HEADER_VAL>\n";
+
+      outputFile2 << "\t<TAIL_VAL>" << "T" << "</TAIL_VAL>\n";
+      
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
       outputFile << "\t<RUN_NR>"  << metaData.run_id   << "</RUN_NR>\n";    
       outputFile << "\t<OBDH_MS>"  << metaData.broadcast.OBDH.ms  << "</OBDH_MS>\n";    
@@ -296,7 +313,15 @@ void HVPSConfigToXML(TString rootname, TString xslPath = "")
       }
 
       outputFile << "<HVPSCONFIG>\n";
+      
+      outputFile << "\t<HEADER>"<< 0 << "</HEADER>\n";
+      
+      if(j%2==0) 
+      outputFile << "\t<HEADER>" << 1 << "</HEADER>\n";
 
+      outputFile << "\t<HEADER_VAL>" << "H" << "</HEADER_VAL>\n";
+      outputFile << "\t<TAIL_VAL>" << "T" << "</TAIL_VAL>\n";
+      
       outputFile << "\t<HV_PLANE_A_error>"  <<  0 << "</HV_PLANE_A_error>\n";
       outputFile << "\t<HV_PLANE_B_error>"  <<  0 << "</HV_PLANE_B_error>\n";
       outputFile << "\t<HV_PMT0_error>"  <<  0 << "</HV_PMT0_error>\n";
@@ -490,13 +515,17 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
    for(int t=0;t<Tmd_entries;t++) {
        
       outputFile << "<RUN_INFO>\n";
+
+      outputFile << "\t<HEADER>"<< 0 << "</HEADER>\n";
       
+            
       outputFile <<  dec << "\t<RUN_TYPE_error>"<< 0 << "</RUN_TYPE_error>\n";
       outputFile << "\t<RUN_DURATION_error>"<< 0 << "</RUN_DURATION_error>\n";
       outputFile << dec << "\t<ORBIT_error>"<< 0 << "</ORBIT_error>\n";
       outputFile << dec << "\t<ORBIT_error_yellow>"<< 0 << "</ORBIT_error_yellow>\n";
        
       if (t%2==0){
+
 	
 	 if (run_type_vect[t]!=run_type_vect[t+1]) 
 	    outputFile << dec << "\t<RUN_TYPE_error>"<< 1 << "</RUN_TYPE_error>\n";
@@ -530,6 +559,11 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 	 
       }
       
+      if(t%2==0) 
+      outputFile << "\t<HEADER>" << 1 << "</HEADER>\n";
+
+      outputFile << "\t<HEADER_VAL>" << "H" << "</HEADER_VAL>\n";
+      outputFile << "\t<TAIL_VAL>" << "T" << "</TAIL_VAL>\n";
       
       outputFile << dec << "\t<BOOT_NR>"    << boot_nr_vect[t]  << "</BOOT_NR>\n";
       outputFile << dec << "\t<RUN_NR>"     << run_id_vect[t]  << "</RUN_NR>\n";
