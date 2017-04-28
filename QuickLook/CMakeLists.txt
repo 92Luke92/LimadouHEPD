@@ -14,6 +14,7 @@ list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS} )
 find_package( ROOT REQUIRED COMPONENTS RIO Net Tree Hist Gpad )
 include(${ROOT_USE_FILE})
 
+set(EXECUTABLE_OUTPUT_PATH "../bin")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)

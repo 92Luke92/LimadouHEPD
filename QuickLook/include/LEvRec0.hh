@@ -36,14 +36,6 @@ public:
 };
 
 
-// struct scientific_data_t
-// {
-//    unsigned short     PMT_rate_meter[PMT_RATE_METER_SIZE];
-//    short              CPU_temp[2];   
-//    short              PMT_temp[2]; 
-//    unsigned int       CPU_time[2];
-// } ;
-
 
 struct silicon_config_t
 {  

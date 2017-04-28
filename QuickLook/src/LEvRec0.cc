@@ -67,12 +67,10 @@ LEvRec0Md::LEvRec0Md(){
    run_type = 0;
    run_duration = 0;
    orbit_Zone = 0;
-   silConfig.ladder_on[0] = 0;
-   silConfig.ladder_on[1] = 0;
-   silConfig.ladder_on[2] = 0;
-   silConfig.ladder_mask[0] = 0;
-   silConfig.ladder_mask[1] = 0;
-   silConfig.ladder_mask[2] = 0;
+   for(int i=0; i<3; ++i)
+      silConfig.ladder_on[i] = false;
+   for(int i=0; i<3; ++i)
+      silConfig.ladder_mask[i] = false; 
    silConfig.plane_HV[0] = 0;
    silConfig.plane_HV[1] = 0;
    silConfig.adj_strip = 0;

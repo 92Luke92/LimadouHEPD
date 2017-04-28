@@ -30,50 +30,50 @@
 void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
 {
   
-  cout << endl << "Broadcast to xml:" << rootname << endl;
+   cout << endl << "Broadcast to xml:" << rootname << endl;
 
-  TString filename = rootname;
-  filename.ReplaceAll(".root", 5, "_Time.xml",9 );
+   TString filename = rootname;
+   filename.ReplaceAll(".root", 5, "_Time.xml",9 );
 
-  ofstream outputFile;
-  outputFile.open(filename.Data(), ios::trunc);
-  if (!outputFile.is_open()){
-    printf("Cannot open the file %s for the output", filename.Data());
-    exit(0);
-  }
+   ofstream outputFile;
+   outputFile.open(filename.Data(), ios::trunc);
+   if (!outputFile.is_open()){
+      printf("Cannot open the file %s for the output", filename.Data());
+      exit(0);
+   }
 
-  TString filename2 = rootname;
-  filename2.ReplaceAll(".root", 5, "_GPS.xml",8 );
+   TString filename2 = rootname;
+   filename2.ReplaceAll(".root", 5, "_GPS.xml",8 );
 
-  ofstream outputFile2;
-  outputFile2.open(filename2.Data(), ios::trunc); 
-  if (!outputFile2.is_open()){
-    printf("Cannot open the file2 %s for the output", filename2.Data());
-    exit(0);
-  }
+   ofstream outputFile2;
+   outputFile2.open(filename2.Data(), ios::trunc); 
+   if (!outputFile2.is_open()){
+      printf("Cannot open the file2 %s for the output", filename2.Data());
+      exit(0);
+   }
  
    
-  LEvRec0File rootfile(rootname.Data());
-  LEvRec0 ev;
-  LEvRec0Md metaData;
-  rootfile.SetTheEventPointer(ev);
-  rootfile.SetTmdPointer(metaData);
+   LEvRec0File rootfile(rootname.Data());
+   LEvRec0 ev;
+   LEvRec0Md metaData;
+   rootfile.SetTheEventPointer(ev);
+   rootfile.SetTmdPointer(metaData);
    
-  outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
-  outputFile << "<!-- Prologo XML -->\n";
-  outputFile << "<?xml-stylesheet type='text/xsl' href='" << xslPath.Data() << "'?>\n";
-  outputFile << "<ROOT_SOURCE>\n";
+   outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
+   outputFile << "<!-- Prologo XML -->\n";
+   outputFile << "<?xml-stylesheet type='text/xsl' href='" << xslPath.Data() << "'?>\n";
+   outputFile << "<ROOT_SOURCE>\n";
 
-  outputFile2 << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
-  outputFile2 << "<!-- Prologo XML -->\n";
-  outputFile2 << "<?xml-stylesheet type='text/xsl' href='" << xslPath2.Data() << "'?>\n";
-  outputFile2 << "<ROOT_SOURCE>\n"; 
+   outputFile2 << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
+   outputFile2 << "<!-- Prologo XML -->\n";
+   outputFile2 << "<?xml-stylesheet type='text/xsl' href='" << xslPath2.Data() << "'?>\n";
+   outputFile2 << "<ROOT_SOURCE>\n"; 
   
-  // Metadata
-  int Tmd_entries = rootfile.GetTmdEntries(); 
-  cout << "Number of Tmd entries: " << Tmd_entries << endl;
-  for(int j=0;j<Tmd_entries;j++)
-    {
+   // Metadata
+   int Tmd_entries = rootfile.GetTmdEntries(); 
+   cout << "Number of Tmd entries: " << Tmd_entries << endl;
+   for(int j=0;j<Tmd_entries;j++)
+   {
       rootfile.GetTmdEntry(j);   
       outputFile << "<BROADCAST>\n";
       outputFile2 << "<BROADCAST2>\n";
@@ -108,11 +108,11 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       outputFile << "</BROADCAST>\n";
       outputFile2 << "</BROADCAST2>\n"; 
   
-    }
-  outputFile << "</ROOT_SOURCE>\n";
-  outputFile2 << "</ROOT_SOURCE>\n";
-  outputFile.close();
-  outputFile2.close();
+   }
+   outputFile << "</ROOT_SOURCE>\n";
+   outputFile2 << "</ROOT_SOURCE>\n";
+   outputFile.close();
+   outputFile2.close();
 }
 
 
@@ -120,130 +120,130 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
 void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 {
   
-  cout << endl << "CPU Time to xml:" << rootname << endl;
+   cout << endl << "CPU Time to xml:" << rootname << endl;
 
-  TString filename = rootname;
-  filename.ReplaceAll(".root", 5, "_CPUTimeTemp.xml", 16);
+   TString filename = rootname;
+   filename.ReplaceAll(".root", 5, "_CPUTimeTemp.xml", 16);
 
-  ofstream outputFile;
-  outputFile.open(filename.Data(), ios::trunc);
-  if (!outputFile.is_open()){
-    printf("Cannot open the file %s for the output", filename.Data());
-    exit(0);
-  }
+   ofstream outputFile;
+   outputFile.open(filename.Data(), ios::trunc);
+   if (!outputFile.is_open()){
+      printf("Cannot open the file %s for the output", filename.Data());
+      exit(0);
+   }
 
-  Short_t CPU_temp_start;
-  Short_t CPU_temp_stop;
-  Short_t PMT_temp_start;
-  Short_t PMT_temp_stop;
+   Short_t CPU_temp_start;
+   Short_t CPU_temp_stop;
+   Short_t PMT_temp_start;
+   Short_t PMT_temp_stop;
 
-  LEvRec0File rootfile(rootname.Data());
-  LEvRec0 ev;
-  LEvRec0Md metaData;
-  rootfile.SetTheEventPointer(ev);
-  rootfile.SetTmdPointer(metaData);
+   LEvRec0File rootfile(rootname.Data());
+   LEvRec0 ev;
+   LEvRec0Md metaData;
+   rootfile.SetTheEventPointer(ev);
+   rootfile.SetTmdPointer(metaData);
    
   
-  outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
-  outputFile << "<!-- Prologo XML -->\n";
-  outputFile << "<?xml-stylesheet type='text/xsl' href='" << xslPath.Data() << "'?>\n";
-  outputFile << "<ROOT_SOURCE>\n";
+   outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
+   outputFile << "<!-- Prologo XML -->\n";
+   outputFile << "<?xml-stylesheet type='text/xsl' href='" << xslPath.Data() << "'?>\n";
+   outputFile << "<ROOT_SOURCE>\n";
 
-  // Metadata
-  int Tmd_entries = rootfile.GetTmdEntries(); 
-  cout << "Number of Tmd entries: " << Tmd_entries << endl;
+   // Metadata
+   int Tmd_entries = rootfile.GetTmdEntries(); 
+   cout << "Number of Tmd entries: " << Tmd_entries << endl;
 
-  for(int j=0;j<Tmd_entries;j++)
-    {
+   for(int j=0;j<Tmd_entries;j++)
+   {
       rootfile.GetTmdEntry(j);   
        
       if(j%2!=0)
-	{
+      {
 	
-	  outputFile << "<CPUTIMETEMP>\n";
+	 outputFile << "<CPUTIMETEMP>\n";
 
-	  outputFile << "\t<CPU_TEMP_START_Y>"  <<  0 << "</CPU_TEMP_START_Y>\n";
-	  outputFile << "\t<CPU_TEMP_STOP_Y>"   <<  0 << "</CPU_TEMP_STOP_Y>\n";
-	  outputFile << "\t<PMT_TEMP_START_Y>"  <<  0 << "</PMT_TEMP_START_Y>\n";
-	  outputFile << "\t<PMT_TEMP_STOP_Y>"   <<  0 << "</PMT_TEMP_STOP_Y>\n";
-	  outputFile << "\t<CPU_TEMP_START_R>"  <<  0 << "</CPU_TEMP_START_R>\n";
-	  outputFile << "\t<CPU_TEMP_STOP_R>"   <<  0 << "</CPU_TEMP_STOP_R>\n";
-	  outputFile << "\t<PMT_TEMP_START_R>"  <<  0 << "</PMT_TEMP_START_R>\n";
-	  outputFile << "\t<PMT_TEMP_STOP_R>"   <<  0 << "</PMT_TEMP_STOP_R>\n";
+	 outputFile << "\t<CPU_TEMP_START_Y>"  <<  0 << "</CPU_TEMP_START_Y>\n";
+	 outputFile << "\t<CPU_TEMP_STOP_Y>"   <<  0 << "</CPU_TEMP_STOP_Y>\n";
+	 outputFile << "\t<PMT_TEMP_START_Y>"  <<  0 << "</PMT_TEMP_START_Y>\n";
+	 outputFile << "\t<PMT_TEMP_STOP_Y>"   <<  0 << "</PMT_TEMP_STOP_Y>\n";
+	 outputFile << "\t<CPU_TEMP_START_R>"  <<  0 << "</CPU_TEMP_START_R>\n";
+	 outputFile << "\t<CPU_TEMP_STOP_R>"   <<  0 << "</CPU_TEMP_STOP_R>\n";
+	 outputFile << "\t<PMT_TEMP_START_R>"  <<  0 << "</PMT_TEMP_START_R>\n";
+	 outputFile << "\t<PMT_TEMP_STOP_R>"   <<  0 << "</PMT_TEMP_STOP_R>\n";
 	 
-	  outputFile << dec <<  "\t<BOOT_NR>"   <<  metaData.boot_nr << "</BOOT_NR>\n";
-	  outputFile << dec << "\t<RUN_ID>"     <<  metaData.run_id  << "</RUN_ID>\n";
+	 outputFile << dec <<  "\t<BOOT_NR>"   <<  metaData.boot_nr << "</BOOT_NR>\n";
+	 outputFile << dec << "\t<RUN_ID>"     <<  metaData.run_id  << "</RUN_ID>\n";
 
-	  CPU_temp_start = metaData.CPU_temp[0]*0.0625;
-	  CPU_temp_stop = metaData.CPU_temp[1]*0.0625;
-	  PMT_temp_start = metaData.PMT_temp[0]*0.25;
-	  PMT_temp_stop = metaData.PMT_temp[1]*0.25;
+	 CPU_temp_start = metaData.CPU_temp[0]*0.0625;
+	 CPU_temp_stop = metaData.CPU_temp[1]*0.0625;
+	 PMT_temp_start = metaData.PMT_temp[0]*0.25;
+	 PMT_temp_stop = metaData.PMT_temp[1]*0.25;
 
 	 
-	  if ((CPU_temp_start <-10) && (CPU_temp_start >-20))
+	 if ((CPU_temp_start <-10) && (CPU_temp_start >-20))
 	    outputFile << "\t<CPU_TEMP_START_Y>"  <<  1  << "</CPU_TEMP_START_Y>\n";
 	  
-	  if ((CPU_temp_start <45) && (CPU_temp_start >35))
+	 if ((CPU_temp_start <45) && (CPU_temp_start >35))
 	    outputFile << "\t<CPU_TEMP_START_Y>" <<  1   << "</CPU_TEMP_START_Y>\n";
 
-	  if ((CPU_temp_stop <-10) && (CPU_temp_stop >-20))
+	 if ((CPU_temp_stop <-10) && (CPU_temp_stop >-20))
 	    outputFile << "\t<CPU_TEMP_STOP_Y>"   <<  1   << "</CPU_TEMP_STOP_Y>\n";
 	  
-	  if ((CPU_temp_stop <45) && (CPU_temp_stop >35))
+	 if ((CPU_temp_stop <45) && (CPU_temp_stop >35))
 	    outputFile << "\t<CPU_TEMP_STOP_Y>"   <<  1   << "</CPU_TEMP_STOP_Y>\n";
 
-	  if ((PMT_temp_start <-10) && (PMT_temp_start >-20))
+	 if ((PMT_temp_start <-10) && (PMT_temp_start >-20))
 	    outputFile << "\t<PMT_TEMP_START_Y>"  <<  1   << "</PMT_TEMP_START_Y>\n";
 	  
-	  if ((PMT_temp_start <45) && (PMT_temp_start >35))
+	 if ((PMT_temp_start <45) && (PMT_temp_start >35))
 	    outputFile << "\t<PMT_TEMP_START_Y>"  <<  1   << "</PMT_TEMP_START_Y>\n";
 
-	  if ((PMT_temp_stop <-10) && (PMT_temp_stop >-20))
+	 if ((PMT_temp_stop <-10) && (PMT_temp_stop >-20))
 	    outputFile << "\t<PMT_TEMP_STOP_Y>"  <<  1    << "</PMT_TEMP_STOP_Y>\n";
 	  
-	  if ((PMT_temp_stop <45) && (PMT_temp_stop >35))
+	 if ((PMT_temp_stop <45) && (PMT_temp_stop >35))
 	    outputFile << "\t<PMT_TEMP_STOP_Y>"  <<  1    << "</PMT_TEMP_STOP_Y>\n";	   
 
-	  if (CPU_temp_start >45)
+	 if (CPU_temp_start >45)
 	    outputFile << "\t<CPU_TEMP_START_R>" <<  1 << "</CPU_TEMP_START_R>\n";
 	   
-	  if (CPU_temp_start<-20)
+	 if (CPU_temp_start<-20)
 	    outputFile << "\t<CPU_TEMP_START_R>"  <<  1 << "</CPU_TEMP_START_R>\n";
 
-	  if (CPU_temp_stop >45)
+	 if (CPU_temp_stop >45)
 	    outputFile << "\t<CPU_TEMP_STOP_R>"  <<  1 << "</CPU_TEMP_STOP_R>\n";
 	  
-	  if (CPU_temp_stop<-20)
+	 if (CPU_temp_stop<-20)
 	    outputFile << "\t<CPU_TEMP_STOP_R>"  <<  1  << "</CPU_TEMP_STOP_R>\n";
 
-	  if (PMT_temp_start >45)
+	 if (PMT_temp_start >45)
 	    outputFile << "\t<PMT_TEMP_START_R>"  <<  1 << "</PMT_TEMP_START_R>\n";
 	  
-	  if (PMT_temp_start<-20)
+	 if (PMT_temp_start<-20)
 	    outputFile << "\t<PMT_TEMP_START_R>"  <<  1 << "</PMT_TEMP_START_R>\n";
 
-	  if (PMT_temp_stop >45)
+	 if (PMT_temp_stop >45)
 	    outputFile << "\t<PMT_TEMP_STOP_R>"  <<  1 << "</PMT_TEMP_STOP_R>\n";
 	  
-	  if (PMT_temp_stop<-20)
+	 if (PMT_temp_stop<-20)
 	    outputFile << "\t<PMT_TEMP_STOP_R>"  <<  1 << "</PMT_TEMP_STOP_R>\n";
 
 	  
-	  outputFile << "\t<CPU_START_TIME>"<< metaData.CPU_time[0] << "</CPU_START_TIME>\n";
-	  outputFile << "\t<CPU_STOP_TIME>" << metaData.CPU_time[1] << "</CPU_STOP_TIME>\n";
-	  outputFile << "\t<CPU_TEMP_START>" <<  CPU_temp_start  << "</CPU_TEMP_START>\n";
-	  outputFile << "\t<CPU_TEMP_STOP>"  <<  CPU_temp_stop  << "</CPU_TEMP_STOP>\n";
-	  outputFile << "\t<PMT_TEMP_START>" <<  PMT_temp_start << "</PMT_TEMP_START>\n";
-	  outputFile << "\t<PMT_TEMP_STOP>"  <<  PMT_temp_stop  << "</PMT_TEMP_STOP>\n";
+	 outputFile << "\t<CPU_START_TIME>"<< metaData.CPU_time[0] << "</CPU_START_TIME>\n";
+	 outputFile << "\t<CPU_STOP_TIME>" << metaData.CPU_time[1] << "</CPU_STOP_TIME>\n";
+	 outputFile << "\t<CPU_TEMP_START>" <<  CPU_temp_start  << "</CPU_TEMP_START>\n";
+	 outputFile << "\t<CPU_TEMP_STOP>"  <<  CPU_temp_stop  << "</CPU_TEMP_STOP>\n";
+	 outputFile << "\t<PMT_TEMP_START>" <<  PMT_temp_start << "</PMT_TEMP_START>\n";
+	 outputFile << "\t<PMT_TEMP_STOP>"  <<  PMT_temp_stop  << "</PMT_TEMP_STOP>\n";
 
-	  outputFile << "</CPUTIMETEMP>\n";   
+	 outputFile << "</CPUTIMETEMP>\n";   
  
-	}
-    } 
+      }
+   } 
 
   
-  outputFile << "</ROOT_SOURCE>\n";
-  outputFile.close();
+   outputFile << "</ROOT_SOURCE>\n";
+   outputFile.close();
 
 }
 
@@ -251,49 +251,49 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 void HVPSConfigToXML(TString rootname, TString xslPath = "")
 {
   
-  cout << endl <<  "HVPS to xml:" << rootname << endl;
+   cout << endl <<  "HVPS to xml:" << rootname << endl;
 
-  TString filename = rootname;
-  filename.ReplaceAll(".root", 5, "_HVPSConfig.xml", 15);
+   TString filename = rootname;
+   filename.ReplaceAll(".root", 5, "_HVPSConfig.xml", 15);
 
-  ofstream outputFile;
-  outputFile.open(filename.Data(), ios::trunc);
+   ofstream outputFile;
+   outputFile.open(filename.Data(), ios::trunc);
   
-  if (!outputFile.is_open()){
-    printf("Cannot open the file %s for the output", filename.Data());
-    exit(0);
-  }
+   if (!outputFile.is_open()){
+      printf("Cannot open the file %s for the output", filename.Data());
+      exit(0);
+   }
   
-  outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
-  outputFile << "<!-- Prologo XML -->\n";
-  outputFile << "<?xml-stylesheet type='text/xsl' href='"<< xslPath.Data()<<"'?>\n";
-  outputFile << "<ROOT_SOURCE>\n";
+   outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
+   outputFile << "<!-- Prologo XML -->\n";
+   outputFile << "<?xml-stylesheet type='text/xsl' href='"<< xslPath.Data()<<"'?>\n";
+   outputFile << "<ROOT_SOURCE>\n";
 
-  Double_t HV_value_table[10];
-  Double_t Plane_value_table[2];
+   Double_t HV_value_table[10];
+   Double_t Plane_value_table[2];
   
-  LEvRec0File rootfile(rootname.Data());
-  LEvRec0 ev;
-  LEvRec0Md metaData;
-  rootfile.SetTheEventPointer(ev);
-  rootfile.SetTmdPointer(metaData);
+   LEvRec0File rootfile(rootname.Data());
+   LEvRec0 ev;
+   LEvRec0Md metaData;
+   rootfile.SetTheEventPointer(ev);
+   rootfile.SetTmdPointer(metaData);
 
-  // Metadata
-  int Tmd_entries = rootfile.GetTmdEntries(); 
-  cout << "Number of Tmd entries: " << Tmd_entries << endl;
+   // Metadata
+   int Tmd_entries = rootfile.GetTmdEntries(); 
+   cout << "Number of Tmd entries: " << Tmd_entries << endl;
   
-  for(int j=0;j<Tmd_entries;j++)
-    {
+   for(int j=0;j<Tmd_entries;j++)
+   {
       rootfile.GetTmdEntry(j);   
       for(int h=0;h<10;h++)
-	{
-	  HV_value_table[h]=(double)(metaData.HV_value[h]+1)/1024*1200;
-	}
+      {
+	 HV_value_table[h]=(double)(metaData.HV_value[h]+1)/1024*1200;
+      }
 
       for(int l=0;l<2;l++)
-	{
-	  Plane_value_table[l]= (double)(metaData.silConfig.plane_HV[l]+1)/1024*150.8;
-	}
+      {
+	 Plane_value_table[l]= (double)(metaData.silConfig.plane_HV[l]+1)/1024*150.8;
+      }
 
       outputFile << "<HVPSCONFIG>\n";
 
@@ -314,40 +314,40 @@ void HVPSConfigToXML(TString rootname, TString xslPath = "")
       outputFile << "\t<RUN_NR>"  << metaData.run_id  << "</RUN_NR>\n";
 
       if (Plane_value_table[0]<0 || Plane_value_table[0]>150.8)
-	outputFile << "\t<HV_PLANE_A_error>"  <<  1   << "</HV_PLANE_A_error>\n";
+	 outputFile << "\t<HV_PLANE_A_error>"  <<  1   << "</HV_PLANE_A_error>\n";
 
       if (Plane_value_table[1]<0 || Plane_value_table[1]>150.8)
-	outputFile << "\t<HV_PLANE_B_error>"  <<  1  << "</HV_PLANE_B_error>\n";
+	 outputFile << "\t<HV_PLANE_B_error>"  <<  1  << "</HV_PLANE_B_error>\n";
 
       if (HV_value_table[0]<0 || HV_value_table[0]>1200)
-	outputFile << "\t<HV_PMT0_error>"  <<  1 << "</HV_PMT0_error>\n";
+	 outputFile << "\t<HV_PMT0_error>"  <<  1 << "</HV_PMT0_error>\n";
 
       if (HV_value_table[1]<0 || HV_value_table[1]>1200)
-	outputFile << "\t<HV_PMT1_error>"  <<  1 << "</HV_PMT1_error>\n";
+	 outputFile << "\t<HV_PMT1_error>"  <<  1 << "</HV_PMT1_error>\n";
 
       if (HV_value_table[2]<0 || HV_value_table[2]>1200)
-	outputFile << "\t<HV_PMT2_error>"  <<  1 << "</HV_PMT2_error>\n";
+	 outputFile << "\t<HV_PMT2_error>"  <<  1 << "</HV_PMT2_error>\n";
 
       if (HV_value_table[3]<0 || HV_value_table[3]>1200)
-	outputFile << "\t<HV_PMT3_error>"  <<  1 << "</HV_PMT3_error>\n";
+	 outputFile << "\t<HV_PMT3_error>"  <<  1 << "</HV_PMT3_error>\n";
 
       if (HV_value_table[4]<0 || HV_value_table[4]>1200)
-	outputFile << "\t<HV_PMT4_error>"  <<  1 << "</HV_PMT4_error>\n";
+	 outputFile << "\t<HV_PMT4_error>"  <<  1 << "</HV_PMT4_error>\n";
 
       if (HV_value_table[5]<0 || HV_value_table[5]>1200)
-	outputFile << "\t<HV_PMT5_error>"  <<  1 << "</HV_PMT5_error>\n";
+	 outputFile << "\t<HV_PMT5_error>"  <<  1 << "</HV_PMT5_error>\n";
 
       if (HV_value_table[6]<0 || HV_value_table[6]>1200)
-	outputFile << "\t<HV_PMT6_error>"  <<  1 << "</HV_PMT6_error>\n";
+	 outputFile << "\t<HV_PMT6_error>"  <<  1 << "</HV_PMT6_error>\n";
 
       if (HV_value_table[7]<0 || HV_value_table[7]>1200)
-	outputFile << "\t<HV_PMT7_error>"  <<  1 << "</HV_PMT7_error>\n";
+	 outputFile << "\t<HV_PMT7_error>"  <<  1 << "</HV_PMT7_error>\n";
 
       if (HV_value_table[8]<0 || HV_value_table[8]>1200)
-	outputFile << "\t<HV_PMT8_error>"  <<  1 << "</HV_PMT8_error>\n";
+	 outputFile << "\t<HV_PMT8_error>"  <<  1 << "</HV_PMT8_error>\n";
 
       if (HV_value_table[9]<0 || HV_value_table[9]>1200)
-	outputFile << "\t<HV_PMT9_error>"  <<  1 << "</HV_PMT9_error>\n";
+	 outputFile << "\t<HV_PMT9_error>"  <<  1 << "</HV_PMT9_error>\n";
 
       
       outputFile << setprecision(3) << "\t<HV_PLANE_A>"  << Plane_value_table[0]
@@ -377,105 +377,105 @@ void HVPSConfigToXML(TString rootname, TString xslPath = "")
 		 << HV_value_table[9] << "</HV_PMT9>\n";
 
       if(metaData.HV_mask[10] == 0)	
-	outputFile << "\t<MASK_PLANE_A>" << "ON" << "</MASK_PLANE_A>\n";
+	 outputFile << "\t<MASK_PLANE_A>" << "ON" << "</MASK_PLANE_A>\n";
       if(metaData.HV_mask[10] == 1)
-	outputFile << "\t<MASK_PLANE_A>" << "OFF" << "</MASK_PLANE_A>\n";   
+	 outputFile << "\t<MASK_PLANE_A>" << "OFF" << "</MASK_PLANE_A>\n";   
       if(metaData.HV_mask[11] == 0)
-	outputFile << "\t<MASK_PLANE_B>" << "ON"  << "</MASK_PLANE_B>\n";
+	 outputFile << "\t<MASK_PLANE_B>" << "ON"  << "</MASK_PLANE_B>\n";
       if(metaData.HV_mask[11] == 1)
-	outputFile << "\t<MASK_PLANE_B>" << "OFF" << "</MASK_PLANE_B>\n";
+	 outputFile << "\t<MASK_PLANE_B>" << "OFF" << "</MASK_PLANE_B>\n";
 
       if(metaData.HV_mask[0] == 0)
-	outputFile << "\t<MASK_PMT0>"  << "ON"  << "</MASK_PMT0>\n";
+	 outputFile << "\t<MASK_PMT0>"  << "ON"  << "</MASK_PMT0>\n";
       if(metaData.HV_mask[0] == 1)
-	outputFile << "\t<MASK_PMT0>"  << "OFF" << "</MASK_PMT0>\n";
+	 outputFile << "\t<MASK_PMT0>"  << "OFF" << "</MASK_PMT0>\n";
       if(metaData.HV_mask[1] == 0)
-	outputFile << "\t<MASK_PMT1>"  << "ON"  << "</MASK_PMT1>\n";
+	 outputFile << "\t<MASK_PMT1>"  << "ON"  << "</MASK_PMT1>\n";
       if(metaData.HV_mask[1] == 1)
-	outputFile << "\t<MASK_PMT1>"  << "OFF"  << "</MASK_PMT1>\n";
+	 outputFile << "\t<MASK_PMT1>"  << "OFF"  << "</MASK_PMT1>\n";
       if(metaData.HV_mask[2] == 0)
-	outputFile << "\t<MASK_PMT2>"  << "ON"  << "</MASK_PMT2>\n";
+	 outputFile << "\t<MASK_PMT2>"  << "ON"  << "</MASK_PMT2>\n";
       if(metaData.HV_mask[2] == 1)
-	outputFile << "\t<MASK_PMT2>"  << "OFF" << "</MASK_PMT2>\n";
+	 outputFile << "\t<MASK_PMT2>"  << "OFF" << "</MASK_PMT2>\n";
       if(metaData.HV_mask[3] == 0)
-	outputFile << "\t<MASK_PMT3>"  << "ON"  << "</MASK_PMT3>\n";
+	 outputFile << "\t<MASK_PMT3>"  << "ON"  << "</MASK_PMT3>\n";
       if(metaData.HV_mask[3] == 1)
-	outputFile << "\t<MASK_PMT3>"  << "OFF" << "</MASK_PMT3>\n";
+	 outputFile << "\t<MASK_PMT3>"  << "OFF" << "</MASK_PMT3>\n";
       if(metaData.HV_mask[4] == 0)
-	outputFile << "\t<MASK_PMT4>"  << "ON"  << "</MASK_PMT4>\n";
+	 outputFile << "\t<MASK_PMT4>"  << "ON"  << "</MASK_PMT4>\n";
       if(metaData.HV_mask[4] == 1)
-	outputFile << "\t<MASK_PMT4>"  << "OFF" << "</MASK_PMT4>\n";
+	 outputFile << "\t<MASK_PMT4>"  << "OFF" << "</MASK_PMT4>\n";
       if(metaData.HV_mask[5] == 0)
-	outputFile << "\t<MASK_PMT5>"  << "ON"  << "</MASK_PMT5>\n";
+	 outputFile << "\t<MASK_PMT5>"  << "ON"  << "</MASK_PMT5>\n";
       if(metaData.HV_mask[5] == 1)
-	outputFile << "\t<MASK_PMT5>" << "OFF"  << "</MASK_PMT5>\n";
+	 outputFile << "\t<MASK_PMT5>" << "OFF"  << "</MASK_PMT5>\n";
       if(metaData.HV_mask[6] == 0)
-	outputFile << "\t<MASK_PMT6>" << "ON"   << "</MASK_PMT6>\n";
+	 outputFile << "\t<MASK_PMT6>" << "ON"   << "</MASK_PMT6>\n";
       if(metaData.HV_mask[6] == 1)
-	outputFile << "\t<MASK_PMT6>" << "OFF"  << "</MASK_PMT6>\n";
+	 outputFile << "\t<MASK_PMT6>" << "OFF"  << "</MASK_PMT6>\n";
       if(metaData.HV_mask[7] == 0)
-	outputFile << "\t<MASK_PMT7>" << "ON"   << "</MASK_PMT7>\n";
+	 outputFile << "\t<MASK_PMT7>" << "ON"   << "</MASK_PMT7>\n";
       if(metaData.HV_mask[7] == 1)
-	outputFile << "\t<MASK_PMT7>" << "OFF" << "</MASK_PMT7>\n";
+	 outputFile << "\t<MASK_PMT7>" << "OFF" << "</MASK_PMT7>\n";
       if(metaData.HV_mask[8] == 0)
-	outputFile << "\t<MASK_PMT8>" << "ON"  << "</MASK_PMT8>\n";
+	 outputFile << "\t<MASK_PMT8>" << "ON"  << "</MASK_PMT8>\n";
       if(metaData.HV_mask[8] == 1)
-	outputFile << "\t<MASK_PMT8>" << "OFF" << "</MASK_PMT8>\n";
+	 outputFile << "\t<MASK_PMT8>" << "OFF" << "</MASK_PMT8>\n";
       if(metaData.HV_mask[9] == 0)
-	outputFile << "\t<MASK_PMT9>" << "ON" << "</MASK_PMT9>\n";
+	 outputFile << "\t<MASK_PMT9>" << "ON" << "</MASK_PMT9>\n";
       if(metaData.HV_mask[9] == 1)
-	outputFile << "\t<MASK_PMT9>" << "OFF" << "</MASK_PMT9>\n";
+	 outputFile << "\t<MASK_PMT9>" << "OFF" << "</MASK_PMT9>\n";
 
       outputFile << "</HVPSCONFIG>\n";
 
-    }
-  outputFile << "</ROOT_SOURCE>\n";
-  outputFile.close();
+   }
+   outputFile << "</ROOT_SOURCE>\n";
+   outputFile.close();
 }
 
 void RunInfoToXML(TString rootname, TString xslPath = "")
 {
   
-  cout << endl << "Run Info to xml:" << rootname << endl;
+   cout << endl << "Run Info to xml:" << rootname << endl;
   
-  TString filename = rootname;
-  filename.ReplaceAll(".root", 5, "_RunInfo.xml", 12);
+   TString filename = rootname;
+   filename.ReplaceAll(".root", 5, "_RunInfo.xml", 12);
 
-  ofstream outputFile;
-  outputFile.open(filename.Data(), ios::trunc);
-
-
-  if (!outputFile.is_open()){
-    printf("Cannot open the file %s for the output", filename.Data());
-    exit(0);
-  }
+   ofstream outputFile;
+   outputFile.open(filename.Data(), ios::trunc);
 
 
-  LEvRec0File rootfile(rootname.Data());
-  LEvRec0 ev;
-  LEvRec0Md metaData;
-  rootfile.SetTheEventPointer(ev);
-  rootfile.SetTmdPointer(metaData);
+   if (!outputFile.is_open()){
+      printf("Cannot open the file %s for the output", filename.Data());
+      exit(0);
+   }
 
-  outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
-  outputFile << "<!-- Prologo XML -->\n";
 
-  outputFile << "<?xml-stylesheet type='text/xsl' href='"<< xslPath.Data()<<"'?>\n";
-  outputFile << "<ROOT_SOURCE>\n";
+   LEvRec0File rootfile(rootname.Data());
+   LEvRec0 ev;
+   LEvRec0Md metaData;
+   rootfile.SetTheEventPointer(ev);
+   rootfile.SetTmdPointer(metaData);
+
+   outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
+   outputFile << "<!-- Prologo XML -->\n";
+
+   outputFile << "<?xml-stylesheet type='text/xsl' href='"<< xslPath.Data()<<"'?>\n";
+   outputFile << "<ROOT_SOURCE>\n";
   
-  // Metadata
-  int Tmd_entries = rootfile.GetTmdEntries(); 
-  cout << "Number of Tmd entries: " << Tmd_entries << endl;
+   // Metadata
+   int Tmd_entries = rootfile.GetTmdEntries(); 
+   cout << "Number of Tmd entries: " << Tmd_entries << endl;
   
-  UShort_t run_type_vect[Tmd_entries];
-  UShort_t run_duration_vect[Tmd_entries];
-  UShort_t orbitZone_vect[Tmd_entries];
-  UShort_t run_id_vect[Tmd_entries];
-  UShort_t boot_nr_vect[Tmd_entries];
+   UShort_t run_type_vect[Tmd_entries];
+   UShort_t run_duration_vect[Tmd_entries];
+   UShort_t orbitZone_vect[Tmd_entries];
+   UShort_t run_id_vect[Tmd_entries];
+   UShort_t boot_nr_vect[Tmd_entries];
 
   
-  for(int j=0;j<Tmd_entries;j++)
-    {
+   for(int j=0;j<Tmd_entries;j++)
+   {
 
       rootfile.GetTmdEntry(j);   
 
@@ -485,66 +485,66 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
       run_id_vect[j]=metaData.run_id;
       boot_nr_vect[j]=metaData.boot_nr;
       
-    }
+   }
 
-  for(int t=0;t<Tmd_entries;t++) {
+   for(int t=0;t<Tmd_entries;t++) {
        
-    outputFile << "<RUN_INFO>\n";
+      outputFile << "<RUN_INFO>\n";
       
-    outputFile <<  dec << "\t<RUN_TYPE_error>"<< 0 << "</RUN_TYPE_error>\n";
-    outputFile << "\t<RUN_DURATION_error>"<< 0 << "</RUN_DURATION_error>\n";
-    outputFile << dec << "\t<ORBIT_error>"<< 0 << "</ORBIT_error>\n";
-    outputFile << dec << "\t<ORBIT_error_yellow>"<< 0 << "</ORBIT_error_yellow>\n";
+      outputFile <<  dec << "\t<RUN_TYPE_error>"<< 0 << "</RUN_TYPE_error>\n";
+      outputFile << "\t<RUN_DURATION_error>"<< 0 << "</RUN_DURATION_error>\n";
+      outputFile << dec << "\t<ORBIT_error>"<< 0 << "</ORBIT_error>\n";
+      outputFile << dec << "\t<ORBIT_error_yellow>"<< 0 << "</ORBIT_error_yellow>\n";
        
-    if (t%2==0){
+      if (t%2==0){
 	
-      if (run_type_vect[t]!=run_type_vect[t+1]) 
-	outputFile << dec << "\t<RUN_TYPE_error>"<< 1 << "</RUN_TYPE_error>\n";
+	 if (run_type_vect[t]!=run_type_vect[t+1]) 
+	    outputFile << dec << "\t<RUN_TYPE_error>"<< 1 << "</RUN_TYPE_error>\n";
 	    
     	    
-      if (run_duration_vect[t]!=run_duration_vect[t+1]) 
-	outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";
+	 if (run_duration_vect[t]!=run_duration_vect[t+1]) 
+	    outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";
 	  
          
-      if (orbitZone_vect[t] & 0x00FF != 0 && orbitZone_vect[t] & 0x00FF != 1 && orbitZone_vect[t] & 0x00FF != 2 && orbitZone_vect[t] & 0x00FF != 3 && orbitZone_vect[t] & 0x00FF != 4 && orbitZone_vect[t]  & 0x00FF != 5) 
-	outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
+	 if (orbitZone_vect[t] & 0x00FF != 0 && orbitZone_vect[t] & 0x00FF != 1 && orbitZone_vect[t] & 0x00FF != 2 && orbitZone_vect[t] & 0x00FF != 3 && orbitZone_vect[t] & 0x00FF != 4 && orbitZone_vect[t]  & 0x00FF != 5) 
+	    outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
           
-      if (orbitZone_vect[t] >> 8 == 170) 
-	outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";   
+	 if (orbitZone_vect[t] >> 8 == 170) 
+	    outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";   
       
-    }
+      }
       
-    if (t%2!=0){
+      if (t%2!=0){
 	
-      if (run_type_vect[t]!=run_type_vect[t-1]) 
-	outputFile << dec << "\t<RUN_TYPE_error>"<< 1 << "</RUN_TYPE_error>\n";
+	 if (run_type_vect[t]!=run_type_vect[t-1]) 
+	    outputFile << dec << "\t<RUN_TYPE_error>"<< 1 << "</RUN_TYPE_error>\n";
 	   	    
-      if (run_duration_vect[t]!=run_duration_vect[t-1]) 
-	outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";  
+	 if (run_duration_vect[t]!=run_duration_vect[t-1]) 
+	    outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";  
 	         
- if (orbitZone_vect[t] & 0x00FF != 0 && orbitZone_vect[t] & 0x00FF != 1 && orbitZone_vect[t] & 0x00FF != 2 && orbitZone_vect[t] & 0x00FF != 3 && orbitZone_vect[t] & 0x00FF != 4 && orbitZone_vect[t]  & 0x00FF != 5) 
-	outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
+	 if (orbitZone_vect[t] & 0x00FF != 0 && orbitZone_vect[t] & 0x00FF != 1 && orbitZone_vect[t] & 0x00FF != 2 && orbitZone_vect[t] & 0x00FF != 3 && orbitZone_vect[t] & 0x00FF != 4 && orbitZone_vect[t]  & 0x00FF != 5) 
+	    outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
           
-      if (orbitZone_vect[t] >> 8 == 170) 
-	outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";
+	 if (orbitZone_vect[t] >> 8 == 170) 
+	    outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";
 	 
-    }
+      }
       
       
-    outputFile << dec << "\t<BOOT_NR>"    << boot_nr_vect[t]  << "</BOOT_NR>\n";
-    outputFile << dec << "\t<RUN_NR>"     << run_id_vect[t]  << "</RUN_NR>\n";
-    outputFile << showbase << hex << "\t<RUN_TYPE>"   << run_type_vect[t]  << "</RUN_TYPE>\n";
-    outputFile << dec << "\t<RUN_DURATION>" << run_duration_vect[t] << "</RUN_DURATION>\n";
-    outputFile << showbase << hex << uppercase << "\t<ORBIT_ZONE>"   << orbitZone_vect[t]  << "</ORBIT_ZONE>\n";
+      outputFile << dec << "\t<BOOT_NR>"    << boot_nr_vect[t]  << "</BOOT_NR>\n";
+      outputFile << dec << "\t<RUN_NR>"     << run_id_vect[t]  << "</RUN_NR>\n";
+      outputFile << showbase << hex << "\t<RUN_TYPE>"   << run_type_vect[t]  << "</RUN_TYPE>\n";
+      outputFile << dec << "\t<RUN_DURATION>" << run_duration_vect[t] << "</RUN_DURATION>\n";
+      outputFile << showbase << hex << uppercase << "\t<ORBIT_ZONE>"   << orbitZone_vect[t]  << "</ORBIT_ZONE>\n";
 
-    outputFile << "</RUN_INFO>\n";
+      outputFile << "</RUN_INFO>\n";
       
       
-  }  
+   }  
    
-  outputFile << "</ROOT_SOURCE>\n";
+   outputFile << "</ROOT_SOURCE>\n";
  
-  outputFile.close();
+   outputFile.close();
 }
 
 
@@ -553,202 +553,202 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 void ScintConfigToXML(TString rootname, TString xslPath = "")
 {
   
-  cout << endl <<  "Scint to xml:" << rootname << endl;
+   cout << endl <<  "Scint to xml:" << rootname << endl;
 
-  TString filename = rootname;
-  filename.ReplaceAll(".root", 5, "_ScintConfig.xml", 16);
+   TString filename = rootname;
+   filename.ReplaceAll(".root", 5, "_ScintConfig.xml", 16);
 
-  ofstream outputFile;
-  outputFile.open(filename.Data(), ios::trunc);
+   ofstream outputFile;
+   outputFile.open(filename.Data(), ios::trunc);
 
   
-  if (!outputFile.is_open()){
-    printf("Cannot open the file %s for the output", filename.Data());
-    exit(0);
-  }
+   if (!outputFile.is_open()){
+      printf("Cannot open the file %s for the output", filename.Data());
+      exit(0);
+   }
   
-  LEvRec0File rootfile(rootname.Data());
-  LEvRec0 ev;
-  LEvRec0Md metaData;
-  rootfile.SetTheEventPointer(ev);
-  rootfile.SetTmdPointer(metaData);
+   LEvRec0File rootfile(rootname.Data());
+   LEvRec0 ev;
+   LEvRec0Md metaData;
+   rootfile.SetTheEventPointer(ev);
+   rootfile.SetTmdPointer(metaData);
 
-  outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
-  outputFile << "<!-- Prologo XML -->\n";
-  outputFile << "<?xml-stylesheet type='text/xsl' href='" << xslPath.Data() << "'?>\n";
-  outputFile << "<ROOT_SOURCE>\n";
+   outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
+   outputFile << "<!-- Prologo XML -->\n";
+   outputFile << "<?xml-stylesheet type='text/xsl' href='" << xslPath.Data() << "'?>\n";
+   outputFile << "<ROOT_SOURCE>\n";
   
-  // Metadata
-  int Tmd_entries = rootfile.GetTmdEntries(); 
-  cout << "Number of Tmd entries: " << Tmd_entries << endl;
+   // Metadata
+   int Tmd_entries = rootfile.GetTmdEntries(); 
+   cout << "Number of Tmd entries: " << Tmd_entries << endl;
   
-  for(int j=0;j<Tmd_entries;j++)
-    {
+   for(int j=0;j<Tmd_entries;j++)
+   {
       rootfile.GetTmdEntry(j);   
        
       if(j%2 == 0){
 
-	outputFile << "<SCINTCONFIG>\n";
-	outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
-	outputFile << "\t<RUN_NR>"  << metaData.run_id  << "</RUN_NR>\n";
+	 outputFile << "<SCINTCONFIG>\n";
+	 outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
+	 outputFile << "\t<RUN_NR>"  << metaData.run_id  << "</RUN_NR>\n";
       
-	outputFile << "\t<VETO_CONFIG>"  << (short)metaData.trigger_mask[0]
-		   << "</VETO_CONFIG>\n";
-	outputFile << "\t<CURRENT_TRIGGER_MASK>" << (short)metaData.trigger_mask[1]
-		   << "</CURRENT_TRIGGER_MASK>\n";
-	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_1>" << (short)metaData.easiroc_config[0]
-		   << "</EASIROC_1>\n";
-	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_2>" << (short)metaData.easiroc_config[60]
-		   << "</EASIROC_2>\n";
+	 outputFile << "\t<VETO_CONFIG>"  << (short)metaData.trigger_mask[0]
+		    << "</VETO_CONFIG>\n";
+	 outputFile << "\t<CURRENT_TRIGGER_MASK>" << (short)metaData.trigger_mask[1]
+		    << "</CURRENT_TRIGGER_MASK>\n";
+	 outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_1>" << (short)metaData.easiroc_config[0]
+		    << "</EASIROC_1>\n";
+	 outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_2>" << (short)metaData.easiroc_config[60]
+		    << "</EASIROC_2>\n";
 
        
-	outputFile << dec <<  "/<MASK_PMT_0>" << metaData.PMT_mask[0] << "</MASK_PMT_0>/n";
-	outputFile << dec << "/<MASK_PMT_1>" << metaData.PMT_mask[1] << "</MASK_PMT_1>/n";
-	outputFile << dec << "/<MASK_PMT_2>" << metaData.PMT_mask[2] << "</MASK_PMT_2>/n";
-	outputFile << dec <<"/<MASK_PMT_3>" << metaData.PMT_mask[3] << "</MASK_PMT_3>/n";
-	outputFile << dec <<"/<MASK_PMT_4>" << metaData.PMT_mask[4] << "</MASK_PMT_4>/n";
-	outputFile << dec <<"/<MASK_PMT_5>" << metaData.PMT_mask[5] << "</MASK_PMT_5>/n";
-	outputFile << dec <<"/<MASK_PMT_6>" << metaData.PMT_mask[6]  << "</MASK_PMT_6>/n";
-	outputFile << dec <<"/<MASK_PMT_7>" << metaData.PMT_mask[7] << "</MASK_PMT_7>/n";
-	outputFile << dec <<"/<MASK_PMT_8>" << metaData.PMT_mask[8]  << "</MASK_PMT_8>/n";
-	outputFile << dec <<"/<MASK_PMT_9>" << metaData.PMT_mask[9]  << "</MASK_PMT_9>/n";
-	outputFile << dec <<"/<MASK_PMT_10>" << metaData.PMT_mask[10]  << "</MASK_PMT_10>/n";
-	outputFile << dec <<"/<MASK_PMT_11>" << metaData.PMT_mask[11]  << "</MASK_PMT_11>/n";
-	outputFile << dec <<"/<MASK_PMT_12>" << metaData.PMT_mask[12]  << "</MASK_PMT_12>/n";
-	outputFile << dec <<"/<MASK_PMT_13>" << metaData.PMT_mask[13]  << "</MASK_PMT_13>/n";
-	outputFile << dec <<"/<MASK_PMT_14>" << metaData.PMT_mask[14]  << "</MASK_PMT_14>/n";
-	outputFile << dec <<"/<MASK_PMT_15>" << metaData.PMT_mask[15]  << "</MASK_PMT_15>/n";
-	outputFile << dec <<"/<MASK_PMT_16>" << metaData.PMT_mask[16]  << "</MASK_PMT_16>/n";
-	outputFile << dec <<"/<MASK_PMT_17>" << metaData.PMT_mask[17]  << "</MASK_PMT_17>/n";
-	outputFile << dec <<"/<MASK_PMT_18>" << metaData.PMT_mask[18]  << "</MASK_PMT_18>/n";
-	outputFile << dec <<"/<MASK_PMT_19>" << metaData.PMT_mask[19]  << "</MASK_PMT_19>/n";
-	outputFile << dec <<"/<MASK_PMT_20>" << metaData.PMT_mask[20]  << "</MASK_PMT_20>/n";
-	outputFile << dec <<"/<MASK_PMT_21>" << metaData.PMT_mask[21] << "</MASK_PMT_21>/n";
-	outputFile << dec <<"/<MASK_PMT_22>" << metaData.PMT_mask[22] << "</MASK_PMT_22>/n";
-	outputFile << dec <<"/<MASK_PMT_23>" << metaData.PMT_mask[23] << "</MASK_PMT_23>/n";
-	outputFile << dec <<"/<MASK_PMT_24>" << metaData.PMT_mask[24] << "</MASK_PMT_24>/n";
-	outputFile << dec <<"/<MASK_PMT_25>" << metaData.PMT_mask[25] << "</MASK_PMT_25>/n";
-	outputFile << dec <<"/<MASK_PMT_26>" << metaData.PMT_mask[26]  << "</MASK_PMT_26>/n";
-	outputFile << dec <<"/<MASK_PMT_27>" << metaData.PMT_mask[27]  << "</MASK_PMT_27>/n";
-	outputFile << dec <<"/<MASK_PMT_28>" << metaData.PMT_mask[28] << "</MASK_PMT_28>/n";
-	outputFile << dec <<"/<MASK_PMT_29>" << metaData.PMT_mask[29] << "</MASK_PMT_29>/n";
-	outputFile << dec <<"/<MASK_PMT_30>" << metaData.PMT_mask[30]  << "</MASK_PMT_30>/n";
-	outputFile << dec <<"/<MASK_PMT_31>" << metaData.PMT_mask[31]  << "</MASK_PMT_31>/n";
+	 outputFile << dec <<  "/<MASK_PMT_0>" << metaData.PMT_mask[0] << "</MASK_PMT_0>/n";
+	 outputFile << dec << "/<MASK_PMT_1>" << metaData.PMT_mask[1] << "</MASK_PMT_1>/n";
+	 outputFile << dec << "/<MASK_PMT_2>" << metaData.PMT_mask[2] << "</MASK_PMT_2>/n";
+	 outputFile << dec <<"/<MASK_PMT_3>" << metaData.PMT_mask[3] << "</MASK_PMT_3>/n";
+	 outputFile << dec <<"/<MASK_PMT_4>" << metaData.PMT_mask[4] << "</MASK_PMT_4>/n";
+	 outputFile << dec <<"/<MASK_PMT_5>" << metaData.PMT_mask[5] << "</MASK_PMT_5>/n";
+	 outputFile << dec <<"/<MASK_PMT_6>" << metaData.PMT_mask[6]  << "</MASK_PMT_6>/n";
+	 outputFile << dec <<"/<MASK_PMT_7>" << metaData.PMT_mask[7] << "</MASK_PMT_7>/n";
+	 outputFile << dec <<"/<MASK_PMT_8>" << metaData.PMT_mask[8]  << "</MASK_PMT_8>/n";
+	 outputFile << dec <<"/<MASK_PMT_9>" << metaData.PMT_mask[9]  << "</MASK_PMT_9>/n";
+	 outputFile << dec <<"/<MASK_PMT_10>" << metaData.PMT_mask[10]  << "</MASK_PMT_10>/n";
+	 outputFile << dec <<"/<MASK_PMT_11>" << metaData.PMT_mask[11]  << "</MASK_PMT_11>/n";
+	 outputFile << dec <<"/<MASK_PMT_12>" << metaData.PMT_mask[12]  << "</MASK_PMT_12>/n";
+	 outputFile << dec <<"/<MASK_PMT_13>" << metaData.PMT_mask[13]  << "</MASK_PMT_13>/n";
+	 outputFile << dec <<"/<MASK_PMT_14>" << metaData.PMT_mask[14]  << "</MASK_PMT_14>/n";
+	 outputFile << dec <<"/<MASK_PMT_15>" << metaData.PMT_mask[15]  << "</MASK_PMT_15>/n";
+	 outputFile << dec <<"/<MASK_PMT_16>" << metaData.PMT_mask[16]  << "</MASK_PMT_16>/n";
+	 outputFile << dec <<"/<MASK_PMT_17>" << metaData.PMT_mask[17]  << "</MASK_PMT_17>/n";
+	 outputFile << dec <<"/<MASK_PMT_18>" << metaData.PMT_mask[18]  << "</MASK_PMT_18>/n";
+	 outputFile << dec <<"/<MASK_PMT_19>" << metaData.PMT_mask[19]  << "</MASK_PMT_19>/n";
+	 outputFile << dec <<"/<MASK_PMT_20>" << metaData.PMT_mask[20]  << "</MASK_PMT_20>/n";
+	 outputFile << dec <<"/<MASK_PMT_21>" << metaData.PMT_mask[21] << "</MASK_PMT_21>/n";
+	 outputFile << dec <<"/<MASK_PMT_22>" << metaData.PMT_mask[22] << "</MASK_PMT_22>/n";
+	 outputFile << dec <<"/<MASK_PMT_23>" << metaData.PMT_mask[23] << "</MASK_PMT_23>/n";
+	 outputFile << dec <<"/<MASK_PMT_24>" << metaData.PMT_mask[24] << "</MASK_PMT_24>/n";
+	 outputFile << dec <<"/<MASK_PMT_25>" << metaData.PMT_mask[25] << "</MASK_PMT_25>/n";
+	 outputFile << dec <<"/<MASK_PMT_26>" << metaData.PMT_mask[26]  << "</MASK_PMT_26>/n";
+	 outputFile << dec <<"/<MASK_PMT_27>" << metaData.PMT_mask[27]  << "</MASK_PMT_27>/n";
+	 outputFile << dec <<"/<MASK_PMT_28>" << metaData.PMT_mask[28] << "</MASK_PMT_28>/n";
+	 outputFile << dec <<"/<MASK_PMT_29>" << metaData.PMT_mask[29] << "</MASK_PMT_29>/n";
+	 outputFile << dec <<"/<MASK_PMT_30>" << metaData.PMT_mask[30]  << "</MASK_PMT_30>/n";
+	 outputFile << dec <<"/<MASK_PMT_31>" << metaData.PMT_mask[31]  << "</MASK_PMT_31>/n";
 
-	outputFile << dec <<"/<MASK2_PMT_0>" << metaData.PMT_mask[32] << "</MASK2_PMT_0>/n";
-	outputFile << dec <<"/<MASK2_PMT_1>" << metaData.PMT_mask[33] << "</MASK2_PMT_1>/n";
-	outputFile << dec <<"/<MASK2_PMT_2>" << metaData.PMT_mask[34] << "</MASK2_PMT_2>/n";
-	outputFile << dec <<"/<MASK2_PMT_3>" << metaData.PMT_mask[35] << "</MASK2_PMT_3>/n";
-	outputFile << dec <<"/<MASK2_PMT_4>" << metaData.PMT_mask[36] << "</MASK2_PMT_4>/n";
-	outputFile << dec <<"/<MASK2_PMT_5>" << metaData.PMT_mask[37] << "</MASK2_PMT_5>/n";
-	outputFile << dec <<"/<MASK2_PMT_6>" << metaData.PMT_mask[38] << "</MASK2_PMT_6>/n";
-	outputFile << dec <<"/<MASK2_PMT_7>" << metaData.PMT_mask[39] << "</MASK2_PMT_7>/n";
-	outputFile << dec <<"/<MASK2_PMT_8>" << metaData.PMT_mask[40] << "</MASK2_PMT_8>/n";
-	outputFile << dec <<"/<MASK2_PMT_9>" << metaData.PMT_mask[41] << "</MASK2_PMT_9>/n";
-	outputFile << dec <<"/<MASK2_PMT_10>" << metaData.PMT_mask[42]  << "</MASK2_PMT_10>/n";
-	outputFile << dec <<"/<MASK2_PMT_11>" << metaData.PMT_mask[43]  << "</MASK2_PMT_11>/n";
-	outputFile << dec <<"/<MASK2_PMT_12>" << metaData.PMT_mask[44] << "</MASK2_PMT_12>/n";
-	outputFile << dec <<"/<MASK2_PMT_13>" << metaData.PMT_mask[45] << "</MASK2_PMT_13>/n";
-	outputFile << dec <<"/<MASK2_PMT_14>" << metaData.PMT_mask[46]  << "</MASK2_PMT_14>/n";
-	outputFile << dec <<"/<MASK2_PMT_15>" << metaData.PMT_mask[47] << "</MASK2_PMT_15>/n";
-	outputFile << dec <<"/<MASK2_PMT_16>" << metaData.PMT_mask[48]  << "</MASK2_PMT_16>/n";
-	outputFile << dec <<"/<MASK2_PMT_17>" << metaData.PMT_mask[49]  << "</MASK2_PMT_17>/n";
-	outputFile << dec <<"/<MASK2_PMT_18>" << metaData.PMT_mask[50] << "</MASK2_PMT_18>/n";
-	outputFile << dec <<"/<MASK2_PMT_19>" << metaData.PMT_mask[51] << "</MASK2_PMT_19>/n";
-	outputFile << dec <<"/<MASK2_PMT_20>" << metaData.PMT_mask[52] << "</MASK2_PMT_20>/n";
-	outputFile << dec <<"/<MASK2_PMT_21>" << metaData.PMT_mask[53] << "</MASK2_PMT_21>/n";
-	outputFile << dec <<"/<MASK2_PMT_22>" << metaData.PMT_mask[54]  << "</MASK2_PMT_22>/n";
-	outputFile << dec <<"/<MASK2_PMT_23>" << metaData.PMT_mask[55] << "</MASK2_PMT_23>/n";
-	outputFile << dec <<"/<MASK2_PMT_24>" << metaData.PMT_mask[56] << "</MASK2_PMT_24>/n";
-	outputFile << dec <<"/<MASK2_PMT_25>" << metaData.PMT_mask[57] << "</MASK2_PMT_25>/n";
-	outputFile << dec <<"/<MASK2_PMT_26>" << metaData.PMT_mask[58] << "</MASK2_PMT_26>/n";
-	outputFile << dec <<"/<MASK2_PMT_27>" << metaData.PMT_mask[59] << "</MASK2_PMT_27>/n";
-	outputFile << dec <<"/<MASK2_PMT_28>" << metaData.PMT_mask[60] << "</MASK2_PMT_28>/n";
-	outputFile << dec <<"/<MASK2_PMT_29>" << metaData.PMT_mask[61] << "</MASK2_PMT_29>/n";
-	outputFile << dec <<"/<MASK2_PMT_30>" << metaData.PMT_mask[62]  << "</MASK2_PMT_30>/n";
+	 outputFile << dec <<"/<MASK2_PMT_0>" << metaData.PMT_mask[32] << "</MASK2_PMT_0>/n";
+	 outputFile << dec <<"/<MASK2_PMT_1>" << metaData.PMT_mask[33] << "</MASK2_PMT_1>/n";
+	 outputFile << dec <<"/<MASK2_PMT_2>" << metaData.PMT_mask[34] << "</MASK2_PMT_2>/n";
+	 outputFile << dec <<"/<MASK2_PMT_3>" << metaData.PMT_mask[35] << "</MASK2_PMT_3>/n";
+	 outputFile << dec <<"/<MASK2_PMT_4>" << metaData.PMT_mask[36] << "</MASK2_PMT_4>/n";
+	 outputFile << dec <<"/<MASK2_PMT_5>" << metaData.PMT_mask[37] << "</MASK2_PMT_5>/n";
+	 outputFile << dec <<"/<MASK2_PMT_6>" << metaData.PMT_mask[38] << "</MASK2_PMT_6>/n";
+	 outputFile << dec <<"/<MASK2_PMT_7>" << metaData.PMT_mask[39] << "</MASK2_PMT_7>/n";
+	 outputFile << dec <<"/<MASK2_PMT_8>" << metaData.PMT_mask[40] << "</MASK2_PMT_8>/n";
+	 outputFile << dec <<"/<MASK2_PMT_9>" << metaData.PMT_mask[41] << "</MASK2_PMT_9>/n";
+	 outputFile << dec <<"/<MASK2_PMT_10>" << metaData.PMT_mask[42]  << "</MASK2_PMT_10>/n";
+	 outputFile << dec <<"/<MASK2_PMT_11>" << metaData.PMT_mask[43]  << "</MASK2_PMT_11>/n";
+	 outputFile << dec <<"/<MASK2_PMT_12>" << metaData.PMT_mask[44] << "</MASK2_PMT_12>/n";
+	 outputFile << dec <<"/<MASK2_PMT_13>" << metaData.PMT_mask[45] << "</MASK2_PMT_13>/n";
+	 outputFile << dec <<"/<MASK2_PMT_14>" << metaData.PMT_mask[46]  << "</MASK2_PMT_14>/n";
+	 outputFile << dec <<"/<MASK2_PMT_15>" << metaData.PMT_mask[47] << "</MASK2_PMT_15>/n";
+	 outputFile << dec <<"/<MASK2_PMT_16>" << metaData.PMT_mask[48]  << "</MASK2_PMT_16>/n";
+	 outputFile << dec <<"/<MASK2_PMT_17>" << metaData.PMT_mask[49]  << "</MASK2_PMT_17>/n";
+	 outputFile << dec <<"/<MASK2_PMT_18>" << metaData.PMT_mask[50] << "</MASK2_PMT_18>/n";
+	 outputFile << dec <<"/<MASK2_PMT_19>" << metaData.PMT_mask[51] << "</MASK2_PMT_19>/n";
+	 outputFile << dec <<"/<MASK2_PMT_20>" << metaData.PMT_mask[52] << "</MASK2_PMT_20>/n";
+	 outputFile << dec <<"/<MASK2_PMT_21>" << metaData.PMT_mask[53] << "</MASK2_PMT_21>/n";
+	 outputFile << dec <<"/<MASK2_PMT_22>" << metaData.PMT_mask[54]  << "</MASK2_PMT_22>/n";
+	 outputFile << dec <<"/<MASK2_PMT_23>" << metaData.PMT_mask[55] << "</MASK2_PMT_23>/n";
+	 outputFile << dec <<"/<MASK2_PMT_24>" << metaData.PMT_mask[56] << "</MASK2_PMT_24>/n";
+	 outputFile << dec <<"/<MASK2_PMT_25>" << metaData.PMT_mask[57] << "</MASK2_PMT_25>/n";
+	 outputFile << dec <<"/<MASK2_PMT_26>" << metaData.PMT_mask[58] << "</MASK2_PMT_26>/n";
+	 outputFile << dec <<"/<MASK2_PMT_27>" << metaData.PMT_mask[59] << "</MASK2_PMT_27>/n";
+	 outputFile << dec <<"/<MASK2_PMT_28>" << metaData.PMT_mask[60] << "</MASK2_PMT_28>/n";
+	 outputFile << dec <<"/<MASK2_PMT_29>" << metaData.PMT_mask[61] << "</MASK2_PMT_29>/n";
+	 outputFile << dec <<"/<MASK2_PMT_30>" << metaData.PMT_mask[62]  << "</MASK2_PMT_30>/n";
 
-        outputFile << dec <<"/<GEN_TRIG_MASK_0>" << metaData.gen_trig_mask[0]  << "</GEN_TRIG_MASK_0>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_1>" << metaData.gen_trig_mask[1]  << "</GEN_TRIG_MASK_1>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_2>" << metaData.gen_trig_mask[2]  << "</GEN_TRIG_MASK_2>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_3>" << metaData.gen_trig_mask[3]  << "</GEN_TRIG_MASK_3>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_4>" << metaData.gen_trig_mask[4]  << "</GEN_TRIG_MASK_4>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_5>" << metaData.gen_trig_mask[5]  << "</GEN_TRIG_MASK_5>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_6>" << metaData.gen_trig_mask[6]  << "</GEN_TRIG_MASK_6>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_7>" << metaData.gen_trig_mask[7]  << "</GEN_TRIG_MASK_7>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_8>" << metaData.gen_trig_mask[8]  << "</GEN_TRIG_MASK_8>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_9>" << metaData.gen_trig_mask[9]  << "</GEN_TRIG_MASK_9>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_10>" << metaData.gen_trig_mask[10]  << "</GEN_TRIG_MASK_10>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_11>" << metaData.gen_trig_mask[11]  << "</GEN_TRIG_MASK_11>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_12>" << metaData.gen_trig_mask[12]  << "</GEN_TRIG_MASK_12>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_13>" << metaData.gen_trig_mask[13]  << "</GEN_TRIG_MASK_13>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_14>" << metaData.gen_trig_mask[14]  << "</GEN_TRIG_MASK_14>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_15>" << metaData.gen_trig_mask[15]  << "</GEN_TRIG_MASK_15>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_16>" << metaData.gen_trig_mask[16]  << "</GEN_TRIG_MASK_16>/n";
-	outputFile << dec <<"/<GEN_TRIG_MASK_17>" << metaData.gen_trig_mask[17]  << "</GEN_TRIG_MASK_17>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_0>" << metaData.gen_trig_mask[0]  << "</GEN_TRIG_MASK_0>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_1>" << metaData.gen_trig_mask[1]  << "</GEN_TRIG_MASK_1>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_2>" << metaData.gen_trig_mask[2]  << "</GEN_TRIG_MASK_2>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_3>" << metaData.gen_trig_mask[3]  << "</GEN_TRIG_MASK_3>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_4>" << metaData.gen_trig_mask[4]  << "</GEN_TRIG_MASK_4>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_5>" << metaData.gen_trig_mask[5]  << "</GEN_TRIG_MASK_5>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_6>" << metaData.gen_trig_mask[6]  << "</GEN_TRIG_MASK_6>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_7>" << metaData.gen_trig_mask[7]  << "</GEN_TRIG_MASK_7>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_8>" << metaData.gen_trig_mask[8]  << "</GEN_TRIG_MASK_8>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_9>" << metaData.gen_trig_mask[9]  << "</GEN_TRIG_MASK_9>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_10>" << metaData.gen_trig_mask[10]  << "</GEN_TRIG_MASK_10>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_11>" << metaData.gen_trig_mask[11]  << "</GEN_TRIG_MASK_11>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_12>" << metaData.gen_trig_mask[12]  << "</GEN_TRIG_MASK_12>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_13>" << metaData.gen_trig_mask[13]  << "</GEN_TRIG_MASK_13>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_14>" << metaData.gen_trig_mask[14]  << "</GEN_TRIG_MASK_14>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_15>" << metaData.gen_trig_mask[15]  << "</GEN_TRIG_MASK_15>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_16>" << metaData.gen_trig_mask[16]  << "</GEN_TRIG_MASK_16>/n";
+	 outputFile << dec <<"/<GEN_TRIG_MASK_17>" << metaData.gen_trig_mask[17]  << "</GEN_TRIG_MASK_17>/n";
 
-	outputFile << "</SCINTCONFIG>\n";
+	 outputFile << "</SCINTCONFIG>\n";
       }   
   
-    }
+   }
   
-  outputFile << "</ROOT_SOURCE>\n";
-  outputFile.close();
+   outputFile << "</ROOT_SOURCE>\n";
+   outputFile.close();
 }
 
 
 void SilConfigToXML(TString rootname, TString xslPath = "")
 {
   
-  cout << endl << "Sil to xml:" << rootname << endl;
+   cout << endl << "Sil to xml:" << rootname << endl;
 
-  TString filename = rootname;
-  filename.ReplaceAll(".root", 5, "_SilConfig.xml", 14);
+   TString filename = rootname;
+   filename.ReplaceAll(".root", 5, "_SilConfig.xml", 14);
 
-  ofstream outputFile;
-  outputFile.open(filename.Data(), ios::trunc);
+   ofstream outputFile;
+   outputFile.open(filename.Data(), ios::trunc);
 
   
-  if (!outputFile.is_open()){
-    printf("Cannot open the file %s for the output",filename.Data());
-    exit(0);
-  }
+   if (!outputFile.is_open()){
+      printf("Cannot open the file %s for the output",filename.Data());
+      exit(0);
+   }
   
  
-  LEvRec0File rootfile(rootname.Data());
-  LEvRec0 ev;
-  LEvRec0Md metaData;
-  rootfile.SetTheEventPointer(ev);
-  rootfile.SetTmdPointer(metaData);
+   LEvRec0File rootfile(rootname.Data());
+   LEvRec0 ev;
+   LEvRec0Md metaData;
+   rootfile.SetTheEventPointer(ev);
+   rootfile.SetTmdPointer(metaData);
  
-  outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
-  outputFile << "<!-- Prologo XML -->\n";
-  outputFile << "<?xml-stylesheet type='text/xsl' href='"<<xslPath<<"'?>\n";
-  outputFile << "<ROOT_SOURCE>\n";
+   outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
+   outputFile << "<!-- Prologo XML -->\n";
+   outputFile << "<?xml-stylesheet type='text/xsl' href='"<<xslPath<<"'?>\n";
+   outputFile << "<ROOT_SOURCE>\n";
   
-  // Metadata
-  int Tmd_entries = rootfile.GetTmdEntries(); 
-  cout << "Number of Runs " << Tmd_entries << endl;
+   // Metadata
+   int Tmd_entries = rootfile.GetTmdEntries(); 
+   cout << "Number of Runs " << Tmd_entries << endl;
   
-  Bool_t ladder_on_top[Tmd_entries];
-  Bool_t ladder_on_central[Tmd_entries];
-  Bool_t ladder_on_bottom[Tmd_entries];
-  Bool_t ladder_mask_top[Tmd_entries];
-  Bool_t ladder_mask_central[Tmd_entries];
-  Bool_t ladder_mask_bottom[Tmd_entries];
-  UShort_t adj_strip_vect[Tmd_entries];
-  UShort_t zero_supp_vect[Tmd_entries];
-  Short_t CN_high_vect[Tmd_entries];
-  Short_t CN_low_vect[Tmd_entries];
-  UShort_t event_RMS_vect[Tmd_entries];
-  UShort_t  event_ped_vect[Tmd_entries];
-  UShort_t event_gauss_vect[Tmd_entries];
-  UShort_t event_CN_vect[Tmd_entries];
-  UShort_t gauss_check_vect[Tmd_entries];
-  UShort_t run_id_vect[Tmd_entries];
-  UShort_t boot_nr_vect[Tmd_entries];
+   Bool_t ladder_on_top[Tmd_entries];
+   Bool_t ladder_on_central[Tmd_entries];
+   Bool_t ladder_on_bottom[Tmd_entries];
+   Bool_t ladder_mask_top[Tmd_entries];
+   Bool_t ladder_mask_central[Tmd_entries];
+   Bool_t ladder_mask_bottom[Tmd_entries];
+   UShort_t adj_strip_vect[Tmd_entries];
+   UShort_t zero_supp_vect[Tmd_entries];
+   Short_t CN_high_vect[Tmd_entries];
+   Short_t CN_low_vect[Tmd_entries];
+   UShort_t event_RMS_vect[Tmd_entries];
+   UShort_t  event_ped_vect[Tmd_entries];
+   UShort_t event_gauss_vect[Tmd_entries];
+   UShort_t event_CN_vect[Tmd_entries];
+   UShort_t gauss_check_vect[Tmd_entries];
+   UShort_t run_id_vect[Tmd_entries];
+   UShort_t boot_nr_vect[Tmd_entries];
 
-  for(int j=0;j<Tmd_entries;j++)
-    {
+   for(int j=0;j<Tmd_entries;j++)
+   {
       rootfile.GetTmdEntry(j);   
 
       ladder_on_top[j] = metaData.silConfig.ladder_on[0];
@@ -757,6 +757,7 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
       ladder_mask_top[j] = metaData.silConfig.ladder_mask[0];
       ladder_mask_central[j] = metaData.silConfig.ladder_mask[1];
       ladder_mask_bottom[j] = metaData.silConfig.ladder_mask[2];
+
       adj_strip_vect[j] = metaData.silConfig.adj_strip;
       zero_supp_vect[j] = metaData.silConfig.zero_supp_thrd;
       CN_high_vect[j] = (short)metaData.silConfig.thrd_CN_HIGH;
@@ -769,140 +770,141 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
       run_id_vect[j]=metaData.run_id;
       boot_nr_vect[j]=metaData.boot_nr;
       
-    }
+   }
 
-  for(int t=0;t<Tmd_entries;t++) {
+   for(int t=0;t<Tmd_entries;t++) {
          
-    outputFile << "<SILCONFIG>\n";
+      outputFile << "<SILCONFIG>\n";
       
-    outputFile << "\t<LADDER_error_top>"<< 0 << "</LADDER_error_top>\n";
-    outputFile << "\t<LADDER_error_central>"<< 0 << "</LADDER_error_central>\n";
-    outputFile << "\t<LADDER_error_bottom>"<< 0 << "</LADDER_error_bottom>\n";
-    outputFile << "\t<LADDER_MASK_error_top>"<< 0 << "</LADDER_MASK_error_top>\n";
-    outputFile << "\t<LADDER_MASK_error_central>"<< 0 << "</LADDER_MASK_error_central>\n";
-    outputFile << "\t<LADDER_MASK_error_bottom>"<< 0 << "</LADDER_MASK_error_bottom>\n";
-    outputFile << "\t<ADJ_STRIP_error>"<< 0 << "</ADJ_STRIP_error>\n";
-    outputFile << "\t<ZERO_SUPP_error>"<< 0 << "</ZERO_SUPP_error>\n";
-    outputFile << "\t<CN_HIGH_error>"<< 0 << "</CN_HIGH_error>\n";
-    outputFile << "\t<CN_LOW_error>"<< 0 << "</CN_LOW_error>\n";
-    outputFile << "\t<EVENT_RMS_error>"<< 0 << "</EVENT_RMS_error>\n";
-    outputFile << "\t<EVENT_PED_error>"<< 0 << "</EVENT_PED_error>\n";
-    outputFile << "\t<EVENT_GAUSS_error>"<< 0 << "</EVENT_GAUSS_error>\n";
-    outputFile << "\t<EVENT_CN_error>"<< 0 << "</EVENT_CN_error>\n";
-    outputFile << "\t<GAUSS_CHECK_error>"<< 0 << "</GAUSS_CHECK_error>\n";
+      outputFile << "\t<LADDER_error_top>"<< 0 << "</LADDER_error_top>\n";
+      outputFile << "\t<LADDER_error_central>"<< 0 << "</LADDER_error_central>\n";
+      outputFile << "\t<LADDER_error_bottom>"<< 0 << "</LADDER_error_bottom>\n";
+      outputFile << "\t<LADDER_MASK_error_top>"<< 0 << "</LADDER_MASK_error_top>\n";
+      outputFile << "\t<LADDER_MASK_error_central>"<< 0 << "</LADDER_MASK_error_central>\n";
+      outputFile << "\t<LADDER_MASK_error_bottom>"<< 0 << "</LADDER_MASK_error_bottom>\n";
+      outputFile << "\t<ADJ_STRIP_error>"<< 0 << "</ADJ_STRIP_error>\n";
+      outputFile << "\t<ZERO_SUPP_error>"<< 0 << "</ZERO_SUPP_error>\n";
+      outputFile << "\t<CN_HIGH_error>"<< 0 << "</CN_HIGH_error>\n";
+      outputFile << "\t<CN_LOW_error>"<< 0 << "</CN_LOW_error>\n";
+      outputFile << "\t<EVENT_RMS_error>"<< 0 << "</EVENT_RMS_error>\n";
+      outputFile << "\t<EVENT_PED_error>"<< 0 << "</EVENT_PED_error>\n";
+      outputFile << "\t<EVENT_GAUSS_error>"<< 0 << "</EVENT_GAUSS_error>\n";
+      outputFile << "\t<EVENT_CN_error>"<< 0 << "</EVENT_CN_error>\n";
+      outputFile << "\t<GAUSS_CHECK_error>"<< 0 << "</GAUSS_CHECK_error>\n";
 
-    if (t%2==0){
+      if (t%2==0){
 	
-      if (ladder_on_top[t]!=ladder_on_top[t+1])
-	outputFile << "\t<LADDER_error_top>"<< 1 << "</LADDER_error_top>\n";
+	 if (ladder_on_top[t]!=ladder_on_top[t+1])
+	    outputFile << "\t<LADDER_error_top>"<< 1 << "</LADDER_error_top>\n";
 
-      if (ladder_on_central[t]!=ladder_on_central[t+1])
-	outputFile << "\t<LADDER_error_central>"<< 1 << "</LADDER_error_central>\n";
+	 if (ladder_on_central[t]!=ladder_on_central[t+1])
+	    outputFile << "\t<LADDER_error_central>"<< 1 << "</LADDER_error_central>\n";
 
-      if (ladder_on_bottom[t]!=ladder_on_bottom[t+1])
-	outputFile << "\t<LADDER_error_bottom>"<< 1 << "</LADDER_error_bottom>\n";
+	 if (ladder_on_bottom[t]!=ladder_on_bottom[t+1])
+	    outputFile << "\t<LADDER_error_bottom>"<< 1 << "</LADDER_error_bottom>\n";
 
-      if (ladder_mask_top[t]!=ladder_mask_top[t+1])
-	outputFile << "\t<LADDER_MASK_error_top>"<< 1 << "</LADDER_MASK_error_top>\n";
+	 if (ladder_mask_top[t]!=ladder_mask_top[t+1])
+	    outputFile << "\t<LADDER_MASK_error_top>"<< 1 << "</LADDER_MASK_error_top>\n";
 
-      if (ladder_mask_central[t]!=ladder_mask_central[t+1])
-	outputFile << "\t<LADDER_MASK_error_central>"<< 1 << "</LADDER_MASK_error_central>\n";
+	 if (ladder_mask_central[t]!=ladder_mask_central[t+1])
+	    outputFile << "\t<LADDER_MASK_error_central>"<< 1 << "</LADDER_MASK_error_central>\n";
 
-      if (ladder_mask_bottom[t]!=ladder_mask_bottom[t+1])
-	outputFile << "\t<LADDER_MASK_error_bottom>"<< 1 << "</LADDER_MASK_error_bottom>\n";
+	 if (ladder_mask_bottom[t]!=ladder_mask_bottom[t+1])
+	    outputFile << "\t<LADDER_MASK_error_bottom>"<< 1 << "</LADDER_MASK_error_bottom>\n";
 	   
-      if (adj_strip_vect[t]!=adj_strip_vect[t+1])
-	outputFile << "\t<ADJ_STRIP_error>"<< 1 << "</ADJ_STRIP_error>\n";
+	 if (adj_strip_vect[t]!=adj_strip_vect[t+1])
+	    outputFile << "\t<ADJ_STRIP_error>"<< 1 << "</ADJ_STRIP_error>\n";
 
-      if (zero_supp_vect[t]!=zero_supp_vect[t+1])
-	outputFile << "\t<ZERO_SUPP_error>"<< 1 << "</ZERO_SUPP_error>\n";
+	 if (zero_supp_vect[t]!=zero_supp_vect[t+1])
+	    outputFile << "\t<ZERO_SUPP_error>"<< 1 << "</ZERO_SUPP_error>\n";
 
-      if (CN_high_vect[t]!=CN_high_vect[t+1])
-	outputFile << "\t<CN_HIGH_error>"<< 1 << "</CN_HIGH_error>\n";
+	 if (CN_high_vect[t]!=CN_high_vect[t+1])
+	    outputFile << "\t<CN_HIGH_error>"<< 1 << "</CN_HIGH_error>\n";
 
-      if (CN_low_vect[t]!=CN_low_vect[t+1])
-	outputFile << "\t<CN_LOW_error>"<< 1 << "</CN_LOW_error>\n";
+	 if (CN_low_vect[t]!=CN_low_vect[t+1])
+	    outputFile << "\t<CN_LOW_error>"<< 1 << "</CN_LOW_error>\n";
 
-      if (event_RMS_vect[t]!=event_RMS_vect[t+1])
-	outputFile << "\t<EVENT_RMS_error>"<< 1 << "</EVENT_RMS_error>\n";
+	 if (event_RMS_vect[t]!=event_RMS_vect[t+1])
+	    outputFile << "\t<EVENT_RMS_error>"<< 1 << "</EVENT_RMS_error>\n";
 
-      if (event_ped_vect[t]!=event_ped_vect[t+1])
-	outputFile << "\t<EVENT_PED_error>"<< 1 << "</EVENT_PED_error>\n";
+	 if (event_ped_vect[t]!=event_ped_vect[t+1])
+	    outputFile << "\t<EVENT_PED_error>"<< 1 << "</EVENT_PED_error>\n";
 
-      if (event_gauss_vect[t]!=event_gauss_vect[t+1])
-	outputFile << "\t<EVENT_GAUSS_error>"<< 1 << "</EVENT_GAUSS_error>\n";
+	 if (event_gauss_vect[t]!=event_gauss_vect[t+1])
+	    outputFile << "\t<EVENT_GAUSS_error>"<< 1 << "</EVENT_GAUSS_error>\n";
 
-      if (event_CN_vect[t]!=event_CN_vect[t+1])
-	outputFile << "\t<EVENT_CN_error>"<< 1 << "</EVENT_CN_error>\n";
+	 if (event_CN_vect[t]!=event_CN_vect[t+1])
+	    outputFile << "\t<EVENT_CN_error>"<< 1 << "</EVENT_CN_error>\n";
 
-      if (gauss_check_vect[t]!=gauss_check_vect[t+1])
-	outputFile << "\t<GAUSS_CHECK_error>"<< 1 << "</GAUSS_CHECK_error>\n";
+	 if (gauss_check_vect[t]!=gauss_check_vect[t+1])
+	    outputFile << "\t<GAUSS_CHECK_error>"<< 1 << "</GAUSS_CHECK_error>\n";
 	  
-    }
+      }
        
        
-    if (t%2!=0)
+      if (t%2!=0)
       {
 
-      if (ladder_on_top[t]!=ladder_on_top[t+1])
-	outputFile << "\t<LADDER_error_top>"<< 1 << "</LADDER_error_top>\n";
+	 if (ladder_on_top[t]!=ladder_on_top[t+1])
+	    outputFile << "\t<LADDER_error_top>"<< 1 << "</LADDER_error_top>\n";
 
-      if (ladder_on_central[t]!=ladder_on_central[t+1])
-	outputFile << "\t<LADDER_error_central>"<< 1 << "</LADDER_error_central>\n";
+	 if (ladder_on_central[t]!=ladder_on_central[t+1])
+	    outputFile << "\t<LADDER_error_central>"<< 1 << "</LADDER_error_central>\n";
 
-      if (ladder_on_bottom[t]!=ladder_on_bottom[t+1])
-	outputFile << "\t<LADDER_error_bottom>"<< 1 << "</LADDER_error_bottom>\n";
+	 if (ladder_on_bottom[t]!=ladder_on_bottom[t+1])
+	    outputFile << "\t<LADDER_error_bottom>"<< 1 << "</LADDER_error_bottom>\n";
 
-      if (ladder_mask_top[t]!=ladder_mask_top[t+1])
-	outputFile << "\t<LADDER_MASK_error_top>"<< 1 << "</LADDER_MASK_error_top>\n";
+	 if (ladder_mask_top[t]!=ladder_mask_top[t+1])
+	    outputFile << "\t<LADDER_MASK_error_top>"<< 1 << "</LADDER_MASK_error_top>\n";
 
-      if (ladder_mask_central[t]!=ladder_mask_central[t+1])
-	outputFile << "\t<LADDER_MASK_error_central>"<< 1 << "</LADDER_MASK_error_central>\n";
+	 if (ladder_mask_central[t]!=ladder_mask_central[t+1])
+	    outputFile << "\t<LADDER_MASK_error_central>"<< 1 << "</LADDER_MASK_error_central>\n";
 
-      if (ladder_mask_bottom[t]!=ladder_mask_bottom[t+1])
-	outputFile << "\t<LADDER_MASK_error_bottom>"<< 1 << "</LADDER_MASK_error_bottom>\n";
+	 if (ladder_mask_bottom[t]!=ladder_mask_bottom[t+1])
+	    outputFile << "\t<LADDER_MASK_error_bottom>"<< 1 << "</LADDER_MASK_error_bottom>\n";
 	   
-	if (adj_strip_vect[t]!=adj_strip_vect[t-1])
-	  outputFile << "\t<ADJ_STRIP_error>"<< 1 << "</ADJ_STRIP_error>\n";
+	 if (adj_strip_vect[t]!=adj_strip_vect[t-1])
+	    outputFile << "\t<ADJ_STRIP_error>"<< 1 << "</ADJ_STRIP_error>\n";
 
-	if (zero_supp_vect[t]!=zero_supp_vect[t-1])
-	  outputFile << "\t<ZERO_SUPP_error>"<< 1 << "</ZERO_SUPP_error>\n";
+	 if (zero_supp_vect[t]!=zero_supp_vect[t-1])
+	    outputFile << "\t<ZERO_SUPP_error>"<< 1 << "</ZERO_SUPP_error>\n";
 
-	if (CN_high_vect[t]!=CN_high_vect[t-1])
-	  outputFile << "\t<CN_HIGH_error>"<< 1 << "</CN_HIGH_error>\n";
+	 if (CN_high_vect[t]!=CN_high_vect[t-1])
+	    outputFile << "\t<CN_HIGH_error>"<< 1 << "</CN_HIGH_error>\n";
 
-	if (CN_low_vect[t]!=CN_low_vect[t-1])
-	  outputFile << "\t<CN_LOW_error>"<< 1 << "</CN_LOW_error>\n";
+	 if (CN_low_vect[t]!=CN_low_vect[t-1])
+	    outputFile << "\t<CN_LOW_error>"<< 1 << "</CN_LOW_error>\n";
 
-	if (event_RMS_vect[t]!=event_RMS_vect[t-1])
-	  outputFile << "\t<EVENT_RMS_error>"<< 1 << "</EVENT_RMS_error>\n";
+	 if (event_RMS_vect[t]!=event_RMS_vect[t-1])
+	    outputFile << "\t<EVENT_RMS_error>"<< 1 << "</EVENT_RMS_error>\n";
 
-	if (event_ped_vect[t]!=event_ped_vect[t-1])
-	  outputFile << "\t<EVENT_PED_error>"<< 1 << "</EVENT_PED_error>\n";
+	 if (event_ped_vect[t]!=event_ped_vect[t-1])
+	    outputFile << "\t<EVENT_PED_error>"<< 1 << "</EVENT_PED_error>\n";
 
-	if (event_gauss_vect[t]!=event_gauss_vect[t-1])
-	  outputFile << "\t<EVENT_GAUSS_error>"<< 1 << "</EVENT_GAUSS_error>\n";
+	 if (event_gauss_vect[t]!=event_gauss_vect[t-1])
+	    outputFile << "\t<EVENT_GAUSS_error>"<< 1 << "</EVENT_GAUSS_error>\n";
 
-	if (event_CN_vect[t]!=event_CN_vect[t-1])
-	  outputFile << "\t<EVENT_CN_error>"<< 1 << "</EVENT_CN_error>\n";
+	 if (event_CN_vect[t]!=event_CN_vect[t-1])
+	    outputFile << "\t<EVENT_CN_error>"<< 1 << "</EVENT_CN_error>\n";
 
-	if (gauss_check_vect[t]!=gauss_check_vect[t-1])
-	  outputFile << "\t<GAUSS_CHECK_error>"<< 1 << "</GAUSS_CHECK_error>\n";
+	 if (gauss_check_vect[t]!=gauss_check_vect[t-1])
+	    outputFile << "\t<GAUSS_CHECK_error>"<< 1 << "</GAUSS_CHECK_error>\n";
       }
 
 
-    outputFile << "\t<BOOT_NR>" << boot_nr_vect[t] << "</BOOT_NR>\n";
-    outputFile << "\t<RUN_NR>"  << run_id_vect[t]  << "</RUN_NR>\n";
+      outputFile << "\t<BOOT_NR>" << boot_nr_vect[t] << "</BOOT_NR>\n";
+      outputFile << "\t<RUN_NR>"  << run_id_vect[t]  << "</RUN_NR>\n";
 
-    if(ladder_on_top[t] == 0)
-      outputFile << "\t<LADDERS_LV_top>" << "OFF" << "</LADDERS_LV_top>\n";
-    if(ladder_on_top[t] == 1)
-      outputFile << "\t<LADDERS_LV_top>" << "ON" << "</LADDERS_LV_top>\n";
+      if(ladder_on_top[t] == 0)
+	 outputFile << "\t<LADDERS_LV_top>" << "OFF" << "</LADDERS_LV_top>\n";
+      if(ladder_on_top[t] == 1)
+	 outputFile << "\t<LADDERS_LV_top>" << "ON" << "</LADDERS_LV_top>\n";
 
-    if(ladder_on_central[t] == 0)
-      outputFile << "\t<LADDERS_LV_central>" << "OFF" << "</LADDERS_LV_central>\n";
-    if(ladder_on_central[t] == 1)
-      outputFile << "\t<LADDERS_LV_central>" << "ON" << "</LADDERS_LV_central>\n";
+      if(ladder_on_central[t] == 0)
+	 outputFile << "\t<LADDERS_LV_central>" << "OFF" << "</LADDERS_LV_central>\n";
+      if(ladder_on_central[t] == 1)
+	 outputFile << "\t<LADDERS_LV_central>" << "ON" << "</LADDERS_LV_central>\n";
+
 
     if(ladder_on_bottom[t] == 0)
       outputFile << "\t<LADDERS_LV_bottom>" << "OFF" << "</LADDERS_LV_bottom>\n";
@@ -925,136 +927,137 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
       outputFile << "\t<CURRENT_SD_bottom>" << "Include" << "</CURRENT_SD_bottom>\n";
     
  
-      
-    outputFile << "\t<ADIACENT_STRIP>" << adj_strip_vect[t]
-	       << "</ADIACENT_STRIP>\n";
-    outputFile << "\t<ZERO_SUPP_THRD>" << zero_supp_vect[t]
-	       << "</ZERO_SUPP_THRD>\n";
-    outputFile << "\t<THRD_CN_HIGH>"  << CN_high_vect[t]
-	       << "</THRD_CN_HIGH>\n";
-    outputFile << "\t<THRD_CN_LOW>"   << CN_low_vect[t]
-	       << "</THRD_CN_LOW>\n";
-    outputFile << "\t<CALIB_EVENT_RMS>" << event_RMS_vect[t]
-	       << "</CALIB_EVENT_RMS>\n";
-    outputFile << "\t<CALIB_EVENT_PED>" << event_ped_vect[t]
-	       << "</CALIB_EVENT_PED>\n";
-    outputFile << "\t<CALIB_EVENT_GAUSS>" << event_gauss_vect[t]
-	       << "</CALIB_EVENT_GAUSS>\n";
-    outputFile << "\t<CALIB_EVENT_CN>" << event_CN_vect[t]
-	       << "</CALIB_EVENT_CN>\n";
-    outputFile << "\t<GAUSS_CHECK>" << gauss_check_vect[t]
-	       << "</GAUSS_CHECK>\n";
 
-    outputFile << "</SILCONFIG>\n";    
+      
+      outputFile << "\t<ADIACENT_STRIP>" << adj_strip_vect[t]
+		 << "</ADIACENT_STRIP>\n";
+      outputFile << "\t<ZERO_SUPP_THRD>" << zero_supp_vect[t]
+		 << "</ZERO_SUPP_THRD>\n";
+      outputFile << "\t<THRD_CN_HIGH>"  << CN_high_vect[t]
+		 << "</THRD_CN_HIGH>\n";
+      outputFile << "\t<THRD_CN_LOW>"   << CN_low_vect[t]
+		 << "</THRD_CN_LOW>\n";
+      outputFile << "\t<CALIB_EVENT_RMS>" << event_RMS_vect[t]
+		 << "</CALIB_EVENT_RMS>\n";
+      outputFile << "\t<CALIB_EVENT_PED>" << event_ped_vect[t]
+		 << "</CALIB_EVENT_PED>\n";
+      outputFile << "\t<CALIB_EVENT_GAUSS>" << event_gauss_vect[t]
+		 << "</CALIB_EVENT_GAUSS>\n";
+      outputFile << "\t<CALIB_EVENT_CN>" << event_CN_vect[t]
+		 << "</CALIB_EVENT_CN>\n";
+      outputFile << "\t<GAUSS_CHECK>" << gauss_check_vect[t]
+		 << "</GAUSS_CHECK>\n";
+
+      outputFile << "</SILCONFIG>\n";    
   
-  }
-  outputFile << "</ROOT_SOURCE>\n";
-  outputFile.close();
+   }
+   outputFile << "</ROOT_SOURCE>\n";
+   outputFile.close();
 }
 
 
 void TelemetryToXML(TString rootname, TString xslPath = "")
 {
   
-  cout << endl << "Telemetry to xml:" << rootname << endl;
+   cout << endl << "Telemetry to xml:" << rootname << endl;
   
-  TString filename = rootname;
-  filename.ReplaceAll(".root", 5, "_Telemetry.xml", 14);
+   TString filename = rootname;
+   filename.ReplaceAll(".root", 5, "_Telemetry.xml", 14);
 
-  ofstream outputFile;
-  outputFile.open(filename.Data(), ios::trunc);
+   ofstream outputFile;
+   outputFile.open(filename.Data(), ios::trunc);
 
 
-  if (!outputFile.is_open()){
-    printf("Cannot open the file %s for the output", filename.Data());
-    exit(0);
-  }
-  LEvRec0File rootfile(rootname.Data());
-  LEvRec0 ev;
-  LEvRec0Md metaData;
-  rootfile.SetTheEventPointer(ev);
-  rootfile.SetTmdPointer(metaData);
+   if (!outputFile.is_open()){
+      printf("Cannot open the file %s for the output", filename.Data());
+      exit(0);
+   }
+   LEvRec0File rootfile(rootname.Data());
+   LEvRec0 ev;
+   LEvRec0Md metaData;
+   rootfile.SetTheEventPointer(ev);
+   rootfile.SetTmdPointer(metaData);
   
-  outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
-  outputFile << "<!-- Prologo XML -->\n";
-  outputFile << "<?xml-stylesheet type='text/xsl' href='"<< xslPath.Data() << "'?>\n";
-  outputFile << "<ROOT_SOURCE>\n";
+   outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
+   outputFile << "<!-- Prologo XML -->\n";
+   outputFile << "<?xml-stylesheet type='text/xsl' href='"<< xslPath.Data() << "'?>\n";
+   outputFile << "<ROOT_SOURCE>\n";
     
-  // Metadata
-  int Tmd_entries =  rootfile.GetTmdEntries(); 
-  int k_start;
-  int k_stop;
+   // Metadata
+   int Tmd_entries =  rootfile.GetTmdEntries(); 
+   int k_start;
+   int k_stop;
   
-  int start_ind;
-  int stop_ind;
+   int start_ind;
+   int stop_ind;
   
-  start_ind=0;
-  stop_ind=0;
+   start_ind=0;
+   stop_ind=0;
   
-  if (Tmd_entries%2 ==0) {
-    k_start= Tmd_entries/2;
-    k_stop = Tmd_entries/2;
+   if (Tmd_entries%2 ==0) {
+      k_start= Tmd_entries/2;
+      k_stop = Tmd_entries/2;
     
-  }
+   }
   
-  else  {
+   else  {
 
-    k_start=((Tmd_entries-1)/2)+1;
-    k_stop=(Tmd_entries-1)/2;   
+      k_start=((Tmd_entries-1)/2)+1;
+      k_stop=(Tmd_entries-1)/2;   
   
-  }
+   }
   
-  UShort_t vect_start_status_DAQ[k_start];
-  UShort_t vect_start_status_PMT[k_start];
-  UShort_t vect_start_status_TM_TC[k_start];
-  UShort_t vect_start_status_HVPS[k_start];
-  UShort_t vect_start_status_CPU_boot[k_start];
-  UShort_t vect_start_status_CPU_FSM[k_start];
-  UShort_t vect_stop_status_DAQ[k_stop];
-  UShort_t vect_stop_status_PMT[k_stop];
-  UShort_t vect_stop_status_TM_TC[k_stop];
-  UShort_t vect_stop_status_HVPS[k_stop];
-  UShort_t vect_stop_status_CPU_boot[k_stop];
-  UShort_t vect_stop_status_CPU_FSM[k_stop];
-  UShort_t vect_boot_nr[k_start];
-  UShort_t vect_run_id[k_start];
+   UShort_t vect_start_status_DAQ[k_start];
+   UShort_t vect_start_status_PMT[k_start];
+   UShort_t vect_start_status_TM_TC[k_start];
+   UShort_t vect_start_status_HVPS[k_start];
+   UShort_t vect_start_status_CPU_boot[k_start];
+   UShort_t vect_start_status_CPU_FSM[k_start];
+   UShort_t vect_stop_status_DAQ[k_stop];
+   UShort_t vect_stop_status_PMT[k_stop];
+   UShort_t vect_stop_status_TM_TC[k_stop];
+   UShort_t vect_stop_status_HVPS[k_stop];
+   UShort_t vect_stop_status_CPU_boot[k_stop];
+   UShort_t vect_stop_status_CPU_FSM[k_stop];
+   UShort_t vect_boot_nr[k_start];
+   UShort_t vect_run_id[k_start];
 
-  cout << "Number of Tmd entries: " << Tmd_entries << endl;
+   cout << "Number of Tmd entries: " << Tmd_entries << endl;
    
-  for(int j=0;j<Tmd_entries;j++)
-    {
+   for(int j=0;j<Tmd_entries;j++)
+   {
       rootfile.GetTmdEntry(j);   
 
 
       if(j%2 == 0){    
-	vect_start_status_DAQ[start_ind] = metaData.status_reg.statusDAQ;
-	vect_start_status_PMT[start_ind] = metaData.status_reg.statusPMT;
-	vect_start_status_TM_TC[start_ind] = metaData.status_reg.statusTM_TC;
-	vect_start_status_HVPS[start_ind] = metaData.status_reg.statusHV_PS;
-	vect_start_status_CPU_boot[start_ind] = metaData.status_reg.CPU_board_boot;
-        vect_start_status_CPU_FSM[start_ind] = metaData.status_reg.statusCPU;
-	vect_boot_nr[start_ind] = metaData.boot_nr;
-	vect_run_id[start_ind]= metaData.run_id;
+	 vect_start_status_DAQ[start_ind] = metaData.status_reg.statusDAQ;
+	 vect_start_status_PMT[start_ind] = metaData.status_reg.statusPMT;
+	 vect_start_status_TM_TC[start_ind] = metaData.status_reg.statusTM_TC;
+	 vect_start_status_HVPS[start_ind] = metaData.status_reg.statusHV_PS;
+	 vect_start_status_CPU_boot[start_ind] = metaData.status_reg.CPU_board_boot;
+	 vect_start_status_CPU_FSM[start_ind] = metaData.status_reg.statusCPU;
+	 vect_boot_nr[start_ind] = metaData.boot_nr;
+	 vect_run_id[start_ind]= metaData.run_id;
        
-	start_ind=start_ind+1;	  
+	 start_ind=start_ind+1;	  
       }      
       else {
-        vect_stop_status_DAQ[stop_ind] = metaData.status_reg.statusDAQ;
-        vect_stop_status_PMT[stop_ind] = metaData.status_reg.statusPMT;
-        vect_stop_status_TM_TC[stop_ind] = metaData.status_reg.statusTM_TC;
-        vect_stop_status_HVPS[stop_ind] = metaData.status_reg.statusHV_PS;
-        vect_stop_status_CPU_boot[stop_ind] = metaData.status_reg.CPU_board_boot;
-	vect_stop_status_CPU_FSM[stop_ind] = metaData.status_reg.statusCPU;
+	 vect_stop_status_DAQ[stop_ind] = metaData.status_reg.statusDAQ;
+	 vect_stop_status_PMT[stop_ind] = metaData.status_reg.statusPMT;
+	 vect_stop_status_TM_TC[stop_ind] = metaData.status_reg.statusTM_TC;
+	 vect_stop_status_HVPS[stop_ind] = metaData.status_reg.statusHV_PS;
+	 vect_stop_status_CPU_boot[stop_ind] = metaData.status_reg.CPU_board_boot;
+	 vect_stop_status_CPU_FSM[stop_ind] = metaData.status_reg.statusCPU;
           
-	stop_ind=stop_ind+1;
+	 stop_ind=stop_ind+1;
 	  
       } 	 
     
-    } 
+   } 
 
   
-  for(int t=0;t<k_start;t++)
-    {
+   for(int t=0;t<k_start;t++)
+   {
       
       outputFile << dec << "\t<DAQ_STOP_error>"     << 0 << "</DAQ_STOP_error>\n";
       outputFile << dec << "\t<PMT_STOP_error>"     << 0 << "</PMT_STOP_error>\n";
@@ -1076,31 +1079,31 @@ void TelemetryToXML(TString rootname, TString xslPath = "")
       outputFile << dec << "\t<RUN_ID>"  <<   vect_run_id[t] << "</RUN_ID>\n";  
 
       if (vect_start_status_DAQ[t]!=20641)
-	outputFile << dec << "\t<DAQ_START_error>" << 1 << "</DAQ_START_error>\n";
+	 outputFile << dec << "\t<DAQ_START_error>" << 1 << "</DAQ_START_error>\n";
 
       
       if (vect_start_status_PMT[t]!=3333 && vect_start_status_PMT[t]!=3328) 
-	outputFile << dec <<  "\t<PMT_START_error>" << 1 << "</PMT_START_error>\n";
+	 outputFile << dec <<  "\t<PMT_START_error>" << 1 << "</PMT_START_error>\n";
 
            
       if (vect_start_status_TM_TC[t]!=4093 && vect_start_status_TM_TC[t]!=1884)
-	outputFile << dec << "\t<TM_TC_START_error>" << 1 << "</TM_TC_START_error>\n";
+	 outputFile << dec << "\t<TM_TC_START_error>" << 1 << "</TM_TC_START_error>\n";
 
       if (vect_start_status_HVPS[t] !=0 && vect_start_status_HVPS[t] !=4)
-	outputFile << dec << "\t<HVPS_START_error>"  <<  1 << "</HVPS_START_error>\n";
+	 outputFile << dec << "\t<HVPS_START_error>"  <<  1 << "</HVPS_START_error>\n";
 
       if (vect_start_status_CPU_boot[t]!=1796 && vect_start_status_CPU_boot[t]!=1797)
-	outputFile << dec << "\t<CPUboot_START_error>"   <<  1 << "</CPUboot_START_error>\n";
+	 outputFile << dec << "\t<CPUboot_START_error>"   <<  1 << "</CPUboot_START_error>\n";
 
       if (vect_start_status_CPU_FSM[t]!=768)
-	outputFile << dec <<"\t<CPU_FSM_START_error>"   <<  1 << "</CPU_FSM_START_error>\n";
+	 outputFile << dec <<"\t<CPU_FSM_START_error>"   <<  1 << "</CPU_FSM_START_error>\n";
 
       outputFile << showbase << hex << uppercase << "\t<DAQ_START>"
 		 << vect_start_status_DAQ[t] << "</DAQ_START>\n";
       outputFile << showbase << hex << "\t<PMT_START>" <<
-	vect_start_status_PMT[t]  << "</PMT_START>\n";
+	 vect_start_status_PMT[t]  << "</PMT_START>\n";
       outputFile << showbase << hex << "\t<TM_TC_START>" <<
-	vect_start_status_TM_TC[t] << "</TM_TC_START>\n";
+	 vect_start_status_TM_TC[t] << "</TM_TC_START>\n";
       outputFile << hex << "\t<HVPS_START>" <<   vect_start_status_HVPS[t]
 		 << "</HVPS_START>\n";
       outputFile << hex << "\t<CPUboot_START>" <<   vect_start_status_CPU_boot[t]
@@ -1115,54 +1118,54 @@ void TelemetryToXML(TString rootname, TString xslPath = "")
       TString goodstatus;
  
       if(PMT_Status.Length() == 3)
-	goodstatus=PMT_Status(1,2);
+	 goodstatus=PMT_Status(1,2);
       
       if(PMT_Status.Length() == 4)
-	goodstatus=PMT_Status(2,2);
+	 goodstatus=PMT_Status(2,2);
     
       ss.str("");
    
     
       if (vect_stop_status_DAQ[t]!=32931 && vect_stop_status_DAQ[t]!=28834 && vect_stop_status_DAQ[t]!=24738)
-	outputFile << dec << "\t<DAQ_STOP_error>" << 1  << "</DAQ_STOP_error>\n";
+	 outputFile << dec << "\t<DAQ_STOP_error>" << 1  << "</DAQ_STOP_error>\n";
 	  
       if (goodstatus!="1f" && goodstatus!="2f")
-	outputFile <<dec <<  "\t<PMT_STOP_error>" <<  1 << "</PMT_STOP_error>\n";
+	 outputFile <<dec <<  "\t<PMT_STOP_error>" <<  1 << "</PMT_STOP_error>\n";
 
       if (vect_stop_status_TM_TC[t]!=4093 && vect_stop_status_TM_TC[t]!=1884)
-	outputFile << dec <<  "\t<TM_TC_STOP_error>"  <<  1 << "</TM_TC_STOP_error>\n";
+	 outputFile << dec <<  "\t<TM_TC_STOP_error>"  <<  1 << "</TM_TC_STOP_error>\n";
 
       if (vect_stop_status_HVPS[t]!=0 && vect_stop_status_HVPS[t]!=4)
-	outputFile << dec << "\t<HVPS_STOP_error>" <<  1 << "</HVPS_STOP_error>\n";
+	 outputFile << dec << "\t<HVPS_STOP_error>" <<  1 << "</HVPS_STOP_error>\n";
 
       if (vect_stop_status_CPU_boot[t]!=1796 && vect_stop_status_CPU_boot[t]!=1797)
-	outputFile << dec << "\t<CPUboot_STOP_error>" << 1 << "</CPUboot_STOP_error>\n";
+	 outputFile << dec << "\t<CPUboot_STOP_error>" << 1 << "</CPUboot_STOP_error>\n";
 
       if (vect_stop_status_CPU_FSM[t]!=1 && vect_stop_status_CPU_FSM[t]!=769 && vect_stop_status_CPU_FSM[t]!=770)
-	outputFile << dec << "\t<CPU_FSM_STOP_error>" << 1 << "</CPU_FSM_STOP_error>\n";
+	 outputFile << dec << "\t<CPU_FSM_STOP_error>" << 1 << "</CPU_FSM_STOP_error>\n";
     
       if (t < k_stop)
-	{
-	  outputFile << hex << "\t<DAQ_STOP>"  <<  vect_stop_status_DAQ[t]
-		     << "</DAQ_STOP>\n";
-	  outputFile << hex << "\t<PMT_STOP>" << vect_stop_status_PMT[t]
-		     << "</PMT_STOP>\n";
-	  outputFile << hex << "\t<TM_TC_STOP>" << vect_stop_status_TM_TC[t]
-		     << "</TM_TC_STOP>\n";
-	  outputFile << hex << "\t<HVPS_STOP>" << vect_stop_status_HVPS[t]
-		     << "</HVPS_STOP>\n";
-	  outputFile << hex << "\t<CPUboot_STOP>"  << vect_stop_status_CPU_boot[t]
-		     << "</CPUboot_STOP>\n";
-	  outputFile << hex << "\t<CPU_FSM_STOP>"  << vect_stop_status_CPU_FSM[t]
-		     << "</CPU_FSM_STOP>\n";
-	}
+      {
+	 outputFile << hex << "\t<DAQ_STOP>"  <<  vect_stop_status_DAQ[t]
+		    << "</DAQ_STOP>\n";
+	 outputFile << hex << "\t<PMT_STOP>" << vect_stop_status_PMT[t]
+		    << "</PMT_STOP>\n";
+	 outputFile << hex << "\t<TM_TC_STOP>" << vect_stop_status_TM_TC[t]
+		    << "</TM_TC_STOP>\n";
+	 outputFile << hex << "\t<HVPS_STOP>" << vect_stop_status_HVPS[t]
+		    << "</HVPS_STOP>\n";
+	 outputFile << hex << "\t<CPUboot_STOP>"  << vect_stop_status_CPU_boot[t]
+		    << "</CPUboot_STOP>\n";
+	 outputFile << hex << "\t<CPU_FSM_STOP>"  << vect_stop_status_CPU_FSM[t]
+		    << "</CPU_FSM_STOP>\n";
+      }
       
       outputFile << "</TELEMETRY>\n";   
    
-    }
+   }
 
   
-  outputFile << "</ROOT_SOURCE>\n";
-  outputFile.close();
+   outputFile << "</ROOT_SOURCE>\n";
+   outputFile.close();
 
 }
