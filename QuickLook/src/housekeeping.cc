@@ -7,7 +7,7 @@
  *
  * DESCRIPTION:  Script to generate Housekeeping Quicklook xml files   
  *                 
- * DATE:           April 14, 2017
+ * DATE:           April 28, 2017
  *     
  *
  =============================================================================
@@ -229,8 +229,8 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 	    outputFile << "\t<PMT_TEMP_STOP_R>"  <<  1 << "</PMT_TEMP_STOP_R>\n";
 
 	  
-	  outputFile << "\t<CPU_START_TIME>"<<metaData.CPU_time[0]<< "</CPU_START_TIME>\n";
-	  outputFile << "\t<CPU_STOP_TIME>" <<metaData.CPU_time[1]<< "</CPU_STOP_TIME>\n";
+	  outputFile << "\t<CPU_START_TIME>"<< metaData.CPU_time[0] << "</CPU_START_TIME>\n";
+	  outputFile << "\t<CPU_STOP_TIME>" << metaData.CPU_time[1] << "</CPU_STOP_TIME>\n";
 	  outputFile << "\t<CPU_TEMP_START>" <<  CPU_temp_start  << "</CPU_TEMP_START>\n";
 	  outputFile << "\t<CPU_TEMP_STOP>"  <<  CPU_temp_stop  << "</CPU_TEMP_STOP>\n";
 	  outputFile << "\t<PMT_TEMP_START>" <<  PMT_temp_start << "</PMT_TEMP_START>\n";
@@ -729,8 +729,12 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
   int Tmd_entries = rootfile.GetTmdEntries(); 
   cout << "Number of Runs " << Tmd_entries << endl;
   
-  Short_t ladder_on_vect[Tmd_entries];
-  Short_t ladder_mask_vect[Tmd_entries];
+  Bool_t ladder_on_top[Tmd_entries];
+  Bool_t ladder_on_central[Tmd_entries];
+  Bool_t ladder_on_bottom[Tmd_entries];
+  Bool_t ladder_mask_top[Tmd_entries];
+  Bool_t ladder_mask_central[Tmd_entries];
+  Bool_t ladder_mask_bottom[Tmd_entries];
   UShort_t adj_strip_vect[Tmd_entries];
   UShort_t zero_supp_vect[Tmd_entries];
   Short_t CN_high_vect[Tmd_entries];
@@ -747,8 +751,12 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
     {
       rootfile.GetTmdEntry(j);   
 
-      ladder_on_vect[j] = (short)metaData.silConfig.ladder_on;
-      ladder_mask_vect[j] = (short)metaData.silConfig.ladder_mask;
+      ladder_on_top[j] = metaData.silConfig.ladder_on[0];
+      ladder_on_central[j] = metaData.silConfig.ladder_on[1];
+      ladder_on_bottom[j] = metaData.silConfig.ladder_on[2];
+      ladder_mask_top[j] = metaData.silConfig.ladder_mask[0];
+      ladder_mask_central[j] = metaData.silConfig.ladder_mask[1];
+      ladder_mask_bottom[j] = metaData.silConfig.ladder_mask[2];
       adj_strip_vect[j] = metaData.silConfig.adj_strip;
       zero_supp_vect[j] = metaData.silConfig.zero_supp_thrd;
       CN_high_vect[j] = (short)metaData.silConfig.thrd_CN_HIGH;
@@ -767,8 +775,12 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
          
     outputFile << "<SILCONFIG>\n";
       
-    outputFile << "\t<LADDER_error>"<< 0 << "</LADDER_error>\n";
-    outputFile << "\t<LADDER_MASK_error>"<< 0 << "</LADDER_MASK_error>\n";
+    outputFile << "\t<LADDER_error_top>"<< 0 << "</LADDER_error_top>\n";
+    outputFile << "\t<LADDER_error_central>"<< 0 << "</LADDER_error_central>\n";
+    outputFile << "\t<LADDER_error_bottom>"<< 0 << "</LADDER_error_bottom>\n";
+    outputFile << "\t<LADDER_MASK_error_top>"<< 0 << "</LADDER_MASK_error_top>\n";
+    outputFile << "\t<LADDER_MASK_error_central>"<< 0 << "</LADDER_MASK_error_central>\n";
+    outputFile << "\t<LADDER_MASK_error_bottom>"<< 0 << "</LADDER_MASK_error_bottom>\n";
     outputFile << "\t<ADJ_STRIP_error>"<< 0 << "</ADJ_STRIP_error>\n";
     outputFile << "\t<ZERO_SUPP_error>"<< 0 << "</ZERO_SUPP_error>\n";
     outputFile << "\t<CN_HIGH_error>"<< 0 << "</CN_HIGH_error>\n";
@@ -781,11 +793,23 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
 
     if (t%2==0){
 	
-      if (ladder_on_vect[t]!=ladder_on_vect[t+1])
-	outputFile << "\t<LADDER_error>"<< 1 << "</LADDER_error>\n";
+      if (ladder_on_top[t]!=ladder_on_top[t+1])
+	outputFile << "\t<LADDER_error_top>"<< 1 << "</LADDER_error_top>\n";
 
-      if (ladder_mask_vect[t]!=ladder_mask_vect[t+1])
-	outputFile << "\t<LADDER_MASK_error>"<< 1 << "</LADDER_MASK_error>\n";
+      if (ladder_on_central[t]!=ladder_on_central[t+1])
+	outputFile << "\t<LADDER_error_central>"<< 1 << "</LADDER_error_central>\n";
+
+      if (ladder_on_bottom[t]!=ladder_on_bottom[t+1])
+	outputFile << "\t<LADDER_error_bottom>"<< 1 << "</LADDER_error_bottom>\n";
+
+      if (ladder_mask_top[t]!=ladder_mask_top[t+1])
+	outputFile << "\t<LADDER_MASK_error_top>"<< 1 << "</LADDER_MASK_error_top>\n";
+
+      if (ladder_mask_central[t]!=ladder_mask_central[t+1])
+	outputFile << "\t<LADDER_MASK_error_central>"<< 1 << "</LADDER_MASK_error_central>\n";
+
+      if (ladder_mask_bottom[t]!=ladder_mask_bottom[t+1])
+	outputFile << "\t<LADDER_MASK_error_bottom>"<< 1 << "</LADDER_MASK_error_bottom>\n";
 	   
       if (adj_strip_vect[t]!=adj_strip_vect[t+1])
 	outputFile << "\t<ADJ_STRIP_error>"<< 1 << "</ADJ_STRIP_error>\n";
@@ -819,11 +843,24 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
        
     if (t%2!=0)
       {
-	if (ladder_on_vect[t]!=ladder_on_vect[t-1])
-	  outputFile << "\t<LADDER_error>"<< 1 << "</LADDER_error>\n";
 
-	if (ladder_mask_vect[t]!=ladder_mask_vect[t-1])
-	  outputFile << "\t<LADDER_MASK_error>"<< 1 << "</LADDER_MASK_error>\n";
+      if (ladder_on_top[t]!=ladder_on_top[t+1])
+	outputFile << "\t<LADDER_error_top>"<< 1 << "</LADDER_error_top>\n";
+
+      if (ladder_on_central[t]!=ladder_on_central[t+1])
+	outputFile << "\t<LADDER_error_central>"<< 1 << "</LADDER_error_central>\n";
+
+      if (ladder_on_bottom[t]!=ladder_on_bottom[t+1])
+	outputFile << "\t<LADDER_error_bottom>"<< 1 << "</LADDER_error_bottom>\n";
+
+      if (ladder_mask_top[t]!=ladder_mask_top[t+1])
+	outputFile << "\t<LADDER_MASK_error_top>"<< 1 << "</LADDER_MASK_error_top>\n";
+
+      if (ladder_mask_central[t]!=ladder_mask_central[t+1])
+	outputFile << "\t<LADDER_MASK_error_central>"<< 1 << "</LADDER_MASK_error_central>\n";
+
+      if (ladder_mask_bottom[t]!=ladder_mask_bottom[t+1])
+	outputFile << "\t<LADDER_MASK_error_bottom>"<< 1 << "</LADDER_MASK_error_bottom>\n";
 	   
 	if (adj_strip_vect[t]!=adj_strip_vect[t-1])
 	  outputFile << "\t<ADJ_STRIP_error>"<< 1 << "</ADJ_STRIP_error>\n";
@@ -857,14 +894,24 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
     outputFile << "\t<BOOT_NR>" << boot_nr_vect[t] << "</BOOT_NR>\n";
     outputFile << "\t<RUN_NR>"  << run_id_vect[t]  << "</RUN_NR>\n";
 
-    if(ladder_on_vect[t] == 0)
-      outputFile << "\t<LADDERS_LV>" << "OFF" << "</LADDERS_LV>\n";
+    if(ladder_on_top[t] == 0)
+      outputFile << "\t<LADDERS_LV_top>" << "OFF" << "</LADDERS_LV_top>\n";
+    if(ladder_on_top[t] == 1)
+      outputFile << "\t<LADDERS_LV_top>" << "ON" << "</LADDERS_LV_top>\n";
 
-    if(ladder_on_vect[t] == 1)
-      outputFile << "\t<LADDERS_LV>" << "ON" << "</LADDERS_LV>\n";
-      
-    outputFile << "\t<CURRENT_SD>" << ladder_mask_vect[t]
-	       << "</CURRENT_SD>\n";
+    if(ladder_on_central[t] == 0)
+      outputFile << "\t<LADDERS_LV_central>" << "OFF" << "</LADDERS_LV_central>\n";
+    if(ladder_on_central[t] == 1)
+      outputFile << "\t<LADDERS_LV_central>" << "ON" << "</LADDERS_LV_central>\n";
+
+    if(ladder_on_bottom[t] == 0)
+      outputFile << "\t<LADDERS_LV_bottom>" << "OFF" << "</LADDERS_LV_bottom>\n";
+    if(ladder_on_bottom[t] == 1)
+      outputFile << "\t<LADDERS_LV_bottom>" << "ON" << "</LADDERS_LV_bottom>\n";
+    
+    outputFile << "\t<CURRENT_SD_top>" << ladder_mask_top[t] << "</CURRENT_SD_top>\n";
+    outputFile << "\t<CURRENT_SD_central>" << ladder_mask_central[t] << "</CURRENT_SD_central>\n";
+    outputFile << "\t<CURRENT_SD_bottom>" << ladder_mask_bottom[t] << "</CURRENT_SD_bottom>\n";
       
     outputFile << "\t<ADIACENT_STRIP>" << adj_strip_vect[t]
 	       << "</ADIACENT_STRIP>\n";

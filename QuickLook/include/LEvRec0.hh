@@ -47,8 +47,8 @@ public:
 
 struct silicon_config_t
 {  
-   unsigned char      ladder_on; 
-   unsigned char      ladder_mask; 
+   bool               ladder_on[3]; 
+   bool               ladder_mask[3]; 
    unsigned short     plane_HV[2];
    unsigned short     adj_strip;
    unsigned short     zero_supp_thrd; 
