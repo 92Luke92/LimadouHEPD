@@ -40,8 +40,22 @@
 		   <td height="50" align="center" colspan="2">Ladder Masks</td>
 		 </tr>
 		 <tr>
-		   <td width="100" height="100" align="center"> Current SD Ladders Mask </td>
-		   <td width="100" height="100" align="center"> Ladders LV ON/OFF Mask </td> 
+		   <table border="1">
+		     <tr bgcolor="#1acd32">
+		       <td width="90" height="100" align="center"> Current SD Ladders Mask </td>
+		       <tr>
+		       <td width="30" height="50" align="center"> Top </td>
+		       <td width="30" height="50" align="center"> Central </td>
+		       <td width="30" height="50" align="center"> Bottom </td>
+		       </tr>
+		       <td width="100" height="100" align="center"> Ladders LV ON/OFF Mask </td>
+		       <tr>
+		       <td width="30" height="50" align="center"> Top </td>
+		       <td width="30" height="50" align="center"> Central </td>
+		       <td width="30" height="50" align="center"> Bottom </td>
+		       </tr>
+		     </tr>
+		   </table>
 		 </tr>
 	       </table>
 	     </td>
@@ -84,20 +98,56 @@
 		   <tr>
 
 		     <xsl:choose>
-		       <xsl:when test="LADDER_MASK_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="CURRENT_SD"/> </td>
+		       <xsl:when test="LADDER_MASK_error_top &gt;'0'">
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="CURRENT_SD_top"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="30" align="center"><xsl:value-of select="CURRENT_SD"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="CURRENT_SD_top"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		     <xsl:choose>
+		       <xsl:when test="LADDER_MASK_error_central &gt;'0'">
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="CURRENT_SD_central"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="100" height="30" align="center"><xsl:value-of select="CURRENT_SD_central"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		    <xsl:choose>
+		       <xsl:when test="LADDER_MASK_error_bottom &gt;'0'">
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="CURRENT_SD_bottom"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="100" height="30" align="center"><xsl:value-of select="CURRENT_SD_bottoml"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 
 		      <xsl:choose>
-		       <xsl:when test="LADDER_error &gt;'0'">
-			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="LADDERS_LV"/> </td>
+		       <xsl:when test="LADDER_error_top &gt;'0'">
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="LADDERS_LV_top"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="30" align="center"><xsl:value-of select="LADDERS_LV"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="LADDERS_LV_top"/>        </td>
+		       </xsl:otherwise>
+		      </xsl:choose>
+
+		       <xsl:choose>
+		       <xsl:when test="LADDER_error_central &gt;'0'">
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="LADDERS_LV_central"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="100" height="30" align="center"><xsl:value-of select="LADDERS_LV_central"/>        </td>
+		       </xsl:otherwise>
+		       </xsl:choose>
+
+		       <xsl:choose>
+		       <xsl:when test="LADDER_error_bottom &gt;'0'">
+			 <td  bgcolor="#ff0000" width="100" height="30" align="center"> <xsl:value-of select="LADDERS_LV_bottom"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="100" height="30" align="center"><xsl:value-of select="LADDERS_LV_bottom"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 		    
