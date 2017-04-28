@@ -747,8 +747,8 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
     {
       rootfile.GetTmdEntry(j);   
 
-      ladder_on_vect[j] = (short)metaData.silConfig.ladder_on;
-      ladder_mask_vect[j] = (short)metaData.silConfig.ladder_mask;
+      // ladder_on_vect[j] = (short)metaData.silConfig.ladder_on;
+      // ladder_mask_vect[j] = (short)metaData.silConfig.ladder_mask;
       adj_strip_vect[j] = metaData.silConfig.adj_strip;
       zero_supp_vect[j] = metaData.silConfig.zero_supp_thrd;
       CN_high_vect[j] = (short)metaData.silConfig.thrd_CN_HIGH;
@@ -781,11 +781,11 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
 
     if (t%2==0){
 	
-      if (ladder_on_vect[t]!=ladder_on_vect[t+1])
-	outputFile << "\t<LADDER_error>"<< 1 << "</LADDER_error>\n";
+      // if (ladder_on_vect[t]!=ladder_on_vect[t+1])
+      // 	outputFile << "\t<LADDER_error>"<< 1 << "</LADDER_error>\n";
 
-      if (ladder_mask_vect[t]!=ladder_mask_vect[t+1])
-	outputFile << "\t<LADDER_MASK_error>"<< 1 << "</LADDER_MASK_error>\n";
+      // if (ladder_mask_vect[t]!=ladder_mask_vect[t+1])
+      // 	outputFile << "\t<LADDER_MASK_error>"<< 1 << "</LADDER_MASK_error>\n";
 	   
       if (adj_strip_vect[t]!=adj_strip_vect[t+1])
 	outputFile << "\t<ADJ_STRIP_error>"<< 1 << "</ADJ_STRIP_error>\n";
@@ -819,11 +819,11 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
        
     if (t%2!=0)
       {
-	if (ladder_on_vect[t]!=ladder_on_vect[t-1])
-	  outputFile << "\t<LADDER_error>"<< 1 << "</LADDER_error>\n";
+	// if (ladder_on_vect[t]!=ladder_on_vect[t-1])
+	//   outputFile << "\t<LADDER_error>"<< 1 << "</LADDER_error>\n";
 
-	if (ladder_mask_vect[t]!=ladder_mask_vect[t-1])
-	  outputFile << "\t<LADDER_MASK_error>"<< 1 << "</LADDER_MASK_error>\n";
+	// if (ladder_mask_vect[t]!=ladder_mask_vect[t-1])
+	//   outputFile << "\t<LADDER_MASK_error>"<< 1 << "</LADDER_MASK_error>\n";
 	   
 	if (adj_strip_vect[t]!=adj_strip_vect[t-1])
 	  outputFile << "\t<ADJ_STRIP_error>"<< 1 << "</ADJ_STRIP_error>\n";

@@ -36,12 +36,12 @@ hadd $MERGEDFILE *.root
 
 #QuickLook $MERGEDFILE -x "/home/fool/LIMADOU/Data_Acquisition/bin2root/HEPD_Quicklook/Housekeeping_QL"
 
-QuickLook $MERGEDFILE -x "xslTemplates/" -o "outdir/"
+QuickLook $MERGEDFILE -x "xslTemplates/" -o $OUTDIR"/outdir/"
 
 #mkdir ../../outdir
 
 #mv *.pdf *.xml ../../outdir
 
-cp -r /home/fool/LIMADOU/recon_software/LimadouHEPD/QuickLook/xslTemplates $OUTDIR
+cp -r /home/fool/LIMADOU/recon_software/LimadouHEPD/QuickLook/xslTemplates $OUTDIR"/outdir/"
 #mkdir $OUTDIR
 #mv *.pdf *.xml  $OUTDIR
