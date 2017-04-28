@@ -31,6 +31,7 @@ MERGEDFILE="${NAME%???????????}"
 #MERGEDFILE="${NAME%Channel*}"
 MERGEDFILE=$MERGEDFILE$EXT
 OUTDIR=$2
+BINDIR=`dirname $0`
 
 hadd $MERGEDFILE *.root
 
@@ -41,7 +42,8 @@ QuickLook $MERGEDFILE -x "xslTemplates/" -o $OUTDIR"/outdir/"
 #mkdir ../../outdir
 
 #mv *.pdf *.xml ../../outdir
+cd $BINDIR
+cp -r ../xslTemplates $OUTDIR"/outdir/"
 
-cp -r /home/fool/LIMADOU/recon_software/LimadouHEPD/QuickLook/xslTemplates $OUTDIR"/outdir/"
 #mkdir $OUTDIR
 #mv *.pdf *.xml  $OUTDIR
