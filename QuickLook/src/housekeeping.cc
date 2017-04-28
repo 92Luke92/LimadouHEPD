@@ -776,6 +776,8 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
          
       outputFile << "<SILCONFIG>\n";
       
+      outputFile << "\t<HEADER>"<< 0 << "</HEADER>\n";
+     
       outputFile << "\t<LADDER_error_top>"<< 0 << "</LADDER_error_top>\n";
       outputFile << "\t<LADDER_error_central>"<< 0 << "</LADDER_error_central>\n";
       outputFile << "\t<LADDER_error_bottom>"<< 0 << "</LADDER_error_bottom>\n";
@@ -891,7 +893,13 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
 	    outputFile << "\t<GAUSS_CHECK_error>"<< 1 << "</GAUSS_CHECK_error>\n";
       }
 
+      if(t%2==0) 
+      outputFile << "\t<HEADER>" << 1 << "</HEADER>\n";
 
+      outputFile << "\t<HEADER_VAL>" << "H" << "</HEADER_VAL>\n";
+
+      outputFile << "\t<TAIL_VAL>" << "T" << "</TAIL_VAL>\n";
+	
       outputFile << "\t<BOOT_NR>" << boot_nr_vect[t] << "</BOOT_NR>\n";
       outputFile << "\t<RUN_NR>"  << run_id_vect[t]  << "</RUN_NR>\n";
 
@@ -912,24 +920,21 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
       outputFile << "\t<LADDERS_LV_bottom>" << "ON" << "</LADDERS_LV_bottom>\n";
 
     if(ladder_mask_top[t] == 0)
-      outputFile << "\t<CURRENT_SD_top>" << "Exclude" << "</CURRENT_SD_top>\n";
+      outputFile << "\t<CURRENT_SD_top>" << "Excl." << "</CURRENT_SD_top>\n";
     if(ladder_mask_top[t] == 1)
-      outputFile << "\t<CURRENT_SD_top>" << "Include" << "</CURRENT_SD_top>\n";
+      outputFile << "\t<CURRENT_SD_top>" << "Incl." << "</CURRENT_SD_top>\n";
     
     if(ladder_mask_central[t] == 0)
-      outputFile << "\t<CURRENT_SD_central>" << "Exclude" << "</CURRENT_SD_central>\n";
+      outputFile << "\t<CURRENT_SD_central>" << "Excl." << "</CURRENT_SD_central>\n";
     if(ladder_mask_central[t] == 1)
-      outputFile << "\t<CURRENT_SD_central>" << "Include" << "</CURRENT_SD_central>\n";
+      outputFile << "\t<CURRENT_SD_central>" << "Incl." << "</CURRENT_SD_central>\n";
 
     if(ladder_mask_bottom[t] == 0)
-      outputFile << "\t<CURRENT_SD_bottom>" << "Exclude" << "</CURRENT_SD_bottom>\n";
+      outputFile << "\t<CURRENT_SD_bottom>" << "Excl." << "</CURRENT_SD_bottom>\n";
     if(ladder_mask_bottom[t] == 1)
-      outputFile << "\t<CURRENT_SD_bottom>" << "Include" << "</CURRENT_SD_bottom>\n";
+      outputFile << "\t<CURRENT_SD_bottom>" << "Incl." << "</CURRENT_SD_bottom>\n";
     
- 
-
-      
-      outputFile << "\t<ADIACENT_STRIP>" << adj_strip_vect[t]
+     outputFile << "\t<ADIACENT_STRIP>" << adj_strip_vect[t]
 		 << "</ADIACENT_STRIP>\n";
       outputFile << "\t<ZERO_SUPP_THRD>" << zero_supp_vect[t]
 		 << "</ZERO_SUPP_THRD>\n";
