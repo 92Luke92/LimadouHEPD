@@ -905,14 +905,29 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
       if(ladder_on_central[t] == 1)
 	 outputFile << "\t<LADDERS_LV_central>" << "ON" << "</LADDERS_LV_central>\n";
 
-      if(ladder_on_bottom[t] == 0)
-	 outputFile << "\t<LADDERS_LV_bottom>" << "OFF" << "</LADDERS_LV_bottom>\n";
-      if(ladder_on_bottom[t] == 1)
-	 outputFile << "\t<LADDERS_LV_bottom>" << "ON" << "</LADDERS_LV_bottom>\n";
+
+    if(ladder_on_bottom[t] == 0)
+      outputFile << "\t<LADDERS_LV_bottom>" << "OFF" << "</LADDERS_LV_bottom>\n";
+    if(ladder_on_bottom[t] == 1)
+      outputFile << "\t<LADDERS_LV_bottom>" << "ON" << "</LADDERS_LV_bottom>\n";
+
+    if(ladder_mask_top[t] == 0)
+      outputFile << "\t<CURRENT_SD_top>" << "Exclude" << "</CURRENT_SD_top>\n";
+    if(ladder_mask_top[t] == 1)
+      outputFile << "\t<CURRENT_SD_top>" << "Include" << "</CURRENT_SD_top>\n";
     
-      outputFile << "\t<CURRENT_SD_top>" << ladder_mask_top[t] << "</CURRENT_SD_top>\n";
-      outputFile << "\t<CURRENT_SD_central>" << ladder_mask_central[t] << "</CURRENT_SD_central>\n";
-      outputFile << "\t<CURRENT_SD_bottom>" << ladder_mask_bottom[t] << "</CURRENT_SD_bottom>\n";
+    if(ladder_mask_central[t] == 0)
+      outputFile << "\t<CURRENT_SD_central>" << "Exclude" << "</CURRENT_SD_central>\n";
+    if(ladder_mask_central[t] == 1)
+      outputFile << "\t<CURRENT_SD_central>" << "Include" << "</CURRENT_SD_central>\n";
+
+    if(ladder_mask_bottom[t] == 0)
+      outputFile << "\t<CURRENT_SD_bottom>" << "Exclude" << "</CURRENT_SD_bottom>\n";
+    if(ladder_mask_bottom[t] == 1)
+      outputFile << "\t<CURRENT_SD_bottom>" << "Include" << "</CURRENT_SD_bottom>\n";
+    
+ 
+
       
       outputFile << "\t<ADIACENT_STRIP>" << adj_strip_vect[t]
 		 << "</ADIACENT_STRIP>\n";
