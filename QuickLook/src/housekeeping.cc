@@ -94,6 +94,9 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
 
       outputFile2 << "\t<TAIL_VAL>" << "T" << "</TAIL_VAL>\n";
       
+      double longitude=metaData.broadcast.GPS.lon*10*exp(-7);
+      double latitude=metaData.broadcast.GPS.lat*10*exp(-7);
+
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
       outputFile << "\t<RUN_NR>"  << metaData.run_id   << "</RUN_NR>\n";    
       outputFile << "\t<OBDH_MS>"  << metaData.broadcast.OBDH.ms  << "</OBDH_MS>\n";    
@@ -120,8 +123,8 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
 		  << "</GPS_VEL_Y>\n";
       outputFile2 << "\t<GPS_VEL_Z>" << metaData.broadcast.GPS.axis_vel[2]
 		  << "</GPS_VEL_Z>\n";
-      outputFile2 << "\t<LONGITUDE>" << metaData.broadcast.GPS.lon << "</LONGITUDE>\n";
-      outputFile2 << "\t<LATITUDE>"  << metaData.broadcast.GPS.lat << "</LATITUDE>\n";
+      outputFile2 << "\t<LONGITUDE>" << longitude << "</LONGITUDE>\n";
+      outputFile2 << "\t<LATITUDE>"  << latitude  << "</LATITUDE>\n";
       outputFile << "</BROADCAST>\n";
       outputFile2 << "</BROADCAST2>\n"; 
   
@@ -567,9 +570,63 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
       
       outputFile << dec << "\t<BOOT_NR>"    << boot_nr_vect[t]  << "</BOOT_NR>\n";
       outputFile << dec << "\t<RUN_NR>"     << run_id_vect[t]  << "</RUN_NR>\n";
-      outputFile << showbase << hex << "\t<RUN_TYPE>"   << run_type_vect[t]  << "</RUN_TYPE>\n";
+
+      if (run_type_vect[t]==0)
+	outputFile <<  "\t<RUN_TYPE>"   << "NO RUN"  << "</RUN_TYPE>\n";
+
+      if (run_type_vect[t]==27)
+	outputFile <<  "\t<RUN_TYPE>"   << "STD CALIB"  << "</RUN_TYPE>\n";
+
+      if (run_type_vect[t]==45)
+	outputFile <<  "\t<RUN_TYPE>"   << "FAST CALIB"  << "</RUN_TYPE>\n";
+
+      if (run_type_vect[t]==54)
+	outputFile <<  "\t<RUN_TYPE>"   << "RUN ZERO-SUPPRESSED"  << "</RUN_TYPE>\n";
+
+      if (run_type_vect[t]==78)
+	outputFile <<  "\t<RUN_TYPE>"   << "RUN VIRGIN RAW"  << "</RUN_TYPE>\n";
+
+      if (run_type_vect[t]==85)
+	outputFile <<  "\t<RUN_TYPE>"   << "RUN ZERO-SUPPRESSED COMMON NOISE"  << "</RUN_TYPE>\n";
+
+      if (run_type_vect[t]==99)
+	outputFile <<  "\t<RUN_TYPE>"   << "RUN MIXED"  << "</RUN_TYPE>\n";
+
+      if (run_type_vect[t]==120)
+	outputFile <<  "\t<RUN_TYPE>"   << "RUN GENERIC"  << "</RUN_TYPE>\n";
+
+      if (run_type_vect[t]==135)
+	outputFile <<  "\t<RUN_TYPE>"   << "STOP"  << "</RUN_TYPE>\n";
+
+      if (run_type_vect[t]==156)
+	outputFile <<  "\t<RUN_TYPE>"   << "DUMP CALIB"  << "</RUN_TYPE>\n";
+
+      if (run_type_vect[t]==170)
+	outputFile <<  "\t<RUN_TYPE>"   << "DUMP INFO"  << "</RUN_TYPE>\n";
+
       outputFile << dec << "\t<RUN_DURATION>" << run_duration_vect[t] << "</RUN_DURATION>\n";
-      outputFile << showbase << hex << uppercase << "\t<ORBIT_ZONE>"   << orbitZone_vect[t]  << "</ORBIT_ZONE>\n";
+
+      if (orbitZone_vect[t] & 0x00FF != 0)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "SAA" << "</ORBIT_ZONE>\n";
+
+      if (orbitZone_vect[t] & 0x00FF != 1)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "Equatorial" << "</ORBIT_ZONE>\n";
+
+      if (orbitZone_vect[t] & 0x00FF != 2)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "South Pole" << "</ORBIT_ZONE>\n";
+
+      if (orbitZone_vect[t] & 0x00FF != 3)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "North Pole" << "</ORBIT_ZONE>\n";
+
+      if (orbitZone_vect[t] & 0x00FF != 4)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "Default (orbit information is not available)" << "</ORBIT_ZONE>\n";
+
+      if (orbitZone_vect[t]  & 0x00FF != 5)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "Standby Zone" << "</ORBIT_ZONE>\n";
+
+      if (orbitZone_vect[t] >> 8 == 170)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "Broadcast not available" << "</ORBIT_ZONE>\n";
+	
 
       outputFile << "</RUN_INFO>\n";
       
