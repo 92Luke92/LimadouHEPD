@@ -19,6 +19,9 @@
      <html>
        <body STYLE="font-family:Arial, helvetica, sans-serif; font-size:12pt">
 	 <h2>CPU Time, CPU Temperature and PMT/Trigger Board Temperature</h2>
+	 <h4>CPU and PMT/Trigger Board temperature operational rage is (−10÷35)°C. Coloured Alerts:</h4>
+	 <h4> 1. Red Cell for temperature greater than 45°C or less than −20°C </h4>
+	 <h4> 2. Yellow Cell for temperature between (35÷45)°C or (−10÷−20)°C  </h4>
 	 <table border="1">
 	   <tr bgcolor="#1acd32">
 	     <td>
