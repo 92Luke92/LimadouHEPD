@@ -165,7 +165,13 @@ void TriggerScan(TString rootname)
    const char *name_pmt_rate_meter;
    for(int kk=0;kk<65;kk++) {
       pmt_rate_meter_vs_time[kk] = new TGraph();
-      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (CH%i); Run time (ms); PMT rate meter (Hz)", subdetector[kk], kk));
+   }
+   for(int kk=0;kk<58;kk++) {
+      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (PMT %i); Run time (ms); PMT rate meter (Hz)", subdetector[kk], kk));
+   }
+   pmt_rate_meter_vs_time[58]->SetTitle("Null PMT");
+   for(int kk=59;kk<65;kk++) {
+      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (PMT %i); Run time (ms); PMT rate meter (Hz)", subdetector[kk-1], kk-1));
    }
    
    Int_t cpu_startRunTime_vect[100];
@@ -387,7 +393,7 @@ void TriggerScan(TString rootname)
       pmt_rate_meter_vs_time[p]->Draw("AP");
    }
   
-   for(int p=59;p<63;p++)
+   for(int p=59;p<64;p++)
    {
       c_rate_meter_pmt_55_64->cd(p-54);
       gPad->SetGrid();
