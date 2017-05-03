@@ -48,7 +48,7 @@
 	     <td>
 	       <table border="1">
 		 <tr  bgcolor="#1acd32">
-		   <td height="30" align="center" colspan="2"> Absolute time (ms) </td>
+		   <td height="30" align="center" colspan="2"> Absolute time (ms) (note: the OBDH-Time broadcast is sent every second) </td>
 		 </tr>
 		 <tr>
 		   <td width="150" height="30" align="center"> Time Start Run </td>
@@ -66,8 +66,8 @@
 		   <td height="30" align="center" colspan="2"> Relative time (ms) </td>
 		 </tr>
 		 <tr>
-		   <td width="150" height="30" align="center"> Time Start Run (ms) </td>
-		   <td width="150" height="30" align="center"> Time Stop Run (ms) </td>
+		   <td width="150" height="30" align="center"> Time Start Run </td>
+		   <td width="150" height="30" align="center"> Time Stop Run </td>
 		    
 
 		 </tr>

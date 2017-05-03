@@ -72,22 +72,37 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
    // Metadata
    int Tmd_entries = rootfile.GetTmdEntries(); 
    cout << "Number of Tmd entries: " << Tmd_entries << endl;
-   for(int j=0;j<Tmd_entries;j++)
+
+   //  Double_t ms_vect[Tmd_entries];
+   //Double_t timestamp_vect[Tmd_entries];
+   //UShort_t ABS_Time_Start_Run;
+   //UShort_t ABS_Time_Stop_Run;
+
+   //   for(int j=0;j<Tmd_entries;j++)
+   //{
+   //rootfile.GetTmdEntry(j);
+
+   //	ms_vect(j) = metaData.broadcast.OBDH.ms;
+   //	timestamp_vect(j) = metaData.timestamp.OBDH;
+   // }
+
+   for(int t=0;t<Tmd_entries;t++)
    {
-      rootfile.GetTmdEntry(j);   
+      rootfile.GetTmdEntry(t);
+      
       outputFile << "<BROADCAST>\n";
       outputFile2 << "<BROADCAST2>\n";
       
       outputFile << "\t<HEADER>"<< 0 << "</HEADER>\n";
       outputFile2 << "\t<HEADER>"<< 0 << "</HEADER>\n";
 
-      if(j%2==0) 
+      if(t%2==0) 
       outputFile << "\t<HEADER>" << 1 << "</HEADER>\n";
 
       outputFile << "\t<HEADER_VAL>" << "H" << "</HEADER_VAL>\n";
       outputFile << "\t<TAIL_VAL>" << "T" << "</TAIL_VAL>\n";
 
-      if(j%2==0) 
+      if(t%2==0) 
       outputFile2 << "\t<HEADER>" << 1 << "</HEADER>\n";
 
       outputFile2 << "\t<HEADER_VAL>" << "H" << "</HEADER_VAL>\n";
@@ -97,6 +112,11 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       double longitude=metaData.broadcast.GPS.lon*10*exp(-7);
       double latitude=metaData.broadcast.GPS.lat*10*exp(-7);
 
+      // if (t%2!=0){
+      //ABS_Time_Start_Run=OBDH_ms_vect(t-1)+(metaData.CPU_time[0]-OBDH_timestamp_vect(t-1));
+      //ABS_Time_Stop_Run=OBDH_ms_vect(t)+(metaData.CPU_time[1]-OBDH_timestamp_vect(t));
+      //}
+      
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
       outputFile << "\t<RUN_NR>"  << metaData.run_id   << "</RUN_NR>\n";    
       outputFile << "\t<OBDH_MS>"  << metaData.broadcast.OBDH.ms  << "</OBDH_MS>\n";    
@@ -606,27 +626,29 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 
       outputFile << dec << "\t<RUN_DURATION>" << run_duration_vect[t] << "</RUN_DURATION>\n";
 
-      if (orbitZone_vect[t] & 0x00FF != 0)
+      int orbit=orbitZone_vect[t] & 0x00FF;
+      //cout << "orbit zone: " << orbit << endl;
+
+    if (orbitZone_vect[t] >> 8 == 170)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "BROADCAST NOT AVAIBLE" << "</ORBIT_ZONE>\n";
+      
+    if (orbit == 0)
 	outputFile <<  "\t<ORBIT_ZONE>"   << "SAA" << "</ORBIT_ZONE>\n";
 
-      if (orbitZone_vect[t] & 0x00FF != 1)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "Equatorial" << "</ORBIT_ZONE>\n";
+      if (orbit == 1)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "EQUATORIAL" << "</ORBIT_ZONE>\n";
 
-      if (orbitZone_vect[t] & 0x00FF != 2)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "South Pole" << "</ORBIT_ZONE>\n";
+      if (orbit == 2)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "SOUTH POLE" << "</ORBIT_ZONE>\n";
 
-      if (orbitZone_vect[t] & 0x00FF != 3)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "North Pole" << "</ORBIT_ZONE>\n";
+      if (orbit == 3)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "NORTH POLE" << "</ORBIT_ZONE>\n";
 
-      if (orbitZone_vect[t] & 0x00FF != 4)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "Default (orbit information is not available)" << "</ORBIT_ZONE>\n";
+      if (orbit == 4)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "DEFAULT (orbit information is not available)" << "</ORBIT_ZONE>\n";
 
-      if (orbitZone_vect[t]  & 0x00FF != 5)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "Standby Zone" << "</ORBIT_ZONE>\n";
-
-      if (orbitZone_vect[t] >> 8 == 170)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "Broadcast not available" << "</ORBIT_ZONE>\n";
-	
+      if (orbit == 5)
+	outputFile <<  "\t<ORBIT_ZONE>"   << "STANDBY ZONE" << "</ORBIT_ZONE>\n";
 
       outputFile << "</RUN_INFO>\n";
       
