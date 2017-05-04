@@ -31,7 +31,7 @@ const double NGIHIGH=3.;
 //eta manage
 
 const int ETASTEP=400;
-const int ETAMAX=2;
-const int ETAMIN=0;
+const double ETAMAX=1.2;
+const double ETAMIN=-0.2;
 const int ETARANGE=ETAMAX-ETAMIN;
 #endif

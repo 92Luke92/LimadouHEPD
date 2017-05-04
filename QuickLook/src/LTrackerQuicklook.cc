@@ -24,6 +24,7 @@
 #include "TRint.h"
 #include "TStyle.h"
 #include "TLine.h"
+#include "TString.h"
 #include <TSystem.h>
 #include <TPaveText.h>
 
@@ -59,17 +60,7 @@ int TrackerQuickLook(std::string namefile){
   TH1D *clustersize[N_SIDES][N_LADDER];
   TH1D *landau[N_SIDES][N_LADDER];
 
-  LEvRec0File input(namefile.c_str());
-  LEvRec0 ev;
-  LEvRec0Md metaData;
-
-  input.SetTheEventPointer(ev);
-  input.SetTmdPointer(metaData);
-  input.GetEntry(0);
-  
-  if (!ev.IsVirgin())
-     return -1;
-  
+ 
     for(int side=0;side<N_SIDES;++side){
     char plan=(side ? 'n' : 'p');
     for(int ld=0;ld<N_LADDER;++ld){
@@ -86,48 +77,59 @@ int TrackerQuickLook(std::string namefile){
       NGindex[side][ld]=new TH2D(
 	 Form("Non_gaussianty_%c_%d",plan,ld),
 	 Form("Non_gaussianty_%c_%d;chan;NG index",plan,ld),
-	 SIDE_CHAN,0,SIDE_CHAN,50,-10,10);
+	 SIDE_CHAN,0,SIDE_CHAN,50,-8,8);
       CN[side][ld]=new TH2D(
 	 Form("Common_Noise_%c_%d",plan,ld),
 	 Form("Common_Noise_%c_%d;VA;ADC",plan,ld),SIDE_VA,0,SIDE_VA,200,-100,100);
       counts_clean[side][ld]=new TH2D(
 	 Form("Counts_clean_%c_%d",plan,ld),
 	 Form("Counts_clean_%c_%d;chan;ADC",plan,ld),SIDE_CHAN,0,SIDE_CHAN,200,-200,500);
-     signal_noise[side][ld]=new TH2D(
-	Form("signal_noise_%c_%d",plan,ld),
-	Form("signal_noise_%c_%d;chan;S/N",plan,ld),SIDE_CHAN,0,SIDE_CHAN,100,-100,100);
-     temp_map[side][ld]=new TH2D(
-	Form("Hotness_map_%c_%d",plan,ld),
-	Form("Hotness_map_%c_%d;channel;VA",plan,ld),VA_CHAN,0,VA_CHAN,SIDE_VA,0,SIDE_VA);
-     gaus_map[side][ld]=new TH2D(
-	Form("non_gaussianity_map_%c_%d",plan,ld),
-	Form("non_gaussianity_map_%c_%d;channel;VA",plan,ld),
-	VA_CHAN,0,VA_CHAN,SIDE_VA,0,SIDE_VA);
-     clustersize[side][ld]=new TH1D(
-	Form("Clustersize_%c_%d",plan,ld),
-	Form("Clustersize_%c_%d;clustersize;counts",plan,ld),5,0,5);
-     landau[side][ld]=new TH1D(
-	Form("Eta_counts_distribution_%c_%d",plan,ld),
-	Form("Eta_counts_distribution_%c_%d;ADC;counts",plan,ld),100,0,300);
+      signal_noise[side][ld]=new TH2D(
+	 Form("signal_noise_%c_%d",plan,ld),
+	 Form("signal_noise_%c_%d;chan;S/N",plan,ld),SIDE_CHAN,0,SIDE_CHAN,100,-100,100);
+      temp_map[side][ld]=new TH2D(
+	 Form("Hotness_map_%c_%d",plan,ld),
+	 Form("Hotness_map_%c_%d;channel;VA",plan,ld),VA_CHAN,0,VA_CHAN,SIDE_VA,0,SIDE_VA);
+      gaus_map[side][ld]=new TH2D(
+	 Form("non_gaussianity_map_%c_%d",plan,ld),
+	 Form("non_gaussianity_map_%c_%d;channel;VA",plan,ld),
+	 VA_CHAN,0,VA_CHAN,SIDE_VA,0,SIDE_VA);
+      clustersize[side][ld]=new TH1D(
+	 Form("Clustersize_%c_%d",plan,ld),
+	 Form("Clustersize_%c_%d;clustersize;counts",plan,ld),6,0,6);
+      landau[side][ld]=new TH1D(
+	 Form("Eta_counts_distribution_%c_%d",plan,ld),
+	 Form("Eta_counts_distribution_%c_%d;ADC;counts",plan,ld),100,0,300);
     }
   }
-  
-  const int MAXEVENTS = input.GetEntries();
-  int N_PKG = MAXEVENTS/NCALIBEVENTS_QL;
+   LEvRec0File input(namefile.c_str());
+  LEvRec0 ev;
+  LEvRec0Md metaData;
 
-  if (N_PKG == 0)
-     N_PKG = 1;
+  input.SetTheEventPointer(ev);
+  input.SetTmdPointer(metaData);
+  input.GetEntry(0);
+  
+    const int MAXEVENTS = input.GetEntries();
+    int N_PKG = MAXEVENTS/NCALIBEVENTS_QL;
+    
+    if (N_PKG == 0)
+      N_PKG = 1;
      
+    
+  if (!ev.IsVirgin())
+     return -1;
   
-  //Calibration on file
-  LTrackerCalibrationManager::GetInstance().LoadRun(namefile.c_str());
-  LTrackerCalibration * cal = LTrackerCalibrationManager::
-     GetInstance().Calibrate(NCALIBEVENTS_QL, 0);
-  //int slots=cal->GetNSlots();
-  
-  for(int ipk = 0; ipk < N_PKG; ++ipk){
-    //std::cout<<"Processing events "<< ipk<<std::endl;
-    double *sigmaraw_chan = cal->GetSigmaRaw(ipk);
+    //Calibration on file
+    LTrackerCalibrationManager::GetInstance().LoadRun(namefile.c_str());
+    LTrackerCalibration * cal = LTrackerCalibrationManager::
+      GetInstance().Calibrate(NCALIBEVENTS_QL, 0);
+    //int slots=cal->GetNSlots();
+    std::cout<<"The run is Virgin mode??? "<<ev.IsVirgin()<<std::endl;
+
+    for(int ipk = 0; ipk < N_PKG; ++ipk){
+      //std::cout<<"Processing events "<< ipk<<std::endl;
+      double *sigmaraw_chan = cal->GetSigmaRaw(ipk);
     double *sigma_chan = cal->GetSigma(ipk);
     double *mean_chan = cal->GetPedestal(ipk);
     double *NGindex_chan = cal->GetNGIndex(ipk);
@@ -261,3 +263,54 @@ int TrackerQuickLook(std::string namefile){
 
   return 0;
 }
+
+
+void LTrackerCalibrationQL(std::string namefile){
+  gStyle->SetPalette(1);
+
+  TH2D *pedestal[N_SIDES][N_LADDER];
+  TH2D *sigma[N_SIDES][N_LADDER];
+  for(int side=0;side<N_SIDES;++side){
+    for(int ld=0;ld<N_LADDER;++ld){
+       char plan=(side ? 'n' : 'p');
+   pedestal[side][ld]=new TH2D(
+	 Form("pedestal_%c_%d",plan,ld),
+	 Form("pedestal_%c_%d;chan;ADC",plan,ld),SIDE_CHAN,0,SIDE_CHAN,100,1000,2500);
+      sigma[side][ld]=new TH2D(
+	 Form("sigma_ped_%c_%d",plan,ld),
+	 Form("sigma_ped_%c_%d;chan;ADC",plan,ld),SIDE_CHAN,0,SIDE_CHAN,100,0,50);
+  }
+  }
+  
+  LEvRec0File input(namefile.c_str());
+  LEvRec0 ev;
+  //LEvRec0Md metaData;
+
+  input.SetTheEventPointer(ev);
+  //input.SetTmdPointer(metaData);
+
+  input.GetEntry(0);
+  for (int ichan=0;ichan<NCHAN;++ichan)
+    pedestal[ChanToSide(ichan)][ChanToLadder(ichan)]->Fill(ChanToSideChan(ichan),ev.strip[ichan]);
+
+  
+
+   input.GetEntry(1);
+   double sigma_ped[NCHAN];
+   for (int ichan=0;ichan<NCHAN;++ichan){
+     sigma_ped[ichan]=ev.strip[ichan];
+     sigma[ChanToSide(ichan)][ChanToLadder(ichan)]->Fill(ChanToSideChan(ichan),sigma_ped[ichan]);
+   }
+
+  TCanvas *output=new TCanvas();
+  output->Print("test.pdf[","pdf");
+
+  drawing6_chan_2D(sigma[0])->Print("test.pdf","pdf");
+  drawing6_chan_2D(sigma[1])->Print("test.pdf","pdf");
+  drawing6_chan_2D(pedestal[0])->Print("test.pdf","pdf");
+  drawing6_chan_2D(pedestal[1])->Print("test.pdf","pdf");
+
+  output->Print("test.pdf]","pdf");
+  
+}
+
