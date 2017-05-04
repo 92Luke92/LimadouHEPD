@@ -4,6 +4,9 @@
 #include "LEvRec0.hh"
 #include <iostream>
 
+#pragma pack(push)
+#pragma pack(1)
+
 LEvRec0::LEvRec0(){
    for(int i=0; i<NCHAN; ++i)
       strip[i]=0;
@@ -94,6 +97,19 @@ LEvRec0Md::LEvRec0Md(){
       HV_value[i] = 0; 
    for(int i=0; i<4; ++i)
       gen_trig_mask[i] = 0;
+
+   broadcast.GPS.sec = 0;
+   for(int i=0; i<3; ++i)
+      broadcast.GPS.axis_pos[i] = 0;
+   for(int i=0; i<3; ++i)
+      broadcast.GPS.axis_vel[i] = 0;
+   broadcast.GPS.dataID = 0;
+   broadcast.GPS.lon = 0;
+   broadcast.GPS.lat = 0;
+   for(int i=0; i<3; ++i)
+      broadcast.GPS.NU[i] = 0;
+   
+   
    
 }
 

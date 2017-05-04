@@ -4,6 +4,9 @@
 #ifndef __LEVREC0__
 #define __LEVREC0__ 1
 
+#pragma pack(push)
+#pragma pack(1)
+
 class LEvRec0 {
 
 public:
@@ -28,10 +31,10 @@ public:
 
   short            strip[NCHAN];
    
-  void DumpStrip(void);
-  void DumpEventIndex();
-  int IsComp();
-  int  IsVirgin();
+  void  DumpStrip(void);
+  void  DumpEventIndex();
+  int   IsComp();
+  int   IsVirgin();
   
 };
 
@@ -58,6 +61,7 @@ struct OBDH_struct_t
 {
    unsigned int     sec;
    unsigned short   ms;
+   unsigned char    NU[2];
 } ;
 
 
@@ -66,9 +70,10 @@ struct GPS_struct_t
    unsigned int     sec;
    int              axis_pos[3];
    int              axis_vel[3];
-   unsigned char    dataID[1];
-   double           lon;
-   double           lat;
+   unsigned char    dataID;
+   int              lon;
+   int              lat;
+   unsigned char    NU[3];
 } ;
 
 
