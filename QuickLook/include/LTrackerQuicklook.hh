@@ -10,10 +10,10 @@ const double HOTCHANNELTHRESHOLD=20.;
 const double COLDCHANNELTHRESHOLD=3.;
 const double GAUSCHANNELTHRESHOLD=3.5;
 
-const int NCALIBEVENTS_QL=1000;
+const int NCALIBEVENTS_QL=1024;
 
-TCanvas *drawing6_chan_2D(TH2D *ladder[N_LADDER]);
 int TrackerQuickLook(std::string namefile);
+void LTrackerCalibrationQL(std::string namefile);
 void PrintHelp(void);
 void PMTScan(TString rootname);
 void TriggerScan(TString rootname);

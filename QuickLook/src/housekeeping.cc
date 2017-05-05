@@ -97,20 +97,20 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       outputFile2 << "\t<HEADER>"<< 0 << "</HEADER>\n";
 
       if(t%2==0) 
-      outputFile << "\t<HEADER>" << 1 << "</HEADER>\n";
+	 outputFile << "\t<HEADER>" << 1 << "</HEADER>\n";
 
       outputFile << "\t<HEADER_VAL>" << "H" << "</HEADER_VAL>\n";
       outputFile << "\t<TAIL_VAL>" << "T" << "</TAIL_VAL>\n";
 
       if(t%2==0) 
-      outputFile2 << "\t<HEADER>" << 1 << "</HEADER>\n";
+	 outputFile2 << "\t<HEADER>" << 1 << "</HEADER>\n";
 
       outputFile2 << "\t<HEADER_VAL>" << "H" << "</HEADER_VAL>\n";
 
       outputFile2 << "\t<TAIL_VAL>" << "T" << "</TAIL_VAL>\n";
-      
-      double longitude=metaData.broadcast.GPS.lon*10*exp(-7);
-      double latitude=metaData.broadcast.GPS.lat*10*exp(-7);
+
+      double longitude = (double)(metaData.broadcast.GPS.lon)*pow(10,-7);
+      double latitude  = (double)(metaData.broadcast.GPS.lat)*pow(10,-7);
 
       // if (t%2!=0){
       //ABS_Time_Start_Run=OBDH_ms_vect(t-1)+(metaData.CPU_time[0]-OBDH_timestamp_vect(t-1));

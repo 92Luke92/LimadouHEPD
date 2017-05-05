@@ -19,7 +19,7 @@ void LEvRec1::FillRandom() {
 }
 
 void LEvRec1::Reset(){
-  tracker.cls.resize(0);
+  tracker.Reset();
   trig.Reset();
   scint.Reset();
   veto.Reset();

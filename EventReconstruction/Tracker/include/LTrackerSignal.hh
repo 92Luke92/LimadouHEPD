@@ -11,6 +11,7 @@ const int MAXNCLUSTERS=25;
 class LTrackerSignal {
 public:
   LTrackerSignal();
+  void Reset();
   std::size_t GetSize() const;
   std::size_t push_back(const LTrackerCluster cl);
   void FillRandom(void);

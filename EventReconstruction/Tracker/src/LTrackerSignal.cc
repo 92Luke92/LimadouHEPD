@@ -3,11 +3,22 @@
 #include <random>
 #include <chrono>
 
+<<<<<<< HEAD
 
 LTrackerSignal::LTrackerSignal() {
   cls.resize(0);
   length=0;
   HTCFLAG = false;
+=======
+void LTrackerSignal::Reset() {
+  cls.resize(0);
+  length=0;
+  return;
+}
+
+LTrackerSignal::LTrackerSignal() {
+  Reset();
+>>>>>>> 29ca6805164235f1ce1d55ceff5d3ac8c7d5c7bc
 }
 
 

@@ -32,18 +32,17 @@ MERGEDFILE="${NAME%???????????}"
 MERGEDFILE=$MERGEDFILE$EXT
 OUTDIR=$2
 BINDIR=`dirname $0`
-
+echo $BINDIR
 hadd $MERGEDFILE *.root
 
 #QuickLook $MERGEDFILE -x "/home/fool/LIMADOU/Data_Acquisition/bin2root/HEPD_Quicklook/Housekeeping_QL"
 
-QuickLook $MERGEDFILE -x "xslTemplates/" -o $OUTDIR"/outdir/"
+QuickLook $MERGEDFILE -x "xslTemplates/" -o $OUTDIR"/QL_outdir/"
 
 #mkdir ../../outdir
 
 #mv *.pdf *.xml ../../outdir
-cd $BINDIR
-cp -r ../xslTemplates $OUTDIR"/outdir/"
+cp -r $BINDIR"/../xslTemplates" $OUTDIR"/QL_outdir/"                                                                              
 
 #mkdir $OUTDIR
 #mv *.pdf *.xml  $OUTDIR

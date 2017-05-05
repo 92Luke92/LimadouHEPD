@@ -212,7 +212,7 @@ LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal) {
   std::vector<LTrackerCluster> *tmp = GetClusters(cont, sigma,evmask);
   // sorting on the eta SN
   std::sort(tmp->begin(), tmp->end(), std::greater<LTrackerCluster>());
-      
+
   LTrackerSignal result;
   for(auto tmpit : *tmp) result.push_back(tmpit);
 
