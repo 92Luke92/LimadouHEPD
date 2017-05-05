@@ -2,9 +2,14 @@
 #include <random>
 #include <chrono>
 
-LTrackerSignal::LTrackerSignal() {
+void LTrackerSignal::Reset() {
   cls.resize(0);
   length=0;
+  return;
+}
+
+LTrackerSignal::LTrackerSignal() {
+  Reset();
 }
 
 
