@@ -14,9 +14,11 @@ public:
   std::size_t GetSize() const;
   std::size_t push_back(const LTrackerCluster cl);
   void FillRandom(void);
+  void HoldTimeCorrection(const double HOLDCORRCONST);
   std::vector<LTrackerCluster> cls;
 private:
   std::size_t length;
+  bool HTCFLAG;
 };
 
 

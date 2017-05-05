@@ -25,13 +25,13 @@ const double HOTSIGMA=25.;
 const double COLDSIGMA=1.;
 const double NGILOW=-999.;
 const double NGIHIGH=3.;
-
+const double HOLDCORRCONST=0.018;//0.018;
 
 
 //eta manage
 
 const int ETASTEP=400;
-const int ETAMAX=2;
-const int ETAMIN=0;
-const int ETARANGE=ETAMAX-ETAMIN;
+const double ETAMIN=-0.2;
+const double ETAMAX=1.2;
+const double ETARANGE=ETAMAX-ETAMIN;
 #endif
