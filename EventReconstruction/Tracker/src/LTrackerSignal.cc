@@ -3,22 +3,16 @@
 #include <random>
 #include <chrono>
 
-<<<<<<< HEAD
 
-LTrackerSignal::LTrackerSignal() {
-  cls.resize(0);
-  length=0;
-  HTCFLAG = false;
-=======
 void LTrackerSignal::Reset() {
   cls.resize(0);
   length=0;
+  HTCFLAG = false;
   return;
 }
 
 LTrackerSignal::LTrackerSignal() {
   Reset();
->>>>>>> 29ca6805164235f1ce1d55ceff5d3ac8c7d5c7bc
 }
 
 
@@ -51,7 +45,6 @@ void LTrackerSignal::FillRandom(void) {
 
 void LTrackerSignal::HoldTimeCorrection(const double ALPHA){
   if(HTCFLAG == true){
-  std::cout<< HTCFLAG << std::endl;
   return; // no double correction
   }
   for (auto cit : cls) {
