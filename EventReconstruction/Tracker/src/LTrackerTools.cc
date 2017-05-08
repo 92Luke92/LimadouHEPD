@@ -4,6 +4,7 @@
 #include "LTrackerMask.hh"
 #include "analysis_const.hh"
 #include <algorithm>
+#include <functional>
 #include <math.h>
 #include <iostream>
 
