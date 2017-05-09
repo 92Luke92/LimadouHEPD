@@ -7,7 +7,7 @@
  *
  * DESCRIPTION:  Script to generate Housekeeping Quicklook xml files   
  *                 
- * DATE:           April 28, 2017
+ * DATE:           May 5, 2017
  *     
  *
  =============================================================================
@@ -25,6 +25,7 @@
 #include <sstream>
 #include <fstream>
 #include "housekeeping.hh"
+#include <TDatime.h>
 
 
 void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
@@ -73,6 +74,7 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
    int Tmd_entries = rootfile.GetTmdEntries(); 
    cout << "Number of Tmd entries: " << Tmd_entries << endl;
 
+
    //  Double_t ms_vect[Tmd_entries];
    //Double_t timestamp_vect[Tmd_entries];
    //UShort_t ABS_Time_Start_Run;
@@ -116,10 +118,26 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       //ABS_Time_Start_Run=OBDH_ms_vect(t-1)+(metaData.CPU_time[0]-OBDH_timestamp_vect(t-1));
       //ABS_Time_Stop_Run=OBDH_ms_vect(t)+(metaData.CPU_time[1]-OBDH_timestamp_vect(t));
       //}
+
+      TDatime h;
+      Int_t date;
+      Int_t time;
+      Int_t a = 1230764400+metaData.broadcast.OBDH.sec;
+      h.Set(a);
+
+      date=h.GetDate();
+      time=h.GetTime(); 
+      cout << date << " " << time << endl; 
+     
       
+      if (metaData.broadcast.OBDH.sec == 3149642683)
+	 outputFile << "\t<OBDH_S>" << "NA" << "</OBDH_S>\n";
+
+	  
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
-      outputFile << "\t<RUN_NR>"  << metaData.run_id   << "</RUN_NR>\n";    
-      outputFile << "\t<OBDH_MS>"  << metaData.broadcast.OBDH.ms  << "</OBDH_MS>\n";    
+      outputFile << "\t<RUN_NR>"  << metaData.run_id   << "</RUN_NR>\n";
+      outputFile << "\t<OBDH_S>" << h.AsSQLString() << "</OBDH_S>\n";
+      outputFile <<  "\t<OBDH_MS>"  << metaData.broadcast.OBDH.ms  << "</OBDH_MS>\n";    
       outputFile << "\t<TIMESTAMP_OBDH>"<< metaData.timestamp.OBDH<< "</TIMESTAMP_OBDH>\n";
       outputFile << "\t<ABS_START_RUN>" << -9999 << "</ABS_START_RUN>\n";
       outputFile << "\t<ABS_STOP_RUN>" << -9999 << "</ABS_STOP_RUN>\n";
@@ -626,29 +644,50 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 
       outputFile << dec << "\t<RUN_DURATION>" << run_duration_vect[t] << "</RUN_DURATION>\n";
 
-      int orbit=orbitZone_vect[t] & 0x00FF;
-      //cout << "orbit zone: " << orbit << endl;
+      int calculated_orbit=orbitZone_vect[t] & 0x00FF;
+      int applied_orbit=orbitZone_vect[t] >> 8;
+      // cout << "orbit zone calculated: " << calculated_orbit << endl;
+      // cout << "orbit zone applied: " << applied_orbit << endl;
 
-    if (orbitZone_vect[t] >> 8 == 170)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "BROADCAST NOT AVAIBLE" << "</ORBIT_ZONE>\n";
+      if (applied_orbit == 170)
+	 outputFile <<  "\t<ORBIT_ZONE_Applied>"   << "BROADCAST NOT AVAIBLE" << "</ORBIT_ZONE_Applied>\n";
       
-    if (orbit == 0)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "SAA" << "</ORBIT_ZONE>\n";
+      if (calculated_orbit == 04)
+	outputFile <<  "\t<ORBIT_ZONE_Calculated>"   << "DEFAULT" << "</ORBIT_ZONE_Calculated>\n";
 
-      if (orbit == 1)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "EQUATORIAL" << "</ORBIT_ZONE>\n";
+      if (applied_orbit == 04)
+	outputFile <<  "\t<ORBIT_ZONE_Applied>"   << "DEFAULT" << "</ORBIT_ZONE_Applied>\n";
+      
+      if (calculated_orbit == 0)
+	outputFile <<  "\t<ORBIT_ZONE_Calculated>"   << "SAA" << "</ORBIT_ZONE_Calculated>\n";
+      
+      if (applied_orbit == 0)
+	outputFile <<  "\t<ORBIT_ZONE_Applied>"   << "SAA" << "</ORBIT_ZONE_Applied>\n";
+          
+      if (calculated_orbit == 1)
+	outputFile <<  "\t<ORBIT_ZONE_Calculated>"   << "EQUATORIAL" << "</ORBIT_ZONE_Calculated>\n";
 
-      if (orbit == 2)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "SOUTH POLE" << "</ORBIT_ZONE>\n";
+      if (applied_orbit == 1)
+	outputFile <<  "\t<ORBIT_ZONE_Applied>"   << "EQUATORIAL" << "</ORBIT_ZONE_Applied>\n";
 
-      if (orbit == 3)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "NORTH POLE" << "</ORBIT_ZONE>\n";
+      if (calculated_orbit == 2)
+	outputFile <<  "\t<ORBIT_ZONE_Calculated>"   << "SOUTH POLE" << "</ORBIT_ZONE_Calculated>\n";
+    
+      if (applied_orbit == 2)
+	outputFile <<  "\t<ORBIT_ZONE_Applied>"   << "SOUTH POLE" << "</ORBIT_ZONE_Applied>\n";
+	
+      if (calculated_orbit == 3)
+	outputFile <<  "\t<ORBIT_ZONE_Calculated>"   << "NORTH POLE" << "</ORBIT_ZONE_Calculated>\n";
 
-      if (orbit == 4)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "DEFAULT (orbit information is not available)" << "</ORBIT_ZONE>\n";
+      if (applied_orbit == 3)
+	outputFile <<  "\t<ORBIT_ZONE_Applied>"   << "NORTH POLE" << "</ORBIT_ZONE_Applied>\n";
 
-      if (orbit == 5)
-	outputFile <<  "\t<ORBIT_ZONE>"   << "STANDBY ZONE" << "</ORBIT_ZONE>\n";
+      if (calculated_orbit == 5)
+	outputFile <<  "\t<ORBIT_ZONE_Calculated>"   << "STANDBY ZONE" << "</ORBIT_ZONE_Calculated>\n";
+
+      if (applied_orbit == 5)
+	outputFile <<  "\t<ORBIT_ZONE_Applied>"   << "STANDBY ZONE" << "</ORBIT_ZONE_Applied>\n";
+	
 
       outputFile << "</RUN_INFO>\n";
       
