@@ -41,8 +41,9 @@
 	     </td>
 
 	     <td  width="100" height="30" align="center"> OBDH Time Broadcast [yy-mm-dd hh:mm:ss] </td>
-	     <td  width="100" height="30" align="center"> OBDH Time Broadcast (ms) </td>
-	     <td  width="100" height="30" align="center"> CPU-timestamp of OBDH broadcast (ms) </td>
+	     <td  width="80" height="30" align="center"> OBDH Time Broadcast (ms) </td>
+	     <td  width="80" height="30" align="center"> CPU-timestamp of OBDH broadcast (ms) </td>
+	      <td  width="100" height="30" align="center"> GPS Time Broadcast [yy-mm-dd hh:mm:ss] </td>
 	  
 	       
 	     
@@ -102,9 +103,10 @@
 		 </table>
 	       </td>
 
-	       <td width="150" height="30" align="center"><xsl:value-of select="OBDH_S"/>        </td>
-	       <td width="150" height="30" align="center"><xsl:value-of select="OBDH_MS"/>        </td>
-	       <td width="150" height="30" align="center"><xsl:value-of select="TIMESTAMP_OBDH"/>        </td>
+	       <td width="100" height="30" align="center"><xsl:value-of select="OBDH_S"/>        </td>
+	       <td width="80" height="30" align="center"><xsl:value-of select="OBDH_MS"/>        </td>
+	       <td width="80" height="30" align="center"><xsl:value-of select="TIMESTAMP_OBDH"/>        </td>
+	       <td width="100" height="30" align="center"><xsl:value-of select="GPS_S"/>        </td>
 	     
 	         <td>
 		 <table border="1">

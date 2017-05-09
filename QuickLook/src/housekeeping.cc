@@ -120,14 +120,18 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       //}
 
       TDatime h;
+      TDatime GPS;
       Int_t date;
       Int_t time;
       Int_t a = 1230764400+metaData.broadcast.OBDH.sec;
+      Int_t b = 1230764400+metaData.broadcast.GPS.sec;
+	
       h.Set(a);
+      GPS.Set(b);
 
       date=h.GetDate();
       time=h.GetTime(); 
-      cout << date << " " << time << endl; 
+      // cout << date << " " << time << endl; 
      
       
       if (metaData.broadcast.OBDH.sec == 3149642683)
@@ -136,8 +140,11 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       if (metaData.broadcast.OBDH.ms == 48059)
 	 outputFile << "\t<OBDH_MS>" << "NA" << "</OBDH_MS>\n";
 
-       if (metaData.timestamp.OBDH == 3435973836)
+      if (metaData.timestamp.OBDH == 3435973836)
 	 outputFile << "\t<TIMESTAMP_OBDH>" << "NA" << "</TIMESTAMP_OBDH>\n";
+
+      if (metaData.broadcast.GPS.sec == 3149642683)
+	 outputFile << "\t<GPS_S>" << "NA" << "</GPS_S>\n";
 
 	  
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
@@ -145,6 +152,7 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       outputFile << "\t<OBDH_S>" << h.AsSQLString() << "</OBDH_S>\n";
       outputFile <<  "\t<OBDH_MS>"  << metaData.broadcast.OBDH.ms  << "</OBDH_MS>\n";    
       outputFile << "\t<TIMESTAMP_OBDH>"<< metaData.timestamp.OBDH<< "</TIMESTAMP_OBDH>\n";
+      outputFile << "\t<GPS_S>" << GPS.AsSQLString() << "</GPS_S>\n";
       outputFile << "\t<ABS_START_RUN>" << -9999 << "</ABS_START_RUN>\n";
       outputFile << "\t<ABS_STOP_RUN>" << -9999 << "</ABS_STOP_RUN>\n";
       outputFile << "\t<RELATIVE_START_RUN>" << metaData.CPU_time[0]
