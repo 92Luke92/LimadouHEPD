@@ -1,10 +1,18 @@
 #include "LTrackerSignal.hh"
+#include "analysis_const.hh"
 #include <random>
 #include <chrono>
 
-LTrackerSignal::LTrackerSignal() {
+
+void LTrackerSignal::Reset() {
   cls.resize(0);
   length=0;
+  HTCFLAG = false;
+  return;
+}
+
+LTrackerSignal::LTrackerSignal() {
+  Reset();
 }
 
 
@@ -32,5 +40,18 @@ void LTrackerSignal::FillRandom(void) {
     cl.FillRandom();
     push_back(cl);
   }
+  return;
+}
+
+void LTrackerSignal::HoldTimeCorrection(const double ALPHA){
+  if(HTCFLAG == true){
+  return; // no double correction
+  }
+  for (auto cit : cls) {
+    for(int icchan = 1; icchan < CLUSTERCHANNELS-1; ++icchan){ //shift of the central channels of the clusters (NOT BORDERS!)
+      cit.count[icchan] = (cit.count[icchan]-ALPHA*cit.count[icchan+1])/(1-ALPHA); //this shift takes in account the channel after the considered one
+    }
+  }
+  HTCFLAG = true;
   return;
 }
