@@ -132,6 +132,12 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       
       if (metaData.broadcast.OBDH.sec == 3149642683)
 	 outputFile << "\t<OBDH_S>" << "NA" << "</OBDH_S>\n";
+            
+      if (metaData.broadcast.OBDH.ms == 48059)
+	 outputFile << "\t<OBDH_MS>" << "NA" << "</OBDH_MS>\n";
+
+       if (metaData.timestamp.OBDH == 3435973836)
+	 outputFile << "\t<TIMESTAMP_OBDH>" << "NA" << "</TIMESTAMP_OBDH>\n";
 
 	  
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";

@@ -40,9 +40,9 @@
 	     </table>
 	     </td>
 
-	     <td  width="100" height="30" align="center"> OBDH Time Broadcast [yymmdd hh:mm:ss] </td>
+	     <td  width="100" height="30" align="center"> OBDH Time Broadcast [yy-mm-dd hh:mm:ss] </td>
 	     <td  width="100" height="30" align="center"> OBDH Time Broadcast (ms) </td>
-	     <td  width="100" height="30" align="center"> OBDH Timestamp (ms) </td>
+	     <td  width="100" height="30" align="center"> CPU-timestamp of OBDH broadcast (ms) </td>
 	  
 	       
 	     
