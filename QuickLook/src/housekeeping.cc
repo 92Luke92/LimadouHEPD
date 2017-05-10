@@ -7,7 +7,7 @@
  *
  * DESCRIPTION:  Script to generate Housekeeping Quicklook xml files   
  *                 
- * DATE:           May 5, 2017
+ * DATE:           May 10, 2017
  *     
  *
  =============================================================================
@@ -75,18 +75,19 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
    cout << "Number of Tmd entries: " << Tmd_entries << endl;
 
 
-   //  Double_t ms_vect[Tmd_entries];
-   //Double_t timestamp_vect[Tmd_entries];
-   //UShort_t ABS_Time_Start_Run;
-   //UShort_t ABS_Time_Stop_Run;
+   Double_t OBDH_ms_vect[Tmd_entries];
+   Double_t OBDH_timestamp_vect[Tmd_entries];
+   UShort_t ABS_Time_Start_Run;
+   UShort_t ABS_Time_Stop_Run;
 
-   //   for(int j=0;j<Tmd_entries;j++)
-   //{
-   //rootfile.GetTmdEntry(j);
+      for(int j=0;j<Tmd_entries;j++)
+   {
+       rootfile.GetTmdEntry(j);
+       
 
-   //	ms_vect(j) = metaData.broadcast.OBDH.ms;
-   //	timestamp_vect(j) = metaData.timestamp.OBDH;
-   // }
+       OBDH_ms_vect[j] = metaData.broadcast.OBDH.ms;
+       OBDH_timestamp_vect[j] = metaData.timestamp.OBDH;
+    }
 
    for(int t=0;t<Tmd_entries;t++)
    {
@@ -94,6 +95,12 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       
       outputFile << "<BROADCAST>\n";
       outputFile2 << "<BROADCAST2>\n";
+
+      outputFile << "\t<BROADCAST_OBDH_SEC_Y>"  <<  0 << "</BROADCAST_OBDH_SEC_Y>\n";
+      outputFile << "\t<BROADCAST_OBDH_MS_Y>"   <<  0 << "</BROADCAST_OBDH_MS_Y>\n";
+      outputFile << "\t<TIMESTAMP_OBDH_Y>"  <<  0 << "</TIMESTAMP_OBDH_Y>\n";
+      outputFile << "\t<ABS_START_RUN_Y>"   <<  0 << "</ABS_START_RUN_Y>\n";
+      outputFile << "\t<ABS_STOP_RUN_Y>"   <<  0 << "</ABS_STOP_RUN_Y>\n";
       
       outputFile << "\t<HEADER>"<< 0 << "</HEADER>\n";
       outputFile2 << "\t<HEADER>"<< 0 << "</HEADER>\n";
@@ -114,37 +121,62 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       double longitude = (double)(metaData.broadcast.GPS.lon)*pow(10,-7);
       double latitude  = (double)(metaData.broadcast.GPS.lat)*pow(10,-7);
 
-      // if (t%2!=0){
-      //ABS_Time_Start_Run=OBDH_ms_vect(t-1)+(metaData.CPU_time[0]-OBDH_timestamp_vect(t-1));
-      //ABS_Time_Stop_Run=OBDH_ms_vect(t)+(metaData.CPU_time[1]-OBDH_timestamp_vect(t));
-      //}
+       if (t%2!=0){
+      ABS_Time_Start_Run= OBDH_ms_vect[t-1]+(metaData.CPU_time[0]-OBDH_timestamp_vect[t-1]);
+      ABS_Time_Stop_Run= OBDH_ms_vect[t]+(metaData.CPU_time[1]-OBDH_timestamp_vect[t]);
+      }
 
       TDatime h;
       TDatime GPS;
+      TDatime AOCC;
       Int_t date;
       Int_t time;
       Int_t a = 1230764400+metaData.broadcast.OBDH.sec;
       Int_t b = 1230764400+metaData.broadcast.GPS.sec;
+      Int_t c = 1230764400+metaData.broadcast.AOCC.sec;
 	
       h.Set(a);
       GPS.Set(b);
-
-      date=h.GetDate();
-      time=h.GetTime(); 
-      // cout << date << " " << time << endl; 
+      AOCC.Set(c);
      
       
-      if (metaData.broadcast.OBDH.sec == 3149642683)
-	 outputFile << "\t<OBDH_S>" << "NA" << "</OBDH_S>\n";
+      if (metaData.broadcast.OBDH.sec == 3149642683){
+	 outputFile << "\t<OBDH_S>" << "N.A." << "</OBDH_S>\n";
+         outputFile << "\t<ABS_START_RUN>" <<  "N.A." << "</ABS_START_RUN>\n";
+         outputFile << "\t<ABS_STOP_RUN>" <<  "N.A." << "</ABS_STOP_RUN>\n";
+	 outputFile << "\t<BROADCAST_OBDH_SEC_Y>"  <<  1 << "</BROADCAST_OBDH_SEC_Y>\n";
+	 outputFile << "\t<ABS_START_RUN_Y>"   <<  1 << "</ABS_START_RUN_Y>\n";
+	 outputFile << "\t<ABS_STOP_RUN_Y>"   <<  1 << "</ABS_STOP_RUN_Y>\n";
+	 }
             
-      if (metaData.broadcast.OBDH.ms == 48059)
-	 outputFile << "\t<OBDH_MS>" << "NA" << "</OBDH_MS>\n";
+      if (metaData.broadcast.OBDH.ms == 48059){
+	 outputFile << "\t<OBDH_MS>" << "N.A." << "</OBDH_MS>\n";
+         outputFile << "\t<ABS_START_RUN>" <<  "N.A." << "</ABS_START_RUN>\n";
+         outputFile << "\t<ABS_STOP_RUN>" <<  "N.A." << "</ABS_STOP_RUN>\n";
+	 outputFile << "\t<BROADCAST_OBDH_MS_Y>"   <<  1 << "</BROADCAST_OBDH_MS_Y>\n";
+	 outputFile << "\t<ABS_START_RUN_Y>"   <<  1 << "</ABS_START_RUN_Y>\n";
+	 outputFile << "\t<ABS_STOP_RUN_Y>"   <<  1 << "</ABS_STOP_RUN_Y>\n";
+	 }
 
-      if (metaData.timestamp.OBDH == 3435973836)
-	 outputFile << "\t<TIMESTAMP_OBDH>" << "NA" << "</TIMESTAMP_OBDH>\n";
+      if (metaData.timestamp.OBDH == 3435973836){
+	 outputFile << "\t<TIMESTAMP_OBDH>" << "N.A." << "</TIMESTAMP_OBDH>\n";
+         outputFile << "\t<TIMESTAMP_OBDH_Y>"  <<  0 << "</TIMESTAMP_OBDH_Y>\n";
+         }
+      
+      if (metaData.broadcast.AOCC.sec == 3149642683)
+	 outputFile << "\t<AOCC_S>" << "N.A." << "</AOCC_S>\n";
+            
+      if (metaData.broadcast.AOCC.us == 48059)
+	 outputFile << "\t<AOCC_US>" << "N.A." << "</AOCC_US>\n";
+
+      if (metaData.timestamp.AOCC == 3435973836)
+	 outputFile << "\t<TIMESTAMP_AOCC>" << "N.A." << "</TIMESTAMP_AOCC>\n";
 
       if (metaData.broadcast.GPS.sec == 3149642683)
-	 outputFile << "\t<GPS_S>" << "NA" << "</GPS_S>\n";
+	 outputFile << "\t<GPS_S>" << "N.A." << "</GPS_S>\n";
+
+      if (metaData.timestamp.GPS == 3435973836)
+	 outputFile << "\t<TIMESTAMP_OBDH>" << "N.A." << "</TIMESTAMP_OBDH>\n";
 
 	  
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
@@ -153,27 +185,31 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       outputFile <<  "\t<OBDH_MS>"  << metaData.broadcast.OBDH.ms  << "</OBDH_MS>\n";    
       outputFile << "\t<TIMESTAMP_OBDH>"<< metaData.timestamp.OBDH<< "</TIMESTAMP_OBDH>\n";
       outputFile << "\t<GPS_S>" << GPS.AsSQLString() << "</GPS_S>\n";
-      outputFile << "\t<ABS_START_RUN>" << -9999 << "</ABS_START_RUN>\n";
-      outputFile << "\t<ABS_STOP_RUN>" << -9999 << "</ABS_STOP_RUN>\n";
+      outputFile << "\t<TIMESTAMP_GPS>"<< metaData.timestamp.GPS << "</TIMESTAMP_GPS>\n";
+      outputFile << "\t<AOCC_S>" << AOCC.AsSQLString() << "</AOCC_S>\n";
+      outputFile <<  "\t<AOCC_US>"  << metaData.broadcast.AOCC.us*10  << "</AOCC_US>\n";    
+      outputFile << "\t<TIMESTAMP_AOCC>"<< metaData.timestamp.AOCC << "</TIMESTAMP_AOCC>\n";   
+      outputFile << "\t<ABS_START_RUN>" <<  ABS_Time_Start_Run << "</ABS_START_RUN>\n";
+      outputFile << "\t<ABS_STOP_RUN>" <<  ABS_Time_Start_Run << "</ABS_STOP_RUN>\n";
       outputFile << "\t<RELATIVE_START_RUN>" << metaData.CPU_time[0]
 		 << "</RELATIVE_START_RUN>\n";
       outputFile << "\t<RELATIVE_STOP_RUN>" << metaData.CPU_time[1]
 		 << "</RELATIVE_STOP_RUN>\n";   
       outputFile2 << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
       outputFile2 << "\t<RUN_NR>"  << metaData.run_id  << "</RUN_NR>\n";
-      outputFile2 << "\t<OBDH_MS>"  << metaData.broadcast.OBDH.ms  << "</OBDH_MS>\n";
-      outputFile2 << "\t<TIMESTAMP_GPS>" << metaData.timestamp.GPS << "</TIMESTAMP_GPS>\n";
-      outputFile2 << "\t<GPS_POS_X>" << metaData.broadcast.GPS.axis_pos[0]
+      outputFile2 << "\t<GPS_S>" << GPS.AsSQLString() << "</GPS_S>\n";
+      outputFile2 << "\t<TIMESTAMP_GPS>"<< metaData.timestamp.GPS << "</TIMESTAMP_GPS>\n";
+      outputFile2 << "\t<GPS_POS_X>" << metaData.broadcast.GPS.axis_pos[0]*0.1
 		  << "</GPS_POS_X>\n";
-      outputFile2 << "\t<GPS_POS_Y>" << metaData.broadcast.GPS.axis_pos[1]
+      outputFile2 << "\t<GPS_POS_Y>" << metaData.broadcast.GPS.axis_pos[1]*0.1
 		  << "</GPS_POS_Y>\n";
-      outputFile2 << "\t<GPS_POS_Z>" << metaData.broadcast.GPS.axis_pos[2]
+      outputFile2 << "\t<GPS_POS_Z>" << metaData.broadcast.GPS.axis_pos[2]*0.1
 		  << "</GPS_POS_Z>\n";
-      outputFile2 << "\t<GPS_VEL_X>" << metaData.broadcast.GPS.axis_vel[0]
+      outputFile2 << "\t<GPS_VEL_X>" << metaData.broadcast.GPS.axis_vel[0]*0.01
 		  << "</GPS_VEL_X>\n";
-      outputFile2 << "\t<GPS_VEL_Y>" << metaData.broadcast.GPS.axis_vel[1]
+      outputFile2 << "\t<GPS_VEL_Y>" << metaData.broadcast.GPS.axis_vel[1]*0.01
 		  << "</GPS_VEL_Y>\n";
-      outputFile2 << "\t<GPS_VEL_Z>" << metaData.broadcast.GPS.axis_vel[2]
+      outputFile2 << "\t<GPS_VEL_Z>" << metaData.broadcast.GPS.axis_vel[2]*0.01
 		  << "</GPS_VEL_Z>\n";
       outputFile2 << "\t<LONGITUDE>" << longitude << "</LONGITUDE>\n";
       outputFile2 << "\t<LATITUDE>"  << latitude  << "</LATITUDE>\n";
@@ -658,8 +694,8 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 
       outputFile << dec << "\t<RUN_DURATION>" << run_duration_vect[t] << "</RUN_DURATION>\n";
 
-      int calculated_orbit=orbitZone_vect[t] & 0x00FF;
-      int applied_orbit=orbitZone_vect[t] >> 8;
+      int applied_orbit=orbitZone_vect[t] & 0x00FF;
+      int calculated_orbit=orbitZone_vect[t] >> 8;
       // cout << "orbit zone calculated: " << calculated_orbit << endl;
       // cout << "orbit zone applied: " << applied_orbit << endl;
 

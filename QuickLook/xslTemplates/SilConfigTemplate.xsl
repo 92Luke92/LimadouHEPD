@@ -34,8 +34,8 @@
 	         <td height="100" align="center" colspan="2"> Run ID </td>
 	       </tr>
 	       <tr>
-	         <td width="50" height="50" align="center">Boot Number</td>
-	         <td width="50" height="50" align="center">Run Number</td>
+	         <td width="60" height="50" align="center">Boot nr.</td>
+	         <td width="60" height="50" align="center">Run nr.</td>
 	       </tr>
 	     </table>
 	     </td>

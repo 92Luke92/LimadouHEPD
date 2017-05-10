@@ -33,14 +33,14 @@
 	         <td height="30" align="center" colspan="2"> Run ID </td>
 	       </tr>
 	       <tr>
-	         <td width="100" height="30" align="center">Boot Number</td>
-	         <td width="100" height="30" align="center">Run Number</td>
+	         <td width="60" height="30" align="center">Boot nr.</td>
+	         <td width="60" height="30" align="center">Run nr.</td>
 	       </tr>
 	     </table>
 	     </td>
 
-	     <td  width="100" height="30" align="center"> OBDH Time Broadcast (ms) </td>
-	     <td  width="10" height="30" align="center"> Timestamp GPS Broadcast (ms) </td>
+	     <td  width="90" height="30" align="center"> GPS Time Broadcast [yyyy-mm-dd hh:mm:ss] </td>
+	     <td  width="70" height="30" align="center"> CPU-timestamp of GPS broadcast (ms) </td>
 	       
 	     
 	     <td>
@@ -105,13 +105,13 @@
 	       <td>
 		 <table border="1">
 		   <tr>
-	              <td width="100" height="30" align="center"><xsl:value-of select="BOOT_NR"/>        </td>
-	              <td width="100" height="30" align="center"><xsl:value-of select="RUN_NR"/>         </td>
+	              <td width="60" height="30" align="center"><xsl:value-of select="BOOT_NR"/>        </td>
+	              <td width="60" height="30" align="center"><xsl:value-of select="RUN_NR"/>         </td>
 		   </tr>
 		 </table>
 	       </td>
 
-	       <td width="100" height="30" align="center"><xsl:value-of select="OBDH_MS"/>        </td>
+	       <td width="100" height="30" align="center"><xsl:value-of select="GPS_S"/>        </td>
 	       <td width="100" height="30" align="center"><xsl:value-of select="TIMESTAMP_GPS"/>        </td>
 
 	         <td>

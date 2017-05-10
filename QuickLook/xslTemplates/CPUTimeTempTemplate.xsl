@@ -18,9 +18,9 @@
    <xsl:template match="/" name="ArrDumpTemplate">
      <html>
        <body STYLE="font-family:Arial, helvetica, sans-serif; font-size:12pt">
-	 <h2>CPU Time, CPU Temperature and PMT/Trigger Board Temperature</h2>
-	 <h4>CPU and PMT/Trigger Board temperature operational rage is (−10÷35)°C. Coloured Alerts:</h4>
-	 <h4> 1. Red Cell for temperature greater than 45°C or less than −20°C </h4>
+	 <h2>CPU Time, CPU Temperatures and PMT/Trigger Board Temperatures </h2>
+	 <h4>CPU and PMT/Trigger Board temperatures operational rage is (−10÷35)°C. Coloured Alerts:</h4>
+	 <h4> 1. Red Cell for temperature higher greater than 45°C or lower than −20°C </h4>
 	 <h4> 2. Yellow Cell for temperature between (35÷45)°C or (−10÷−20)°C  </h4>
 	 <table border="1">
 	   <tr bgcolor="#1acd32">
@@ -30,8 +30,8 @@
 	         <td height="30" align="center" colspan="2"> Run ID </td>
 	       </tr>
 	       <tr>
-	         <td width="100" height="30" align="center">Boot Number</td>
-	         <td width="100" height="30" align="center">Run Number</td>
+	         <td width="60" height="30" align="center">Boot nr.</td>
+	         <td width="60" height="30" align="center">Run nr.</td>
 	       </tr>
 	     </table>
 	     </td>
@@ -84,8 +84,8 @@
 	       <td>
 		 <table border="1">
 		   <tr>
-	              <td width="100" height="30" align="center"><xsl:value-of select="BOOT_NR"/>        </td>
-	              <td width="100" height="30" align="center"><xsl:value-of select="RUN_ID"/>         </td>
+	              <td width="60" height="30" align="center"><xsl:value-of select="BOOT_NR"/>        </td>
+	              <td width="60" height="30" align="center"><xsl:value-of select="RUN_ID"/>         </td>
 		   </tr>
 		 </table>
 	       </td>
