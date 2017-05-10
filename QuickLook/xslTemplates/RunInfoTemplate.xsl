@@ -43,7 +43,19 @@
 	     
 	     <td width="150" height="30" align="center">Run Type</td>
 	     <td width="150" height="30" align="center">Run Duration (s)</td>
-	     <td width="150" height="30" align="center">Orbit Zone</td>
+
+	     <td>
+	     <table border="1">
+	       <tr  bgcolor="#1acd32">
+	         <td height="30" align="center" colspan="2"> Orbit Zone </td>
+	       </tr>
+	       <tr>
+	         <td width="150" height="30" align="center">Calculated</td>
+	         <td width="150" height="30" align="center">Applied</td>
+	       </tr>
+	     </table>
+	     </td>
+	     
 	   </tr>
 	   
 	   <xsl:for-each select="//RUN_INFO">
@@ -89,17 +101,48 @@
 	       </xsl:otherwise>
 	       </xsl:choose>	       
 
-	        <xsl:choose>
+	       <td>
+		 <table border="1">
+		   <tr>
+
+
+	       <xsl:choose>
 	       <xsl:when test="ORBIT_error &gt;'0'">
-	        <td  bgcolor="#ff0000" width="150" height="30" align="center"> <xsl:value-of select="ORBIT_ZONE"/> </td>
+	        <td  bgcolor="#ff0000" width="150" height="30" align="center"> <xsl:value-of select="ORBIT_ZONE_Calculated"/> </td>
 	       </xsl:when>
 	        <xsl:when test="ORBIT_error_yellow &gt;'0'">
-	        <td  bgcolor="#ffff00" width="150" height="30" align="center"> <xsl:value-of select="ORBIT_ZONE"/> </td>
+	        <td  bgcolor="#ffff00" width="150" height="30" align="center"> <xsl:value-of select="ORBIT_ZONE_Calculated"/> </td>
 	       </xsl:when>
 	       <xsl:otherwise>
-		 <td width="150" height="30" align="center"><xsl:value-of select="ORBIT_ZONE"/>        </td>
+		 <td width="150" height="30" align="center"><xsl:value-of select="ORBIT_ZONE_Calculated"/>        </td>
 	       </xsl:otherwise>
 		</xsl:choose>
+
+
+	       <xsl:choose>
+	       <xsl:when test="ORBIT_error &gt;'0'">
+	        <td  bgcolor="#ff0000" width="150" height="30" align="center"> <xsl:value-of select="ORBIT_ZONE_Applied"/> </td>
+	       </xsl:when>
+	        <xsl:when test="ORBIT_error_yellow &gt;'0'">
+	        <td  bgcolor="#ffff00" width="150" height="30" align="center"> <xsl:value-of select="ORBIT_ZONE_Applied"/> </td>
+	       </xsl:when>
+	       <xsl:otherwise>
+		 <td width="150" height="30" align="center"><xsl:value-of select="ORBIT_ZONE_Applied"/>        </td>
+	       </xsl:otherwise>
+		</xsl:choose>
+
+		   </tr>
+		 </table>
+		 </td>
+
+
+
+
+
+
+
+
+
 	       
 	     </tr>	
 

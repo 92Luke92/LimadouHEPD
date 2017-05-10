@@ -40,15 +40,17 @@
 	     </table>
 	     </td>
 
-	     <td  width="100" height="30" align="center"> OBDH Time Broadcast (ms) </td>
-	     <td  width="100" height="30" align="center"> OBDH Timestamp (ms) </td>
+	     <td  width="100" height="30" align="center"> OBDH Time Broadcast [yy-mm-dd hh:mm:ss] </td>
+	     <td  width="80" height="30" align="center"> OBDH Time Broadcast (ms) </td>
+	     <td  width="80" height="30" align="center"> CPU-timestamp of OBDH broadcast (ms) </td>
+	      <td  width="100" height="30" align="center"> GPS Time Broadcast [yy-mm-dd hh:mm:ss] </td>
 	  
 	       
 	     
 	     <td>
 	       <table border="1">
 		 <tr  bgcolor="#1acd32">
-		   <td height="30" align="center" colspan="2"> Absolute time (ms) (note: the OBDH-Time broadcast is sent every second) </td>
+		   <td height="30" align="center" colspan="2"> Absolute time (ms) </td>
 		 </tr>
 		 <tr>
 		   <td width="150" height="30" align="center"> Time Start Run </td>
@@ -101,8 +103,10 @@
 		 </table>
 	       </td>
 
-	       <td width="150" height="30" align="center"><xsl:value-of select="OBDH_MS"/>        </td>
-	       <td width="150" height="30" align="center"><xsl:value-of select="TIMESTAMP_OBDH"/>        </td>
+	       <td width="100" height="30" align="center"><xsl:value-of select="OBDH_S"/>        </td>
+	       <td width="80" height="30" align="center"><xsl:value-of select="OBDH_MS"/>        </td>
+	       <td width="80" height="30" align="center"><xsl:value-of select="TIMESTAMP_OBDH"/>        </td>
+	       <td width="100" height="30" align="center"><xsl:value-of select="GPS_S"/>        </td>
 	     
 	         <td>
 		 <table border="1">
