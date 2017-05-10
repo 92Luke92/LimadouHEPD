@@ -16,7 +16,7 @@ EXT="merged.root"
     echo ""
     echo " __________________________________________________________________________"
     echo "|                                                                          |"     
-    echo "|  use: HEPDquickLook  <root files directory>  <out dir>                   |"
+    echo "|  use: HEPDquickLook  <root files directory>  <out dir> (absolute path)   |"
 #    echo "|  use: HEPDquickLook  <input root file>  <path with xsl template>         |"
     echo "|__________________________________________________________________________|"
     echo ""
@@ -30,19 +30,22 @@ NAME=$(ls *.root | sort -V | head -1)
 MERGEDFILE="${NAME%???????????}"
 #MERGEDFILE="${NAME%Channel*}"
 MERGEDFILE=$MERGEDFILE$EXT
-OUTDIR=$2
+OUTPATH=$2
+OUTDIR="/QL_outdir"
+DEST=$OUTPATH$OUTDIR
 BINDIR=`dirname $0`
-echo $BINDIR
+echo "binary file dir = " $BINDIR
+#echo "output dir = " $DEST
 hadd $MERGEDFILE *.root
 
 #QuickLook $MERGEDFILE -x "/home/fool/LIMADOU/Data_Acquisition/bin2root/HEPD_Quicklook/Housekeeping_QL"
 
-QuickLook $MERGEDFILE -x "xslTemplates/" -o $OUTDIR"/QL_outdir/"
+QuickLook $MERGEDFILE -x "xslTemplates/" -o $DEST
 
 #mkdir ../../outdir
 
 #mv *.pdf *.xml ../../outdir
-cp -r $BINDIR"/../xslTemplates" $OUTDIR"/QL_outdir/"                                                                              
+cp -r $BINDIR"/../xslTemplates" $DEST
 
 #mkdir $OUTDIR
 #mv *.pdf *.xml  $OUTDIR

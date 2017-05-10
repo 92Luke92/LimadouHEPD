@@ -11,7 +11,7 @@ LTriggerSignal GetTriggerSignal(const LEvRec0 lev0, const LCalibration cal) {
 
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-      int index = OFFSET+iu*npmts+32*ipmt; // even ipmt is east, odd ipmt is west
+     int index = OFFSET+iu*npmts+32*ipmt; // even ipmt is east, odd ipmt is west
       result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestal[index];
       result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigma[index];
       result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestal[index];
@@ -28,12 +28,16 @@ LScintillatorSignal GetScintillatorSignal(const LEvRec0 lev0, const LCalibration
   const int npmts = result.GetNPMTs();
   const int OFFSET = NTRIGSCINT; // PMT index offset for this kind of calo  
 
+  
+
   const double *pedestal = cal.GetCaloHGCalibration()->GetPedestal();
   const double *sigma = cal.GetCaloHGCalibration()->GetSigma();
 
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-      int index = OFFSET+iu*npmts+32*ipmt;  // (even,even)=SouthEast (even,odd)=NorthWest (odd,even)=SouthWest (odd,odd)=NorthEast
+      //int index = OFFSET+iu*npmts+32*ipmt;  // (even,even)=SouthEast (even,odd)=NorthWest (odd,even)=SouthWest (odd,odd)=NorthEast
+     
+      int index = OFFSET + iu + (ipmt*32);
       result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestal[index];
       result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigma[index];
       result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestal[index];
