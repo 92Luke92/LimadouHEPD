@@ -1,0 +1,3 @@
+/home/luca/LimadouHEPD/QuickLook/build/CMakeFiles/rebuild_cache.dir
+/home/luca/LimadouHEPD/QuickLook/build/CMakeFiles/edit_cache.dir
+/home/luca/LimadouHEPD/QuickLook/build/CMakeFiles/QuickLook.dir
