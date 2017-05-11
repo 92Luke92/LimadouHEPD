@@ -53,11 +53,11 @@ int  LEvRec0::IsComp(void) {
    
 }
 
-int  LEvRec0::IsVirgin(void) {
-   int ret = 0;
+bool  LEvRec0::IsVirgin(void) {
+   bool ret = false;
    std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
    if (runType == 0x634e || runType == 0x004e)
-      ret = 1;
+      ret = true;
    
    return ret;
    

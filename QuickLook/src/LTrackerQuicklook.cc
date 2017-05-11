@@ -72,8 +72,8 @@ int TrackerQuickLook(std::string namefile){
 	 Form("pedestal_%c_%d",plan,ld),
 	 Form("pedestal_%c_%d;chan;ADC",plan,ld),SIDE_CHAN,0,SIDE_CHAN,100,1000,2500);
       sigma[side][ld]=new TH2D(
-	 Form("sigma_%c_%d",plan,ld),
-	 Form("sigma_%c_%d;chan;ADC",plan,ld),SIDE_CHAN,0,SIDE_CHAN,100,0,50);
+	 Form("sigma_pedestal_%c_%d",plan,ld),
+	 Form("sigma_pedestal_%c_%d;chan;ADC",plan,ld),SIDE_CHAN,0,SIDE_CHAN,100,0,50);
       NGindex[side][ld]=new TH2D(
 	 Form("Non_gaussianty_%c_%d",plan,ld),
 	 Form("Non_gaussianty_%c_%d;chan;NG index",plan,ld),
@@ -117,9 +117,9 @@ int TrackerQuickLook(std::string namefile){
       N_PKG = 1;
      
     
-  if (!ev.IsVirgin())
-     return -1;
-  
+    if(!ev.IsVirgin())
+      return -1;
+    
     //Calibration on file
     LTrackerCalibrationManager::GetInstance().LoadRun(namefile.c_str());
     LTrackerCalibration * cal = LTrackerCalibrationManager::

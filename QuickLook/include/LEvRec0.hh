@@ -34,7 +34,7 @@ public:
   void  DumpStrip(void);
   void  DumpEventIndex();
   int   IsComp();
-  int   IsVirgin();
+  bool   IsVirgin();
   
 };
 
