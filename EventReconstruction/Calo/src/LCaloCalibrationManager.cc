@@ -95,7 +95,6 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum,
   std::cout << __LCALOCALIBRATIONMANAGER__ << "Finding peak for pmt number "
             << pmtnum << std::endl;
   int spectrum[PeakFinderWindowWidth] = {0};
-  int cursor = 0;
   int peakpos = -1;
   LEvRec0 cev;
   calRunFile->SetTheEventPointer(cev);
@@ -105,7 +104,7 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum,
   // fill spectrum
   for (int loop = __skipEv; loop < __nEv; ++loop) {
     calRunFile->GetEntry(loop);
-    cursor = (isHG ? static_cast<int>(cev.pmt_high[pmtnum])
+    int cursor = (isHG ? static_cast<int>(cev.pmt_high[pmtnum])
                    : static_cast<int>(cev.pmt_low[pmtnum]));
     if (cursor < PeakFinderWindowWidth && cev.trigger_flag[pmtnum] == 0) {
       ++spectrum[cursor];
