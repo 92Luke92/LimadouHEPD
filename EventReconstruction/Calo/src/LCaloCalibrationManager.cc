@@ -94,8 +94,7 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum,
                                       const bool isHG) const {
   std::cout << __LCALOCALIBRATIONMANAGER__ << "Finding peak for pmt number "
             << pmtnum << std::endl;
-  int *spectrum = new int[PeakFinderWindowWidth];
-  for (int i = 0; i < PeakFinderWindowWidth; ++i) spectrum[i] = 0;
+  int spectrum[PeakFinderWindowWidth] = {0};
   int cursor = 0;
   int peakpos = -1;
   LEvRec0 cev;
@@ -104,7 +103,6 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum,
   // std::cout << "Num of Events on File " << nEvents << std::endl;
 
   // fill spectrum
-  // for(int loop=0; loop< nEvents; ++loop){
   for (int loop = __skipEv; loop < __nEv; ++loop) {
     calRunFile->GetEntry(loop);
     cursor = (isHG ? static_cast<int>(cev.pmt_high[pmtnum])
@@ -123,7 +121,6 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum,
     }
   }
 
-  delete[] spectrum;
 
   return peakpos;
 }
@@ -159,14 +156,8 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
                                               const bool isHG, double *new_mean,
                                               double *new_rms,
                                               int *cntssxdx) const {
-  double calc[NPMT][2];
-  int outcnts[NPMT][2];
-  for (int iCh = 0; iCh < NPMT; ++iCh) {
-    for (int i = 0; i < 2; ++i) {
-      calc[iCh][i] = 0.;
-      outcnts[iCh][i] = 0;
-    }
-  }
+  double calc[NPMT][2]={{0}};
+  int outcnts[NPMT][2]={{0}};
 
   LEvRec0 cev;
   calRunFile->SetTheEventPointer(cev);
@@ -189,9 +180,9 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
                              : static_cast<double>(cev.pmt_low[iCh]));
       if (minv[iCh] < content && content < maxv[iCh] &&
           cev.trigger_flag[iCh] == 0) {
-        calc[iCh][0] += content;
-        calc[iCh][1] += (content * content);
-        ++nEventsU[iCh];
+            calc[iCh][0] += content;
+            calc[iCh][1] += (content * content);
+            ++nEventsU[iCh];
       }
     }
   }
@@ -210,9 +201,7 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
   for (int iCh = 0; iCh < NPMT; ++iCh) {
     new_mean[iCh] = calc[iCh][0];
     new_rms[iCh] = calc[iCh][1] * correction_factor;
-  }
   // Outliers
-  for (int iCh = 0; iCh < NPMT; ++iCh) {
     maxv[iCh] = new_mean[iCh] + (sizew * new_rms[iCh]);
     minv[iCh] = new_mean[iCh] - (sizew * new_rms[iCh]);
   }
