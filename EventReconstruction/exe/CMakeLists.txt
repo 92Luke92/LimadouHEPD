@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
-if(WIN32)	
+if(WIN32)
  find_package( ROOT REQUIRED COMPONENTS libCore libRIO libNet libTree libHist )
 elseif(UNIX)
  find_package( ROOT REQUIRED COMPONENTS RIO Net Tree Hist )
@@ -26,6 +26,7 @@ add_executable(CalibrateCalo CalibrateCalo.cc ${sources})
 add_executable(Calibrate Calibrate.cc ${sources})
 add_executable(Reco01 Reco01.cc ${sources})
 add_executable(L1Reader L1Reader.cc ${sources})
+add_executable(dictest dictest.cc ${sources})
 
 
 target_link_libraries(CalibrateTracker ${ROOT_LIBRARIES})
@@ -33,7 +34,7 @@ target_link_libraries(CalibrateCalo ${ROOT_LIBRARIES})
 target_link_libraries(Calibrate ${ROOT_LIBRARIES})
 target_link_libraries(Reco01 ${ROOT_LIBRARIES})
 target_link_libraries(L1Reader ${ROOT_LIBRARIES})
-
+target_link_libraries(dictest ${ROOT_LIBRARIES})
 
 
 
