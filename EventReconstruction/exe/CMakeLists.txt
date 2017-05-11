@@ -28,6 +28,7 @@ add_executable(Reco01 Reco01.cc ${sources})
 add_executable(L1Reader L1Reader.cc ${sources})
 add_executable(EqualizeCalo EqualizeCalo.cc ${sources})
 add_executable(dictest dictest.cc ${sources})
+add_executable(stattest stattest.cc ${sources})
 
 
 target_link_libraries(CalibrateTracker ${ROOT_LIBRARIES})
@@ -37,6 +38,7 @@ target_link_libraries(Reco01 ${ROOT_LIBRARIES})
 target_link_libraries(L1Reader ${ROOT_LIBRARIES})
 target_link_libraries(EqualizeCalo ${ROOT_LIBRARIES})
 target_link_libraries(dictest ${ROOT_LIBRARIES})
+target_link_libraries(stattest ${ROOT_LIBRARIES})
 
 
 
