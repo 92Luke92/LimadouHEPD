@@ -67,7 +67,7 @@ int main(int argc, char **argv){
 
    std::cout << "xsl path = " << xslPath << std::endl;
    std::cout << "output path = " << outPath << std::endl;
-
+    
    if (TrackerQuickLook(argv[1]) == -1 )
       std::cout << "Not Virgin run: " << std::endl;
    
