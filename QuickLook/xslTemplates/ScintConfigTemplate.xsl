@@ -29,8 +29,8 @@
 	            <td height="30" align="center" colspan="2"> <strong> Run ID </strong> </td>
 		  </tr>
 		  <tr>
-	            <td width="60" height="30" align="center"><strong>Boot nr.</strong></td>
-	            <td width="60" height="30" align="center"><strong>Run nr.</strong></td>
+	            <td width="80" height="30" align="center"><strong>Boot nr.</strong></td>
+	            <td width="80" height="30" align="center"><strong>Run nr.</strong></td>
 		  </tr>
 		</table>
 	      </td>
@@ -40,8 +40,8 @@
 	      <td>
 		<table border="1">
 		  <tr>
-	            <td width="60" height="30" align="center"><xsl:value-of select="BOOT_NR"/>        </td>
-	            <td width="60" height="30" align="center"><xsl:value-of select="RUN_NR"/>         </td>
+	            <td width="80" height="30" align="center"><xsl:value-of select="BOOT_NR"/>        </td>
+	            <td width="80" height="30" align="center"><xsl:value-of select="RUN_NR"/>         </td>
 		  </tr>
 		</table>
 	      </td>
