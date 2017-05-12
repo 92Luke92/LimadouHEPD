@@ -45,7 +45,7 @@ QuickLook $MERGEDFILE -x "xslTemplates/" -o $DEST
 #mkdir ../../outdir
 
 #mv *.pdf *.xml ../../outdir
-#cp -r $BINDIR"../xslTemplates" $DEST
+cp -r $BINDIR"/../xslTemplates" $DEST
 
 #mkdir $OUTDIR
 #mv *.pdf *.xml  $OUTDIR
