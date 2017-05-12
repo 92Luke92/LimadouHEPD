@@ -1,5 +1,6 @@
 #include <iostream>
 #include "LStatTools.hh"
+#include "gmm.hh"
 #include <string>
 
 
@@ -16,6 +17,9 @@ int main (int argc, char *argv[])
 
     LStatTools stat3(stat2.getBins(), stat2.getNormalizedBinContent());
     stat3.dump();
+
+    for (auto elt : GMM::normal_pdf({-2, 1, 0, 1, 2, 1.5}))
+        cout << elt << endl;
 
     return 0;
 }
