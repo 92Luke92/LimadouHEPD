@@ -12,10 +12,10 @@ int main (int argc, char *argv[])
     LStatTools stat(data);
     stat.dump();
     LStatTools stat2({360, 362, 364, 325}, {5, 2, 3, 4});
-    std::cout << stat.mean() << " -- " << stat.rms()<< std::endl;
-
     stat2.dump();
 
+    LStatTools stat3(stat2.getBins(), stat2.getNormalizedBinContent());
+    stat3.dump();
 
     return 0;
 }
