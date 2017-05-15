@@ -388,57 +388,32 @@ LCaloCalibration *LCaloCalibrationManager::Calibrate(const bool isHG,
   // double skewness[NPMT], kurtosis[NPMT];
 
   // Zero approximation initialization
-  if (isHG) {
-    int *peaks = GetPeaksHG();
-    for (int iCh = 0; iCh < NPMT; ++iCh)
+  int *peaks = isHG ? GetPeaksHG() : GetPeaksLG();
+
+
+    for (int iCh = 0; iCh < NPMT; ++iCh) {
       ped0[iCh] = static_cast<double>(peaks[iCh]);
-    for (int iCh = 0; iCh < NPMT; ++iCh) sigma0[iCh] = STARTINGSIGMA;
+      sigma0[iCh] = STARTINGSIGMA;
+    }
+
     if (verboseFLAG)
-      std::cout << __LCALOCALIBRATIONMANAGER__ << " 0th approx. done"
-                << std::endl;
+      std::cout << __LCALOCALIBRATIONMANAGER__ << " 0th approx. done"  << std::endl;
 
     // First approximation
-    PMTsWindowedRmsHG(ped0, sigma0, ped1, sigma1, outliers);
+    PMTsWindowedRms(ped0, sigma0, isHG, ped1, sigma1, outliers);
     if (verboseFLAG)
-      std::cout << __LCALOCALIBRATIONMANAGER__ << " 1th approx. done"
-                << std::endl;
+      std::cout << __LCALOCALIBRATIONMANAGER__ << " 1th approx. done"  << std::endl;
 
     // Second approximation
-    PMTsWindowedRmsHG(ped1, sigma1, ped, sigma, outliers);
+    PMTsWindowedRms(ped1, sigma1, isHG, ped, sigma, outliers);
     if (verboseFLAG)
-      std::cout << __LCALOCALIBRATIONMANAGER__ << " 2th approx. done"
-                << std::endl;
+      std::cout << __LCALOCALIBRATIONMANAGER__ << " 2th approx. done"  << std::endl;
 
     // 3-4 Momenta
     //    PMTsMomenta34HG(ped, sigma, skewness, kurtosis);
     //    if(verboseFLAG)  std::cout << __LCALOCALIBRATIONMANAGER__
     //			       << " 3-4 momenta done" << std::endl;
-  } else {
-    int *peaks = GetPeaksLG();
-    for (int iCh = 0; iCh < NPMT; ++iCh)
-      ped0[iCh] = static_cast<double>(peaks[iCh]);
-    for (int iCh = 0; iCh < NPMT; ++iCh) sigma0[iCh] = STARTINGSIGMA;
-    if (verboseFLAG)
-      std::cout << __LCALOCALIBRATIONMANAGER__ << " 0th approx. done"
-                << std::endl;
 
-    // First approximation
-    PMTsWindowedRmsLG(ped0, sigma0, ped1, sigma1, outliers);
-    if (verboseFLAG)
-      std::cout << __LCALOCALIBRATIONMANAGER__ << " 1th approx. done"
-                << std::endl;
-
-    // Second approximation
-    PMTsWindowedRmsLG(ped1, sigma1, ped, sigma, outliers);
-    if (verboseFLAG)
-      std::cout << __LCALOCALIBRATIONMANAGER__ << " 2th approx. done"
-                << std::endl;
-
-    // 3-4 Momenta
-    //    PMTsMomenta34LG(ped, sigma, skewness, kurtosis);
-    //    if(verboseFLAG)  std::cout << __LCALOCALIBRATIONMANAGER__
-    //			       << " 3-4 momenta done" << std::endl;
-  }
 
   int RunId = calRunFile->GetRunId();
   LCaloCalibration *result =
