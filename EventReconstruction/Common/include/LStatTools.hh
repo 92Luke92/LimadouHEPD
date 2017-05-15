@@ -21,16 +21,19 @@ class LStatTools
    public:
       LStatTools(std::vector<int> data) ;
       LStatTools(std::vector<int> data, std::vector<float> weight) ;
+      LStatTools(std::map <int, float> map) : datamap(map) {};
       void info(); // Main stat info (mean, rms, N elements)
       void dump(); // info() + detail of each element
 
       float moment(uint n);
+      float norm_moment(uint n) {return moment(n)/pow(sigma(), n);}
       float mean() {return mu;}
       float sigma() {return rms();}
       float rms() {return sqrt(variance());}
       float variance() {return moment(2);}
-      float skewness() {return moment(3);}
-      float kurtosis() {return moment(4);}
+      float skewness() {return norm_moment(3);}
+      float kurtosis() {return norm_moment(4);}
+      float norm_kurtosis() {return norm_moment(4)-3;}
       float integral() {return sum_weights;}
 
       std::vector<int>   getBins();
