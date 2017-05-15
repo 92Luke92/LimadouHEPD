@@ -3,6 +3,8 @@
 
 #include "LCaloCalibration.hh"
 #include "LEvRec0File.hh"
+#include "LStatTools.hh"
+#include <functional>
 
 const int HGPEAKFINDERWINDOW = 500;     // units of ADC
 const int LGPEAKFINDERWINDOW = 450;     // units of ADC
@@ -20,13 +22,13 @@ class LCaloCalibrationManager {
 
 public:
   static LCaloCalibrationManager& GetInstance();
-  
+
   int LoadRun(const char *fileInp);
   void SetTargetRuns(const int InitialRun, const int FinalRun=-1);
   inline LCaloCalibration* CalibrateHG(const int nEvents=-1, const int skipEvents=-1){return Calibrate(true, nEvents, skipEvents);};
   inline LCaloCalibration* CalibrateLG(const int nEvents=-1, const int skipEvents=-1){return Calibrate(false, nEvents, skipEvents);};
   inline bool SetVerbosity(const bool boolFLAG) { verboseFLAG = boolFLAG; return verboseFLAG; };
-  
+
 private:
   LEvRec0File *calRunFile;  // pointer to the run used for calibration
   int InitialTargetRun;     // Run id of first target run
@@ -41,11 +43,11 @@ private:
   void PMTsRawMeanRms(const bool isHG, double *mean, double *rms) const;
   void PMTsRawMeanRmsHG(double *mean, double *rms) const;
   void PMTsRawMeanRmsLG(double *mean, double *rms) const;
-  void PMTsMomenta34(const double *pedestal, const double *sigma, const bool isHG, 
+  void PMTsMomenta34(const double *pedestal, const double *sigma, const bool isHG,
 		     double *m3, double *m4) const;
-  void PMTsMomenta34HG(const double *pedestal, const double *sigma, 
+  void PMTsMomenta34HG(const double *pedestal, const double *sigma,
 		     double *m3, double *m4) const;
-  void PMTsMomenta34LG(const double *pedestal, const double *sigma, 
+  void PMTsMomenta34LG(const double *pedestal, const double *sigma,
 		     double *m3, double *m4) const;
                                                                              // cntssxdx cointains: out-of-distribution counts (sx,dx)
   void PMTsWindowedRmsHG(const double *old_mean, const double *old_rms,  double *new_mean, double *new_rms, int *cntssxdx) const;
@@ -57,7 +59,9 @@ private:
   int GetPeakLG(const int pmtnum) const;
   int* GetPeaksHG() const;
   int* GetPeaksLG() const;
-  
+
+  std::vector <std::map  <int, float>> MapCalibFromPredicate(std::function <bool(int content, bool trigger_flag, int iCh)> predicate, const bool isHG) const;
+
   ~LCaloCalibrationManager();
 
 
@@ -66,10 +70,10 @@ private:
 
   // Debugging stuff do we need to keep it?
   void PMTsMeanRmsData(const int pmt, double *res) const;
-  
 
 
-  /*  
+
+  /*
   // C++ 03
   // ========
   // Dont forget to declare these two. You want to make sure they
