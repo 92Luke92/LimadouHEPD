@@ -258,15 +258,9 @@ void LCaloCalibrationManager::PMTsMomenta34(const double *pedestal,
 
   LEvRec0 cev;
   calRunFile->SetTheEventPointer(cev);
-  // const int nEvents=calRunFile->GetEntries();
 
-  //  std::cout << "Events to be processed: " << nEvents << std::endl;
-  // std::cout << "Events processed: " << std::setprecision(2) << std::setw(2)
-  // << 0 << "%" << std::flush;
 
   for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
-    // std::cout << "\b\b\b" << std::setprecision(2) << std::setw(2) <<
-    // int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
     calRunFile->GetEntry(iEv);
 
     for (int ch = 0; ch < NPMT; ++ch) {  // PMT channel loop
@@ -286,7 +280,6 @@ void LCaloCalibrationManager::PMTsMomenta34(const double *pedestal,
     LStatTools stat(histo[iCh]);
     m3Out[iCh] = stat.skewness();
     m4Out[iCh] = stat.norm_kurtosis() * KURTOSISCORRECTIONFACTOR;
-    ;
   }
 
   return;
@@ -370,7 +363,7 @@ void LCaloCalibrationManager::PMTsRawMeanRms(const bool isHG, double *meanOut,
 
 void LCaloCalibrationManager::PMTsMeanRmsData(const int pmt,
                                               double *res) const {
-  std::vector<double> calc(2, 0);
+   std::map  <int, float>   calc;
 
   LEvRec0 cev;
   calRunFile->SetTheEventPointer(cev);
@@ -384,23 +377,12 @@ void LCaloCalibrationManager::PMTsMeanRmsData(const int pmt,
   for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
     calRunFile->GetEntry(iEv);
     double signal = static_cast<double>(cev.pmt_high[pmt]);
-    if (minv < signal && signal < maxv && cev.trigger_flag[pmt] == 0) {
-      calc[0] += signal;
-      calc[1] += signal * signal;
-      ++nEventsU;
-    }
+    if (minv < signal && signal < maxv && cev.trigger_flag[pmt] == 0) calc[signal] ++;
   }
 
-  // std::cout << std::endl;
-
-  calc[0] /= nEventsU;
-  calc[1] /= nEventsU;
-  calc[1] -= (calc[0] * calc[0]);
-  calc[1] = sqrt(calc[1]);
-
-  // output
-  res[0] = calc[0];
-  res[1] = calc[1];
+ LStatTools stat(calc);
+  res[0] = stat.mean();
+  res[1] = stat.rms();
 
   return;
 }
