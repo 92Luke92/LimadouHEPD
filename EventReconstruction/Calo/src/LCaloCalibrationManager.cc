@@ -1,6 +1,7 @@
 #include "LCaloCalibrationManager.hh"
 #include "LEvRec0.hh"
 #include "LEvRec0File.hh"
+#include "LStatTools.hh"
 
 #include <math.h>
 #include <fstream>
@@ -252,9 +253,8 @@ void LCaloCalibrationManager::PMTsMomenta34(const double *pedestal,
                                             const double *sigmaIN,
                                             const bool isHG, double *m3Out,
                                             double *m4Out) const {
-  std::vector<double> mean(NPMT, 0), mean2(NPMT, 0), mean3(NPMT, 0),
-      mean4(NPMT, 0), sigma(NPMT, 0), skew(NPMT, 0), kurt(NPMT, 0);
-  std::vector<int> nEventsU(NPMT, 0);
+
+  std::map  <int, float>   histo[NPMT];
 
   LEvRec0 cev;
   calRunFile->SetTheEventPointer(cev);
@@ -264,63 +264,31 @@ void LCaloCalibrationManager::PMTsMomenta34(const double *pedestal,
   // std::cout << "Events processed: " << std::setprecision(2) << std::setw(2)
   // << 0 << "%" << std::flush;
 
-  //  for (int iEv = 0; iEv < nEvents; ++iEv) { // Event loop
   for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
     // std::cout << "\b\b\b" << std::setprecision(2) << std::setw(2) <<
     // int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
     calRunFile->GetEntry(iEv);
 
     for (int ch = 0; ch < NPMT; ++ch) {  // PMT channel loop
-      double content = (isHG ? static_cast<double>(cev.pmt_high[ch])
-                             : static_cast<double>(cev.pmt_low[ch]));
-      if (content > pedestal[ch] + SKEWKURTFINDINGHALFWINDOW * sigmaIN[ch] ||
-          content < pedestal[ch] - SKEWKURTFINDINGHALFWINDOW * sigmaIN[ch] ||
+      unsigned short content = (isHG ? cev.pmt_high[ch] : cev.pmt_low[ch]);
+      if (float(content) > pedestal[ch] + SKEWKURTFINDINGHALFWINDOW * sigmaIN[ch] ||
+          float(content) < pedestal[ch] - SKEWKURTFINDINGHALFWINDOW * sigmaIN[ch] ||
           cev.trigger_flag[ch] != 0)
         continue;
 
-      mean[ch] += content;
-      mean2[ch] += (content * content);
-      mean3[ch] += (content * content * content);
-      mean4[ch] += (content * content * content * content);
-      ++nEventsU[ch];
+      histo[ch][content]++;
     }
   }
 
-  // std::cout << std::endl;
-  for (int iCh = 0; iCh < NPMT; ++iCh) {
-    mean[iCh] /= nEventsU[iCh];
-    mean2[iCh] /= nEventsU[iCh];
-    mean3[iCh] /= nEventsU[iCh];
-    mean4[iCh] /= nEventsU[iCh];
-  }
 
   // output
   for (int iCh = 0; iCh < NPMT; ++iCh) {
-    double m2 = mean2[iCh] - mean[iCh] * mean[iCh];
-    double m3 = mean3[iCh] - 3 * mean2[iCh] * mean[iCh] +
-                2 * mean[iCh] * mean[iCh] * mean[iCh];
-    double m4 = mean4[iCh] - 4 * mean3[iCh] * mean[iCh] +
-                6 * mean2[iCh] * mean[iCh] * mean[iCh] -
-                3 * mean[iCh] * mean[iCh] * mean[iCh] * mean[iCh];
-    sigma[iCh] = sqrt(m2);
-    skew[iCh] = m3 / (m2 * sqrt(m2));
-    m3Out[iCh] = skew[iCh];
-    kurt[iCh] = m4 / (m2 * m2) - 3.;
-    m4Out[iCh] = kurt[iCh] * KURTOSISCORRECTIONFACTOR;
+    LStatTools stat(histo[iCh]);
+    m3Out[iCh] = stat.skewness();
+    m4Out[iCh] = stat.norm_kurtosis() * KURTOSISCORRECTIONFACTOR;
     ;
   }
 
-  /*
-  // out
-  double sigmaSkew = sqrt(6. / static_cast<double>(nEvents or __nEv??));
-  double sigmaKurt = sqrt(24. / static_cast<double>(nEvents or __nEv??));
-  std::ofstream outm("MomDebug.txt");
-  for (int i = 0; i < NPMT; ++i){
-    outm << i << " " << skew[i] << " " << skew[i] / sigmaSkew << " " << kurt[i]
-  << " " << kurt[i]/sigmaKurt << std::endl;
-  }
-  outm.close();
-  */
   return;
 }
 
