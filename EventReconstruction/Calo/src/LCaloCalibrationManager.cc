@@ -156,7 +156,7 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
                                               const bool isHG, double *new_mean,
                                               double *new_rms,
                                               int *cntssxdx) const {
-  double calc[NPMT][2]={{0}};
+  std::map  <int, float>   calc [NPMT];
   int outcnts[NPMT][2]={{0}};
 
   LEvRec0 cev;
@@ -170,37 +170,28 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
     minv[iCh] = old_mean[iCh] - (sizew * old_rms[iCh]);
   }
 
-  int nEventsU[NPMT];
-  for (int iCh = 0; iCh < NPMT; ++iCh) nEventsU[iCh] = 0;
+
   // for (int iEv = 0; iEv < nEvents; ++iEv) { // Event loop
   for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
     calRunFile->GetEntry(iEv);
     for (int iCh = 0; iCh < NPMT; ++iCh) {
       double content = (isHG ? static_cast<double>(cev.pmt_high[iCh])
                              : static_cast<double>(cev.pmt_low[iCh]));
-      if (minv[iCh] < content && content < maxv[iCh] &&
-          cev.trigger_flag[iCh] == 0) {
-            calc[iCh][0] += content;
-            calc[iCh][1] += (content * content);
-            ++nEventsU[iCh];
+      if (minv[iCh] < content && content < maxv[iCh] && cev.trigger_flag[iCh] == 0) {
+            calc[iCh][content] ++;
       }
     }
   }
 
-  // std::cout << std::endl;
-  for (int iCh = 0; iCh < NPMT; ++iCh) {
-    calc[iCh][0] /= nEventsU[iCh];
-    calc[iCh][1] /= nEventsU[iCh];
-    calc[iCh][1] -= (calc[iCh][0] * calc[iCh][0]);
-    calc[iCh][1] = sqrt(calc[iCh][1]);
-  }
+
   // output mean rms
   double correction_factor =
       RMSCORRECTIONFACTOR +
       (isHG ? 0.01 : 0.02);  // why this over correction???????????
   for (int iCh = 0; iCh < NPMT; ++iCh) {
-    new_mean[iCh] = calc[iCh][0];
-    new_rms[iCh] = calc[iCh][1] * correction_factor;
+      LStatTools stat(calc[iCh]);
+      new_mean[iCh] = stat.mean();
+      new_rms[iCh] = stat.rms() * correction_factor;
   // Outliers
     maxv[iCh] = new_mean[iCh] + (sizew * new_rms[iCh]);
     minv[iCh] = new_mean[iCh] - (sizew * new_rms[iCh]);
@@ -211,12 +202,8 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
     for (int iCh = 0; iCh < NPMT; ++iCh) {
       double content = (isHG ? static_cast<double>(cev.pmt_high[iCh])
                              : static_cast<double>(cev.pmt_low[iCh]));
-      if (content < minv[iCh] && content != 0.) {
-        ++outcnts[iCh][0];
-      }
-      if (content > maxv[iCh]) {
-        ++outcnts[iCh][1];
-      }
+      if (content < minv[iCh] && content != 0.)    ++outcnts[iCh][0];
+      if (content > maxv[iCh])            ++outcnts[iCh][1];
     }
   }
   // output outliers
@@ -274,7 +261,6 @@ void LCaloCalibrationManager::PMTsMomenta34(const double *pedestal,
     }
   }
 
-
   // output
   for (int iCh = 0; iCh < NPMT; ++iCh) {
     LStatTools stat(histo[iCh]);
@@ -308,52 +294,29 @@ void LCaloCalibrationManager::PMTsRawMeanRmsLG(double *mean,
 void LCaloCalibrationManager::PMTsRawMeanRms(const bool isHG, double *meanOut,
                                              double *rmsOut) const {
   std::vector<double> mean(NPMT, 0), rms(NPMT, 0), usedEVTS(NPMT, 0);
+  std::map  <int, float>   histo[NPMT];
 
   LEvRec0 cev;
   calRunFile->SetTheEventPointer(cev);
-  // const int nEvents=calRunFile->GetEntries();
 
-  // std::cout << "Events to be processed: " << nEvents << std::endl;
-  // std::cout << "Events processed: " << std::setprecision(2) << std::setw(2)
-  // << 0 << "%" << std::flush;
 
-  //  for (int iEv = 0; iEv < nEvents; ++iEv) { // Event loop
   for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
     //    std::cout << "\b\b\b" << std::setprecision(2) << std::setw(2) <<
     //    int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
     calRunFile->GetEntry(iEv);
     for (int ch = 0; ch < NPMT; ++ch) {  // PMT channel loop
-      double content = (isHG ? static_cast<int>(cev.pmt_high[ch])
+      int content = (isHG ? static_cast<int>(cev.pmt_high[ch])
                              : static_cast<int>(cev.pmt_low[ch]));
-      if (cev.trigger_flag[ch] == 0) {
-        ++usedEVTS[ch];
-        mean[ch] += content;
-        rms[ch] += (content * content);
-      }
+      if (cev.trigger_flag[ch] == 0)   histo[ch][content]++;
     }
   }
 
   for (int iCh = 0; iCh < NPMT; ++iCh) {
-    mean[iCh] /= usedEVTS[iCh];
-    rms[iCh] /= usedEVTS[iCh];
-    rms[iCh] -= (mean[iCh] * mean[iCh]);
-    rms[iCh] = sqrt(rms[iCh]);
+    LStatTools stat(histo[iCh]);
+    meanOut[iCh] = stat.mean();
+    rmsOut[iCh] = stat.mean();
   }
 
-  for (int iCh = 0; iCh < NPMT; ++iCh) {
-    meanOut[iCh] = mean[iCh];
-    rmsOut[iCh] = rms[iCh];
-  }
-
-  /*  // output
-  std::ofstream out("debug.txt");
-  for (int i = 0; i < NPMT; ++i) {
-    out << i << " " << meanOut[i] << " " << rmsOut[i] << std::endl;
-  }
-
-  out.close();
-  // debug
-  */
 
   return;
 }
@@ -373,7 +336,6 @@ void LCaloCalibrationManager::PMTsMeanRmsData(const int pmt,
   const double minv = DATACALWINDOWMIN;
   int nEventsU = 0;
 
-  //  for (int iEv = 0; iEv < nEvents; ++iEv) {// Event loop
   for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
     calRunFile->GetEntry(iEv);
     double signal = static_cast<double>(cev.pmt_high[pmt]);
