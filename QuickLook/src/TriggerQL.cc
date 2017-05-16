@@ -46,7 +46,6 @@ using namespace std;
 
 void TriggerScan(TString rootname)
 {
-
   TString outname = rootname;
   outname.ReplaceAll(".root", 5, "_TriggerQL.pdf", 14);
   
@@ -167,11 +166,11 @@ void TriggerScan(TString rootname)
       pmt_rate_meter_vs_time[kk] = new TGraph();
    }
    for(int kk=0;kk<58;kk++) {
-      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (PMT %i); Run time (ms); PMT rate meter (Hz)", subdetector[kk], kk));
+      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (CH%i); Run time (ms); PMT rate meter (Hz)", subdetector[kk], kk));
    }
    pmt_rate_meter_vs_time[58]->SetTitle("Null PMT");
    for(int kk=59;kk<65;kk++) {
-      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (PMT %i); Run time (ms); PMT rate meter (Hz)", subdetector[kk-1], kk-1));
+      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (CH%i); Run time (ms); PMT rate meter (Hz)", subdetector[kk-1], kk-1));
    }
    
    Int_t cpu_startRunTime_vect[100];
@@ -311,7 +310,13 @@ void TriggerScan(TString rootname)
 
    TString rate_meter_pmt_1_9 = "8_pmt_rate_meter_1_9.png";
    c_rate_meter_pmt_1_9->SaveAs(rate_meter_pmt_1_9);
-
+   /*
+   TCanvas* myc = new TCanvas("myc"," ",1200,600);
+   pmt_rate_meter_vs_time[8]->SetMarkerStyle(20);
+   pmt_rate_meter_vs_time[8]->Draw("AP");
+   TString mys = "Trigger_example_pmtratemeter.png";
+   myc->SaveAs(mys);
+   */
    TCanvas* c_rate_meter_pmt_10_18 = new TCanvas("c_rate_meter_pmt_10_18"," ",1200,600);
    c_rate_meter_pmt_10_18->Divide(3,3);
   

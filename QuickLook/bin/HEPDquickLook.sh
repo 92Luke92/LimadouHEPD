@@ -35,7 +35,7 @@ OUTDIR="/QL_outdir"
 DEST=$OUTPATH$OUTDIR
 BINDIR=`dirname $0`
 echo "binary file dir = " $BINDIR
-#echo "output dir = " $DEST
+echo "output dir = " $DEST
 hadd $MERGEDFILE *.root
 
 #QuickLook $MERGEDFILE -x "/home/fool/LIMADOU/Data_Acquisition/bin2root/HEPD_Quicklook/Housekeeping_QL"

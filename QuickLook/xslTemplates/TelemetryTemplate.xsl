@@ -111,8 +111,8 @@
 	      <td>
 		 <table border="1">
 		   <tr>
-		     <td width="100" height="60" align="center"> 0X50A1  </td>
-		     <td width="400" height="60" align="center"> 0X80A3/70A2/60A2 </td>
+		     <td width="100" height="80" align="center"> 0X50A1  </td>
+		     <td width="400" height="80" align="center"> 0X80A3/70A2/60A2 </td>
 		   </tr>
 		 </table>
 	      </td>
@@ -120,8 +120,8 @@
 	      <td>
 		 <table border="1">
 		   <tr>	     
-		     <td width="210" height="60" align="center"> 0X0D00/0D05 </td>
-		     <td width="190" height="60" align="center"> 0Xxx1F/xx2F </td>
+		     <td width="210" height="80" align="center"> 0X0D00/0D05 </td>
+		     <td width="190" height="80" align="center"> 0Xxx1F/xx2F </td>
 		   </tr>
 		 </table>
 	      </td>
@@ -129,8 +129,8 @@
 	      <td>
 		 <table border="1">
 		   <tr>   
-		     <td width="150" height="60" align="center"> 0XFFD/75C  </td>
-		     <td width="150" height="60" align="center"> 0XFFD/75C  </td>
+		     <td width="150" height="80" align="center"> 0XFFD/75C  </td>
+		     <td width="150" height="80" align="center"> 0XFFD/75C  </td>
 		   </tr>
 		 </table>
 	      </td>
@@ -138,8 +138,8 @@
 	      <td>
 		 <table border="1">
 		   <tr>        
-		     <td width="150" height="60" align="center"> 0x000/004  </td>
-		     <td width="150" height="60" align="center"> 0x000/004  </td>
+		     <td width="150" height="80" align="center"> 0x000/004  </td>
+		     <td width="150" height="80" align="center"> 0x000/004  </td>
 		   </tr>
 		 </table>
 	      </td>
@@ -147,8 +147,8 @@
 	      <td>
 		 <table border="1">
 		   <tr>      
-		     <td width="150" height="60" align="center"> 0x704/705  </td>
-		     <td width="150" height="60" align="center"> 0x704/705  </td>
+		     <td width="150" height="80" align="center"> 0x704/705  </td>
+		     <td width="150" height="80" align="center"> 0x704/705  </td>
 		   </tr>
 		 </table>
 	      </td>
@@ -156,8 +156,8 @@
 	      <td>
 		 <table border="1">
 		   <tr>      
-		     <td width="370" height="60" align="center"> 0X300/100/200 </td>
-		     <td width="230" height="60" align="center"> 0X001/301/302/002  </td>
+		     <td width="370" height="80" align="center"> 0X300/100/200 </td>
+		     <td width="230" height="80" align="center"> 0X001/301/302/002  </td>
 		   </tr>
 		 </table>
 	      </td>
