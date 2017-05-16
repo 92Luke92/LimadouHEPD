@@ -62,7 +62,24 @@ void LCaloCalibrationManager::SetTargetRuns(const int InitialRun,
 
 int *LCaloCalibrationManager::GetPeaksHG() const {
   int *result = new int[NPMT];
-  for (int iCh = 0; iCh < NPMT; ++iCh) result[iCh] = GetPeakHG(iCh);
+
+  const bool isHG=true;
+  auto predicate = [&](int cursor, bool trigger_flag, int iCh)
+    {(void)iCh; return cursor < HGPEAKFINDERWINDOW && trigger_flag==0;};
+  std::vector <std::map  <int, float>>  spectrum=MapCalibFromPredicate(predicate, isHG);
+
+  for (int iCh=0; iCh< NPMT ; iCh++) {
+    int maxval = 0;
+    int peakpos = -1;
+    for (int loop1 = 0; loop1 < HGPEAKFINDERWINDOW; ++loop1) {
+      if (spectrum[iCh][loop1] > maxval) {
+        maxval = spectrum[iCh][loop1];
+        peakpos = loop1;
+      }
+    }
+    result[iCh] = peakpos;
+  }
+
   return result;
 }
 
@@ -70,7 +87,24 @@ int *LCaloCalibrationManager::GetPeaksHG() const {
 
 int *LCaloCalibrationManager::GetPeaksLG() const {
   int *result = new int[NPMT];
-  for (int iCh = 0; iCh < NPMT; ++iCh) result[iCh] = GetPeakLG(iCh);
+
+  const bool isHG=false;
+  auto predicate = [&](int cursor, bool trigger_flag, int iCh)
+    {(void)iCh; return cursor < LGPEAKFINDERWINDOW && trigger_flag==0;};
+  std::vector <std::map  <int, float>>  spectrum=MapCalibFromPredicate(predicate, isHG);
+
+  for (int iCh=0; iCh< NPMT ; iCh++) {
+    int maxval = 0;
+    int peakpos = -1;
+    for (int loop1 = 0; loop1 < LGPEAKFINDERWINDOW; ++loop1) {
+      if (spectrum[iCh][loop1] > maxval) {
+        maxval = spectrum[iCh][loop1];
+        peakpos = loop1;
+      }
+    }
+    result[iCh] = peakpos;
+  }
+
   return result;
 }
 
