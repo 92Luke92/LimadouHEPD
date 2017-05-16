@@ -4,13 +4,15 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include "LSteeringManager.hh"
 #include "TF1.h"
 #include "TH1I.h"
 #include "TSpectrum.h"
 
 LCaloEqualizationManager::LCaloEqualizationManager() {
   calRunFile = 0;
-  verboseFLAG = true;
+  steer.verboseFLAG = true;
+  steer.L1fname.clear();
 }
 
 LCaloEqualizationManager &LCaloEqualizationManager::GetInstance() {
@@ -18,6 +20,67 @@ LCaloEqualizationManager &LCaloEqualizationManager::GetInstance() {
   return instance;
 }
 
+//---------------------------------------------------------------------------
+void LCaloEqualizationManager::LoadSteering(const std::string steerFileIN) {
+  std::cout << __LCALOEQUALIZATIONMANAGER__ << "Loading the steerig file \""
+            << steerFileIN << "\"..." << std::endl;
+
+  LSteeringManager steerMan;
+  steerMan.Load(steerFileIN);
+  // Load calibration
+  steer.calFileName = steerMan.GetParameter<std::string>("CALBFILE");
+  cal = LCalibration::Read(steer.calFileName.c_str());
+  // Input file list
+  steer.inpFileList = steerMan.GetParameter<std::string>("INPLIST");
+  // Output folder
+  steer.outDirectory = steerMan.GetParameter<std::string>("OUTFOLD");
+  // Verbose Flag
+  steer.verboseFLAG = steerMan.GetParameter<bool>("VERBOSE");
+  // Sigma for peak searching
+  steer.sigma = steerMan.GetParameter<double>("SIGMA");
+
+  // Threshold for peak searching
+  steer.threshold = steerMan.GetParameter<double>("THRESHOLD");
+  std::cout << "steer.sigma: " << steer.sigma
+            << "steer.threshold: " << steer.threshold << std::endl;
+  std::cout << __LCALOEQUALIZATIONMANAGER__ << "Steering file loaded."
+            << std::endl;
+}
+//---------------------------------------------------------------------------
+int LCaloEqualizationManager::Run() {
+  int nFilesToBeProcessed = LoadInputFileList();
+  if (nFilesToBeProcessed != 1) {
+    std::cerr
+        << "Equalization procedure runs over 1 single file: the list contains "
+        << nFilesToBeProcessed << " files!" << std::endl;
+    return -1;
+  }
+
+  LoadRun(steer.L1fname.at(0),
+          steer.calFileName);  // later on we can add running on multiple files
+  std::cout << __LCALOEQUALIZATIONMANAGER__ << "Processing file "
+            << steer.L1fname.at(0) << "..." << std::endl;
+  LCaloEqualization *eqHG = EqualizeHG();
+  LCaloEqualization *eqLG = EqualizeLG();
+  eqHG->Write("eqHG.txt");
+  eqLG->Write("eqLG.txt");
+  return 0;
+}
+
+//---------------------------------------------------------------------------
+int LCaloEqualizationManager::LoadInputFileList() {
+  steer.L1fname.resize(0);
+  std::ifstream in(steer.inpFileList.c_str());
+  std::string fname;
+  while (in >> fname) {
+    steer.L1fname.push_back(fname);
+  }
+
+  int result = steer.L1fname.size();
+  std::cout << __LCALOEQUALIZATIONMANAGER__ << result
+            << " files about to be processed." << std::endl;
+  return result;
+}
 //---------------------------------------------------------------------------
 
 int LCaloEqualizationManager::LoadRun(const std::string inputFileROOT,
@@ -54,7 +117,7 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
     return 0;
   }
 
-  if (verboseFLAG)
+  if (steer.verboseFLAG)
     std::cout << __LCALOEQUALIZATIONMANAGER__
               << (isHG ? "High gain " : "Low gain ") << "equalization started"
               << std::endl;
@@ -65,12 +128,14 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
 
   // Events
 
-  TH1I *h_pmt[NPMT];
+  TH1I h_pmt[NPMT];
 
   for (int k = 0; k < NPMT; k++) {
     TString hname = (isHG ? "PMT_High_Gain_Ch_" : "PMT_Low_Gain_Ch_");
     hname += k;
-    h_pmt[k] = new TH1I(hname, hname, 250, -100, 900);
+    h_pmt[k].SetName(hname);
+    h_pmt[k].SetTitle(hname);
+    h_pmt[k].SetBins(250, -100, 900);
   }
 
   std::cout << "Filling histograms: " << std::setw(2) << 0 << "%";
@@ -87,8 +152,8 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
     int nTriggerPMTs = cev.trig.GetNPMTs();
     for (int itu = 0; itu < nTriggerUnits; itu++) {
       for (int itpmt = 0; itpmt < nTriggerPMTs; itpmt++) {
-        (isHG ? h_pmt[idPMT]->Fill(cev.trig.sn_hg[itu][itpmt])
-              : h_pmt[idPMT]->Fill(cev.trig.sn_lg[itu][itpmt]));
+        (isHG ? h_pmt[idPMT].Fill(cev.trig.sn_hg[itu][itpmt])
+              : h_pmt[idPMT].Fill(cev.trig.sn_lg[itu][itpmt]));
         idPMT++;
       }
     }
@@ -97,8 +162,8 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
     int nScintPMTs = cev.scint.GetNPMTs();
     for (int isu = 0; isu < nScintUnits; isu++) {
       for (int ispmt = 0; ispmt < nScintPMTs; ispmt++) {
-        (isHG ? h_pmt[idPMT]->Fill(cev.scint.sn_hg[isu][ispmt])
-              : h_pmt[idPMT]->Fill(cev.scint.sn_lg[isu][ispmt]));
+        (isHG ? h_pmt[idPMT].Fill(cev.scint.sn_hg[isu][ispmt])
+              : h_pmt[idPMT].Fill(cev.scint.sn_lg[isu][ispmt]));
         idPMT++;
       }
     }
@@ -107,8 +172,8 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
     int nVetoPMTs = cev.veto.GetNPMTs();
     for (int ivu = 0; ivu < nVetoUnits; ivu++) {
       for (int ivpmt = 0; ivpmt < nVetoPMTs; ivpmt++) {
-        (isHG ? h_pmt[idPMT]->Fill(cev.veto.sn_hg[ivu][ivpmt])
-              : h_pmt[idPMT]->Fill(cev.veto.sn_lg[ivu][ivpmt]));
+        (isHG ? h_pmt[idPMT].Fill(cev.veto.sn_hg[ivu][ivpmt])
+              : h_pmt[idPMT].Fill(cev.veto.sn_lg[ivu][ivpmt]));
         idPMT++;
       }
     }
@@ -118,8 +183,8 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
 
     for (int ilu = 0; ilu < nLysoUnits; ilu++) {
       for (int ilpmt = 0; ilpmt < nLysoPMTs; ilpmt++) {
-        (isHG ? h_pmt[idPMT]->Fill(cev.lyso.sn_hg[ilu][ilpmt])
-              : h_pmt[idPMT]->Fill(cev.lyso.sn_lg[ilu][ilpmt]));
+        (isHG ? h_pmt[idPMT].Fill(cev.lyso.sn_hg[ilu][ilpmt])
+              : h_pmt[idPMT].Fill(cev.lyso.sn_lg[ilu][ilpmt]));
         idPMT++;
       }
     }
@@ -127,39 +192,41 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
   std::cout << "\nFinding peaks..." << std::endl;
 
   LCaloEqualization *result = new LCaloEqualization();
-  TFile out("out.root", "RECREATE");
+  std::string outNameROOT_DEBUG;
+  if (isHG)
+    outNameROOT_DEBUG = "equalizationHG.root";
+  else
+    outNameROOT_DEBUG = "equalizationLG.root";
+  TFile out(outNameROOT_DEBUG.c_str(), "RECREATE");
   for (int ch = 0; ch < NPMT; ch++) {
     TSpectrum s;
-    h_pmt[ch]->Smooth(2);
+    h_pmt[ch].Smooth(1);
 
-    Int_t nfound = s.Search(h_pmt[ch], 2, "", 0.1);
+    Int_t nfound = s.Search(&(h_pmt[ch]), steer.sigma, "", steer.threshold);
     Int_t nPeaks = s.GetNPeaks();               // Get number of peaks
     Float_t *peakPositions = s.GetPositionX();  // Get peak positions
     Float_t *peakHeights = s.GetPositionY();    // Get height of the peaksù
     bool isPeakFound = false;
 
     for (int ip = 0; ip < nPeaks; ip++) {
-      if (peakPositions[ip] > 25) {
-       // double maxFit = 2 * peakPositions[ip];
-		  double binWidth = h_pmt[ch]->GetBinWidth(1);
-        h_pmt[ch]->Fit("landau", "", "q", peakPositions[ip] - 4* binWidth, peakPositions[ip] + 4 * binWidth);
+      if (peakPositions[ip] > 15) {
+        // double maxFit = 2 * peakPositions[ip];
+        double binWidth = h_pmt[ch].GetBinWidth(1);
+        h_pmt[ch].Fit("landau", "", "q", peakPositions[ip] - 2 * binWidth,
+                      peakPositions[ip] + 5 * binWidth);
         isPeakFound = true;
         break;
       }
     }
     if (isPeakFound) {
-      TF1 *f = h_pmt[ch]->GetFunction("landau");
+      TF1 *f = h_pmt[ch].GetFunction("landau");
       result->addFactors(f->GetParameter(1), f->GetParameter(2));
     } else
       result->addFactors(-1, -1);
-	h_pmt[ch]->Write();
+    h_pmt[ch].Write();
   }
   out.Close();
   std::cout << "End Equalization..." << std::endl;
-
-  for (int k = 0; k < NPMT; k++) {
-    delete h_pmt[k];
-  }
 
   return result;
 }
