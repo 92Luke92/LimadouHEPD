@@ -54,12 +54,12 @@ void LCaloCalibration::Write(std::ofstream *output) const {
   }
   *output << std::endl;
   std::cout << __LCALOCALIBRATION__ << "Calibration file written." << std::endl;
-  
+
   return;
 }
 
 void LCaloCalibration::Write(const char *fileOut) const {
-  std::ofstream output(fileOut, std::ofstream::out); 
+  std::ofstream output(fileOut, std::ofstream::out);
   Write(&output);
   output.close();
   return;
@@ -67,7 +67,7 @@ void LCaloCalibration::Write(const char *fileOut) const {
 
 
 LCaloCalibration* LCaloCalibration::Read(std::ifstream *input) {
-  
+
   int RunIdST, InitialTargetRunST, FinalTargetRunST;
   double pedestalST[NPMT];
   double sigmaST[NPMT];
@@ -81,8 +81,8 @@ LCaloCalibration* LCaloCalibration::Read(std::ifstream *input) {
 
   for(int iChan=0; iChan<NPMT; ++iChan) {
     *input >> pedestalST[iChan] >>  sigmaST[iChan];
-    /*	  >> outliersST[iChan] 
-	  >> skewnessST[iChan] 
+    /*	  >> outliersST[iChan]
+	  >> skewnessST[iChan]
 	  >> kurtosisST[iChan];*/
   }
   std::cout << __LCALOCALIBRATION__ << "Calibration file read." << std::endl << std::flush;;
@@ -95,19 +95,19 @@ LCaloCalibration* LCaloCalibration::Read(std::ifstream *input) {
 }
 
 LCaloCalibration* LCaloCalibration::Read(const char *fileIn) {
-  
-  std::ifstream input(fileIn, std::ifstream::in); 
+
+  std::ifstream input(fileIn, std::ifstream::in);
   LCaloCalibration *result = Read(&input);
-  input.close();  
+  input.close();
   return result;
 }
- 
+
 
 LCaloCalibration& LCaloCalibration::operator=(const LCaloCalibration& other) {
   for(int ipmt=0; ipmt<NPMT; ++ipmt) {
     pedestal[ipmt] = other.GetPedestal()[ipmt];
     sigma[ipmt] = other.GetSigma()[ipmt];
-    /* outliers[ipmt] = other.GetOutliers()[ipmt]; 
+    /* outliers[ipmt] = other.GetOutliers()[ipmt];
        skewness[ipmt] = other.GetSkewness()[ipmt];
        kurtosis[ipmt] = other.GetKurtosis()[ipmt];*/
   }
@@ -122,20 +122,20 @@ LCaloCalibration& LCaloCalibration::operator=(const LCaloCalibration& other) {
 
 LCaloCalibration& LCaloCalibration::operator+=(const LCaloCalibration& rhs) // compound assignment (does not need to be a member,
 {                           // but often is, to modify the private members)
-  
+
   std::vector<double> ped(NPMT,0.);
   std::vector<double> var(NPMT,0.);
   std::vector<int> outl(NPMT,0.);
   std::vector<double> skew(NPMT,0.);
   std::vector<double> kurt(NPMT,0.);
-  
-  for(int ipmt=0; ipmt<NPMT; ++ipmt) {
+
+  for(uint ipmt=0; ipmt<NPMT; ++ipmt) {
     double tmp = rhs.GetPedestal()[ipmt];
     ped[ipmt] = pedestal[ipmt]+tmp;
     double tmpsig = rhs.GetSigma()[ipmt];
     var[ipmt] = sigma[ipmt]*sigma[ipmt]+tmpsig*tmpsig;
-    /* tmp = rhs.GetOutliers()[ipmt]; 
-       outl[ipmt] = outliers[ipmt] + tmp; 
+    /* tmp = rhs.GetOutliers()[ipmt];
+       outl[ipmt] = outliers[ipmt] + tmp;
        tmp = other.GetSkewness()[ipmt];
        skew[ipmt] = (skewness[ipmt]*sigma[ipmt]*sigma[ipmt]*sigma[ipmt] + tmp*tmpsig*tmpsig*tmpsig)/
        (sigma[ipmt]*sigma[ipmt]*sigma[ipmt]+tmpsig*tmpsig*tmpsig);  // correlations neglected!!!
@@ -144,7 +144,7 @@ LCaloCalibration& LCaloCalibration::operator+=(const LCaloCalibration& rhs) // c
        (sigma[ipmt]*sigma[ipmt]*sigma[ipmt]*sigma[ipmt]+tmpsig*tmpsig*tmpsig*tmpsig);  // correlations neglected!!!
     */
   }
-  for(int ipmt=0; ipmt<NPMT; ++ipmt) {
+  for(uint ipmt=0; ipmt<NPMT; ++ipmt) {
     pedestal[ipmt] = ped.at(ipmt);
     sigma[ipmt] = sqrt(var.at(ipmt));
     /*  outliers[ipmt] = outl[ipmt];
@@ -152,7 +152,7 @@ LCaloCalibration& LCaloCalibration::operator+=(const LCaloCalibration& rhs) // c
     kurtosis[ipmt] = kurt[ipmt];
     */
   }
-  
+
   // In/out run info
   RunId = std::min(RunId, rhs.GetRunId());
   InitialTargetRun = std::min(InitialTargetRun, rhs.GetInitialTargetRun());
@@ -160,7 +160,7 @@ LCaloCalibration& LCaloCalibration::operator+=(const LCaloCalibration& rhs) // c
 
   return *this; // return the result by reference
 }
- 
+
 LCaloCalibration operator+(LCaloCalibration lhs,        // passing lhs by value helps optimize chained a+b+c
 		   const LCaloCalibration& rhs) // otherwise, both parameters may be const references
 {
@@ -170,7 +170,7 @@ LCaloCalibration operator+(LCaloCalibration lhs,        // passing lhs by value 
 
 
 LCaloCalibration& LCaloCalibration::operator/=(const double& rhs) {
-  
+
   for(int ipmt=0; ipmt<NPMT; ++ipmt) {
     pedestal[ipmt] /= rhs;
     sigma[ipmt] /= sqrt(rhs);
@@ -179,7 +179,7 @@ LCaloCalibration& LCaloCalibration::operator/=(const double& rhs) {
     kurtosis[ipmt] /= rhs;
     */
   }
-  
+
   return *this; // return the result by reference
 }
- 
+
