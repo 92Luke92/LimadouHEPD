@@ -40,10 +40,10 @@
 	     </table>
 	     </td>
 
-	     <td  width="90" height="30" align="center"> OBDH Time Broadcast [yyyy-mm-dd hh:mm:ss] </td>
+	     <td  width="90" height="30" align="center"> OBDH Time Broadcast (yyyy-mm-dd hh:mm:ss) </td>
 	     <td  width="70" height="30" align="center"> OBDH Time Broadcast (ms) </td>
 	     <td  width="70" height="30" align="center"> CPU-timestamp of OBDH broadcast (ms) </td>
-	     <td  width="90" height="30" align="center"> AOCC Time Broadcast [yyyy-mm-dd hh:mm:ss] </td>
+	     <td  width="90" height="30" align="center"> AOCC Time Broadcast (yyyy-mm-dd hh:mm:ss) </td>
 	     <td  width="70" height="30" align="center"> AOCC Time Broadcast (μs) </td>
 	     <td  width="70" height="30" align="center"> CPU-timestamp of AOCC broadcast (ms) </td>
 	  
@@ -59,10 +59,10 @@
 		   <td  width="300" height="30" align="center" colspan="2"> Time Stop Run </td>
 		 </tr>
 		 <tr>
-		   <td  width="50" height="30" align="center"> [yyyy-mm-dd hh:mm:ss] </td>
-		   <td  width="50" height="30" align="center"> [ms] </td>
-		    <td  width="50" height="30" align="center"> [yyyy-mm-dd hh:mm:ss] </td>
-		    <td  width="50" height="30" align="center"> [ms] </td>
+		   <td  width="50" height="30" align="center"> (yyyy-mm-dd hh:mm:ss) </td>
+		   <td  width="50" height="30" align="center"> (ms) </td>
+		    <td  width="50" height="30" align="center"> (yyyy-mm-dd hh:mm:ss) </td>
+		    <td  width="50" height="30" align="center"> (ms) </td>
 		 </tr>
 			 
 	       </table>

@@ -18,10 +18,10 @@
    <xsl:template match="/" name="ArrDumpTemplate">
      <html>
        <body STYLE="font-family:Arial, helvetica, sans-serif; font-size:12pt">
-	 <h2>CPU Time, CPU Temperatures and PMT/Trigger Board Temperatures </h2>
-	 <h4>CPU and PMT/Trigger Board temperature operational range is (−10÷35)°C. Coloured Alerts:</h4>
-	 <h4> 1. Red Cell for temperatures higher than 45°C or lower than −20°C </h4>
-	 <h4> 2. Yellow Cell for temperatures in the range (35÷45)°C or (−10÷−20)°C  </h4>
+	 <h2>CPU Time, CPU and PMT/Trigger Board Temperatures </h2>
+	 <h4>CPU and PMT/Trigger Board temperature operational range is (−10÷35)°C. Implemented coloured alerts:</h4>
+	 <h4> 1. Cell is RED for temperatures higher than 45°C or lower than −20°C; </h4>
+	 <h4> 2. Cell is YELLOW for temperatures in the range (35÷45)°C or (−10÷−20)°C.  </h4>
 	 <table border="1">
 	   <tr bgcolor="#1acd32">
 	     <td>
@@ -43,8 +43,8 @@
 		   <td height="30" align="center" colspan="2"> CPU Time (ms) </td>
 		 </tr>
 		 <tr>
-		   <td width="100" height="30" align="center"> Start  </td>
-		   <td width="100" height="30" align="center"> Stop  </td>
+		   <td width="100" height="30" align="center"> Start Run  </td>
+		   <td width="100" height="30" align="center"> Stop Run </td>
 
 		 </tr>
 	       </table>
@@ -56,8 +56,8 @@
 		   <td height="30" align="center" colspan="2"> CPU Temperature (°C) </td>
 		 </tr>
 		 <tr>
-		   <td width="100" height="30" align="center"> Start  </td>
-		   <td width="100" height="30" align="center"> Stop  </td>
+		   <td width="100" height="30" align="center"> Start Run  </td>
+		   <td width="100" height="30" align="center"> Stop Run  </td>
 		 </tr>
 	       </table>
 	     </td>
@@ -68,8 +68,8 @@
 		   <td height="30" align="center" colspan="2"> PMT/Trigger Board Temperature (°C) </td>
 		 </tr>
 		 <tr>
-		   <td width="100" height="30" align="center"> Start  </td>
-		   <td width="100" height="30" align="center"> Stop  </td>
+		   <td width="100" height="30" align="center"> Start Run  </td>
+		   <td width="100" height="30" align="center"> Stop Run </td>
 		 </tr>
 	       </table>
 	     </td>

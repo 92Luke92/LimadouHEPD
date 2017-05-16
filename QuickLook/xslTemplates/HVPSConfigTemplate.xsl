@@ -42,16 +42,16 @@
 		   <td height="30" align="center" colspan="10">PMT HVPS ID</td>
 		 </tr>
 		 <tr>
-		   <td width="80" height="30" align="center"> 0 </td>
-		   <td width="80" height="30" align="center"> 1  </td>
-		   <td width="80" height="30" align="center"> 2  </td>    
-		   <td width="80" height="30" align="center"> 3  </td>   
-		   <td width="80"  height="30" align="center"> 4  </td>    
-		   <td width="80" height="30" align="center"> 5  </td> 
-		   <td width="80" height="30" align="center"> 6  </td>  
-		   <td width="80" height="30" align="center"> 7 </td>  
-		   <td width="80" height="30" align="center"> 8 </td> 
-		   <td width="80" height="30" align="center"> 9 </td>  
+		   <td width="80" height="60" align="center"> 0 </td>
+		   <td width="80" height="60" align="center"> 1  </td>
+		   <td width="80" height="60" align="center"> 2  </td>    
+		   <td width="80" height="60" align="center"> 3  </td>   
+		   <td width="80"  height="60" align="center"> 4  </td>    
+		   <td width="80" height="60" align="center"> 5  </td> 
+		   <td width="80" height="60" align="center"> 6  </td>  
+		   <td width="80" height="60" align="center"> 7 </td>  
+		   <td width="80" height="60" align="center"> 8 </td> 
+		   <td width="80" height="60" align="center"> 9 </td>  
 		 </tr>
 	       </table>
 	     </td>
@@ -61,8 +61,8 @@
 		   <td height="30" align="center" colspan="2"> Silicon Plane </td>
 		 </tr>
 		 <tr  bgcolor="#1acd32">
-		   <td width="100" height="30" align="center">A</td>
-		   <td width="100" height="30" align="center">B</td>
+		   <td width="100" height="60" align="center">A</td>
+		   <td width="100" height="60" align="center">B</td>
 		 </tr>
 	       </table>
 	     </td>
@@ -88,8 +88,8 @@
 	       <td>
 		 <table border="1">
 		   <tr>
-	              <td width="60" height="60" align="center"><xsl:value-of select="BOOT_NR"/>        </td>
-	              <td width="60" height="60" align="center"><xsl:value-of select="RUN_NR"/>         </td>
+	              <td width="60" height="70" align="center"><xsl:value-of select="BOOT_NR"/>        </td>
+	              <td width="60" height="70" align="center"><xsl:value-of select="RUN_NR"/>         </td>
 		   </tr>
 		 </table>
 	       </td>

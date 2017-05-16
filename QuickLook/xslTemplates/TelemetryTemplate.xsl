@@ -38,8 +38,8 @@
 		   <td height="30" align="center" colspan="2"> DAQ Board </td>
 		 </tr>
 		 <tr>
-		   <td width="120" height="30" align="center"> Start  </td>
-		   <td width="400" height="30" align="center"> Stop  </td>
+		   <td width="120" height="30" align="center"> Start Run  </td>
+		   <td width="400" height="30" align="center"> Stop Run  </td>
 		 </tr>
 	       </table>
 	     </td>
@@ -50,8 +50,8 @@
 		   <td height="30" align="center" colspan="2"> PMT/Trigger Board </td>
 		 </tr>
 		 <tr>
-		   <td width="210" height="30" align="center"> Start  </td>
-		   <td width="190" height="30" align="center"> Stop  </td>
+		   <td width="210" height="30" align="center"> Start Run  </td>
+		   <td width="190" height="30" align="center"> Stop Run  </td>
 		 </tr>
 	       </table>
 	     </td>
@@ -62,8 +62,8 @@
 		   <td height="30" align="center" colspan="2"> TM/TC Power Board </td>
 		 </tr>
 		 <tr>
-		   <td width="150" height="30" align="center"> Start  </td>
-		   <td width="150" height="30" align="center"> Stop  </td>
+		   <td width="150" height="30" align="center"> Start Run  </td>
+		   <td width="150" height="30" align="center"> Stop Run </td>
 		 </tr>
 	       </table>
 	     </td>
@@ -74,8 +74,8 @@
 		   <td height="30" align="center" colspan="2"> HVPS Control Board </td>
 		 </tr>
 		 <tr>
-		   <td width="150" height="30" align="center"> Start  </td>
-		   <td width="150" height="30" align="center"> Stop  </td>
+		   <td width="150" height="30" align="center"> Start Run  </td>
+		   <td width="150" height="30" align="center"> Stop Run </td>
 		 </tr>
 	       </table>
 	       </td>
@@ -86,8 +86,8 @@
 		   <td height="30" align="center" colspan="2"> CPU Board Boot Status </td>
 		 </tr>
 		 <tr>
-		   <td width="150" height="30" align="center"> Start  </td>
-		   <td width="150" height="30" align="center"> Stop  </td>
+		   <td width="150" height="30" align="center"> Start Run </td>
+		   <td width="150" height="30" align="center"> Stop Run </td>
 		 </tr>
 	       </table>
 	       </td>
@@ -98,8 +98,8 @@
 		   <td height="30" align="center" colspan="2"> CPU Board Status FSM </td>
 		 </tr>
 		 <tr>
-		   <td width="370" height="30" align="center"> Start  </td>
-		   <td width="230" height="30" align="center"> Stop  </td>
+		   <td width="370" height="30" align="center"> Start Run </td>
+		   <td width="230" height="30" align="center"> Stop Run </td>
 		 </tr>
 	       </table>
 	       </td>
@@ -107,7 +107,7 @@
 	   </tr>
 	   
 	   <tr bgcolor="#339966">
-	     <td width="200" height="30" align="center">Default Status Values (Approximate Values)</td>
+	     <td width="200" height="30" align="center">Default Status Values </td>
 	      <td>
 		 <table border="1">
 		   <tr>

@@ -102,7 +102,7 @@
 	       </xsl:choose>	       
 
 	       <td>
-		 <table border="1">
+		 <table border="1">	
 		   <tr>
 
 
@@ -132,7 +132,7 @@
 		</xsl:choose>
 
 		   </tr>
-		 </table>
+		   </table>
 		 </td>
 
 

@@ -101,7 +101,7 @@
 	  
 	  <table border="1">
 	    <tr bgcolor="#999999">
-	      <td  width="300" height="30" align="center"> <strong> Mask PMT </strong> </td> 
+	      <td  width="550" height="30" align="center"> <strong> Mask PMT (1 include, 0 exclude)  </strong> </td> 
 	    </tr>
 	  </table>
 	  
@@ -653,7 +653,7 @@
 	  
 	  <table border="1">
 	    <tr bgcolor="#999999">
-	      <td  width="300" height="30" align="center"> <strong> Generic Trigger Mask (1 include, 0 exclude) </strong></td> 
+	      <td  width="530" height="30" align="center"> <strong> Generic Trigger Mask (1 include, 0 exclude) </strong></td> 
 	    </tr>
 	  </table>
 	  

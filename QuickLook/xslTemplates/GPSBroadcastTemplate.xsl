@@ -39,7 +39,7 @@
 	     </table>
 	     </td>
 
-	     <td  width="90" height="30" align="center"> GPS Time Broadcast [yyyy-mm-dd hh:mm:ss] </td>
+	     <td  width="90" height="30" align="center"> GPS Time Broadcast (yyyy-mm-dd hh:mm:ss) </td>
 	     <td  width="70" height="30" align="center"> CPU-timestamp of GPS broadcast (ms) </td>
 	       
 	     
