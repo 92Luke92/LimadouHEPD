@@ -95,7 +95,8 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum,
                                       const bool isHG) const {
   std::cout << __LCALOCALIBRATIONMANAGER__ << "Finding peak for pmt number "
             << pmtnum << std::endl;
-  int spectrum[PeakFinderWindowWidth] = {0};
+  int* spectrum= new int[PeakFinderWindowWidth];
+  spectrum={0};
   int peakpos = -1;
   LEvRec0 cev;
   calRunFile->SetTheEventPointer(cev);
@@ -121,6 +122,7 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum,
     }
   }
 
+  delete spectrum;
 
   return peakpos;
 }
@@ -156,12 +158,8 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
                                               const bool isHG, double *new_mean,
                                               double *new_rms,
                                               int *cntssxdx) const {
-  //std::map  <int, float>   calc [NPMT];
   int outcnts[NPMT][2]={{0}};
 
-  //LEvRec0 cev;
-  //calRunFile->SetTheEventPointer(cev);
-  //  const int nEvents=calRunFile->GetEntries();
 
   const double sizew = RMSFINDINGHALFWINDOW;
   double maxv[NPMT], minv[NPMT];
@@ -170,18 +168,6 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
     minv[iCh] = old_mean[iCh] - (sizew * old_rms[iCh]);
   }
 
-
-  // for (int iEv = 0; iEv < nEvents; ++iEv) { // Event loop
-  /*for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
-    calRunFile->GetEntry(iEv);
-    for (int iCh = 0; iCh < NPMT; ++iCh) {
-      double content = (isHG ? static_cast<double>(cev.pmt_high[iCh])
-                             : static_cast<double>(cev.pmt_low[iCh]));
-      if (minv[iCh] < content && content < maxv[iCh] && cev.trigger_flag[iCh] == 0) {
-            calc[iCh][content] ++;
-      }
-    }
-  }*/
 
   auto predicate = [&](int content, bool trigger_flag, int iCh)
     {return minv[iCh] < content && content < maxv[iCh] && trigger_flag == 0;};
@@ -206,7 +192,8 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
   LEvRec0 cev;
   calRunFile->SetTheEventPointer(cev);
 
-  // for (int iEv = 0; iEv < nEvents; ++iEv) { // Event loop
+  // If we don't use independently outcnts[0] and  [1], reduce through MapCalibFromPredicate
+
   for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
     calRunFile->GetEntry(iEv);
     for (int iCh = 0; iCh < NPMT; ++iCh) {
@@ -290,30 +277,16 @@ void LCaloCalibrationManager::PMTsRawMeanRmsLG(double *mean,
 
 void LCaloCalibrationManager::PMTsRawMeanRms(const bool isHG, double *meanOut,
                                              double *rmsOut) const {
-  std::vector<double> mean(NPMT, 0), rms(NPMT, 0), usedEVTS(NPMT, 0);
-  std::map  <int, float>   histo[NPMT];
 
-  LEvRec0 cev;
-  calRunFile->SetTheEventPointer(cev);
-
-
-  for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
-    //    std::cout << "\b\b\b" << std::setprecision(2) << std::setw(2) <<
-    //    int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
-    calRunFile->GetEntry(iEv);
-    for (int ch = 0; ch < NPMT; ++ch) {  // PMT channel loop
-      int content = (isHG ? static_cast<int>(cev.pmt_high[ch])
-                             : static_cast<int>(cev.pmt_low[ch]));
-      if (cev.trigger_flag[ch] == 0)   histo[ch][content]++;
-    }
-  }
+  auto predicate = [&](int content, bool trigger_flag, int iCh)
+    {(void)content; (void) iCh; return trigger_flag == 0;};
+  std::vector <std::map  <int, float>> calc=MapCalibFromPredicate(predicate, isHG);
 
   for (int iCh = 0; iCh < NPMT; ++iCh) {
-    LStatTools stat(histo[iCh]);
+    LStatTools stat(calc[iCh]);
     meanOut[iCh] = stat.mean();
-    rmsOut[iCh] = stat.mean();
+    rmsOut[iCh] = stat.rms();
   }
-
 
   return;
 }
@@ -331,7 +304,6 @@ void LCaloCalibrationManager::PMTsMeanRmsData(const int pmt,
 
   const double maxv = DATACALWINDOWMAX;
   const double minv = DATACALWINDOWMIN;
-  int nEventsU = 0;
 
   for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
     calRunFile->GetEntry(iEv);
@@ -425,15 +397,14 @@ LCaloCalibration *LCaloCalibrationManager::Calibrate(const bool isHG,
 
 std::vector <std::map  <int, float>> LCaloCalibrationManager::MapCalibFromPredicate(std::function <bool(int content, bool trigger_flag, int channel)> predicate, const bool isHG) const {
   std::vector <std::map  <int, float>>  histo;
-  int pmtnum=0;
   LEvRec0 cev;
   calRunFile->SetTheEventPointer(cev);
   for (int iEv = __skipEv; iEv < __nEv; iEv++) {  // Event loop
     calRunFile->GetEntry(iEv);
     for (int iCh = 0; iCh < NPMT; iCh++) {
       int content = isHG ? cev.pmt_high[iCh] : cev.pmt_low[iCh];
-      if (predicate(content, cev.trigger_flag[iCh], iCh));
-      histo[iCh][content]++;
+      if (predicate(content, cev.trigger_flag[iCh], iCh))
+        histo[iCh][content]++;
     }
   }
   return histo;
