@@ -31,7 +31,7 @@
 	     <td>
 	       <table border="1">
 		 <tr>
-	     <td height="50" align="center" colspan="2"> Run ID </td>
+	     <td height="60" align="center" colspan="2"> Run ID </td>
 	       </tr>
 	       <tr>
 	         <td width="60" height="30" align="center">Boot nr.</td>
@@ -43,8 +43,6 @@
 	     <td  width="90" height="30" align="center"> OBDH Time Broadcast [yyyy-mm-dd hh:mm:ss] </td>
 	     <td  width="70" height="30" align="center"> OBDH Time Broadcast (ms) </td>
 	     <td  width="70" height="30" align="center"> CPU-timestamp of OBDH broadcast (ms) </td>
-	     <td  width="90" height="30" align="center"> GPS Time Broadcast [yyyy-mm-dd hh:mm:ss] </td>
-	     <td  width="70" height="30" align="center"> CPU-timestamp of GPS broadcast (ms) </td>
 	     <td  width="90" height="30" align="center"> AOCC Time Broadcast [yyyy-mm-dd hh:mm:ss] </td>
 	     <td  width="70" height="30" align="center"> AOCC Time Broadcast (μs) </td>
 	     <td  width="70" height="30" align="center"> CPU-timestamp of AOCC broadcast (ms) </td>
@@ -54,13 +52,19 @@
 	     <td>
 	       <table border="1">
 		 <tr  bgcolor="#1acd32">
-		   <td height="30" align="center" colspan="2"> Absolute time (ms) </td>
+		   <td height="30" align="center" colspan="4"> Absolute time (ms) </td>
+		 </tr>		 
+		 <tr>
+		   <td width="300" height="30" align="center" colspan="2"> Time Start Run </td>
+		   <td  width="300" height="30" align="center" colspan="2"> Time Stop Run </td>
 		 </tr>
 		 <tr>
-		   <td width="100" height="30" align="center"> Time Start Run </td>
-		   <td width="100" height="30" align="center"> Time Stop Run  </td>
-		   
+		   <td  width="50" height="30" align="center"> [yyyy-mm-dd hh:mm:ss] </td>
+		   <td  width="50" height="30" align="center"> [ms] </td>
+		    <td  width="50" height="30" align="center"> [yyyy-mm-dd hh:mm:ss] </td>
+		    <td  width="50" height="30" align="center"> [ms] </td>
 		 </tr>
+			 
 	       </table>
 	     </td>
 
@@ -69,7 +73,7 @@
 	     <td>
 	       <table border="1">
 		 <tr  bgcolor="#1acd32">
-		   <td height="50" align="center" colspan="2"> Relative time (ms) </td>
+		   <td height="60" align="center" colspan="2"> Relative time (ms) </td>
 		 </tr>
 		 <tr>
 		   <td width="100" height="30" align="center"> Time Start Run </td>
@@ -108,7 +112,7 @@
 	       </td>
 
 	       <td>
-		 <table border="1">
+	
 		   <tr>
 
 		     <xsl:choose>
@@ -121,12 +125,12 @@
 		     </xsl:choose>
 		      
 		   </tr>
-		 </table>
+	
 	       </td>
 
 
 	       <td>
-		 <table border="1">
+	
 		   <tr>
 
 		     <xsl:choose>
@@ -139,11 +143,11 @@
 		     </xsl:choose>
 		      
 		   </tr>
-		 </table>
+	
 	       </td>
 
 	       <td>
-		 <table border="1">
+		
 		   <tr>
 
 		     <xsl:choose>
@@ -156,11 +160,9 @@
 		     </xsl:choose>
 		      
 		   </tr>
-		 </table>
+	
 	       </td>
 
-	       <td width="90" height="30" align="center"><xsl:value-of select="GPS_S"/>        </td>
-	       <td width="70" height="30" align="center"><xsl:value-of select="TIMESTAMP_GPS"/>        </td>
 	       <td width="90" height="30" align="center"><xsl:value-of select="AOCC_S"/>        </td>
 	       <td width="70" height="30" align="center"><xsl:value-of select="AOCC_US"/>        </td>
 	       <td width="70" height="30" align="center"><xsl:value-of select="TIMESTAMP_AOCC"/>        </td>
@@ -171,19 +173,23 @@
 
 		     <xsl:choose>
 		       <xsl:when test="ABS_START_RUN_Y &gt;'0'">
-			 <td  bgcolor="#ffff00" width="100" height="30" align="center"> <xsl:value-of select="ABS_START_RUN"/> </td>
+			 <td  bgcolor="#ffff00" width="170" height="30" align="center"> <xsl:value-of select="ABS_START_RUN"/> </td>
+			 <td  bgcolor="#ffff00" width="70" height="30" align="center"> <xsl:value-of select="ABS_START_RUN_ms"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="30" align="center"><xsl:value-of select="ABS_START_RUN"/>        </td>
+			 <td width="170" height="30" align="center"><xsl:value-of select="ABS_START_RUN"/>        </td>
+			 <td width="70" height="30" align="center"><xsl:value-of select="ABS_START_RUN_ms"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 
 		     <xsl:choose>
 		       <xsl:when test="ABS_STOP_RUN_Y &gt;'0'">
-			 <td  bgcolor="#ffff00" width="100" height="30" align="center"> <xsl:value-of select="ABS_STOP_RUN"/> </td>
+			 <td  bgcolor="#ffff00" width="170" height="30" align="center"> <xsl:value-of select="ABS_STOP_RUN"/> </td>
+			  <td  bgcolor="#ffff00" width="70" height="30" align="center"> <xsl:value-of select="ABS_STOP_RUN_ms"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="30" align="center"><xsl:value-of select="ABS_STOP_RUN"/>        </td>
+			 <td width="170" height="30" align="center"><xsl:value-of select="ABS_STOP_RUN"/>        </td>
+			 <td width="70" height="30" align="center"><xsl:value-of select="ABS_STOP_RUN_ms"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 		      
