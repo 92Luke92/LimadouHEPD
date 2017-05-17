@@ -1,7 +1,6 @@
 // Steering file for the Limadou event calibration
 // M. Pozzato May 16th, 2017
 // michele.pozzato@bo.infn.it
-
 std::string    INPLIST   inpRunsEq.list
 std::string     CALBFILE  CalPar___Runs_4660_4660___target_DEF_DEF___inpRunMode_virgin.cal
 std::string    OUTFOLD   .
