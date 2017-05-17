@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
 if(WIN32)
- find_package( ROOT REQUIRED COMPONENTS libCore libRIO libNet libTree libHist libSpectrum)
+ find_package( ROOT REQUIRED COMPONENTS libCore libRIO libNet libTree libHist)
 elseif(UNIX)
- find_package( ROOT REQUIRED COMPONENTS RIO Net Tree Hist Spectrum)
+ find_package( ROOT REQUIRED COMPONENTS RIO Net Tree Hist)
 endif()
 
 include(${ROOT_USE_FILE})
