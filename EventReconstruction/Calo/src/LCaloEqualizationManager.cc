@@ -22,7 +22,7 @@ LCaloEqualizationManager &LCaloEqualizationManager::GetInstance() {
 
 //---------------------------------------------------------------------------
 void LCaloEqualizationManager::LoadSteering(const std::string steerFileIN) {
-  std::cout << __LCALOEQUALIZATIONMANAGER__ << "Loading the steerig file \""
+  std::cout << __LCALOEQUALIZATIONMANAGER__ << "Loading the steering file \""
             << steerFileIN << "\"..." << std::endl;
 
   LSteeringManager steerMan;

@@ -16,7 +16,7 @@ LCalibrationManager::~LCalibrationManager() {
 
 void LCalibrationManager::LoadSteering(const char* steerFileIN) {
   Reset();
-  std::cout << __LCALIBRATIONMANAGER__ << "Loading the steerig file \""
+  std::cout << __LCALIBRATIONMANAGER__ << "Loading the steering file \""
 	    << steerFileIN << "\"..." << std::endl;
 
   steerFile = std::string(steerFileIN);
@@ -42,14 +42,14 @@ void LCalibrationManager::LoadSteering(const char* steerFileIN) {
   // Initial and Final Target Runs
   InitialTargetRun = steer.GetParameter<int>("INITRUN");
   FinalTargetRun = steer.GetParameter<int>("FINRUN");
-  // Verbosity 
+  // Verbosity
   verboseFLAG = steer.GetParameter<bool>("VERBOSE");
 
   std::cout << __LCALIBRATIONMANAGER__ << "Steering file loaded." << std::endl;
   steeringLoadedFLAG=true;
-  
+
   if(!CheckLoadedSteering()) Reset();
-  
+
   return;
 }
 
@@ -75,7 +75,7 @@ void LCalibrationManager::Run() {
     std::cout << __LCALIBRATIONMANAGER__ << "How to run? Steering file never loaded!" << std::endl;
     return;
   }
-  
+
   std::vector<std::string> fnames;
   std::ifstream istr(inpFileList, std::ifstream::in);
   std::string line;
@@ -105,7 +105,7 @@ void LCalibrationManager::Run() {
     + "___inpRunMode_" + inpRunMode
     + ".cal";
   outcal.Write(outName.c_str());
-  
+
   return;
 }
 
@@ -121,7 +121,7 @@ bool LCalibrationManager::CheckLoadedSteering(void) const {
   if(istr.good()==false)  {
     std::cout << __LCALIBRATIONMANAGER__ << "Input file list " << inpFileList << " goodness=" << istr.good() << std::endl;
     result=false;
-  } 
+  }
   istr.close();
   if(inpRunMode.compare("virgin")!=0 &&
      inpRunMode.compare("compressed")!=0 &&
@@ -136,7 +136,7 @@ bool LCalibrationManager::CheckLoadedSteering(void) const {
     std::cout << __LCALIBRATIONMANAGER__ << "Output directory " << outDirectory << " status=" << status << std::endl;
     result=false;
   }
-  
+
   if(skipEvents<0 && skipEvents!=-1) result=false;
   if(skipFileEvents<0 && skipFileEvents!=-1) result=false;
   if(maxEvents<0 && maxEvents!=-1) result=false;
@@ -144,7 +144,7 @@ bool LCalibrationManager::CheckLoadedSteering(void) const {
   if(trackerSlotEvents<0 && trackerSlotEvents!=-1) result=false;
   if(InitialTargetRun<0 && InitialTargetRun!=-1) result=false;
   if(FinalTargetRun<0 && FinalTargetRun!=-1) result=false;
-   
+
   std::cout << __LCALIBRATIONMANAGER__ << "Temptative calibration parameters:" << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  inpFileList  " << inpFileList << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  inpRunMode   " << inpRunMode << std::endl;
@@ -156,12 +156,12 @@ bool LCalibrationManager::CheckLoadedSteering(void) const {
   std::cout << __LCALIBRATIONMANAGER__ << "  slotEvents   " << trackerSlotEvents << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  IniTargetRun " << InitialTargetRun << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  FinTargetRun " << FinalTargetRun << std::endl;
-   
+
   if(result==false) {
     std::cout << __LCALIBRATIONMANAGER__ << "something is wrong or missing in the steering file" << std::endl;
   }
   else {
-    std::cout << __LCALIBRATIONMANAGER__ << "steering file \"" << steerFile << "\" ok." << std::endl; 
+    std::cout << __LCALIBRATIONMANAGER__ << "steering file \"" << steerFile << "\" ok." << std::endl;
   }
   return result;
 }
@@ -191,7 +191,7 @@ bool LCalibrationManager::SetVerbosity(const bool boolFLAG) {
 void LCalibrationManager::LoadRun(const char *fileInp) {
   LTrackerCalibrationManager::GetInstance().LoadRun(fileInp);
   LCaloCalibrationManager::GetInstance().LoadRun(fileInp);
-  
+
   return;
 }
 

@@ -14,7 +14,7 @@ LReco01Manager::LReco01Manager() {
 
 void LReco01Manager::LoadSteering(const char* steerFileIN) {
   Reset();
-  std::cout << __LRECO01MANAGER__ << "Loading the steerig file \""
+  std::cout << __LRECO01MANAGER__ << "Loading the steering file \""
 	    << steerFileIN << "\"..." << std::endl;
 
   steerFile = steerFileIN;
@@ -31,13 +31,13 @@ void LReco01Manager::LoadSteering(const char* steerFileIN) {
   maxEvents = steer.GetParameter<int>("MAXEVTS");
   // Max File Events
   maxFileEvents = steer.GetParameter<int>("MAXFEVTS");
-  // Verbosity 
+  // Verbosity
   verboseFLAG = steer.GetParameter<bool>("VERBOSE");
   std::cout << __LRECO01MANAGER__ << "Steering file loaded." << std::endl;
   steeringLoadedFLAG=true;
-  
+
   if(!CheckLoadedSteering()) Reset();
-  
+
   return;
 }
 
@@ -75,7 +75,7 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
   if(status!=0) result=false;
 
   std::ifstream istr(inpFileList, std::ifstream::in);
-  if(istr.good()==false) result=false; 
+  if(istr.good()==false) result=false;
   istr.close();
   if(maxEvents<0 && maxEvents!=-1) result=false;
   if(maxFileEvents<0 && maxFileEvents!=-1) result=false;
@@ -83,7 +83,7 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
     std::cout << __LRECO01MANAGER__ << "something is wrong or missing in the steering file" << std::endl;
   }
   else {
-    std::cout << __LRECO01MANAGER__ << "steering file \"" << steerFile << "\" ok." << std::endl; 
+    std::cout << __LRECO01MANAGER__ << "steering file \"" << steerFile << "\" ok." << std::endl;
     if(verboseFLAG==true) {
       std::cout << __LRECO01MANAGER__ << "Reco parameters:" << std::endl;
       std::cout << __LRECO01MANAGER__ << "calFileName  " << calFileName << std::endl;
@@ -138,7 +138,7 @@ void LReco01Manager::Run(void) {
   outFile->Write();
   outFile->Close();
   delete outFile;
-  
+
   return;
 }
 
@@ -153,7 +153,7 @@ void LReco01Manager::NewOutFile(void) {
     outFile->Close();
     delete outFile;
   }
-  
+
   // Set the new name
   std::string l1name = L0NameToL1Name();
   outFile = new LEvRec1File(l1name.c_str(),"WRITE");
@@ -164,9 +164,9 @@ void LReco01Manager::NewOutFile(void) {
 
 std::string LReco01Manager::L0NameToL1Name(void) { // Naming convention needed!
   std::string l0name=inFile->GetName();
-  size_t last_slash = l0name.find_last_of('/'); 
+  size_t last_slash = l0name.find_last_of('/');
   if(last_slash==std::string::npos) last_slash=0;
-  size_t last_dot =  l0name.find_last_of('.'); 
+  size_t last_dot =  l0name.find_last_of('.');
   if(last_dot==std::string::npos) {
     std::cerr << __LRECO01MANAGER__ << "Error: file \"" << l0name << "\" has not suffix." << std::endl;
     return 0;
