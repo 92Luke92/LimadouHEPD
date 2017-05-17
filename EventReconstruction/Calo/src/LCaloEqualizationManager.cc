@@ -204,8 +204,8 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
 
     Int_t nfound = s.Search(&(h_pmt[ch]), steer.sigma, "", steer.threshold);
     Int_t nPeaks = s.GetNPeaks();               // Get number of peaks
-    Float_t *peakPositions = s.GetPositionX();  // Get peak positions
-    Float_t *peakHeights = s.GetPositionY();    // Get height of the peaksù
+    Double_t *peakPositions = s.GetPositionX();  // Get peak positions
+    Double_t *peakHeights = s.GetPositionY();    // Get height of the peaksù
     bool isPeakFound = false;
 
     for (int ip = 0; ip < nPeaks; ip++) {
