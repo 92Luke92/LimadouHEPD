@@ -73,7 +73,7 @@
 	     <td>
 	       <table border="1">
 		 <tr  bgcolor="#1acd32">
-		   <td height="60" align="center" colspan="2"> Relative time (ms) </td>
+		   <td height="60" align="center" colspan="2"> CPU time (ms) </td>
 		 </tr>
 		 <tr>
 		   <td width="100" height="30" align="center"> Time Start Run </td>
