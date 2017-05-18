@@ -1,11 +1,12 @@
 #include "detector_const.hh"
-#include <TTree.h>
-#include <TFile.h>
-#include <TROOT.h>
-#include <TH2D.h>
+#include "TTree.h"
+#include "TFile.h"
+#include "TROOT.h"
+#include "TH2D.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 #include <unistd.h>
 #include <TCanvas.h>
 #include <TPaveText.h>
@@ -13,6 +14,10 @@
 #include <TStyle.h>
 #include <iostream>
 #include <sstream>
+#include <fstream>
+#include <vector>
+#include <cmath>
+#include <algorithm>
 #include "LEvRec0File.hh"
 #include "LEvRec0.hh"
 
@@ -72,14 +77,11 @@ int TrackerQuickLook(std::string namefile){
       landau[side][ld]=0;     
     }
   }
-  
-  std::cout<<"Check1!"<<std::endl;
- 
+   
   for(int side=0;side<N_SIDES;++side){
     char plan=(side==0 ? 'n' : 'p');
     for(int ld=0;ld<N_LADDER;++ld){
-      std::cout << side << " " << ld << std::endl << std::flush;
-      std::cout << sigmaraw[side][ld] << std::endl << std::flush;
+
       sigmaraw[side][ld]=new TH2D(
 	Form("sigma_raw_%c_%d",plan,ld),
 	Form("sigma_raw_%c_%d;chan;ADC",plan,ld),
@@ -123,9 +125,7 @@ int TrackerQuickLook(std::string namefile){
 	
     }
   }
-  
-  std::cout<<"Check2!"<<std::endl << std::flush;
-  
+    
     LEvRec0File input(namefile.c_str());
     LEvRec0 ev;
     LEvRec0Md metaData;
@@ -194,9 +194,8 @@ int TrackerQuickLook(std::string namefile){
     
     std::vector<LTrackerCluster> *clusters=GetClusters(counts_clean_chan,sigma_chan,evmask);
    
-    /* 
     std::cout<<"Clusters out of the loop: "<<clusters->size()<<std::endl;
-    
+    /*
     for(int cl=0;cl<clusters->size();++cl){
       
     int seed=clusters->at(cl).seed;

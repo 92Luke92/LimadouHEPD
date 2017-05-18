@@ -75,7 +75,6 @@ int main(int argc, char **argv){
    
    if (TrackerQuickLook(argv[1]) == -1 )
       std::cout << "Not Virgin run: " << std::endl;
-   std::cout << "Sotgiu" << std::endl;
    
    broad1 = xslPath+"TimeBroadcastTemplate.xsl";
    broad2 = xslPath+"GPSBroadcastTemplate.xsl";
