@@ -194,7 +194,6 @@ int TrackerQuickLook(std::string namefile){
     
     std::vector<LTrackerCluster> *clusters=GetClusters(counts_clean_chan,sigma_chan,evmask);
    
-    std::cout<<"Clusters out of the loop: "<<clusters->size()<<std::endl;
     /*
     for(int cl=0;cl<clusters->size();++cl){
       
