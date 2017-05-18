@@ -19,6 +19,8 @@
      <html>
        <body STYLE="font-family:Arial, helvetica, sans-serif; font-size:12pt">
 	 <h2>Run Information </h2>
+	 <h5>We defined 5 orbit zones: equatorial, south polar, north polar, SAA (South Atlantic Anomaly) and default zone (when no orbit information is available).</h5>
+	 <h5>By standby zone we do not mean one of the above-mentioned orbit zones, but we mean that HEPD is not in data acquisition. </h5>
 	 <table border="1">
 	   <tr bgcolor="#1acd32">
 

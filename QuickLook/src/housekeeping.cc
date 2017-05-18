@@ -7,7 +7,7 @@
  *
  * DESCRIPTION:  Script to generate Housekeeping Quicklook xml files   
  *                 
- * DATE:           May 16, 2017
+ * DATE:           May 18, 2017
  *     
  *
  =============================================================================
@@ -208,12 +208,14 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       outputFile << "\t<AOCC_S>" << AOCC.AsSQLString() << "</AOCC_S>\n";
       outputFile <<  "\t<AOCC_US>"  << metaData.broadcast.AOCC.us*10  << "</AOCC_US>\n";    
       outputFile << "\t<TIMESTAMP_AOCC>"<< metaData.timestamp.AOCC << "</TIMESTAMP_AOCC>\n";
+      
       if (t%2==0){
 	outputFile << "\t<ABS_START_RUN>" <<  "-" << "</ABS_START_RUN>\n";
 	outputFile << "\t<ABS_STOP_RUN>" << "-" << "</ABS_STOP_RUN>\n";
 	outputFile << "\t<ABS_START_RUN_ms>" << "-" << "</ABS_START_RUN_ms>\n";
 	outputFile << "\t<ABS_STOP_RUN_ms>" << "-"  << "</ABS_STOP_RUN_ms>\n";
       }
+      
       outputFile << "\t<ABS_START_RUN>" <<  absolute_start.AsSQLString() << "</ABS_START_RUN>\n";
       outputFile << "\t<ABS_STOP_RUN>" <<  absolute_stop.AsSQLString() << "</ABS_STOP_RUN>\n";
       outputFile << "\t<ABS_START_RUN_ms>" << ABS_Time_Start_Run_ms       << "</ABS_START_RUN_ms>\n";
