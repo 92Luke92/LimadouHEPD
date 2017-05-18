@@ -108,95 +108,16 @@ std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigm
 	max1 = newmax1;
       }
     }
-    // Compare with the threshold
-    /*
-    if(maxindex1<CLSNTHRESHOLD1CHAN) {
-      ich+=2; // already explored up to ich+2
-      //ich-=2;
-      continue;
-    }
-    */
+   
     LTrackerCluster mycl(maxindex1, cont, sigma);
     if(maskIn[maxindex1]&&maskIn[maxindex1-1]&&maskIn[maxindex1+1])
       result->push_back(mycl);
     ich=maxindex1+2; // already explored up there.
-    //ich=maxindex1-2; // already explored up there.
+  
   } // end of the main loop:: Warning, possible overlap between clusters' boundaries
 
   return result;
 }
-
-/*
-std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigma, const bool *maskIn=0) {
-  
-  auto result= new std::vector<LTrackerCluster>;
-  double sn[NCHAN];
-  for(int ich=0; ich<NCHAN; ++ich) sn[ich]=cont[ich]/sigma[ich];
-
-  // Prepare mask even for default case
-  double mask[NCHAN];
-  if(maskIn==0) for(int ich=0; ich<NCHAN; ++ich) mask[ich]=true;
-  else for(int ich=0; ich<NCHAN; ++ich) mask[ich]=maskIn[ich];
-  // Apply the mask
-  for(int ich=0; ich<NCHAN; ++ich) sn[ich]*=(static_cast<double>(mask[ich]));
-  
-  // Main loop
-  for(int ich=0; ich<NCHAN; ++ich) {
-    //for(int ich=NCHAN-1; ich>-1; --ich) {
-    if(sn[ich]<CLFINDTHRESHOLD) continue;
- 
-    int maxindex1=ich;
-    double max1 = sn[ich];
-    // Check if there's a higher maximum  - up to two chans ahead
-    int newmaxindex1 = maxindex1;
-    double newmax1 = max1;
-    while(1) {
-      int extentAhead=std::min(SIDE_CHAN-1-ChanToSideChan(maxindex1),2);
-      for(int index=1; index<=extentAhead; ++index) {
-	if(sn[maxindex1+index]>newmax1) {
-	  newmaxindex1=maxindex1+index;
-	  newmax1=sn[maxindex1+index];
-	}
-      } // Endl loop for newmax1
-      if(newmaxindex1 == maxindex1) {
-	break;
-      } else {
-	maxindex1 = newmaxindex1;
-	max1 = newmax1;
-      }
-    }
-
-    // Find the highest SN adjacent to the maximum
-    int maxindex2;
-    int schmax = ChanToSideChan(maxindex1);
-    if(schmax==0) maxindex2=maxindex1+1;
-    else if(schmax==SIDE_CHAN-1) maxindex2=maxindex1-1;
-    else maxindex2=(sn[maxindex1-1]>sn[maxindex1+1] ? maxindex1-1 : maxindex1+1);
-
-    // Check if the maximum pair is suitable for cluster finding
-    // Compute the estimator
-    double numerator=(cont[maxindex1]*static_cast<double>(mask[maxindex1])+
-		      cont[maxindex2]*static_cast<double>(mask[maxindex2]));
-    double denominator=sqrt(
-			    sigma[maxindex1]*sigma[maxindex1]*static_cast<double>(mask[maxindex1])+
-			    sigma[maxindex2]*sigma[maxindex2]*static_cast<double>(mask[maxindex2])
-			    );
-    double meter=numerator/denominator;
-    // Compare with the threshold
-    if(meter<CLSNTHRESHOLD) {
-      ich+=2; // already explored up to ich+2
-      //ich-=2;
-      continue;
-    }
-    LTrackerCluster mycl(maxindex1, cont, sigma);
-    result->push_back(mycl);
-    ich=maxindex1+2; // already explored up there.
-    //ich=maxindex1-2; // already explored up there.
-  } // end of the main loop:: Warning, possible overlap between clusters' boundaries
-
-  return result;
-}
-*/
 
 void ComputeCN(const short *counts, const double *pedestal, const bool *CN_mask, double *CN) {
   double sumVA[N_VA];

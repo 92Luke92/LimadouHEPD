@@ -46,7 +46,7 @@ void LEvRec0::DumpEventIndex() {
 int  LEvRec0::IsComp(void) {
    int ret = 0;
    std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
-   if (runType == 0x6336 )
+   if (runType == 0x36 )
       ret = 1;
    
    return ret;
@@ -56,7 +56,7 @@ int  LEvRec0::IsComp(void) {
 bool  LEvRec0::IsVirgin(void) {
    bool ret = false;
    std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
-   if (runType == 0x634e || runType == 0x004e)
+   if (runType == 0x4e ||runType == 0x634e )
       ret = true;
    
    return ret;

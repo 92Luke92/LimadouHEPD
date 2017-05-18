@@ -68,17 +68,15 @@ int main(int argc, char **argv){
    std::cout << "xsl path = " << xslPath << std::endl;
    std::cout << "output path = " << outPath << std::endl;
 
-    
-   if (TrackerQuickLook(argv[1]) == -1 )
-      std::cout << "Not Virgin run: " << std::endl;
-
-
-   //if (TrackerQuickLook(argv[1]) == -1 )
-   //   std::cout << "Not Virgin run: " << std::endl;
+   
    
    TriggerScan(argv[1]);
    PMTScan(argv[1]);
-
+   
+   if (TrackerQuickLook(argv[1]) == -1 )
+      std::cout << "Not Virgin run: " << std::endl;
+   std::cout << "Sotgiu" << std::endl;
+   
    broad1 = xslPath+"TimeBroadcastTemplate.xsl";
    broad2 = xslPath+"GPSBroadcastTemplate.xsl";
 
