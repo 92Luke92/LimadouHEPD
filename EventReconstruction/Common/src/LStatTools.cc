@@ -25,6 +25,7 @@ LStatTools::LStatTools(std::vector<int> data, std::vector<float> weight) {
 
 void LStatTools::init()  {
    float accu=0;
+   sum_weights=0;
    for (const auto& elt : datamap) {
       accu += elt.first*elt.second;
       sum_weights+=elt.second;

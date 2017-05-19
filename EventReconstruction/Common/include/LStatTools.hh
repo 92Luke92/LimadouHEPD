@@ -21,7 +21,7 @@ class LStatTools
    public:
       LStatTools(std::vector<int> data) ;
       LStatTools(std::vector<int> data, std::vector<float> weight) ;
-      LStatTools(std::map <int, float> map) : datamap(map) {};
+      LStatTools(std::map <int, float> map) : datamap(map) {init();};
       void info(); // Main stat info (mean, rms, N elements)
       void dump(); // info() + detail of each element
 
