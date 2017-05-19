@@ -626,6 +626,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
       run_type_vect[j] = metaData.run_type;
       run_duration_vect[j] = metaData.run_duration;
       orbitZone_vect[j] = metaData.orbit_Zone;
+      
       run_id_vect[j]=metaData.run_id;
       boot_nr_vect[j]=metaData.boot_nr;
       
@@ -642,6 +643,11 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
     outputFile << "\t<RUN_DURATION_error>"<< 0 << "</RUN_DURATION_error>\n";
     outputFile << dec << "\t<ORBIT_error>"<< 0 << "</ORBIT_error>\n";
     outputFile << dec << "\t<ORBIT_error_yellow>"<< 0 << "</ORBIT_error_yellow>\n";
+
+    int applied_orbit=orbitZone_vect[t] & 0x00FF;
+    int calculated_orbit=orbitZone_vect[t] >> 8;
+    cout <<  "orbit zone calculated: " << hex << calculated_orbit << endl;
+    cout << "orbit zone applied: " << hex << applied_orbit << endl;
        
     if (t%2==0){
 
@@ -654,10 +660,10 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 	outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";
 	  
          
-      if (orbitZone_vect[t] & 0x00FF != 0 && orbitZone_vect[t] & 0x00FF != 1 && orbitZone_vect[t] & 0x00FF != 2 && orbitZone_vect[t] & 0x00FF != 3 && orbitZone_vect[t] & 0x00FF != 4 && orbitZone_vect[t]  & 0x00FF != 5) 
+      if (applied_orbit != 0 && applied_orbit != 1 && applied_orbit != 2 && applied_orbit != 3 && applied_orbit != 4 && applied_orbit != 5) 
 	outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
           
-      if (orbitZone_vect[t] >> 8 == 170) 
+      if (calculated_orbit == 170) 
 	outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";   
       
     }
@@ -670,7 +676,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
       if (run_duration_vect[t]!=run_duration_vect[t-1]) 
 	outputFile << "\t<RUN_DURATION_error>"<< 1 << "</RUN_DURATION_error>\n";  
 	         
-      if (orbitZone_vect[t] & 0x00FF != 0 && orbitZone_vect[t] & 0x00FF != 1 && orbitZone_vect[t] & 0x00FF != 2 && orbitZone_vect[t] & 0x00FF != 3 && orbitZone_vect[t] & 0x00FF != 4 && orbitZone_vect[t]  & 0x00FF != 5) 
+     if (applied_orbit != 0 && applied_orbit != 1 && applied_orbit != 2 && applied_orbit != 3 && applied_orbit != 4 && applied_orbit != 5) 
 	outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
           
       if (orbitZone_vect[t] >> 8 == 170) 
@@ -722,10 +728,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 
     outputFile << dec << "\t<RUN_DURATION>" << run_duration_vect[t] << "</RUN_DURATION>\n";
 
-    int applied_orbit=orbitZone_vect[t] & 0x00FF;
-    int calculated_orbit=orbitZone_vect[t] >> 8;
-    // cout << "orbit zone calculated: " << calculated_orbit << endl;
-    // cout << "orbit zone applied: " << applied_orbit << endl;
+
 
     if (applied_orbit == 170)
       outputFile <<  "\t<ORBIT_ZONE_Applied>"   << "BROADCAST NOT AVAIBLE" << "</ORBIT_ZONE_Applied>\n";
