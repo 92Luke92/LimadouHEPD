@@ -430,7 +430,7 @@ LCaloCalibration *LCaloCalibrationManager::Calibrate(const bool isHG,
 
 
 std::vector <std::map  <int, float>> LCaloCalibrationManager::MapCalibFromPredicate(std::function <bool(int content, bool trigger_flag, int channel)> predicate, const bool isHG) const {
-  std::vector <std::map  <int, float>>  histo;
+  std::vector <std::map  <int, float>>  histo(NPMT);
   LEvRec0 cev;
   calRunFile->SetTheEventPointer(cev);
   for (int iEv = __skipEv; iEv < __nEv; iEv++) {  // Event loop
