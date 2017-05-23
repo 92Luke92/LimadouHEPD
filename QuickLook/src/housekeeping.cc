@@ -111,6 +111,11 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       outputFile << "\t<BROADCAST_OBDH_MS_Y>"   <<  0 << "</BROADCAST_OBDH_MS_Y>\n";
       outputFile << "\t<TIMESTAMP_OBDH_Y>"  <<  0 << "</TIMESTAMP_OBDH_Y>\n";
       outputFile << "\t<ABS_TIME_Y>"   <<  0 << "</ABS_TIME_Y>\n";
+      outputFile << "\t<AOCC_S_Y>"   <<  0 << "</AOCC_S_Y>\n";
+      outputFile << "\t<AOCC_US_Y>"   <<  0 << "</AOCC_US_Y>\n";
+      outputFile << "\t<AOCC_Timestamp_Y>"   <<  0 << "</AOCC_Timestamp_Y>\n";
+      outputFile2 << "\t<GPS_broadcast_Y>"   <<  0 << "</GPS_broadcast_Y>\n";
+      outputFile2 << "\t<GPS_timestamp_Y>"   <<  0 << "</GPS_timastamp_Y>\n";
 
       outputFile << "\t<LATITUDE_error>"   <<  0 << "</LATITUDE_error>\n";
       outputFile << "\t<LONGITUDE_error>"   <<  0 << "</LONGITUDE_error>\n";
@@ -200,23 +205,33 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       if (metaData.timestamp.OBDH == 3435973836){
 	outputFile << "\t<TIMESTAMP_OBDH>" << "N.A." << "</TIMESTAMP_OBDH>\n";
 	outputFile << "\t<TIMESTAMP_OBDH_Y>"  <<  1 << "</TIMESTAMP_OBDH_Y>\n";
+	outputFile << "\t<ABS_TIME>" <<  "N.A." << "</ABS_TIME>\n";
+	outputFile << "\t<ABS_TIME_ms>" << "N.A."       << "</ABS_TIME_ms>\n";
+	outputFile << "\t<ABS_TIME_Y>"   <<  1 << "</ABS_TIME_Y>\n";
+	outputFile << "\t<BROADCAST_OBDH_MS_Y>"   <<  1 << "</BROADCAST_OBDH_MS_Y>\n";
       }
       
-      if (metaData.broadcast.AOCC.sec == 3149642683)
+      if (metaData.broadcast.AOCC.sec == 3149642683){
 	outputFile << "\t<AOCC_S>" << "N.A." << "</AOCC_S>\n";
-            
-      if (metaData.broadcast.AOCC.us == 48059)
+      	outputFile << "\t<AOCC_S_Y>"   <<  1 << "</AOCC_S_Y>\n";
+        }
+      
+      if (metaData.broadcast.AOCC.us == 48059){
 	outputFile << "\t<AOCC_US>" << "N.A." << "</AOCC_US>\n";
-
-      if (metaData.timestamp.AOCC == 3435973836)
+	outputFile << "\t<AOCC_US_Y>"   <<  1 << "</AOCC_US_Y>\n";
+      }
+      if (metaData.timestamp.AOCC == 3435973836){
 	outputFile << "\t<TIMESTAMP_AOCC>" << "N.A." << "</TIMESTAMP_AOCC>\n";
-
-      if (metaData.broadcast.GPS.sec == 3149642683)
-	outputFile << "\t<GPS_S>" << "N.A." << "</GPS_S>\n";
-
-      if (metaData.timestamp.GPS == 3435973836)
-	outputFile << "\t<TIMESTAMP_OBDH>" << "N.A." << "</TIMESTAMP_OBDH>\n";
-
+	outputFile << "\t<AOCC_Timestamp_Y>"   <<  1 << "</AOCC_Timestamp_Y>\n";
+      }
+      if (metaData.broadcast.GPS.sec == 3149642683){
+	outputFile2 << "\t<GPS_S>" << "N.A." << "</GPS_S>\n";
+	outputFile2 << "\t<GPS_broadcast_Y>"   <<  1 << "</GPS_broadcast_Y>\n";
+      }
+      if (metaData.timestamp.GPS == 3435973836){
+	outputFile2 << "\t<TIMESTAMP_GPS>" << "N.A." << "</TIMESTAMP_GPS>\n";
+	outputFile2 << "\t<GPS_timestamp_Y>"   <<  1 << "</GPS_timestamp_Y>\n";
+      }
 	  
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
       outputFile << "\t<RUN_NR>"  << metaData.run_id   << "</RUN_NR>\n";

@@ -111,9 +111,37 @@
 		 </table>
 	       </td>
 
-	       <td width="100" height="30" align="center"><xsl:value-of select="GPS_S"/>        </td>
-	       <td width="100" height="30" align="center"><xsl:value-of select="TIMESTAMP_GPS"/>        </td>
+	       <td>
+		 <tr>
 
+		    <xsl:choose>
+		       <xsl:when test="GPS_broadcast_Y &gt;'0'">
+			 <td  bgcolor="#ffff00" width="100" height="30" align="center"> <xsl:value-of select="GPS_S"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="100" height="30" align="center"><xsl:value-of select="GPS_S"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		 </tr>
+	       </td>
+
+	       <td>
+		 <tr>
+
+		    <xsl:choose>
+		       <xsl:when test="GPS_timestamp_Y &gt;'0'">
+			 <td  bgcolor="#ffff00" width="100" height="30" align="center"> <xsl:value-of select="TIMESTAMP_GP"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="100" height="30" align="center"><xsl:value-of select="TIMESTAMP_GP"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		 </tr>
+	       </td>
+
+	     
 	         <td>
 		 <table border="1">
 		   <tr>

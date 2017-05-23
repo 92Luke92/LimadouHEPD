@@ -69,7 +69,7 @@
 		 </tr>		 
 		 <tr>
 		    <td width="100" height="30" align="center"> Time   </td> 
- 		   <td  width="100" height="30" align="center"> (ms) </td>
+ 		   <td  width="200" height="30" align="center"> (ms) </td>
 		 </tr>
 			 
 	       </table>
@@ -157,24 +157,62 @@
 	
 	       </td>
 
-	       <td width="90" height="30" align="center"><xsl:value-of select="AOCC_S"/>        </td>
-	       <td width="70" height="30" align="center"><xsl:value-of select="AOCC_US"/>        </td>
-	       <td width="70" height="30" align="center"><xsl:value-of select="TIMESTAMP_AOCC"/>        </td>
-	       
+	       <td>
+		 <tr>
+
+		    <xsl:choose>
+		       <xsl:when test="AOCC_S_Y &gt;'0'">
+			 <td  bgcolor="#ffff00" width="90" height="30" align="center"> <xsl:value-of select="AOCC_S"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="90" height="30" align="center"><xsl:value-of select="AOCC_S"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		 </tr>
+	       </td>
+
+	       <td>
+		 <tr>
+
+		    <xsl:choose>
+		       <xsl:when test="AOCC_US_Y &gt;'0'">
+			 <td  bgcolor="#ffff00" width="70" height="30" align="center"> <xsl:value-of select="AOCC_US"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="70" height="30" align="center"><xsl:value-of select="AOCC_US"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		 </tr>
+	       </td>
+		     
+	      	       <td>
+		 <tr>
+
+		    <xsl:choose>
+		       <xsl:when test="AOCC_Timestamp_Y &gt;'0'">
+			 <td  bgcolor="#ffff00" width="70" height="30" align="center"> <xsl:value-of select="TIMESTAMP_AOCC"/> </td>
+		       </xsl:when>
+		       <xsl:otherwise>
+			 <td width="70" height="30" align="center"><xsl:value-of select="TIMESTAMP_AOCC"/>        </td>
+		       </xsl:otherwise>
+		     </xsl:choose>
+
+		 </tr>
+		       </td>    
 	      
-
-
 		<td>
 		  <table border="1">
 		   <tr>
 		     <xsl:choose>
 		       <xsl:when test="ABS_TIME_Y &gt;'0'">
-			 <td width="70" height="30" align="center"><xsl:value-of select="TIME_RUN"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="TIME_RUN"/>        </td>
 			 <td  bgcolor="#ffff00" width="200" height="30" align="center"> <xsl:value-of select="ABS_TIME"/> </td>
 			 <td  bgcolor="#ffff00" width="100" height="30" align="center"> <xsl:value-of select="ABS_TIME_ms"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="70" height="30" align="center"><xsl:value-of select="TIME_RUN"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="TIME_RUN"/>        </td>
 			 <td width="200" height="30" align="center"><xsl:value-of select="ABS_TIME"/>        </td>
 			 <td width="100" height="30" align="center"><xsl:value-of select="ABS_TIME_ms"/>        </td>
 		       </xsl:otherwise>
@@ -189,8 +227,8 @@
 		  <table border="1">
 		   <tr>
 
-		     <td width="70" height="30" align="center"><xsl:value-of select="TIME_RUN"/>        </td>
-		     <td width="100" height="30" align="center"><xsl:value-of select="CPU_TIME"/>         </td>
+		     <td width="100" height="30" align="center"><xsl:value-of select="TIME_RUN"/>        </td>
+		     <td width="200" height="30" align="center"><xsl:value-of select="CPU_TIME"/>         </td>
 			             	 	       
 		   </tr>
 		   	   
