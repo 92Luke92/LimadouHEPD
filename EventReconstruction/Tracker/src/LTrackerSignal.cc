@@ -2,7 +2,7 @@
 #include "analysis_const.hh"
 #include <random>
 #include <chrono>
-
+#include <iostream>
 
 void LTrackerSignal::Reset() {
   cls.resize(0);
@@ -43,14 +43,12 @@ void LTrackerSignal::FillRandom(void) {
   return;
 }
 
-void LTrackerSignal::HoldTimeCorrection(const double ALPHA){
-  if(HTCFLAG == true){
-  return; // no double correction
-  }
-  for (auto cit : cls) {
-    for(int icchan = 1; icchan < CLUSTERCHANNELS-1; ++icchan){ //shift of the central channels of the clusters (NOT BORDERS!)
-      cit.count[icchan] = (cit.count[icchan]-ALPHA*cit.count[icchan+1])/(1-ALPHA); //this shift takes in account the channel after the considered one
-    }
+void LTrackerSignal::HoldTimeCorrection(const double HOLDCORRCONST){
+  if(HTCFLAG == true) return; // no double correction
+  for (int icls = 0; icls<cls.size(); ++icls){
+      for(int icchan = 1; icchan < CLUSTERCHANNELS-1; ++icchan){ //shift of the central channels of the clusters (NOT BORDERS!)
+          cls.at(icls).count[icchan] = (cls.at(icls).count[icchan]-HOLDCORRCONST*cls.at(icls).count[icchan+1])/(1.-HOLDCORRCONST);
+      }
   }
   HTCFLAG = true;
   return;

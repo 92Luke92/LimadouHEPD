@@ -197,12 +197,12 @@ int LReco01Manager::LoadInpFileList(void) {
   while(1) {
     std::string fname;
     istr >> fname;
-    if(istr.eof()) break;
     if(CheckInputFile(fname)) L0fname.push_back(fname);
     else {
       std::cout << __LRECO01MANAGER__ << "File \"" << fname << "\" does not look "
 		<< " a good LEvRec0File." << std::endl;
     }
+    if(istr.eof()) break;
   }
   int result = L0fname.size();
   std::cout << __LRECO01MANAGER__ << result << " files about to be processed." << std::endl;
