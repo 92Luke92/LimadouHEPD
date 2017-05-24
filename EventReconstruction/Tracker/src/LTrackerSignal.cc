@@ -2,7 +2,6 @@
 #include "analysis_const.hh"
 #include <random>
 #include <chrono>
-#include <iostream>
 
 void LTrackerSignal::Reset() {
   cls.resize(0);
