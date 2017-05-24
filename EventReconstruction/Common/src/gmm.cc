@@ -32,7 +32,7 @@ void GMM::init() {
 float GMM::normal_pdf(float x, float mu, float sigma) {
    static const float inv_sqrt_2pi = 0.3989422804014327;
    float a = (x - mu) / sigma;
-   return inv_sqrt_2pi / sigma * std::exp(-0.5f * a * a);
+   return inv_sqrt_2pi / sigma * exp(-0.5f * a * a);
 }
 
 
