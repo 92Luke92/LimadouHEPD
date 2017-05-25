@@ -20,14 +20,11 @@ public:
   static LTrackerCalibrationManager& GetInstance();
   
   int LoadRun(const char *fileInp);
-  void SetTargetRuns(const int InitialRun, const int FinalRun=-1);
   LTrackerCalibration* Calibrate(const int nEvents=-1, const int skipEvents=-1);
   inline bool SetVerbosity(const bool boolFLAG) { verboseFLAG = boolFLAG; return verboseFLAG; };
   
 private:
   LEvRec0File *calRunFile;  // pointer to the run used for calibration
-  int InitialTargetRun;     // Run id of first target run
-  int FinalTargetRun;       // Run id of last target run
   LTrackerCalibrationManager();
   
   // CalibrationSlots

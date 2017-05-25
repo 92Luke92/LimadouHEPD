@@ -21,16 +21,17 @@ private:
   std::string inpFileList;
   std::string inpRunMode;
   std::string outDirectory;
+  std::string outFormat;
   int skipEvents, skipFileEvents, maxEvents, maxFileEvents, trackerSlotEvents;
-  int InitialTargetRun, FinalTargetRun;
     
   void LoadRun(const char *fileInp);
-  void SetTargetRuns(const int InitialRun, const int FinalRun=-1);
   LCalibrationManager();
   ~LCalibrationManager();
   void Reset();
   bool CheckLoadedSteering(void) const;
-
+  std::string GetWriteOutName(const std::string fname);
+  void RunOnRun(const std::string fname);
+ 
 
   /*  
   // C++ 03

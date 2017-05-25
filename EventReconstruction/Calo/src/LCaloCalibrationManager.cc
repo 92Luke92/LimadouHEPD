@@ -10,8 +10,6 @@
 
 LCaloCalibrationManager::LCaloCalibrationManager() {
   calRunFile = 0;
-  InitialTargetRun = -1;
-  FinalTargetRun = -1;
   verboseFLAG = true;
   __skipEv = 0;
   __nEv = 0;
@@ -31,8 +29,6 @@ int LCaloCalibrationManager::LoadRun(const char *fileInp) {
     if (calRunFile->IsOpen()) calRunFile->Close();
     calRunFile = 0;
     // Sure we want also to reset the target runs? Today we reply yes... check
-    InitialTargetRun = -1;
-    FinalTargetRun = -1;
     __skipEv = 0;
     __nEv = 0;
   }
@@ -47,15 +43,6 @@ int LCaloCalibrationManager::LoadRun(const char *fileInp) {
     return -999;
   }
   return 0;
-}
-
-//---------------------------------------------------------------------------
-
-void LCaloCalibrationManager::SetTargetRuns(const int InitialRun,
-                                            const int FinalRun) {
-  InitialTargetRun = InitialRun;
-  FinalTargetRun = FinalRun;
-  return;
 }
 
 //---------------------------------------------------------------------------
@@ -420,8 +407,7 @@ LCaloCalibration *LCaloCalibrationManager::Calibrate(const bool isHG,
 
   int RunId = calRunFile->GetRunId();
   LCaloCalibration *result =
-      new LCaloCalibration(RunId, InitialTargetRun, FinalTargetRun, ped,
-                           sigma);  //, outliers, skewness, kurtosis);
+      new LCaloCalibration(RunId, ped, sigma);  //, outliers, skewness, kurtosis);
 
   return result;
 }

@@ -8,7 +8,7 @@
 class LTrackerCalibration {
 public:
   LTrackerCalibration();
-  LTrackerCalibration(const int RunIdINP, const int InitialTargetRunINP, const int FinalTargetRun);
+  LTrackerCalibration(const int RunIdINP);
   void Add(const LTrackerCalibrationSlot *lcal);
   void Write(const char *fileOut) const;
   void Write(std::ofstream *fileOut) const;
@@ -17,8 +17,6 @@ public:
   inline LTrackerCalibrationSlot GetTrackerCalibrationSlot(const int nSlot) const {return calarray.at(nSlot);};
   inline int GetNSlots() const {return nSlots;};
   inline int GetRunId() const {return RunId;};
-  inline int GetInitialTargetRun() const {return InitialTargetRun;};
-  inline int GetFinalTargetRun() const {return FinalTargetRun;};
   inline const double* GetSigmaRaw(const int nSlot) const {return calarray.at(nSlot).GetSigmaRaw();};
   inline const double* GetPedestal(const int nSlot) const {return calarray.at(nSlot).GetPedestal();};
   inline const double* GetSigma(const int nSlot) const {return calarray.at(nSlot).GetSigma();};
@@ -36,8 +34,6 @@ private:
   // Calib infos
   int RunId;
   int nSlots;
-  int InitialTargetRun;
-  int FinalTargetRun;
   std::vector<LTrackerCalibrationSlot> calarray;
 
   void Reset();

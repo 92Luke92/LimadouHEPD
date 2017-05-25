@@ -18,22 +18,17 @@ LTrackerCalibration::LTrackerCalibration() {
 void LTrackerCalibration::Reset(void) {
   RunId=-99999;
   nSlots=0;
-  InitialTargetRun=-99999;
-  FinalTargetRun=-99999;
   calarray.resize(0);
   return;
 }
 
-LTrackerCalibration::LTrackerCalibration(const int RunIdINP,  const int InitialTargetRunINP, const int FinalTargetRunINP) {
+LTrackerCalibration::LTrackerCalibration(const int RunIdINP) {
   RunId=RunIdINP;
   nSlots=0;
-  InitialTargetRun=InitialTargetRunINP;
-  FinalTargetRun=FinalTargetRunINP;
 }
 
 void LTrackerCalibration::Write(std::ofstream *output) const {
   *output << RunId << std::endl;
-  *output << InitialTargetRun << " " << FinalTargetRun << std::endl;
   *output << nSlots << std::endl;
 
   for(auto cslotit : calarray) cslotit.Write(output);
@@ -54,14 +49,14 @@ void LTrackerCalibration::Write(const char *fileOut) const {
 
 LTrackerCalibration* LTrackerCalibration::Read(std::ifstream *input) {
   
-  int RunIdST, InitialTargetRunST, FinalTargetRunST, nSlotsST;
+  int RunIdST, nSlotsST;
 
   *input >> RunIdST;
-  *input >> InitialTargetRunST >> FinalTargetRunST;
 
-  LTrackerCalibration *result = new LTrackerCalibration(RunIdST, InitialTargetRunST, FinalTargetRunST);
+  LTrackerCalibration *result = new LTrackerCalibration(RunIdST);
 
   *input >> nSlotsST;
+  std::cout << "nSlotsST " << nSlotsST << std::endl << std::flush;
   for(int is=0; is<nSlotsST; ++is) result->Add(LTrackerCalibrationSlot::Read(input));
 
   return result;
@@ -87,8 +82,6 @@ LTrackerCalibration& LTrackerCalibration::operator=(const LTrackerCalibration& o
   }
   // In/out run info
   RunId = other.GetRunId();
-  InitialTargetRun = other.GetInitialTargetRun();
-  FinalTargetRun = other.GetFinalTargetRun();
 
   return *this;
 }
@@ -122,9 +115,6 @@ LTrackerCalibration& LTrackerCalibration::operator+=(const LTrackerCalibration& 
 
   // In/out run info
   RunId = rhs.GetRunId();
-  InitialTargetRun = rhs.GetInitialTargetRun();
-  FinalTargetRun = rhs.GetFinalTargetRun();
-
   
   return *this; // return the result by reference
 }

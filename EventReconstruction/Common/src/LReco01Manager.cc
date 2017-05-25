@@ -97,6 +97,8 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
 
 
 void LReco01Manager::Run(void) {
+  std::cout << "      warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ \n THE SYSTEM IS MIGRATING TOWARDS RECO01 APPLICATIONS RUNNING ON 1 FILE ONLY \n               !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  " << std::endl;
+
   if(steeringLoadedFLAG==false) {
     std::cout << __LRECO01MANAGER__ << "How to run? Steering file never loaded!" << std::endl;
     return;
@@ -120,7 +122,7 @@ void LReco01Manager::Run(void) {
     for(int i0=0; i0<nentries; ++i0){
       if(i0%PRINTOUTEVENTS==0) {
 	std::cout << __LRECO01MANAGER__
-		  <<"event " << i0 << "/" <<nentries;
+		  <<"event " << i0 << "/" <<nentries << std::endl;
       }
       inFile->GetEntry(i0);
       if(i0==0) NewOutFile();
@@ -164,18 +166,31 @@ void LReco01Manager::NewOutFile(void) {
 
 std::string LReco01Manager::L0NameToL1Name(void) { // Naming convention needed!
   std::string l0name=inFile->GetName();
-  size_t last_slash = l0name.find_last_of('/');
-  if(last_slash==std::string::npos) last_slash=0;
-  size_t last_dot =  l0name.find_last_of('.');
-  if(last_dot==std::string::npos) {
-    std::cerr << __LRECO01MANAGER__ << "Error: file \"" << l0name << "\" has not suffix." << std::endl;
-    return 0;
+  std::string l1name=l0name;
+  
+  // Getting the basename
+  size_t index=l1name.rfind("/");
+  l1name.erase(l1name.begin(),l1name.begin()+index+1);
+
+  // Replacing L0 --> L1                                               
+  index=0;
+  while(true) {
+    /* Locate the substring to replace. */
+    index = l1name.find("L0", index);
+    if (index == std::string::npos) break;
+
+    /* Make the replacement. */
+    l1name.replace(index, 2, "L1");
+
+    /* Advance index forward so the next iteration doesn't pick it up as well. \
+     */
+    index += 6;
   }
-  std::string l1name=outDirectory + "/"
-    + l0name.substr(last_slash,last_dot)
-    + "_L1.root";
-  std::cout << __LRECO01MANAGER__ << "Output file name \"" << l1name << "\"" << std::endl;
-  return l1name;
+  // No need to change the suffix
+  std::string result=outDirectory + "/" + l1name;
+  
+  std::cout << __LRECO01MANAGER__ << "Output file name \"" << result << "\"" << std::endl;
+  return result;
 }
 
 
@@ -197,7 +212,7 @@ int LReco01Manager::LoadInpFileList(void) {
   while(1) {
     std::string fname;
     istr >> fname;
-    if(CheckInputFile(fname)) L0fname.push_back(fname);
+    if(fname!="" && CheckInputFile(fname)) L0fname.push_back(fname);
     else {
       std::cout << __LRECO01MANAGER__ << "File \"" << fname << "\" does not look "
 		<< " a good LEvRec0File." << std::endl;

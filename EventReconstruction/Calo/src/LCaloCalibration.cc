@@ -9,8 +9,6 @@ LCaloCalibration::LCaloCalibration() {
 
 void LCaloCalibration::Reset(void) {
   RunId=-99999;
-  InitialTargetRun=-99999;
-  FinalTargetRun=-99999;
   for(int iPmt=0; iPmt<NPMT; ++iPmt) {
     pedestal[iPmt]=0.;
     sigma[iPmt]=0.;
@@ -22,14 +20,11 @@ void LCaloCalibration::Reset(void) {
 }
 
 LCaloCalibration::LCaloCalibration(const int RunIdINP,
-				   const int InitialTargetRunINP, const int FinalTargetRunINP,
 				   const double* ped, const double *rms) {  // outliers? momenta 3-4?
   //                               const int* outl,
   //                               const double* skew, const double* kurt);
 
   RunId=RunIdINP;
-  InitialTargetRun=InitialTargetRunINP;
-  FinalTargetRun=FinalTargetRunINP;
   for(int iChan=0; iChan<NPMT; ++iChan) {
     pedestal[iChan]=ped[iChan];
     sigma[iChan]=rms[iChan];
@@ -44,7 +39,6 @@ void LCaloCalibration::Write(std::ofstream *output) const {
   std::cout << __LCALOCALIBRATION__ << "Calibration file writing..." << std::endl;
 
   *output << RunId << std::endl;
-  *output << InitialTargetRun << " " << FinalTargetRun << std::endl;
   for(int iChan=0; iChan<NPMT; ++iChan) {
     *output << pedestal[iChan] << " " << sigma[iChan] << " "
       /*	   << outliers[iChan] << " "
@@ -68,7 +62,7 @@ void LCaloCalibration::Write(const char *fileOut) const {
 
 LCaloCalibration* LCaloCalibration::Read(std::ifstream *input) {
 
-  int RunIdST, InitialTargetRunST, FinalTargetRunST;
+  int RunIdST;
   double pedestalST[NPMT];
   double sigmaST[NPMT];
   /*  int outliersST[NPMT];
@@ -77,7 +71,6 @@ LCaloCalibration* LCaloCalibration::Read(std::ifstream *input) {
   */
 
   *input >> RunIdST;
-  *input >> InitialTargetRunST >> FinalTargetRunST;
 
   for(int iChan=0; iChan<NPMT; ++iChan) {
     *input >> pedestalST[iChan] >>  sigmaST[iChan];
@@ -87,7 +80,7 @@ LCaloCalibration* LCaloCalibration::Read(std::ifstream *input) {
   }
   std::cout << __LCALOCALIBRATION__ << "Calibration file read." << std::endl << std::flush;;
 
-  LCaloCalibration *result = new LCaloCalibration(RunIdST, InitialTargetRunST, FinalTargetRunST,
+  LCaloCalibration *result = new LCaloCalibration(RunIdST,
 						  pedestalST, sigmaST);//, outliersST, skewnessST, kurtosisST);
   std::cout << __LCALOCALIBRATION__ << "Calo calibration created (" << &result << ")" << std::endl << std::flush;
 
@@ -114,8 +107,6 @@ LCaloCalibration& LCaloCalibration::operator=(const LCaloCalibration& other) {
 
   // In/out run info
   RunId = other.GetRunId();
-  InitialTargetRun = other.GetInitialTargetRun();
-  FinalTargetRun = other.GetFinalTargetRun();
 
   return *this;
 }
@@ -155,8 +146,6 @@ LCaloCalibration& LCaloCalibration::operator+=(const LCaloCalibration& rhs) // c
 
   // In/out run info
   RunId = std::min(RunId, rhs.GetRunId());
-  InitialTargetRun = std::min(InitialTargetRun, rhs.GetInitialTargetRun());
-  FinalTargetRun = std::max(FinalTargetRun, rhs.GetFinalTargetRun());
 
   return *this; // return the result by reference
 }

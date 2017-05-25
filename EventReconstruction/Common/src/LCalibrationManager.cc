@@ -29,6 +29,8 @@ void LCalibrationManager::LoadSteering(const char* steerFileIN) {
   inpRunMode = steer.GetParameter<std::string>("RUNMODE");
   // Output folder
   outDirectory = steer.GetParameter<std::string>("OUTFOLD");
+  // Output format
+  outFormat = steer.GetParameter<std::string>("OUTFORM");
   // Events to skip at the beginning
   skipFileEvents = steer.GetParameter<int>("SKIPEVTS");
   // Events to skip at the beginning of each file
@@ -39,17 +41,16 @@ void LCalibrationManager::LoadSteering(const char* steerFileIN) {
   maxFileEvents = steer.GetParameter<int>("MAXFEVTS");
   // Tracker slot events
   trackerSlotEvents = steer.GetParameter<int>("SLOTEVTS");
-  // Initial and Final Target Runs
-  InitialTargetRun = steer.GetParameter<int>("INITRUN");
-  FinalTargetRun = steer.GetParameter<int>("FINRUN");
   // Verbosity
   verboseFLAG = steer.GetParameter<bool>("VERBOSE");
 
   std::cout << __LCALIBRATIONMANAGER__ << "Steering file loaded." << std::endl;
   steeringLoadedFLAG=true;
 
-  if(!CheckLoadedSteering()) Reset();
-
+  if(!CheckLoadedSteering()) {
+    std::cout << __LCALIBRATIONMANAGER__ << "LCalibrationManager reset." << std::endl;
+    Reset();
+  }
   return;
 }
 
@@ -58,6 +59,7 @@ void LCalibrationManager::Reset(void) {
   inpFileList="";
   inpRunMode="";
   outDirectory="";
+  outFormat="";
   skipEvents=-1;
   skipFileEvents=-1;
   maxEvents=-1;
@@ -65,8 +67,6 @@ void LCalibrationManager::Reset(void) {
   trackerSlotEvents=-1;
   verboseFLAG=true;
   steeringLoadedFLAG=false;
-  InitialTargetRun=-1;
-  FinalTargetRun=-1;
   return;
 }
 
@@ -76,37 +76,63 @@ void LCalibrationManager::Run() {
     return;
   }
 
-  std::vector<std::string> fnames;
   std::ifstream istr(inpFileList, std::ifstream::in);
   std::string line;
   while(getline(istr,line)) {
     if(line=="") continue;
-    fnames.push_back(line);
+    RunOnRun(line);
   }
-
-  std::vector<LCalibration*> cal_vector;
-  for(auto fname : fnames) {
-    LoadRun(fname.c_str());
-    std::cout << __LCALIBRATIONMANAGER__ << "Processing file " << fname << "..." << std::endl;
-    SetTargetRuns(InitialTargetRun,FinalTargetRun);
-    cal_vector.push_back(Calibrate());
-  }
-
-  LCalibration outcal=(*cal_vector.front());
-  int counter=1;
-  for(auto cit = std::next(cal_vector.begin()); cit!= cal_vector.end(); ++cit) {
-    outcal+=(**cit); // be careful: no weighting for the actual number of events we calibrated on
-    ++counter;
-  }
-  outcal/=(static_cast<double>(counter));
-
-  std::string outName = outDirectory + "/"
-    + outcal.GetWriteOutNameBase()
-    + "___inpRunMode_" + inpRunMode
-    + ".cal";
-  outcal.Write(outName.c_str());
 
   return;
+}
+
+void LCalibrationManager::RunOnRun(const std::string fname) {
+  LoadRun(fname.c_str());
+  std::cout << __LCALIBRATIONMANAGER__ << "Processing file " << fname << "..." << std::endl;
+  LCalibration *outcal = Calibrate();
+  
+  std::string outName = outDirectory + "/"
+    + GetWriteOutName(fname);
+
+  if(outFormat == "TXT") outcal->WriteTXT(outName.c_str());
+  //  else if(outFormat == "ROOT") outcal->WriteROOT(outName.c_str());
+
+  return;
+}
+
+
+std::string LCalibrationManager::GetWriteOutName(const std::string fname) {
+  std::string result = fname;
+
+  // Getting the basename
+  size_t index=result.rfind("/");
+  result.erase(result.begin(),result.begin()+index+1);
+  
+  // Replacing Events --> CalOff
+  index=0;
+  while(true) {
+    /* Locate the substring to replace. */
+    index = result.find("Events", index);
+    if (index == std::string::npos) break;
+
+    /* Make the replacement. */
+    result.replace(index, 6, "CalOff");
+
+    /* Advance index forward so the next iteration doesn't pick it up as well. */
+    index += 6;
+  }
+
+  // New  suffix
+  result.erase(result.end()-5,result.end());
+
+  std::string new_suffix="";
+  if(outFormat=="TXT") new_suffix = std::string(".txt");
+  else if (outFormat=="ROOT") new_suffix = std::string(".root");
+  result += new_suffix;
+
+  std::cout << result << std::endl << std::flush;
+
+  return result;
 }
 
 
@@ -123,6 +149,7 @@ bool LCalibrationManager::CheckLoadedSteering(void) const {
     result=false;
   }
   istr.close();
+
   if(inpRunMode.compare("virgin")!=0 &&
      inpRunMode.compare("compressed")!=0 &&
      inpRunMode.compare("mixed")!=0 ) {
@@ -137,14 +164,18 @@ bool LCalibrationManager::CheckLoadedSteering(void) const {
     result=false;
   }
 
+  if(outFormat.compare("TXT")!=0 &&
+     outFormat.compare("ROOT")!=0 ) {
+    std::cout << __LCALIBRATIONMANAGER__ << "Output format " << outFormat << " unknown." << std::endl;
+    result=false;
+  }
+
   if(skipEvents<0 && skipEvents!=-1) result=false;
   if(skipFileEvents<0 && skipFileEvents!=-1) result=false;
   if(maxEvents<0 && maxEvents!=-1) result=false;
   if(maxFileEvents<0 && maxFileEvents!=-1) result=false;
   if(trackerSlotEvents<0 && trackerSlotEvents!=-1) result=false;
-  if(InitialTargetRun<0 && InitialTargetRun!=-1) result=false;
-  if(FinalTargetRun<0 && FinalTargetRun!=-1) result=false;
-
+  
   std::cout << __LCALIBRATIONMANAGER__ << "Temptative calibration parameters:" << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  inpFileList  " << inpFileList << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  inpRunMode   " << inpRunMode << std::endl;
@@ -154,8 +185,6 @@ bool LCalibrationManager::CheckLoadedSteering(void) const {
   std::cout << __LCALIBRATIONMANAGER__ << "  skipEvents   " << skipEvents << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  skipFEvents  " << skipFileEvents << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  slotEvents   " << trackerSlotEvents << std::endl;
-  std::cout << __LCALIBRATIONMANAGER__ << "  IniTargetRun " << InitialTargetRun << std::endl;
-  std::cout << __LCALIBRATIONMANAGER__ << "  FinTargetRun " << FinalTargetRun << std::endl;
 
   if(result==false) {
     std::cout << __LCALIBRATIONMANAGER__ << "something is wrong or missing in the steering file" << std::endl;
@@ -192,15 +221,6 @@ void LCalibrationManager::LoadRun(const char *fileInp) {
   LTrackerCalibrationManager::GetInstance().LoadRun(fileInp);
   LCaloCalibrationManager::GetInstance().LoadRun(fileInp);
 
-  return;
-}
-
-
-//---------------------------------------------------------------------------
-
-void LCalibrationManager::SetTargetRuns(const int InitialRun, const int FinalRun) {
-  LTrackerCalibrationManager::GetInstance().SetTargetRuns(InitialRun, FinalRun);
-  LCaloCalibrationManager::GetInstance().SetTargetRuns(InitialRun, FinalRun);
   return;
 }
 

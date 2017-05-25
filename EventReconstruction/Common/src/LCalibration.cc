@@ -24,8 +24,6 @@ void LCalibration::Reset() {
   }
   InitialRunId = DEFAULT;
   FinalRunId = DEFAULT;
-  InitialTargetRun = DEFAULT;
-  FinalTargetRun = DEFAULT;
   return;
 }
 
@@ -37,19 +35,17 @@ LCalibration::LCalibration(LCaloCalibration *calo_HG_IN,
   tracker = tracker_IN;
   InitialRunId = calo_HG_IN->GetRunId();
   FinalRunId = calo_HG_IN->GetRunId();
-  InitialTargetRun = DEFAULT;
-  FinalTargetRun = DEFAULT;
 }
   
-void LCalibration::Write(const char *fileOut) const {
+void LCalibration::WriteTXT(const char *fileOut) const {
   std::cout << __LCALIBRATION__ << "Writing calibration file " << fileOut << "..." << std::endl;
   std::ofstream output(fileOut, std::ofstream::out); 
-  Write(&output);
+  WriteTXT(&output);
   output.close();
   return;
 }
 
-void LCalibration::Write(std::ofstream *fileOut) const {
+void LCalibration::WriteTXT(std::ofstream *fileOut) const {
   calo_HG->Write(fileOut);
   calo_LG->Write(fileOut);
   tracker->Write(fileOut);
@@ -90,8 +86,6 @@ bool LCalibration::CheckStatus(void) const {
 LCalibration& LCalibration::operator=(const LCalibration& other) {
   InitialRunId = other.GetInitialRunId();
   FinalRunId = other.GetFinalRunId();
-  InitialTargetRun = other.GetInitialTargetRun();
-  FinalTargetRun = other.GetFinalTargetRun();
 
   calo_HG = new LCaloCalibration();
   (*calo_HG) = (*other.GetCaloHGCalibration());
@@ -118,8 +112,6 @@ LCalibration& LCalibration::operator+=(const LCalibration& rhs) // compound assi
   // In/out run info
   InitialRunId = std::min(InitialRunId, rhs.GetInitialRunId());
   FinalRunId = std::max(FinalRunId, rhs.GetFinalRunId());
-  InitialTargetRun = std::min(InitialTargetRun, rhs.GetInitialTargetRun());
-  FinalTargetRun = std::max(FinalTargetRun, rhs.GetFinalTargetRun());
 
   return *this; // return the result by reference
 }
@@ -144,19 +136,5 @@ LCalibration& LCalibration::operator/=(const double& rhs) {
 
 
 
-std::string LCalibration::GetWriteOutNameBase(void) {
-  std::ostringstream ostr;
-  ostr << "CalPar___Runs_";
-  if(GetInitialRunId()==DEFAULT) ostr << "DEF"; else  ostr << GetInitialRunId(); 
-  ostr << "_";
-  if(GetFinalRunId()==DEFAULT) ostr << "DEF"; else ostr << GetFinalRunId();
-  ostr << "___target_";
-  if(GetInitialTargetRun()==DEFAULT) ostr << "DEF"; else ostr << GetInitialTargetRun();
-  ostr << "_";
-  if(GetFinalTargetRun()==DEFAULT) ostr << "DEF"; else ostr << GetFinalTargetRun();
-  // no suffix!
-  std::string result=ostr.str();
-  return result;
-}
 
  
