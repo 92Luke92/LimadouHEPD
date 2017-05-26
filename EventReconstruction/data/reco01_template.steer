@@ -1,8 +1,8 @@
 # This is a test for the Reco01 utility
 // comments may be placed anywhere in this file
 
-std::string 	CALBFILE  test.cal		// calibration file
-std::string	INPLIST	  inputFiles.list	// input file list
+std::string 	CALBFILE  /Users/roberto/work/LIMADOU/EventReconstruction/build/exe/calib_dir/Data-20090101-024910-CalOff-00108_00001-p00_L0.txt		// calibration file
+std::string	INPFILE   /Users/roberto/work/LIMADOU/DATA_SAMPLES/virgin/Data-20090101-024910-Events-00108_00001-p00_L0.root  // input file
 std::string	OUTFOLD	  outdir		// output dir
 
 int		MAXEVTS	  -1			// max number of events to process (-1 is all)
