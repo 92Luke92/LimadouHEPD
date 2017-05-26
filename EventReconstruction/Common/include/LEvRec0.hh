@@ -30,8 +30,9 @@ public:
    
   void DumpStrip(void) const;
   void DumpEventIndex() const;
-  bool IsCompressed() const;
+  bool IsZeroSuppressed() const;
   bool IsVirgin() const;
+  bool IsMixed() const;
 };
 
 

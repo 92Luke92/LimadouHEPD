@@ -45,7 +45,7 @@ void LEvRec0::DumpEventIndex() const{
 }
 
 
-bool  LEvRec0::IsCompressed(void) const {
+bool  LEvRec0::IsZeroSuppressed(void) const {
    bool ret = false;
    //std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
    if (runType == 0x36 )
@@ -57,7 +57,16 @@ bool  LEvRec0::IsCompressed(void) const {
 bool  LEvRec0::IsVirgin(void) const {
    bool ret = false;
    //std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
-   if (runType == 0x4e ||runType == 0x634e )
+   if (runType == 0x4e )
+      ret = true;
+   
+   return ret;
+}
+
+bool  LEvRec0::IsMixed(void) const {
+   bool ret = false;
+   //std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
+   if (runType == 0x63 )
       ret = true;
    
    return ret;
