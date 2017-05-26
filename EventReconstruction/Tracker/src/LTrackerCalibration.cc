@@ -56,7 +56,6 @@ LTrackerCalibration* LTrackerCalibration::Read(std::ifstream *input) {
   LTrackerCalibration *result = new LTrackerCalibration(RunIdST);
 
   *input >> nSlotsST;
-  std::cout << "nSlotsST " << nSlotsST << std::endl << std::flush;
   for(int is=0; is<nSlotsST; ++is) result->Add(LTrackerCalibrationSlot::Read(input));
 
   return result;
