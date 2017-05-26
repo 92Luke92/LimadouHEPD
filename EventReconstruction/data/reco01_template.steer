@@ -2,7 +2,7 @@
 // comments may be placed anywhere in this file
 
 std::string 	CALBFILE  test.cal		// calibration file
-std::string	INPLIST	  inputFiles.list	// input file list
+std::string	INPFILE	  inputFile		// input file
 std::string	OUTFOLD	  outdir		// output dir
 
 int		MAXEVTS	  -1			// max number of events to process (-1 is all)
