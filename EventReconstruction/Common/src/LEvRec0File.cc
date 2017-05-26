@@ -4,6 +4,7 @@ LEvRec0File::LEvRec0File() {
   fFile=0;
   fTree=0;
   RunId=-999;
+  BootNr=-999;
 }
 
 LEvRec0File::LEvRec0File(const char *inpFile) {
@@ -18,8 +19,11 @@ void LEvRec0File::Open(const char *inpFile) {
   TTree *Tmd = (TTree*)fFile->Get("Tmd");
   unsigned short run_id;
   Tmd->SetBranchAddress("run_id",&run_id);
+  unsigned short boot_nr;
+  Tmd->SetBranchAddress("boot_nr",&boot_nr);
   Tmd->GetEntry(0);
   RunId = static_cast<int>(run_id);
+  BootNr = static_cast<int>(boot_nr);
 
   return;
 }
@@ -35,25 +39,24 @@ void LEvRec0File::Reset() {
 }
 
 int LEvRec0File::SetTheEventPointer(LEvRec0 &ev) {
-  fTree->SetBranchAddress("strip[4608]",&ev.strip);
-  fTree->SetBranchAddress("trigger_index", &ev.trigger_index);
-  fTree->SetBranchAddress("hepd_time", &ev.hepd_time);
+  fTree->SetBranchAddress("runType", &ev.runType);
+  fTree->SetBranchAddress("boot_nr", &ev.boot_nr);
+  fTree->SetBranchAddress("run_id", &ev.run_id);
   fTree->SetBranchAddress("event_index", &ev.event_index);
   fTree->SetBranchAddress("event_length", &ev.event_length);
+  fTree->SetBranchAddress("trigger_index", &ev.trigger_index);
+  fTree->SetBranchAddress("hepd_time", &ev.hepd_time);
   fTree->SetBranchAddress("pmt_high[64]", &ev.pmt_high);
   fTree->SetBranchAddress("pmt_low[64]", &ev.pmt_low);
+  fTree->SetBranchAddress("PMTBoard_trigger_counter", &ev.PMTBoard_trigger_counter);
+  fTree->SetBranchAddress("lost_trigger", &ev.lost_trigger);
   fTree->SetBranchAddress("rate_meter[9]", &ev.rate_meter);
   fTree->SetBranchAddress("trigger_flag[64]", &ev.trigger_flag);
   fTree->SetBranchAddress("alive_time", &ev.alive_time);
   fTree->SetBranchAddress("dead_time", &ev.dead_time);
-
-  //  fTree->SetBranchStatus("*",kFALSE);
-  fTree->SetBranchStatus("strip[4608]",kTRUE);
-  fTree->SetBranchStatus("event_index",kTRUE);
-  fTree->SetBranchStatus("pmt_high[64]",kTRUE);
-  fTree->SetBranchStatus("pmt_low[64]",kTRUE);
+  fTree->SetBranchAddress("strip[4608]",&ev.strip);
   
-  
+  fTree->SetBranchStatus("*",kTRUE);
   
   return 0;
 }

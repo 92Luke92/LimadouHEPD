@@ -15,10 +15,24 @@ void LEvRec1::FillRandom() {
   scint.FillRandom();
   veto.FillRandom();
   lyso.FillRandom();
+  // other values left as default
   return;
 }
 
 void LEvRec1::Reset(){
+  runType = 0x0;
+  boot_nr=0;
+  run_id=0;
+  event_index=0;
+  event_length=0;
+  trigger_index=0;
+  hepd_time=0;
+  PMTBoard_trigger_counter = 0;
+  lost_trigger=0;
+  for(int i=0; i<NRATEMETER; ++i) rate_meter[i]=0;
+  alive_time=0;
+  dead_time=0;
+
   tracker.Reset();
   trig.Reset();
   scint.Reset();
@@ -73,6 +87,20 @@ void LEvRec1::DumpLyso() const {
 void LEvRec1::CopyFromLEvRec1Stream(const LEvRec1Stream evstr) {
   Reset();
   
+  // info other than signal
+  runType = evstr.runType;
+  boot_nr = evstr.boot_nr; 
+  run_id = evstr.run_id;
+  event_index = evstr.event_index;
+  event_length = evstr.event_length;
+  trigger_index = evstr.trigger_index;
+  hepd_time = evstr.hepd_time;
+  PMTBoard_trigger_counter  = evstr.PMTBoard_trigger_counter;
+  lost_trigger = evstr.lost_trigger;
+  for(int i=0; i<NRATEMETER; ++i) rate_meter[i] = evstr.rate_meter[i];
+  alive_time = evstr.alive_time;
+  dead_time = evstr.dead_time;
+
   // tracker
   for(int i=0; i<evstr.nClusters; ++i) {
     LTrackerCluster cl;
@@ -105,6 +133,7 @@ void LEvRec1::CopyFromLEvRec1Stream(const LEvRec1Stream evstr) {
       trig.sn_hg[iu][ip]=evstr.trigger_snHG[iu*npmts+ip];
       trig.cont_lg[iu][ip]=evstr.trigger_countLG[iu*npmts+ip];
       trig.sn_lg[iu][ip]=evstr.trigger_snLG[iu*npmts+ip];
+      trig.trigger_flag[iu][ip]=evstr.trigger_trigger_flag[iu*npmts+ip];
     }
   }
   nunits=scint.GetNUnits();
@@ -115,6 +144,7 @@ void LEvRec1::CopyFromLEvRec1Stream(const LEvRec1Stream evstr) {
       scint.sn_hg[iu][ip]=evstr.scint_snHG[iu*npmts+ip];
       scint.cont_lg[iu][ip]=evstr.scint_countLG[iu*npmts+ip];
       scint.sn_lg[iu][ip]=evstr.scint_snLG[iu*npmts+ip];
+      scint.trigger_flag[iu][ip]=evstr.scint_trigger_flag[iu*npmts+ip];
     }
   }
   nunits=veto.GetNUnits();
@@ -125,6 +155,7 @@ void LEvRec1::CopyFromLEvRec1Stream(const LEvRec1Stream evstr) {
       veto.sn_hg[iu][ip]=evstr.veto_snHG[iu*npmts+ip];
       veto.cont_lg[iu][ip]=evstr.veto_countLG[iu*npmts+ip];
       veto.sn_lg[iu][ip]=evstr.veto_snLG[iu*npmts+ip];
+      veto.trigger_flag[iu][ip]=evstr.veto_trigger_flag[iu*npmts+ip];
     }
   }
   nunits=lyso.GetNUnits();
@@ -135,6 +166,7 @@ void LEvRec1::CopyFromLEvRec1Stream(const LEvRec1Stream evstr) {
       lyso.sn_hg[iu][ip]=evstr.lyso_snHG[iu*npmts+ip];
       lyso.cont_lg[iu][ip]=evstr.lyso_countLG[iu*npmts+ip];
       lyso.sn_lg[iu][ip]=evstr.lyso_snLG[iu*npmts+ip];
+      lyso.trigger_flag[iu][ip]=evstr.lyso_trigger_flag[iu*npmts+ip];
     }
   }
 
@@ -186,6 +218,7 @@ void LEvRec1Stream::CopyFromLEvRec1(const LEvRec1 event) {
       trigger_snHG[iu*npmts+ip]=event.trig.sn_hg[iu][ip];
       trigger_countLG[iu*npmts+ip]=event.trig.cont_lg[iu][ip];
       trigger_snLG[iu*npmts+ip]=event.trig.sn_lg[iu][ip];
+      trigger_trigger_flag[iu*npmts+ip]=event.trig.trigger_flag[iu][ip];
     }
   }
 
@@ -197,6 +230,7 @@ void LEvRec1Stream::CopyFromLEvRec1(const LEvRec1 event) {
       scint_snHG[iu*npmts+ip]=event.scint.sn_hg[iu][ip];
       scint_countLG[iu*npmts+ip]=event.scint.cont_lg[iu][ip];
       scint_snLG[iu*npmts+ip]=event.scint.sn_lg[iu][ip];
+      scint_trigger_flag[iu*npmts+ip]=event.scint.trigger_flag[iu][ip];
     }
   }
 
@@ -208,6 +242,7 @@ void LEvRec1Stream::CopyFromLEvRec1(const LEvRec1 event) {
       veto_snHG[iu*npmts+ip]=event.veto.sn_hg[iu][ip];
       veto_countLG[iu*npmts+ip]=event.veto.cont_lg[iu][ip];
       veto_snLG[iu*npmts+ip]=event.veto.sn_lg[iu][ip];
+      veto_trigger_flag[iu*npmts+ip]=event.veto.trigger_flag[iu][ip];
     }
   }
 
@@ -219,8 +254,39 @@ void LEvRec1Stream::CopyFromLEvRec1(const LEvRec1 event) {
       lyso_snHG[iu*npmts+ip]=event.lyso.sn_hg[iu][ip];
       lyso_countLG[iu*npmts+ip]=event.lyso.cont_lg[iu][ip];
       lyso_snLG[iu*npmts+ip]=event.lyso.sn_lg[iu][ip];
+      lyso_trigger_flag[iu*npmts+ip]=event.lyso.trigger_flag[iu][ip];
     }
   }
+
+  // info other than signal
+  runType = event.runType;
+  boot_nr = event.boot_nr; 
+  run_id = event.run_id;
+  event_index = event.event_index;
+  event_length = event.event_length;
+  trigger_index = event.trigger_index;
+  hepd_time = event.hepd_time;
+  PMTBoard_trigger_counter  = event.PMTBoard_trigger_counter;
+  lost_trigger = event.lost_trigger;
+  for(int i=0; i<NRATEMETER; ++i) rate_meter[i] = event.rate_meter[i];
+  alive_time = event.alive_time;
+  dead_time = event.dead_time;
+
+  return;
+}
+
+void LEvRec1Stream::DumpTrigger(void) const {
+  for(int iu=0; iu<NTRIGSCINT; ++iu) {
+    for(int ip=0; ip<2; ++ip){
+      std::cout << "[iu,ip]=" << iu <<","<<ip <<" " 
+		<< trigger_countHG[iu*2+ip] << " "
+		<< trigger_snHG[iu*2+ip] << " "
+		<< trigger_countLG[iu*2+ip] << " "
+		<< trigger_snLG[iu*2+ip] << " "
+		<< trigger_trigger_flag[iu*2+ip] << std::endl;
+    }
+  }
+
   return;
 }
 
@@ -264,25 +330,43 @@ void LEvRec1Stream::Reset() {
     trigger_snHG[i]=0.;
     trigger_countLG[i]=0.;
     trigger_snLG[i]=0.;
+    trigger_trigger_flag[i]=false;
   }
   for(int i=0; i<2*NSCINTPLANES; ++i) {
     scint_countHG[i]=0.;
     scint_snHG[i]=0.;
     scint_countLG[i]=0.;
     scint_snLG[i]=0.;
+    scint_trigger_flag[i]=false;
   }
   for(int i=0; i<2*NVETOSCINT; ++i) {
     veto_countHG[i]=0.;
     veto_snHG[i]=0.;
     veto_countLG[i]=0.;
     veto_snLG[i]=0.;
+    veto_trigger_flag[i]=false;
   }
   for(int i=0; i<NLYSOCRYSTALS; ++i) {
     lyso_countHG[i]=0.;
     lyso_snHG[i]=0.;
     lyso_countLG[i]=0.;
     lyso_snLG[i]=0.;
+    lyso_trigger_flag[i]=false;
   }
+  
+  runType = 0x0;
+  boot_nr=0;
+  run_id=0;
+  event_index=0;
+  event_length=0;
+  trigger_index=0;
+  hepd_time=0;
+  PMTBoard_trigger_counter = 0;
+  lost_trigger=0;
+  for(int i=0; i<NRATEMETER; ++i) rate_meter[i]=0;
+  alive_time=0;
+  dead_time=0;
+
   return;
 }
 

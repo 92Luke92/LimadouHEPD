@@ -12,11 +12,6 @@ LEvRec1File::LEvRec1File(const char *inpFile, const char *openMode="READ") {
     fFile=TFile::Open(inpFile, "READ");
     fTree=(TTree*)fFile->Get("L1");
     InitializeBranches();
-    /*fTreeMd = (TTree*)fFile->Get("1L1md");
-    unsigned short run_id;
-    Tmd->SetBranchAddress("run_id",&run_id);
-    Tmd->GetEntry(0);
-    RunId = static_cast<int>(run_id);*/
     WritableFLAG=false;
   } else if((omstr.compare("WRITE"))==0) {        // WRITE MODE
     fFile = TFile::Open(inpFile, "NEW");
@@ -65,6 +60,20 @@ void LEvRec1File::CreateTrees() {
   lyso_snHGBR = fTree->Branch("lyso_snHG[9]", 0, "lyso_snHG[9]/D");
   lyso_countLGBR = fTree->Branch("lyso_countLG[9]", 0, "lyso_countLG[9]/D");
   lyso_snLGBR = fTree->Branch("lyso_snLG[9]", 0, "lyso_snLG[9]/D");
+  
+  runTypeBR = fTree->Branch("runType", 0, "runType/s");
+  boot_nrBR = fTree->Branch("boot_nr", 0, "boot_nr/s");
+  run_idBR = fTree->Branch("run_id", 0, "run_id/s");
+  event_indexBR = fTree->Branch("event_index", 0, "event_index/i");
+  event_lengthBR = fTree->Branch("event_length", 0, "event_length/s");
+  trigger_indexBR = fTree->Branch("trigger_index", 0, "trigger_index/i");
+  hepd_timeBR = fTree->Branch("hepd_time", 0, "hepd_time/i");
+  PMTBoard_trigger_counterBR = fTree->Branch("PMTBoard_trigger_counter", 0, "PMTBoard_trigger_counter/i");
+  lost_triggerBR = fTree->Branch("lost_trigger", 0, "lsot_trigger/s");
+  rate_meterBR = fTree->Branch("rate_meter[9]", 0, "rate_meter[9]/s");
+  alive_timeBR = fTree->Branch("alive_time", 0, "alive_time/i");
+  dead_timeBR = fTree->Branch("dead_time", 0, "dead_time/i");
+
 
   SetAddresses();
 
@@ -100,6 +109,19 @@ void LEvRec1File::InitializeBranches(void) {
   lyso_snHGBR = fTree->GetBranch("lyso_snHG[9]");
   lyso_countLGBR = fTree->GetBranch("lyso_countLG[9]");
   lyso_snLGBR = fTree->GetBranch("lyso_snLG[9]");
+
+  runTypeBR = fTree->GetBranch("runType");
+  boot_nrBR = fTree->GetBranch("boot_nr");
+  run_idBR = fTree->GetBranch("run_id");
+  event_indexBR = fTree->GetBranch("event_index");
+  event_lengthBR = fTree->GetBranch("event_length");
+  trigger_indexBR = fTree->GetBranch("trigger_index");
+  hepd_timeBR = fTree->GetBranch("hepd_time");
+  PMTBoard_trigger_counterBR = fTree->GetBranch("PMTBoard_trigger_counter");
+  lost_triggerBR = fTree->GetBranch("lost_trigger");
+  rate_meterBR = fTree->GetBranch("rate_meter[9]");
+  alive_timeBR = fTree->GetBranch("alive_time");
+  dead_timeBR = fTree->GetBranch("dead_time");
 
   SetAddresses();  
 
@@ -142,6 +164,19 @@ void LEvRec1File::SetAddresses() {
   lyso_snHGBR->SetAddress(&(evstr.lyso_snHG[0]));
   lyso_countLGBR->SetAddress(&(evstr.lyso_countLG[0]));
   lyso_snLGBR->SetAddress(&(evstr.lyso_snLG[0]));
+
+  runTypeBR->SetAddress(&(evstr.runType));
+  boot_nrBR->SetAddress(&(evstr.boot_nr));
+  run_idBR->SetAddress(&(evstr.run_id));
+  event_indexBR->SetAddress(&(evstr.event_index));
+  event_lengthBR->SetAddress(&(evstr.event_length));
+  trigger_indexBR->SetAddress(&(evstr.trigger_index));
+  hepd_timeBR->SetAddress(&(evstr.hepd_time));
+  PMTBoard_trigger_counterBR->SetAddress(&(evstr.PMTBoard_trigger_counter));
+  lost_triggerBR->SetAddress(&(evstr.lost_trigger));
+  rate_meterBR->SetAddress(&(evstr.rate_meter[0]));
+  alive_timeBR->SetAddress(&(evstr.alive_time));
+  dead_timeBR->SetAddress(&(evstr.dead_time));
 
   return;  
 }

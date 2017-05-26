@@ -1,7 +1,6 @@
 #ifndef __LRECO01MANAGER__
 #define __LRECO01MANAGER__ "LReco01Manager   ########## "
 
-#include <vector>
 #include <string>
 #include "LEvRec0File.hh"
 #include "LEvRec1File.hh"
@@ -23,7 +22,6 @@ private:
 
   void Reset(void);
   bool CheckLoadedSteering(void) const;
-  int LoadInpFileList(void);
   bool CheckInputFile(const std::string fname) const;
   void NewOutFile(void);
   LEvRec1 L0ToL1(const LEvRec0 lev0, const LCalibration *cal);
@@ -33,14 +31,12 @@ private:
 
   std::string calFileName;
   LCalibration *cal;
-  std::string inpFileList;
   std::string outDirectory;
-  int maxEvents; // max events to be processed in total
-  int maxFileEvents; // max events to be processed for each file
+  int maxFileEvents; // max events to be processed for in the file
   bool verboseFLAG;
   bool steeringLoadedFLAG;
 
-  std::vector< std::string > L0fname;
+  std::string L0fname;
   LEvRec0File *inFile;
   LEvRec1File *outFile;
 

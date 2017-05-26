@@ -20,6 +20,7 @@ public:
   void Close();
   inline bool IsOpen() {return fFile->IsOpen();}
   inline int GetRunId(){return RunId;};
+  inline int GetBootNr(){return BootNr;};
   inline const char* GetName(){return fFile->GetName();};
   ~LEvRec0File();
   
@@ -27,6 +28,7 @@ private:
   TFile *fFile;
   TTree *fTree;
   int RunId;
+  int BootNr;
 };
 
 

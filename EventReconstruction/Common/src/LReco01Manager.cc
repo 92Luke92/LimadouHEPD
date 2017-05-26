@@ -4,7 +4,6 @@
 #include "LCaloTools.hh"
 
 #include <iostream>
-#include <fstream>
 #include <sys/stat.h>
 
 LReco01Manager::LReco01Manager() {
@@ -23,12 +22,10 @@ void LReco01Manager::LoadSteering(const char* steerFileIN) {
   // Load calibration
   calFileName = steer.GetParameter<std::string>("CALBFILE");
   cal = LCalibration::Read(calFileName.c_str());
-  // Input file list
-  inpFileList = steer.GetParameter<std::string>("INPLIST");
+  // Input file 
+  L0fname = steer.GetParameter<std::string>("INPFILE");
   // Output folder
   outDirectory = steer.GetParameter<std::string>("OUTFOLD");
-  // Max Events
-  maxEvents = steer.GetParameter<int>("MAXEVTS");
   // Max File Events
   maxFileEvents = steer.GetParameter<int>("MAXFEVTS");
   // Verbosity
@@ -44,15 +41,13 @@ void LReco01Manager::LoadSteering(const char* steerFileIN) {
 void LReco01Manager::Reset(void) {
   steerFile="";
   calFileName="";
-  inpFileList="";
   outDirectory="";
-  maxEvents=0;
   maxFileEvents=0;
   verboseFLAG=true;
   steeringLoadedFLAG=false;
   if(cal) cal->Reset();
   cal=0;
-  L0fname.resize(0);
+  L0fname="";
   inFile=0;
   outFile=0;
   return;
@@ -74,10 +69,10 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
   int status = stat(outDirectory.c_str(), &odir);
   if(status!=0) result=false;
 
-  std::ifstream istr(inpFileList, std::ifstream::in);
-  if(istr.good()==false) result=false;
-  istr.close();
-  if(maxEvents<0 && maxEvents!=-1) result=false;
+  if(! CheckInputFile(L0fname)) {
+    std::cout <<  __LRECO01MANAGER__ << "Error: the file " << L0fname << " has been checked and found not to work." << std::endl;
+    result=false;
+  }
   if(maxFileEvents<0 && maxFileEvents!=-1) result=false;
   if(result==false) {
     std::cout << __LRECO01MANAGER__ << "something is wrong or missing in the steering file" << std::endl;
@@ -87,9 +82,9 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
     if(verboseFLAG==true) {
       std::cout << __LRECO01MANAGER__ << "Reco parameters:" << std::endl;
       std::cout << __LRECO01MANAGER__ << "calFileName  " << calFileName << std::endl;
-      std::cout << __LRECO01MANAGER__ << "inpFileList  " << inpFileList << std::endl;
+      std::cout << __LRECO01MANAGER__ << "inpFile  " << L0fname << std::endl;
       std::cout << __LRECO01MANAGER__ << "outDirectory " << outDirectory << std::endl;
-      std::cout << __LRECO01MANAGER__ << "maxEvents    " << maxEvents << std::endl;
+      std::cout << __LRECO01MANAGER__ << "maxFileEvents    " << maxFileEvents << std::endl;
     }
   }
   return result;
@@ -97,46 +92,34 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
 
 
 void LReco01Manager::Run(void) {
-  std::cout << "      warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ \n THE SYSTEM IS MIGRATING TOWARDS RECO01 APPLICATIONS RUNNING ON 1 FILE ONLY \n               !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  " << std::endl;
-
   if(steeringLoadedFLAG==false) {
     std::cout << __LRECO01MANAGER__ << "How to run? Steering file never loaded!" << std::endl;
     return;
   }
-  int nFiles=LoadInpFileList();
-  if(nFiles==0) {
-    std::cout << __LRECO01MANAGER__ << "No input file to run on." << std::endl;
-    return;
-  }
 
-  // Main loop
-  int totevtcounter=0;
-  for(auto fin : L0fname) {
-    int fevtcounter=0;
-    std::cout << __LRECO01MANAGER__ << "Reading L0 file " << fin << std::endl;
-    inFile = new LEvRec0File(fin.c_str());
-    LEvRec0 lev0;
-    inFile->SetTheEventPointer(lev0);
-    int nentries=inFile->GetEntries();
-    std::cout << __LRECO01MANAGER__ << "Looping on file " << fin << " (" << nentries << " entries)" << std::endl;
-    for(int i0=0; i0<nentries; ++i0){
-      if(i0%PRINTOUTEVENTS==0) {
-	std::cout << __LRECO01MANAGER__
-		  <<"event " << i0 << "/" <<nentries << std::endl;
-      }
-      inFile->GetEntry(i0);
-      if(i0==0) NewOutFile();
-      outFile->Fill(L0ToL1(lev0,cal));
-      ++fevtcounter;
-      if(maxFileEvents!=-1 && fevtcounter>maxFileEvents-1) break;
-      ++totevtcounter;
-      if(maxEvents!=-1 && totevtcounter>maxEvents-1) break;
+  // Actual run
+  int fevtcounter=0;
+  std::cout << __LRECO01MANAGER__ << "Reading L0 file " << L0fname << std::endl;
+  inFile = new LEvRec0File(L0fname.c_str());
+  NewOutFile();
+  LEvRec0 lev0;
+  inFile->SetTheEventPointer(lev0);
+  int nentries=inFile->GetEntries();
+  std::cout << __LRECO01MANAGER__ << "Looping on file " << L0fname << " (" << nentries << " entries)" << std::endl;
+  for(int i0=0; i0<nentries; ++i0){
+    if(i0%PRINTOUTEVENTS==0) {
+      std::cout << __LRECO01MANAGER__
+		<<"event " << i0 << "/" <<nentries << std::endl;
     }
-    std::cout << __LRECO01MANAGER__ << std::endl;
-    inFile->Close();
-    delete inFile;
-    if(maxEvents!=-1 && totevtcounter>maxEvents-1) break;
+    inFile->GetEntry(i0);
+    LEvRec1 l1ev = L0ToL1(lev0,cal);
+    outFile->Fill(L0ToL1(lev0,cal));
+    ++fevtcounter;
+    if(maxFileEvents!=-1 && fevtcounter>maxFileEvents-1) break;
   }
+  std::cout << __LRECO01MANAGER__ << std::endl;
+  inFile->Close();
+  delete inFile;
   outFile->Write();
   outFile->Close();
   delete outFile;
@@ -197,6 +180,19 @@ std::string LReco01Manager::L0NameToL1Name(void) { // Naming convention needed!
 LEvRec1 LReco01Manager::L0ToL1(const LEvRec0 lev0IN, const LCalibration *calIN) {
   LEvRec1 result;
 
+  result.runType = lev0IN.runType;
+  result.boot_nr = lev0IN.boot_nr; 
+  result.run_id = lev0IN.run_id;
+  result.event_index = lev0IN.event_index;
+  result.event_length = lev0IN.event_length;
+  result.trigger_index = lev0IN.trigger_index;
+  result.hepd_time = lev0IN.hepd_time;
+  result.PMTBoard_trigger_counter  = lev0IN.PMTBoard_trigger_counter;
+  result.lost_trigger = lev0IN.lost_trigger;
+  for(int i=0; i<NRATEMETER; ++i) result.rate_meter[i] = lev0IN.rate_meter[i];
+  result.alive_time = lev0IN.alive_time;
+  result.dead_time = lev0IN.dead_time;
+
   result.tracker=GetTrackerSignal(lev0IN, *calIN);
   result.trig=GetTriggerSignal(lev0IN, *calIN);
   result.scint=GetScintillatorSignal(lev0IN, *calIN);
@@ -205,25 +201,6 @@ LEvRec1 LReco01Manager::L0ToL1(const LEvRec0 lev0IN, const LCalibration *calIN) 
 
   return result;
 }
-
-int LReco01Manager::LoadInpFileList(void) {
-  L0fname.resize(0);
-  std::ifstream istr(inpFileList, std::ifstream::in);
-  while(1) {
-    std::string fname;
-    istr >> fname;
-    if(fname!="" && CheckInputFile(fname)) L0fname.push_back(fname);
-    else {
-      std::cout << __LRECO01MANAGER__ << "File \"" << fname << "\" does not look "
-		<< " a good LEvRec0File." << std::endl;
-    }
-    if(istr.eof()) break;
-  }
-  int result = L0fname.size();
-  std::cout << __LRECO01MANAGER__ << result << " files about to be processed." << std::endl;
-  return result;
-}
-
 
 bool LReco01Manager::CheckInputFile(const std::string fname) const {
   bool result =true;

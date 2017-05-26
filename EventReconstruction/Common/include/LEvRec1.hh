@@ -29,6 +29,20 @@ public:
   void DumpLyso(void) const;
   void FillRandom(void);
   void CopyFromLEvRec1Stream(const LEvRec1Stream evstr);
+
+  unsigned short   runType;
+  unsigned short   boot_nr;
+  unsigned short   run_id;
+  unsigned int     event_index;
+  unsigned short   event_length;
+  unsigned int     trigger_index;
+  unsigned int     hepd_time;
+  unsigned int     PMTBoard_trigger_counter;
+  unsigned short   lost_trigger;
+  unsigned short   rate_meter[NRATEMETER];
+  unsigned int     alive_time;
+  unsigned int     dead_time;
+
   
   LTrackerSignal tracker;
   LTriggerSignal trig;
@@ -52,18 +66,22 @@ struct LEvRec1Stream {
   double trigger_snHG[2*NTRIGSCINT];
   double trigger_countLG[2*NTRIGSCINT];
   double trigger_snLG[2*NTRIGSCINT];
+  bool trigger_trigger_flag[2*NTRIGSCINT];
   double scint_countHG[2*NSCINTPLANES];
   double scint_snHG[2*NSCINTPLANES];
   double scint_countLG[2*NSCINTPLANES];
   double scint_snLG[2*NSCINTPLANES];
+  bool scint_trigger_flag[2*NSCINTPLANES];
   double veto_countHG[2*NVETOSCINT];
   double veto_snHG[2*NVETOSCINT];
   double veto_countLG[2*NVETOSCINT];
   double veto_snLG[2*NVETOSCINT];
+  bool veto_trigger_flag[2*NVETOSCINT];
   double lyso_countHG[NLYSOCRYSTALS];
   double lyso_snHG[NLYSOCRYSTALS];
   double lyso_countLG[NLYSOCRYSTALS];
   double lyso_snLG[NLYSOCRYSTALS];
+  bool lyso_trigger_flag[NLYSOCRYSTALS];
   
   int nClusters;
   int seed[MAXNCLUSTERS];
@@ -78,12 +96,25 @@ struct LEvRec1Stream {
   double sn3[MAXNCLUSTERS];
   double sn4[MAXNCLUSTERS];
 
+  unsigned short   runType;
+  unsigned short   boot_nr;
+  unsigned short   run_id;
+  unsigned int     event_index;
+  unsigned short   event_length;
+  unsigned int     trigger_index;
+  unsigned int     hepd_time;
+  unsigned int     PMTBoard_trigger_counter;
+  unsigned short   lost_trigger;
+  unsigned short   rate_meter[NRATEMETER];
+  unsigned int     alive_time;
+  unsigned int     dead_time;
 
   LEvRec1Stream();
   LEvRec1Stream(const LEvRec1 event);
   void Reset();
   void CopyFromLEvRec1(const LEvRec1 event);
   void DumpTracker (void) const;
+  void DumpTrigger (void) const;
   ~LEvRec1Stream();
 };
 
