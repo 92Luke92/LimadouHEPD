@@ -41,7 +41,7 @@ void LSteeringManager::Load(const char* inputFile) {
   myparser.remove_final_blanks();
   myparser.remove_blank_lines();
   myparser.tokenize(" ");
-  myparser.dump();
+  //myparser.dump();
 
   std::vector< std::vector< std::string > > mylines_parsed=myparser.get_lines();
 
@@ -55,7 +55,12 @@ void LSteeringManager::Load(const char* inputFile) {
     size_t NOfTokens=iit->size();    
     if(static_cast<int>(NOfTokens)!=static_cast<int>(NOfTokensPerLine)) {
       std::cerr << __LSTEERINGMANAGER__ << "Found " << iit->size()
-		<< " tokens in a line of \"" << inputFile << "\"."
+		<< " tokens in a line of \"" << inputFile << "\":" << std::endl;
+      
+      for(int ind=0; ind < static_cast<int>(NOfTokens); ++ind) {
+	std::cout << iit->at(ind) << " ";
+      }
+      std::cout << std::endl
 		<< " Impossible continuing." << std::endl;
       return;
     }
