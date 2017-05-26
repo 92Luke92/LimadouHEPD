@@ -6,8 +6,10 @@ LTriggerSignal GetTriggerSignal(const LEvRec0 lev0, const LCalibration cal) {
   const int npmts = result.GetNPMTs();
   const int OFFSET = 0; // PMT index offset for this kind of calo  
 
-  const double *pedestal = cal.GetCaloHGCalibration()->GetPedestal();
-  const double *sigma = cal.GetCaloHGCalibration()->GetSigma();
+  const double *pedestalHG = cal.GetCaloHGCalibration()->GetPedestal();
+  const double *sigmaHG = cal.GetCaloHGCalibration()->GetSigma();
+  const double *pedestalLG = cal.GetCaloLGCalibration()->GetPedestal();
+  const double *sigmaLG = cal.GetCaloLGCalibration()->GetSigma();
 
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
@@ -15,10 +17,10 @@ LTriggerSignal GetTriggerSignal(const LEvRec0 lev0, const LCalibration cal) {
 
        int index = OFFSET+ (iu) +(32*ipmt);// it seems to me this is mapping correctly - needed to check
 
-      result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestal[index];
-      result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigma[index];
-      result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestal[index];
-      result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigma[index];
+      result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestalHG[index];
+      result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigmaHG[index];
+      result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
+      result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigmaLG[index];
     }
   }
 
@@ -31,20 +33,20 @@ LScintillatorSignal GetScintillatorSignal(const LEvRec0 lev0, const LCalibration
   const int npmts = result.GetNPMTs();
   const int OFFSET = NTRIGSCINT; // PMT index offset for this kind of calo  
 
-  
-
-  const double *pedestal = cal.GetCaloHGCalibration()->GetPedestal();
-  const double *sigma = cal.GetCaloHGCalibration()->GetSigma();
+  const double *pedestalHG = cal.GetCaloHGCalibration()->GetPedestal();
+  const double *sigmaHG = cal.GetCaloHGCalibration()->GetSigma();
+  const double *pedestalLG = cal.GetCaloLGCalibration()->GetPedestal();
+  const double *sigmaLG = cal.GetCaloLGCalibration()->GetSigma();
 
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
       //int index = OFFSET+iu*npmts+32*ipmt;  // (even,even)=SouthEast (even,odd)=NorthWest (odd,even)=SouthWest (odd,odd)=NorthEast
      
       int index = OFFSET + iu + (ipmt*32);
-      result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestal[index];
-      result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigma[index];
-      result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestal[index];
-      result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigma[index];
+      result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestalHG[index];
+      result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigmaHG[index];
+      result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
+      result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigmaLG[index];
     }
   }
   
@@ -57,16 +59,18 @@ LVetoSignal GetVetoSignal(const LEvRec0 lev0, const LCalibration cal) {
   const int npmts = result.GetNPMTs();
   const int OFFSET = NTRIGSCINT+NSCINTPLANES; // PMT index offset for this kind of calo  
 
-  const double *pedestal = cal.GetCaloHGCalibration()->GetPedestal();
-  const double *sigma = cal.GetCaloHGCalibration()->GetSigma();
+  const double *pedestalHG = cal.GetCaloHGCalibration()->GetPedestal();
+  const double *sigmaHG = cal.GetCaloHGCalibration()->GetSigma();
+  const double *pedestalLG = cal.GetCaloLGCalibration()->GetPedestal();
+  const double *sigmaLG = cal.GetCaloLGCalibration()->GetSigma();
 
   for(int iu=0; iu<nunits; ++iu) { // iu: north, east, south, west, bottom
     for(int ipmt=0; ipmt<npmts; ++ipmt) { // pmt even: up, odd: down   ---   for bottom(iu=4) even:NorthEast, odd:SouthWest
       int index = OFFSET+iu*npmts+32*ipmt; 
-      result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestal[index];
-      result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigma[index];
-      result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestal[index];
-      result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigma[index];
+      result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestalHG[index];
+      result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigmaHG[index];
+      result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
+      result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigmaLG[index];
     }
   }
   
@@ -79,16 +83,18 @@ LLysoSignal GetLysoSignal(const LEvRec0 lev0, const LCalibration cal) {
   const int npmts = result.GetNPMTs();
   const int OFFSET = NTRIGSCINT+NSCINTPLANES+NVETOSCINT; // PMT index offset for this kind of calo  
 
-  const double *pedestal = cal.GetCaloHGCalibration()->GetPedestal();
-  const double *sigma = cal.GetCaloHGCalibration()->GetSigma();
+  const double *pedestalHG = cal.GetCaloHGCalibration()->GetPedestal();
+  const double *sigmaHG = cal.GetCaloHGCalibration()->GetSigma();
+  const double *pedestalLG = cal.GetCaloLGCalibration()->GetPedestal();
+  const double *sigmaLG = cal.GetCaloLGCalibration()->GetSigma();
 
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
       int index = (iu<5 ? OFFSET+iu*npmts+32*ipmt : OFFSET+(iu-5)*npmts+32); //9-7-1-8-5   and 3-2-6-4
-      result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestal[index];
-      result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigma[index];
-      result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestal[index];
-      result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigma[index];
+      result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestalHG[index];
+      result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigmaHG[index];
+      result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
+      result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigmaLG[index];
     }
   }
   

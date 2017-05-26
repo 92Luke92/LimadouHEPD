@@ -13,6 +13,7 @@ LCaloSignal::LCaloSignal() {
   sn_hg=0;
   cont_lg=0;
   sn_lg=0;
+  trigger_flag=0;
 }
 
 LCaloSignal::LCaloSignal(const LCaloSignal &cs) {
@@ -22,16 +23,19 @@ LCaloSignal::LCaloSignal(const LCaloSignal &cs) {
   sn_hg = new double*[nunits];
   cont_lg = new double*[nunits];
   sn_lg = new double*[nunits];
+  trigger_flag = new bool*[nunits];
   for(int iu=0; iu<nunits; ++iu) {
     cont_hg[iu] = new double[npmts];
     sn_hg[iu] = new double[npmts];
     cont_lg[iu] = new double[npmts];
     sn_lg[iu] = new double[npmts];
+    trigger_flag[iu] = new bool[npmts];
     for(int ip=0; ip<npmts; ++ip) {
       cont_hg[iu][ip] = cs.cont_hg[iu][ip];
       sn_hg[iu][ip] = cs.sn_hg[iu][ip];
       cont_lg[iu][ip] = cs.cont_lg[iu][ip];
       sn_lg[iu][ip] = cs.sn_lg[iu][ip];
+      trigger_flag[iu][ip] = cs.trigger_flag[iu][ip];
     }
   }
 }
@@ -45,16 +49,19 @@ LCaloSignal& LCaloSignal::operator=(const LCaloSignal& cs) {  // copy assignment
     sn_hg = new double*[nunits];
     cont_lg = new double*[nunits];
     sn_lg = new double*[nunits];
+    trigger_flag = new bool*[nunits];
     for(int iu=0; iu<nunits; ++iu) {
       cont_hg[iu] = new double[npmts];
       sn_hg[iu] = new double[npmts];
       cont_lg[iu] = new double[npmts];
       sn_lg[iu] = new double[npmts];
+      trigger_flag[iu] = new bool[npmts];
       for(int ip=0; ip<npmts; ++ip) {
 	cont_hg[iu][ip] = cs.cont_hg[iu][ip];
 	sn_hg[iu][ip] = cs.sn_hg[iu][ip];
 	cont_lg[iu][ip] = cs.cont_lg[iu][ip];
 	sn_lg[iu][ip] = cs.sn_lg[iu][ip];
+	trigger_flag[iu][ip] = cs.trigger_flag[iu][ip];
       }
     }
   }
@@ -78,6 +85,10 @@ LCaloSignal::~LCaloSignal() {
     for(int iu=0; iu<nunits; ++iu) if(sn_lg[iu]) delete[] sn_lg[iu];
     delete[] sn_lg;
   }
+  if(trigger_flag) {
+    for(int iu=0; iu<nunits; ++iu) if(trigger_flag[iu]) delete[] trigger_flag[iu];
+    delete[] trigger_flag;
+  }
 }
 
 void LCaloSignal::Reset() {
@@ -87,6 +98,7 @@ void LCaloSignal::Reset() {
       cont_lg[i][j]=0.;
       sn_hg[i][j]=0.;
       sn_lg[i][j]=0.;
+      trigger_flag[i][j]=false;
     }
   }
   return;
@@ -100,11 +112,13 @@ void LCaloSignal::CreateContainers() {
   sn_hg = new double*[nunits];
   cont_lg = new double*[nunits];
   sn_lg = new double*[nunits];
+  trigger_flag = new bool*[nunits];
   for(int iu=0; iu<nunits; ++iu) {
     cont_hg[iu] = new double[npmts];
     sn_hg[iu] = new double[npmts];
     cont_lg[iu] = new double[npmts];
     sn_lg[iu] = new double[npmts];
+    trigger_flag[iu] = new bool[npmts];
   }
   Reset();
   return;
@@ -121,12 +135,23 @@ void LCaloSignal::DumpModule(double** inp, const char *string) const {
   std::cout << std::endl;
 }
 
+void LCaloSignal::DumpTriggerFlag(void) const {
+  std::cout << "TRIGGER FLAG" << std::endl;
+  for(int iu=0; iu<nunits; ++iu) {
+    std::cout << "  Unit " << iu << ": ";
+    for(int ip=0; ip<npmts; ++ip) std::cout << trigger_flag[iu][ip] << "  ";
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+}
+
 void LCaloSignal::DumpAll() const {
   if(!(nunits>0)) return;
   DumpModule(cont_hg, "HIGH GAIN counts");
   DumpModule(sn_hg, "HIGH GAIN signal to noise");
   DumpModule(cont_lg, "LOW GAIN counts");
   DumpModule(sn_lg, "LOW GAIN signal to noise");
+  DumpTriggerFlag();
   return;
 }
 
@@ -146,6 +171,7 @@ void LCaloSignal::FillRandom(void) {
       cont_lg[i][j]=distribution(generator);
       sn_hg[i][j]=cont_hg[i][j]/sigmaIN;
       sn_lg[i][j]=cont_lg[i][j]/sigmaIN;
+      trigger_flag[i][j]=false;
     }
   }
   return;

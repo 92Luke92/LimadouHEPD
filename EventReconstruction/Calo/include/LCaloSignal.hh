@@ -18,6 +18,7 @@ public:
   double **sn_hg;
   double **cont_lg;
   double **sn_lg;
+  bool **trigger_flag;
   virtual double GetX(const int iu, const int ipmt) const =0;
   virtual double GetY(const int iu, const int ipmt) const =0;
   virtual double GetZ(const int iu, const int ipmt) const =0;
@@ -25,6 +26,7 @@ public:
 protected:
   void CreateContainers(void);
   void DumpModule(double** inp, const char *string) const;
+  void DumpTriggerFlag() const;
   void DumpAll() const;
   int nunits;
   int npmts;
