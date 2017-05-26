@@ -49,19 +49,23 @@ private:
   TBranch *trigger_snHGBR;
   TBranch *trigger_countLGBR;
   TBranch *trigger_snLGBR;
+  TBranch *trigger_trigger_flagBR;
   TBranch *scint_countHGBR;
   TBranch *scint_snHGBR;
   TBranch *scint_countLGBR;
   TBranch *scint_snLGBR;
+  TBranch *scint_trigger_flagBR;
   TBranch *veto_countHGBR;
   TBranch *veto_snHGBR;
   TBranch *veto_countLGBR;
   TBranch *veto_snLGBR;
+  TBranch *veto_trigger_flagBR;
   TBranch *lyso_countHGBR;
   TBranch *lyso_snHGBR;
   TBranch *lyso_countLGBR;
   TBranch *lyso_snLGBR;
-  
+  TBranch *lyso_trigger_flagBR;
+
   TBranch *runTypeBR;
   TBranch *boot_nrBR;
   TBranch *run_idBR;

@@ -18,6 +18,7 @@ LTriggerSignal GetTriggerSignal(const LEvRec0 lev0, const LCalibration cal) {
      result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigmaHG[index];
      result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
      result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigmaLG[index];
+     result.trigger_flag[iu][ipmt] = lev0.trigger_flag[index];
     }
   }
 
@@ -42,6 +43,7 @@ LScintillatorSignal GetScintillatorSignal(const LEvRec0 lev0, const LCalibration
       result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigmaHG[index];
       result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
       result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigmaLG[index];
+      result.trigger_flag[iu][ipmt] = lev0.trigger_flag[index];
     }
   }
   
@@ -66,6 +68,7 @@ LVetoSignal GetVetoSignal(const LEvRec0 lev0, const LCalibration cal) {
       result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigmaHG[index];
       result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
       result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigmaLG[index];
+      result.trigger_flag[iu][ipmt] = lev0.trigger_flag[index];
     }
   }
   
@@ -90,6 +93,7 @@ LLysoSignal GetLysoSignal(const LEvRec0 lev0, const LCalibration cal) {
       result.sn_hg[iu][ipmt] = result.cont_hg[iu][ipmt]/sigmaHG[index];
       result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
       result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigmaLG[index];
+      result.trigger_flag[iu][ipmt] = lev0.trigger_flag[index];
     }
   }
   
