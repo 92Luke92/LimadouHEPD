@@ -31,16 +31,10 @@ void LCalibrationManager::LoadSteering(const char* steerFileIN) {
   outDirectory = steer.GetParameter<std::string>("OUTFOLD");
   // Output format
   outFormat = steer.GetParameter<std::string>("OUTFORM");
-  // Events to skip at the beginning
-  skipFileEvents = steer.GetParameter<int>("SKIPEVTS");
   // Events to skip at the beginning of each file
   skipFileEvents = steer.GetParameter<int>("SKIPFEVTS");
-  // Max Events to calibrate on
-  maxEvents = steer.GetParameter<int>("MAXEVTS");
   // Max File Events
   maxFileEvents = steer.GetParameter<int>("MAXFEVTS");
-  // Tracker slot events
-  trackerSlotEvents = steer.GetParameter<int>("SLOTEVTS");
   // Verbosity
   verboseFLAG = steer.GetParameter<bool>("VERBOSE");
 
@@ -60,11 +54,8 @@ void LCalibrationManager::Reset(void) {
   inpRunMode="";
   outDirectory="";
   outFormat="";
-  skipEvents=-1;
   skipFileEvents=-1;
-  maxEvents=-1;
   maxFileEvents=-1;
-  trackerSlotEvents=-1;
   verboseFLAG=true;
   steeringLoadedFLAG=false;
   return;
@@ -89,7 +80,7 @@ void LCalibrationManager::Run() {
 void LCalibrationManager::RunOnRun(const std::string fname) {
   LoadRun(fname.c_str());
   std::cout << __LCALIBRATIONMANAGER__ << "Processing file " << fname << "..." << std::endl;
-  LCalibration *outcal = Calibrate();
+  LCalibration *outcal = Calibrate(maxFileEvents, skipFileEvents);
   
   std::string outName = outDirectory + "/"
     + GetWriteOutName(fname);
@@ -130,8 +121,6 @@ std::string LCalibrationManager::GetWriteOutName(const std::string fname) {
   else if (outFormat=="ROOT") new_suffix = std::string(".root");
   result += new_suffix;
 
-  std::cout << result << std::endl << std::flush;
-
   return result;
 }
 
@@ -170,21 +159,15 @@ bool LCalibrationManager::CheckLoadedSteering(void) const {
     result=false;
   }
 
-  if(skipEvents<0 && skipEvents!=-1) result=false;
   if(skipFileEvents<0 && skipFileEvents!=-1) result=false;
-  if(maxEvents<0 && maxEvents!=-1) result=false;
   if(maxFileEvents<0 && maxFileEvents!=-1) result=false;
-  if(trackerSlotEvents<0 && trackerSlotEvents!=-1) result=false;
   
   std::cout << __LCALIBRATIONMANAGER__ << "Temptative calibration parameters:" << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  inpFileList  " << inpFileList << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  inpRunMode   " << inpRunMode << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  outDirectory " << outDirectory << std::endl;
-  std::cout << __LCALIBRATIONMANAGER__ << "  maxEvents    " << maxEvents << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  maxFEvents   " << maxFileEvents << std::endl;
-  std::cout << __LCALIBRATIONMANAGER__ << "  skipEvents   " << skipEvents << std::endl;
   std::cout << __LCALIBRATIONMANAGER__ << "  skipFEvents  " << skipFileEvents << std::endl;
-  std::cout << __LCALIBRATIONMANAGER__ << "  slotEvents   " << trackerSlotEvents << std::endl;
 
   if(result==false) {
     std::cout << __LCALIBRATIONMANAGER__ << "something is wrong or missing in the steering file" << std::endl;

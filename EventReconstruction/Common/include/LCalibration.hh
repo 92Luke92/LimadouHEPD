@@ -15,10 +15,8 @@ public:
   void WriteTXT(std::ofstream *fileOut) const;
   static LCalibration* Read(const char *fileIn);
   static LCalibration* Read(std::ifstream *fileIn);
-  inline void SetInitialRunId(const int in) {InitialRunId=in; return;};
-  inline void SetFinalRunId(const int in) {FinalRunId=in; return;};
-  inline int GetInitialRunId() const {return InitialRunId;};
-  inline int GetFinalRunId() const {return FinalRunId;};
+  inline void SetRunId(const int in) {RunId=in; return;};
+  inline int GetRunId() const {return RunId;};
   bool CheckStatus(void) const;  
   inline LTrackerCalibration* GetTrackerCalibration() const {return tracker;};
   inline LCaloCalibration* GetCaloHGCalibration() const {return calo_HG;} ;
@@ -31,7 +29,7 @@ public:
   LCalibration& operator/=(const double& rhs);
 
 private:
-  int InitialRunId, FinalRunId;
+  int RunId;
   LTrackerCalibration *tracker;
   LCaloCalibration *calo_HG;
   LCaloCalibration *calo_LG;

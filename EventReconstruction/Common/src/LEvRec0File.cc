@@ -39,9 +39,9 @@ void LEvRec0File::Reset() {
 }
 
 int LEvRec0File::SetTheEventPointer(LEvRec0 &ev) {
-  fTree->SetBranchAddress("runType", &ev.runType);
-  fTree->SetBranchAddress("boot_nr", &ev.boot_nr);
-  fTree->SetBranchAddress("run_id", &ev.run_id);
+  fTree->SetBranchAddress("run_type", &ev.runType);
+  fTree->SetBranchAddress("ev_boot_nr", &ev.boot_nr);
+  fTree->SetBranchAddress("ev_run_id", &ev.run_id);
   fTree->SetBranchAddress("event_index", &ev.event_index);
   fTree->SetBranchAddress("event_length", &ev.event_length);
   fTree->SetBranchAddress("trigger_index", &ev.trigger_index);

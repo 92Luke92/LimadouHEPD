@@ -22,8 +22,7 @@ void LCalibration::Reset() {
     delete calo_LG;
     calo_LG=0;
   }
-  InitialRunId = DEFAULT;
-  FinalRunId = DEFAULT;
+  RunId = DEFAULT;
   return;
 }
 
@@ -33,8 +32,7 @@ LCalibration::LCalibration(LCaloCalibration *calo_HG_IN,
   calo_HG = calo_HG_IN;
   calo_LG = calo_LG_IN;
   tracker = tracker_IN;
-  InitialRunId = calo_HG_IN->GetRunId();
-  FinalRunId = calo_HG_IN->GetRunId();
+  RunId = calo_HG_IN->GetRunId();
 }
   
 void LCalibration::WriteTXT(const char *fileOut) const {
@@ -84,9 +82,8 @@ bool LCalibration::CheckStatus(void) const {
 
 
 LCalibration& LCalibration::operator=(const LCalibration& other) {
-  InitialRunId = other.GetInitialRunId();
-  FinalRunId = other.GetFinalRunId();
-
+  RunId = other.GetRunId();
+  
   calo_HG = new LCaloCalibration();
   (*calo_HG) = (*other.GetCaloHGCalibration());
   calo_LG = new LCaloCalibration();
@@ -110,8 +107,7 @@ LCalibration& LCalibration::operator+=(const LCalibration& rhs) // compound assi
   (*tracker) += (*rhs.GetTrackerCalibration());
 
   // In/out run info
-  InitialRunId = std::min(InitialRunId, rhs.GetInitialRunId());
-  FinalRunId = std::max(FinalRunId, rhs.GetFinalRunId());
+  RunId = std::min(RunId, rhs.GetRunId()); // arbitrary. Why?
 
   return *this; // return the result by reference
 }

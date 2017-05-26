@@ -1,16 +1,12 @@
 // Steering file for the Limadou event calibration
 // R. Iuppa April 8th, 2017
+// Major rev. May 26th, 2017
 // roberto.iuppa@unitn.it
 
-std::string    INPLIST   inputFilesCalib.list
+std::string    INPLIST   inputFiles.list
 std::string    RUNMODE   virgin
 std::string    OUTFOLD   calib_dir
 std::string    OUTFORM   TXT
-int            SKIPEVTS  -1
 int            SKIPFEVTS -1
-int            MAXEVTS   -1
 int            MAXFEVTS  -1
-int            SLOTEVTS  -1
-int            INITRUN   -1
-int            FINRUN    -1
 bool           VERBOSE   true

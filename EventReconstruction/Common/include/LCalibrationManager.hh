@@ -22,7 +22,7 @@ private:
   std::string inpRunMode;
   std::string outDirectory;
   std::string outFormat;
-  int skipEvents, skipFileEvents, maxEvents, maxFileEvents, trackerSlotEvents;
+  int skipFileEvents, maxFileEvents;
     
   void LoadRun(const char *fileInp);
   LCalibrationManager();
