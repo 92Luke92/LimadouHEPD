@@ -32,6 +32,7 @@ public:
   void DumpEventIndex() const;
   bool IsZeroSuppressed() const;
   bool IsVirgin() const;
+  bool IsMixed() const;
 };
 
 

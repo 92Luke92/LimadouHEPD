@@ -417,9 +417,11 @@ LCaloCalibration *LCaloCalibrationManager::Calibrate(const bool isHG,
 std::vector <std::map  <int, float>> LCaloCalibrationManager::MapCalibFromPredicate(std::function <bool(int content, bool trigger_flag, int channel)> predicate, const bool isHG) const {
   std::vector <std::map  <int, float>>  histo(NPMT);
   LEvRec0 cev;
+  bool MixedFLAG = calRunFile->IsMixed(); // important to see if we have to skip half the events
   calRunFile->SetTheEventPointer(cev);
   for (int iEv = __skipEv; iEv < __nEv; iEv++) {  // Event loop
     calRunFile->GetEntry(iEv);
+    if(MixedFLAG==true && cev.IsZeroSuppressed()) continue;
     for (int iCh = 0; iCh < NPMT; iCh++) {
       int content = isHG ? cev.pmt_high[iCh] : cev.pmt_low[iCh];
       if (predicate(content, cev.trigger_flag[iCh], iCh))

@@ -45,14 +45,19 @@ LTrackerCalibration* LTrackerCalibrationManager::Calibrate(const int nEvents, co
     return 0;
   }
   
-  int nEntries=calRunFile->GetEntries();
-  if(nEntries<skipEvents+nEvents) return 0;
-  int *pivot=0;
-  int nSlots = CalculateCalibrationSlots(nEvents, skipEvents, nEntries, pivot);
-
   LTrackerCalibration *result = CreateTrackerCalibration();
-  for(int is=0; is<nSlots; ++is) result->Add(CalibrateSlot(pivot[is],pivot[is+1]));
-
+  if(!calRunFile->IsVirgin()) {
+    std::cout << __LTRACKERCALIBRATIONMANAGER__ << "Input file not of virgin type. Tracker calibration unset. " << std::endl;
+    result->DefaultFilling();
+  } else {
+    int nEntries=calRunFile->GetEntries();
+    if(nEntries<skipEvents+nEvents) return 0;
+    int *pivot=0;
+    int nSlots = CalculateCalibrationSlots(nEvents, skipEvents, nEntries, pivot);
+    
+    for(int is=0; is<nSlots; ++is) result->Add(CalibrateSlot(pivot[is],pivot[is+1]));
+  }
+  
   return result;
 }
 

@@ -5,7 +5,6 @@ LEvRec0File::LEvRec0File() {
   fTree=0;
   RunId=-999;
   BootNr=-999;
-  runType=0;
 }
 
 LEvRec0File::LEvRec0File(const char *inpFile) {
@@ -22,13 +21,10 @@ void LEvRec0File::Open(const char *inpFile) {
   Tmd->SetBranchAddress("run_id",&run_id);
   unsigned short boot_nr;
   Tmd->SetBranchAddress("boot_nr",&boot_nr);
-  unsigned short run_type; 
-  Tmd->SetBranchAddress("run_type",&run_type);
   Tmd->GetEntry(0);
   RunId = static_cast<int>(run_id);
   BootNr = static_cast<int>(boot_nr);
-  runType = run_type;
-  
+
   return;
 }
 
@@ -38,9 +34,7 @@ void LEvRec0File::Reset() {
     fFile->Close();
   }
   RunId=-999;
-  BootNr=-999;
-  runType=0;
-
+  
   return;
 }
 

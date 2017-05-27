@@ -10,6 +10,12 @@ void LTrackerCalibration::Add(const LTrackerCalibrationSlot *lcal) {
   return;
 }
 
+void LTrackerCalibration::DefaultFilling() {
+  LTrackerCalibrationSlot DefaultSlot;
+  calarray.push_back(DefaultSlot);
+  return;
+}
+
 LTrackerCalibration::LTrackerCalibration() {
   Reset();
 }

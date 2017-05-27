@@ -10,6 +10,7 @@ public:
   LTrackerCalibration();
   LTrackerCalibration(const int RunIdINP);
   void Add(const LTrackerCalibrationSlot *lcal);
+  void DefaultFilling();
   void Write(const char *fileOut) const;
   void Write(std::ofstream *fileOut) const;
   static LTrackerCalibration* Read(const char *fileIn);
