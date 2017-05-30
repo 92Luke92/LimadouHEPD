@@ -95,8 +95,8 @@ int main(int argc, char **argv){
    TelemetryToXML(argv[1], tel);
 
    const char *char_outPath = outPath;
-   gROOT->ProcessLine(Form(".!mkdir -p %s",char_outPath));
-   gROOT->ProcessLine(Form(".!mv *.pdf *.xml %s", char_outPath));
+//   gROOT->ProcessLine(Form(".!mkdir -p %s",char_outPath));         not required anymore
+//   gROOT->ProcessLine(Form(".!mv *.pdf *.xml %s", char_outPath));
            
    
   return 0; 
