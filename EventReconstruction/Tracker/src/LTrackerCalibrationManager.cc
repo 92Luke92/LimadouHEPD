@@ -47,7 +47,7 @@ LTrackerCalibration* LTrackerCalibrationManager::Calibrate(const int nEvents, co
   
   LTrackerCalibration *result = CreateTrackerCalibration();
   if(!calRunFile->IsVirgin()) {
-    std::cout << __LTRACKERCALIBRATIONMANAGER__ << "Input file not of virgin type. Tracker calibration unset. " << std::endl;
+    std::cout << __LTRACKERCALIBRATIONMANAGER__ << "Input file type " << calRunFile->GetRunType() << " not \"virgin\". Tracker calibration unset. " << std::endl;
     result->DefaultFilling();
   } else {
     int nEntries=calRunFile->GetEntries();
