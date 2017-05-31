@@ -117,7 +117,7 @@ void LEvRec1File::InitializeBranches(void) {
   lyso_snHGBR = fTree->GetBranch("lyso_snHG[9]");
   lyso_countLGBR = fTree->GetBranch("lyso_countLG[9]");
   lyso_snLGBR = fTree->GetBranch("lyso_snLG[9]");
-  lyso_trigger_flagBR = fTree->GetBranch("lyso_trigger_flag[10]");
+  lyso_trigger_flagBR = fTree->GetBranch("lyso_trigger_flag[9]");
 
   runTypeBR = fTree->GetBranch("runType");
   boot_nrBR = fTree->GetBranch("boot_nr");
