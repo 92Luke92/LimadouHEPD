@@ -32,11 +32,11 @@ void LOfflineTrigger::LoadConfiguration(const std::string conf_str){
 
 void LOfflineTrigger::SetTheFunction(void){
 	if(conf.compare("default")) {
-		_function = std::bind(&LOfflineTrigger::_default, std::placeholders::_1);
+		_function = std::bind(&LOfflineTrigger::_default, this, std::placeholders::_1);
 	} else if(conf.compare("(T2.OR.T3).AND.S1")) {
-		_function = &I_T2_OR_T3_I_AND_S1;
+		_function = std::bind(&LOfflineTrigger::I_T2_OR_T3_I_AND_S1, this, std::placeholders::_1);
 	} else {
-		_function = &_default;
+		_function = std::bind(&LOfflineTrigger::_default, this, std::placeholders::_1);
 	}
 	return;
 }
