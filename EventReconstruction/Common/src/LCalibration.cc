@@ -49,7 +49,7 @@ void LCalibration::WriteTXT(std::ofstream *fileOut) const {
   tracker->Write(fileOut);
   return;
 }
-
+/*
 void LCalibration::WriteROOT(const char *fileOut) const {
   std::cout << __LCALIBRATION__ << "Writing calibration file " << fileOut << "..." << std::endl;
   std::ofstream output(fileOut, std::ofstream::out); 
@@ -57,7 +57,7 @@ void LCalibration::WriteROOT(const char *fileOut) const {
   output.close();
   return;
 }
-
+*/
 
 LCalibration* LCalibration::Read(const char *fileIn) {
   std::cout << __LCALIBRATION__ << "Reading calibration file " << fileIn << "..." << std::endl;
