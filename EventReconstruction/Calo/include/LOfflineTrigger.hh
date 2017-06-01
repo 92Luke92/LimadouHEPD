@@ -22,7 +22,12 @@ private:
 
 	inline bool _default(const LEvRec1 ev) const {return true;};
 	//################## Starting point of the offline trigger functions ####################
-	bool I_T2_OR_T3_I_AND_S1(const LEvRec1 ev) const; // flag: (T2.OR.T3).AND.S1
+	bool I_T2_OR_T3_I_AND_S0(const LEvRec1 ev) const; // flag: (T2.OR.T3).AND.S0
+	bool I_T2_OR_T3_I_AND_L4(const LEvRec1 ev) const; // flag: (T2.OR.T3).AND.L4
+	bool I_T2_OR_T3_I_AND_S15(const LEvRec1 ev) const; // flag: (T2.OR.T3).AND.S15
+	bool I_T2_OR_T3_I_AND_VB(const LEvRec1 ev) const; // flag: (T2.OR.T3).AND.VB
+	bool central_muon_tight(const LEvRec1 ev) const; // flag: central_muon_tight
+	bool VL(const LEvRec1 ev) const; // flag: VL
 };
 
 
