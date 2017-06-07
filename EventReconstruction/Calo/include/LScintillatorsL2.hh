@@ -21,7 +21,9 @@ private:
   static LScintillatorsL2& GetInstance();
   int LoadRun(const std::string inputFileROOT);
   
-  int Test();
+  int Test(int bar);
+  int Calc();
+
 
   LScintillatorsL2(LScintillatorsL2 const&) = delete;
   void operator=(LScintillatorsL2 const&) = delete;
