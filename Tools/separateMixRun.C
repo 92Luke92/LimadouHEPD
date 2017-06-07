@@ -152,11 +152,11 @@ void separateMixedRun(string rootname, string outdir)
    TFile *newfile2 = new TFile(outnameVIRGIN.c_str(),"recreate");
    TTree *virtree = T->CloneTree(0);
    TTree *newtmdv = Tmd->CloneTree(0);
-   
+   /*
    TFile *newfile1 = new TFile(outnameCOMP.c_str(),"recreate");
    TTree *newtmdc = Tmd->CloneTree(0);
    TTree *comptree = T->CloneTree(0);
-
+   */
    
    for(int i=0;i<nEvents;i++)
    {
@@ -165,28 +165,30 @@ void separateMixedRun(string rootname, string outdir)
 
       if(run_type == 0x634E)
       	 virtree->Fill();
+      /*
       if(run_type == 0x6336) 
 	 comptree->Fill();
+      */
    }
 
    for(int i=0; i<2; i++) 
    {
       Tmd->GetEntry(i);
-      newtmdc->Fill();
+      //newtmdc->Fill();
       newtmdv->Fill();
    }
-
+   /*
    newfile1->cd();
    newtmdc->Write();
    comptree->Write();
-
+   */
    
    
    newfile2->cd();
    newtmdv->Write();
    virtree->Write();
    
-   newfile1->Close(); 
+   //newfile1->Close(); 
    newfile2->Close();
    rootfile->Close();
 }
