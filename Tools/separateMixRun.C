@@ -10,7 +10,7 @@
  *
  * INSTRUCTIONS:
  *     compile:    g++ -Wall separateMixRun.C -o separate `root-config --cflags --libs`
- *     run:        ./separate <root file> 
+ *     run:        ./separate <root file> <outdir>
  *
  *
  * =============================================================================
@@ -28,15 +28,16 @@
 #include <TFile.h>
 #include <TBranch.h>
 #include <iostream>
+#include <string>
 
 #include "bin2root.h"
 
 using namespace std;
 
-void separateMixedRun(TString rootname);
+void separateMixedRun(string rootname, string outdir);
 
 
-void separateMixedRun(TString rootname)
+void separateMixedRun(string rootname, string outdir)
 {
 
    tail_run_t tail_run;
@@ -71,7 +72,7 @@ void separateMixedRun(TString rootname)
 
 
    //TFile *rootfile = new TFile(rootname,"read");
-   TFile *rootfile = new TFile(rootname,"read");
+   TFile *rootfile = new TFile(rootname.c_str(),"read");
 
    TTree* Tmd = (TTree*)rootfile->Get("Tmd");
    Tmd->SetBranchAddress("boot_nr", &tail_run.boot_nr);
@@ -132,21 +133,27 @@ void separateMixedRun(TString rootname)
    // silicon data
    T->SetBranchAddress("strip[4608]", &strip[0]);
 
-   TString outnameCOMP = rootname;
-   outnameCOMP.ReplaceAll(".root", 5, "_COMP.root", 10);
+   string outnameCOMP= outdir;
+   outnameCOMP.append("/");
+   outnameCOMP.append(rootname.substr(rootname.find_last_of("\\/")));
    
-   TString outnameVIRGIN = rootname;
-   outnameVIRGIN.ReplaceAll(".root", 5, "_VIRGIN.root", 12);
-
+   outnameCOMP.erase(outnameCOMP.end()-5);
+   outnameCOMP.append("_COMP.root");
+   string outnameVIRGIN=outdir;
+   outnameVIRGIN.append("/");
+   outnameVIRGIN.append(rootname.substr(rootname.find_last_of("\\/")));
+   
+   outnameVIRGIN.erase(outnameVIRGIN.end()-5);
+   outnameVIRGIN.append("_VIRGIN.root");
    
    Int_t nEvents = T->GetEntries();
    
    
-   TFile *newfile2 = new TFile(outnameVIRGIN,"recreate");
+   TFile *newfile2 = new TFile(outnameVIRGIN.c_str(),"recreate");
    TTree *virtree = T->CloneTree(0);
    TTree *newtmdv = Tmd->CloneTree(0);
    
-   TFile *newfile1 = new TFile(outnameCOMP,"recreate");
+   TFile *newfile1 = new TFile(outnameCOMP.c_str(),"recreate");
    TTree *newtmdc = Tmd->CloneTree(0);
    TTree *comptree = T->CloneTree(0);
 
@@ -186,7 +193,7 @@ void separateMixedRun(TString rootname)
 
 
 int main(int argc, char** argv){
-   separateMixedRun(argv[1]);
+  separateMixedRun(argv[1],argv[2]);
 
    return 0;
 }
