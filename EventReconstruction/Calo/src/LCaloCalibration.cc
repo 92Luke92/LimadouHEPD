@@ -120,7 +120,7 @@ LCaloCalibration& LCaloCalibration::operator+=(const LCaloCalibration& rhs) // c
   std::vector<double> skew(NPMT,0.);
   std::vector<double> kurt(NPMT,0.);
 
-  for(uint ipmt=0; ipmt<NPMT; ++ipmt) {
+  for(uint16_t ipmt=0; ipmt<NPMT; ++ipmt) {
     double tmp = rhs.GetPedestal()[ipmt];
     ped[ipmt] = pedestal[ipmt]+tmp;
     double tmpsig = rhs.GetSigma()[ipmt];
@@ -135,7 +135,7 @@ LCaloCalibration& LCaloCalibration::operator+=(const LCaloCalibration& rhs) // c
        (sigma[ipmt]*sigma[ipmt]*sigma[ipmt]*sigma[ipmt]+tmpsig*tmpsig*tmpsig*tmpsig);  // correlations neglected!!!
     */
   }
-  for(uint ipmt=0; ipmt<NPMT; ++ipmt) {
+  for(uint16_t ipmt=0; ipmt<NPMT; ++ipmt) {
     pedestal[ipmt] = ped.at(ipmt);
     sigma[ipmt] = sqrt(var.at(ipmt));
     /*  outliers[ipmt] = outl[ipmt];

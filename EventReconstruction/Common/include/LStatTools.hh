@@ -25,8 +25,8 @@ class LStatTools
       void info(); // Main stat info (mean, rms, N elements)
       void dump(); // info() + detail of each element
 
-      float moment(uint n);
-      float norm_moment(uint n) {return moment(n)/pow(sigma(), n);}
+      float moment(uint16_t n);
+      float norm_moment(uint16_t n) {return moment(n)/pow(sigma(), n);}
       float mean() {return mu;}
       float sigma() {return rms();}
       float rms() {return sqrt(variance());}

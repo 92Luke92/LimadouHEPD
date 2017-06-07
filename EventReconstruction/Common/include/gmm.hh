@@ -10,11 +10,11 @@
 #ifndef GMM_HH
 #define GMM_HH
 
-
 #include "LStatTools.hh"
 
 class GMM
 {
+
    public:
       GMM(LStatTools stat) :  distrib_init(stat),
                               distribs(2, stat)
@@ -22,7 +22,7 @@ class GMM
 
       static float normal_pdf(float x, float mu=0, float sigma=1);
       static std::vector<float> normal_pdf(std::vector<float> x, float mu=0, float sigma=1);
-      void iterate(uint niter=20);
+      void iterate(uint16_t niter=20);
 
 
 
@@ -49,11 +49,11 @@ class GMM
       float alpha[2]={0};
       float mu[2]={0};
       float sigma[2]={0};
-      const uint ngaus=2;
+	  static const uint16_t ngaus = { 2 };
       LStatTools distrib_init;
       std::vector <LStatTools> distribs;
 
-      uint totiter=0;
+      uint16_t totiter=0;
       void EMstep();
 
       bool verbose=false;

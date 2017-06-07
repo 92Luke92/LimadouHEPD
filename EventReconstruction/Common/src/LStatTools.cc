@@ -62,7 +62,7 @@ void LStatTools::dump() {
 
 
 
-float LStatTools::moment(uint n) {
+float LStatTools::moment(uint16_t n) {
    float accu=0, sum=0;
    float mu=mean();
    for (const auto& elt : datamap) {
