@@ -22,7 +22,7 @@ private:
   int LoadRun(const std::string inputFileROOT);
   
   int Test(int bar);
-  int Calc();
+  int Calc(int hw_condition);//hw_condition = 0 all pmts; =1 no pmt 5east
 
 
   LScintillatorsL2(LScintillatorsL2 const&) = delete;

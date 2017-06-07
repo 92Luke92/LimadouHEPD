@@ -11,6 +11,6 @@ int main(int argc, char *argv[]) {
 	}
 	std::string st = argv[1];
 	LScintillatorsL2::GetInstance().LoadRun(st);
-	LScintillatorsL2::GetInstance().Calc();
+	LScintillatorsL2::GetInstance().Calc(0);
 	return EXIT_SUCCESS;
 }
