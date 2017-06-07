@@ -56,9 +56,4 @@ hadd $DEST$MERGEDFILE $1*.root
                                                                                                                                   
                                                                                                                                   
 QuickLook $DEST$MERGEDFILE -x "xslTemplates/" #-o $DEST        
-cp -r $BINDIR"/../xslTemplates" $DEST                                                                                             
-                                                                                                                                  
-                                                                                                                                  
-                                                                                                                                  
-                                                                                                                                  
-            
+cp -r $BINDIR"/../xslTemplates" $DEST                                                                                           
