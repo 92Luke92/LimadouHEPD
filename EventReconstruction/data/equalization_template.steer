@@ -1,9 +1,13 @@
 // Steering file for the Limadou event calibration
 // M. Pozzato May 16th, 2017
 // michele.pozzato@bo.infn.it
-std::string    INPLIST   inpRunsEq.list
-std::string     CALBFILE  CalPar___Runs_4660_4660___target_DEF_DEF___inpRunMode_virgin.cal
+std::string    INPLIST   inputFiles.list
+std::string    CALBFILE  CALIB_FK_01_HOT.txt
 std::string    OUTFOLD   .
-double         SIGMA     1
-double         THRESHOLD 0.05
+double         SIGMA     2
+double         THRESHOLD 0.005
 bool           VERBOSE   true
+double          MINADCCOUNTS 20
+int NBINSBEFOREPEAK 4
+int NBINSAFTERPEAK 4
+
