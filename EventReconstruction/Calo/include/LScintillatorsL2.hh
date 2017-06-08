@@ -23,8 +23,8 @@ private:
   
   int Test(int bar);
   int Calc(int hw_condition);//hw_condition = 0 all pmts; =1 no pmt 5east
-
-
+  int Filter(int type, double *argums);//
+ 
   LScintillatorsL2(LScintillatorsL2 const&) = delete;
   void operator=(LScintillatorsL2 const&) = delete;
 

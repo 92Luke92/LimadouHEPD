@@ -1,4 +1,4 @@
-#include "TH1I.h"
+#include "TH1.h"
 #include "LEvRec1File.hh"
 #include "LScintillatorsL2.hh"
 #include <iostream>
@@ -209,7 +209,7 @@ sumall=0,suma=0,sumb=0, mult=0, conn[16]={0}, enUC=0;
         enUC=(sumall-Ek[0])*Ek[1];//MeV
    
         h1->Fill(enUC);
-/*
+
 // loop on lat veto ---------------------------------------------------------------
 // flag for lat veto hitting 
 
@@ -222,7 +222,7 @@ int IsVetoLatHit=0;
 
 // check for signal within the vetos signals
 
-      if( veto_snHG[veto]>5. && veto_snHG[veto2]>5. ){IsVetoLatHit=1;}
+      if( cev.veto.cont_hg[veto][0]>act_threshold && cev.veto.cont_hg[veto][0]>act_threshold ){IsVetoLatHit=1;}
   
       }// end veto loop------------------------------------------------------------
 
@@ -238,10 +238,10 @@ int IsLYSOHit=0;
 
 // check for signal within the vetos signals
 
-      if( lyso_snLG[lys]>5.){IsLYSOHit=1;}
+      if( cev.lyso.sn_hg[lys][0]>act_threshold){IsLYSOHit=1;}
   
       }// end veto loop------------------------------------------------------------
-*/
+
 
 
 
@@ -255,6 +255,14 @@ return 0;
 }
 //---------------------------------------------------------------------------
 
+int LScintillatorsL2::Filter(int type, double *argums){
+int filterval=-1.;
+if(1){}
+return filterval;
+
+}
+
+//---------------------------------------------------------------------------
 LScintillatorsL2::~LScintillatorsL2() {
   // do not care about singleton destructor
 }
