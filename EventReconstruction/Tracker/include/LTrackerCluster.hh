@@ -12,6 +12,7 @@ const double CLSNTHRESHOLD1CHAN=3.;
 class LTrackerCluster {
 public:
   LTrackerCluster();
+  LTrackerCluster& operator=(const LTrackerCluster& other);
   LTrackerCluster(const int inpSeed, const double *inpCont, const double *inpSigma);
   void Dump() const;
   void FillRandom(void);

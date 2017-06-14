@@ -47,9 +47,7 @@ int LCaloCalibrationManager::LoadRun(const char *fileInp) {
 
 //---------------------------------------------------------------------------
 
-int *LCaloCalibrationManager::GetPeaksHG() const {
-  int *result = new int[NPMT];
-
+void LCaloCalibrationManager::GetPeaksHG(int *result) const {
   const bool isHG=true;
   auto predicate = [&](int cursor, bool trigger_flag, int iCh)
     {(void)iCh; return cursor < HGPEAKFINDERWINDOW && trigger_flag==0;};
@@ -67,14 +65,12 @@ int *LCaloCalibrationManager::GetPeaksHG() const {
     result[iCh] = peakpos;
   }
 
-  return result;
+  return;
 }
 
 //---------------------------------------------------------------------------
 
-int *LCaloCalibrationManager::GetPeaksLG() const {
-  int *result = new int[NPMT];
-
+void LCaloCalibrationManager::GetPeaksLG(int *result) const {
   const bool isHG=false;
   auto predicate = [&](int cursor, bool trigger_flag, int iCh)
     {(void)iCh; return cursor < LGPEAKFINDERWINDOW && trigger_flag==0;};
@@ -92,7 +88,7 @@ int *LCaloCalibrationManager::GetPeaksLG() const {
     result[iCh] = peakpos;
   }
 
-  return result;
+  return;
 }
 
 //---------------------------------------------------------------------------
@@ -143,7 +139,7 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum,
     }
   }
 
-  delete spectrum;
+  delete[] spectrum;
 
   return peakpos;
 }
@@ -378,7 +374,9 @@ LCaloCalibration *LCaloCalibrationManager::Calibrate(const bool isHG,
   // double skewness[NPMT], kurtosis[NPMT];
 
   // Zero approximation initialization
-  int *peaks = isHG ? GetPeaksHG() : GetPeaksLG();
+  int peaks[NPMT];
+  if(isHG==true) GetPeaksHG(peaks);
+  else GetPeaksLG(peaks);
     
   for (int iCh = 0; iCh < NPMT; ++iCh) {
     ped0[iCh] = static_cast<double>(peaks[iCh]);

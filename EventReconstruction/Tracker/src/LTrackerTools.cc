@@ -66,8 +66,8 @@ int ChanToSideChan(const int Chan) {
   return result;
 }
 
-std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigma, const bool *maskIn, const bool __emulateOnline){
-  auto result= new std::vector<LTrackerCluster>;
+std::vector<LTrackerCluster> GetClusters(const double* cont, const double *sigma, const LTrackerMask *maskIn, const bool __emulateOnline){
+  std::vector<LTrackerCluster> result;
   double sn[NCHAN];
   for(int ich=0; ich<NCHAN; ++ich){
     if(sigma[ich]==0.) sn[ich]=-999.;
@@ -76,9 +76,9 @@ std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigm
   }
   
   // Prepare mask even for default case
-  double mask[NCHAN];
+  bool mask[NCHAN];
   if(maskIn==0) for(int ich=0; ich<NCHAN; ++ich) mask[ich]=true;
-  else for(int ich=0; ich<NCHAN; ++ich) mask[ich]=maskIn[ich];
+  else for(int ich=0; ich<NCHAN; ++ich) mask[ich]=maskIn->Get(ich);
   // Apply the mask
   for(int ich=0; ich<NCHAN; ++ich) sn[ich]*=(static_cast<double>(mask[ich]));
   
@@ -117,8 +117,8 @@ std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigm
     }
     */
     LTrackerCluster mycl(maxindex1, cont, sigma);
-    if(maskIn[maxindex1]&&maskIn[maxindex1-1]&&maskIn[maxindex1+1])
-      result->push_back(mycl);
+    if(maskIn->Get(maxindex1)&&maskIn->Get(maxindex1-1)&&maskIn->Get(maxindex1+1))
+      result.push_back(mycl);
     ich=maxindex1+2; // already explored up there.
     //ich=maxindex1-2; // already explored up there.
   } // end of the main loop:: Warning, possible overlap between clusters' boundaries
@@ -126,16 +126,16 @@ std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigm
   return result;
 }
 
-std::vector<LTrackerCluster>* GetClusters2Chan(const double* cont, const double *sigma, const bool *maskIn) {
+std::vector<LTrackerCluster> GetClusters2Chan(const double* cont, const double *sigma, const LTrackerMask *maskIn) {
   
-  auto result= new std::vector<LTrackerCluster>;
+  std::vector<LTrackerCluster> result;
   double sn[NCHAN];
   for(int ich=0; ich<NCHAN; ++ich) sn[ich]=cont[ich]/sigma[ich];
 
   // Prepare mask even for default case
-  double mask[NCHAN];
+  bool mask[NCHAN];
   if(maskIn==0) for(int ich=0; ich<NCHAN; ++ich) mask[ich]=true;
-  else for(int ich=0; ich<NCHAN; ++ich) mask[ich]=maskIn[ich];
+  else for(int ich=0; ich<NCHAN; ++ich) mask[ich]=maskIn->Get(ich);
   // Apply the mask
   for(int ich=0; ich<NCHAN; ++ich) sn[ich]*=(static_cast<double>(mask[ich]));
   
@@ -188,7 +188,7 @@ std::vector<LTrackerCluster>* GetClusters2Chan(const double* cont, const double 
       continue;
     }
     LTrackerCluster mycl(maxindex1, cont, sigma);
-    result->push_back(mycl);
+    result.push_back(mycl);
     ich=maxindex1+2; // already explored up there.
     //ich=maxindex1-2; // already explored up there.
   } // end of the main loop:: Warning, possible overlap between clusters' boundaries
@@ -202,26 +202,26 @@ LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal) {
   const double *sigma = cal.GetTrackerCalibration()->GetSigma(0);
   LTrackerMask hotmask=cal.GetTrackerCalibration()->GetMaskOnSigma(0,COLDSIGMA,HOTSIGMA);//set the variables!!!
   LTrackerMask ngmask=cal.GetTrackerCalibration()->GetMaskOnNGI(0,NGILOW,NGIHIGH);//set the variables!!!
-  bool *evmask=(hotmask&&ngmask).GetBool();
+  LTrackerMask evmask=(hotmask&&ngmask);
 
   //CN calculation
   LTrackerMask cnmask=cal.GetTrackerCalibration()->GetCNMask(0);
   double CN[N_VA];
   for (int iva=0;iva<N_VA;++iva) CN[iva]=0.; 
-  ComputeCN(lev0.strip,ped,cnmask.GetBool(),CN);
+  ComputeCN(lev0.strip,ped,&cnmask,CN);
   for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich])-ped[ich]-CN[ChanToVA(ich)];
-  std::vector<LTrackerCluster> *tmp = GetClusters(cont, sigma,evmask);
+  std::vector<LTrackerCluster> tmp = GetClusters(cont, sigma,&evmask);
   // sorting on the eta SN
-  std::sort(tmp->begin(), tmp->end(), std::greater<LTrackerCluster>());
+  std::sort(tmp.begin(), tmp.end(), std::greater<LTrackerCluster>());
 
   LTrackerSignal result;
-  for(auto tmpit : *tmp) result.push_back(tmpit);
-
+  for(auto tmpit : tmp) result.push_back(tmpit);
+  
   return result;
 }
 
 
-void ComputeCN(const short *counts, const double *pedestal, const bool *CN_mask, double *CN) {
+void ComputeCN(const short *counts, const double *pedestal, const LTrackerMask *CN_mask, double *CN) {
   double sumVA[N_VA];
   int countVA[N_VA];
   for(int iVA=0; iVA<N_VA; ++iVA) {
@@ -230,7 +230,7 @@ void ComputeCN(const short *counts, const double *pedestal, const bool *CN_mask,
   }
     
   for(int iChan=0; iChan<NCHAN; ++iChan) {
-    if(CN_mask[iChan]==false) continue;
+    if(CN_mask->Get(iChan)==false) continue;
     int iVA=ChanToVA(iChan);
     sumVA[iVA]+=(static_cast<double>(counts[iChan])-pedestal[iChan]);
     ++countVA[iVA];

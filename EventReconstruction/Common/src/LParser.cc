@@ -30,7 +30,6 @@ void LParser::read_file(const std::string inputFile)
 
 void LParser::remove_comments(const std::string comment)
 {
-  size_t comsize=comment.size();
   std::vector< std::string >::iterator it;
   for(it=mylines.begin(); it!=mylines.end(); it++){
     size_t comm_pos=it->find(comment.c_str());

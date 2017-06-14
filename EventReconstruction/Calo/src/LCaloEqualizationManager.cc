@@ -122,7 +122,7 @@ int LCaloEqualizationManager::LoadRun(const std::string inputFileROOT,
 LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
   if (calRunFile == 0 || !(calRunFile->IsOpen())) {
     std::cerr << __LCALOEQUALIZATIONMANAGER__
-              << "Error! Attempt to call the \"Calibrate\" method, but no "
+              << "Error! Attempt to call the \"Equalize\" method, but no "
                  "calibration run loaded."
               << std::endl;
     return 0;
@@ -217,7 +217,7 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
 
     Int_t nfound = s.Search(&(h_pmt[ch]), steer.sigma, "", steer.threshold);
     Int_t nPeaks = s.GetNPeaks();               // Get number of peaks
-    Float_t *peakPositions = s.GetPositionX();  // Get peak positions
+    Double_t *peakPositions = s.GetPositionX();  // Get peak positions
 	std::sort(peakPositions, peakPositions + nPeaks);
 	bool isPeakFound = false;
 

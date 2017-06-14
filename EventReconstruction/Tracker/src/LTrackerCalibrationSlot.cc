@@ -34,7 +34,7 @@ void LTrackerCalibrationSlot::Write(std::ofstream *output) {
   return;
 }
 
-LTrackerCalibrationSlot* LTrackerCalibrationSlot::Read(std::ifstream *input) {
+LTrackerCalibrationSlot LTrackerCalibrationSlot::Read(std::ifstream *input) {
   char word[100];
   int StartEventST, StopEventST;
   double sigmarawST[NCHAN], pedestalST[NCHAN], sigmaST[NCHAN], ngindexST[NCHAN];
@@ -44,10 +44,9 @@ LTrackerCalibrationSlot* LTrackerCalibrationSlot::Read(std::ifstream *input) {
   for(int iChan=0; iChan<NCHAN; ++iChan)
     *input >> sigmarawST[iChan] >> pedestalST[iChan] >>  sigmaST[iChan] >> ngindexST[iChan] >> cnmST[iChan];
   
-  LTrackerCalibrationSlot *result = new LTrackerCalibrationSlot(StartEventST, StopEventST, sigmarawST, pedestalST, sigmaST, ngindexST, cnmST);
-
-																		
-  return result;
+   LTrackerCalibrationSlot result(StartEventST, StopEventST, sigmarawST, pedestalST, sigmaST, ngindexST, cnmST);
+  
+   return result;
 }
 
 
@@ -69,19 +68,35 @@ LTrackerMask LTrackerCalibrationSlot::GetMaskOnNGI(const double ngiMin, const do
 }
 
 
+LTrackerCalibrationSlot::LTrackerCalibrationSlot(const LTrackerCalibrationSlot &other) {
+    for(int ichan=0; ichan<NCHAN; ++ichan) {
+      sigmaraw[ichan]= other.GetSigmaRaw()[ichan];
+      pedestal[ichan] = other.GetPedestal()[ichan];
+      sigma[ichan] = other.GetSigma()[ichan];
+      ngindex[ichan] = other.GetNGIndex()[ichan];
+      CN_mask[ichan] = other.GetCNMask()[ichan];
+    }
+    
+    // event info
+    StartEvent = other.GetStartEvent();
+    StopEvent = other.GetStopEvent();
+}
+
 LTrackerCalibrationSlot& LTrackerCalibrationSlot::operator=(const LTrackerCalibrationSlot& other) {
-  for(int ichan=0; ichan<NCHAN; ++ichan) {
-    sigmaraw[ichan]= other.GetSigmaRaw()[ichan];
-    pedestal[ichan] = other.GetPedestal()[ichan];
-    sigma[ichan] = other.GetSigma()[ichan];
-    ngindex[ichan] = other.GetNGIndex()[ichan];
-    CN_mask[ichan] = other.GetCNMask()[ichan];
+  if(this != &other) {
+    for(int ichan=0; ichan<NCHAN; ++ichan) {
+      sigmaraw[ichan]= other.GetSigmaRaw()[ichan];
+      pedestal[ichan] = other.GetPedestal()[ichan];
+      sigma[ichan] = other.GetSigma()[ichan];
+      ngindex[ichan] = other.GetNGIndex()[ichan];
+      CN_mask[ichan] = other.GetCNMask()[ichan];
+    }
+    
+    // event info
+    StartEvent = other.GetStartEvent();
+    StopEvent = other.GetStopEvent();
   }
-
-  // event info
-  StartEvent = other.GetStartEvent();
-  StopEvent = other.GetStopEvent();
-
+  
   return *this;
 }
 

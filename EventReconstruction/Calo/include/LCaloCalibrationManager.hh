@@ -54,8 +54,8 @@ private:
   int FindPeak(const int pmtnum, const int PeakFinderWindowWidth, const bool isHG) const;
   int GetPeakHG(const int pmtnum) const;
   int GetPeakLG(const int pmtnum) const;
-  int* GetPeaksHG() const;
-  int* GetPeaksLG() const;
+  void GetPeaksHG(int*) const;
+  void GetPeaksLG(int*) const;
 
   std::vector <std::map  <int, float>> MapCalibFromPredicate(std::function <bool(int content, bool trigger_flag, int iCh)> predicate, const bool isHG) const;
 

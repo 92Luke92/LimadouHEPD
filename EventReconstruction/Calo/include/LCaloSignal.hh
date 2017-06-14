@@ -31,6 +31,8 @@ protected:
   int nunits;
   int npmts;
 
+private:
+  void ClearHEAP();
 };
 
 

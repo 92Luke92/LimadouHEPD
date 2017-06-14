@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <math.h>
 
-void LTrackerCalibration::Add(const LTrackerCalibrationSlot *lcal) {
-  calarray.push_back(*lcal);
+void LTrackerCalibration::Add(const LTrackerCalibrationSlot lcal) {
+  calarray.push_back(lcal);
   ++nSlots;
   std::cout << __LTRACKERCALIBRATION__ << "Current slot number " << nSlots << std::endl;;
   return;
@@ -113,8 +113,7 @@ LTrackerCalibration& LTrackerCalibration::operator+=(const LTrackerCalibration& 
   }
   tmpSlot2/=(static_cast<double>(cntSlot2));
 
-  LTrackerCalibrationSlot *toAdd = new LTrackerCalibrationSlot();
-  *toAdd = tmpSlot+tmpSlot2;
+  LTrackerCalibrationSlot toAdd =  tmpSlot+tmpSlot2;
   Add(toAdd);
   nSlots=1;
 
