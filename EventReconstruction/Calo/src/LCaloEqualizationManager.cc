@@ -217,7 +217,7 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
 
     Int_t nfound = s.Search(&(h_pmt[ch]), steer.sigma, "", steer.threshold);
     Int_t nPeaks = s.GetNPeaks();               // Get number of peaks
-    Float_t *peakPositions = s.GetPositionX();  // Get peak positions
+    Double_t *peakPositions = s.GetPositionX();  // Get peak positions
 	std::sort(peakPositions, peakPositions + nPeaks);
 	bool isPeakFound = false;
 
