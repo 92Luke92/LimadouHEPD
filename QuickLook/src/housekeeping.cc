@@ -39,132 +39,132 @@ void DUMPConfigToXML(TString rootname, TString xslPath = "")
   LEvRec0Conf dummyPKT;
   rootfile.SetTheEventPointer(ev);
   rootfile.SetTmdPointer(metaData);
-  rootfile.SetTConfPointer(dummyPKT);
+
 
   if (rootfile.IsTConf()){
-
-  cout << endl << "DUMP Config to xml:" << rootname << endl;
+     
+     rootfile.SetTConfPointer(dummyPKT);
+     cout << endl << "DUMP Config to xml:" << rootname << endl;
 
   
-  int TConf_entries = rootfile.GetTConfEntries(); 
-  cout << "Number of TConf entries: " << TConf_entries << endl;
+     int TConf_entries = rootfile.GetTConfEntries(); 
+     cout << "Number of TConf entries: " << TConf_entries << endl;
   
-  TString filename = rootname;
-  filename.ReplaceAll(".root", 5, "_DUMPConfig.xml", 15);
+     TString filename = rootname;
+     filename.ReplaceAll(".root", 5, "_DUMPConfig.xml", 15);
 
-  ofstream outputFile;
-  outputFile.open(filename.Data(), ios::trunc);
+     ofstream outputFile;
+     outputFile.open(filename.Data(), ios::trunc);
 
 
-  if (!outputFile.is_open()){
-    printf("Cannot open the file %s for the output", filename.Data());
-    exit(0);
-  }
+     if (!outputFile.is_open()){
+	printf("Cannot open the file %s for the output", filename.Data());
+	exit(0);
+     }
 
-  outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
-  outputFile << "<!-- Prologo XML -->\n";
-  outputFile << "<?xml-stylesheet type='text/xsl' href='" << xslPath.Data() << "'?>\n";
-  outputFile << "<ROOT_SOURCE>\n";
+     outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
+     outputFile << "<!-- Prologo XML -->\n";
+     outputFile << "<?xml-stylesheet type='text/xsl' href='" << xslPath.Data() << "'?>\n";
+     outputFile << "<ROOT_SOURCE>\n";
   
 
 
-  for(int j=0;j<TConf_entries;j++) {
+     for(int j=0;j<TConf_entries;j++) {
 
-    rootfile.GetTConfEntry(j);
+	rootfile.GetTConfEntry(j);
 
      
-    outputFile << "\t<INDEX>"<< 0 << "</INDEX>\n";  
-    outputFile << "\t<INDEX_2>"<< 0 << "</INDEX_2>\n";
+	outputFile << "\t<INDEX>"<< 0 << "</INDEX>\n";  
+	outputFile << "\t<INDEX_2>"<< 0 << "</INDEX_2>\n";
     
-    for(int i=0; i<5; ++i) {
+	for(int i=0; i<5; ++i) {
       
-      outputFile << "<DUMP_CONFIG>\n";
+	   outputFile << "<DUMP_CONFIG>\n";
       
-      outputFile << "\t<BOOT_NR>" << dummyPKT.dummy_pkt.boot_nr << "</BOOT_NR>\n";
-      outputFile << "\t<RUN_NR>"  << dummyPKT.dummy_pkt.run_id  << "</RUN_NR>\n";
+	   outputFile << "\t<BOOT_NR>" << dummyPKT.dummy_pkt.boot_nr << "</BOOT_NR>\n";
+	   outputFile << "\t<RUN_NR>"  << dummyPKT.dummy_pkt.run_id  << "</RUN_NR>\n";
       
-      if (i==0) {      
-	outputFile << "\t<ORBIT_CONF>"    << "SAA"  << "</ORBIT_CONF>\n";
-	outputFile << "\t<LADDER_MASK_TOP>"    << dummyPKT.dummy_pkt.orbit_conf[0].ladder_mask[0] << "</LADDER_MASK_TOP>\n";
-	outputFile << "\t<LADDER_MASK_CENTR>"    << dummyPKT.dummy_pkt.orbit_conf[0].ladder_mask[1] << "</LADDER_MASK_CENTR>\n";
-	outputFile << "\t<LADDER_MASK_BOTT>"    << dummyPKT.dummy_pkt.orbit_conf[0].ladder_mask[2] << "</LADDER_MASK_BOTT>\n";
-	outputFile << "\t<TRIGGER_MASK_VETO>"    << (short)dummyPKT.dummy_pkt.orbit_conf[0].trigger_mask[0] << "</TRIGGER_MASK_VETO>\n";
-	outputFile << "\t<TRIGGER_MASK>"    << (short)dummyPKT.dummy_pkt.orbit_conf[0].trigger_mask[1] << "</TRIGGER_MASK>\n";
-	outputFile << "\t<RUN_DURATION>"    << dummyPKT.dummy_pkt.orbit_conf[0].run_duration << "</RUN_DURATION>\n";
-	outputFile << "\t<LATITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[0].lat1*pow(10,-7)<< ";" << (double)dummyPKT.dummy_pkt.orbit_conf[0].lat2*pow(10,-7) <<"]" << "</LATITUDE_RANGE>\n";
-	outputFile << "\t<LONGITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[0].long1*pow(10,-7)<< ";" << (double)dummyPKT.dummy_pkt.orbit_conf[0].long2*pow(10,-7) << "]" << "</LONGITUDE_RANGE>\n";
+	   if (i==0) {      
+	      outputFile << "\t<ORBIT_CONF>"    << "SAA"  << "</ORBIT_CONF>\n";
+	      outputFile << "\t<LADDER_MASK_TOP>"    << dummyPKT.dummy_pkt.orbit_conf[0].ladder_mask[0] << "</LADDER_MASK_TOP>\n";
+	      outputFile << "\t<LADDER_MASK_CENTR>"    << dummyPKT.dummy_pkt.orbit_conf[0].ladder_mask[1] << "</LADDER_MASK_CENTR>\n";
+	      outputFile << "\t<LADDER_MASK_BOTT>"    << dummyPKT.dummy_pkt.orbit_conf[0].ladder_mask[2] << "</LADDER_MASK_BOTT>\n";
+	      outputFile << "\t<TRIGGER_MASK_VETO>"    << (short)dummyPKT.dummy_pkt.orbit_conf[0].trigger_mask[0] << "</TRIGGER_MASK_VETO>\n";
+	      outputFile << "\t<TRIGGER_MASK>"    << (short)dummyPKT.dummy_pkt.orbit_conf[0].trigger_mask[1] << "</TRIGGER_MASK>\n";
+	      outputFile << "\t<RUN_DURATION>"    << dummyPKT.dummy_pkt.orbit_conf[0].run_duration << "</RUN_DURATION>\n";
+	      outputFile << "\t<LATITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[0].lat1*pow(10,-7)<< ";" << (double)dummyPKT.dummy_pkt.orbit_conf[0].lat2*pow(10,-7) <<"]" << "</LATITUDE_RANGE>\n";
+	      outputFile << "\t<LONGITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[0].long1*pow(10,-7)<< ";" << (double)dummyPKT.dummy_pkt.orbit_conf[0].long2*pow(10,-7) << "]" << "</LONGITUDE_RANGE>\n";
 
-	 outputFile << "\t<INDEX_2>"<< 1 << "</INDEX_2>\n";
-      }
+	      outputFile << "\t<INDEX_2>"<< 1 << "</INDEX_2>\n";
+	   }
       
-      if (i==1) {       
-	outputFile << "\t<ORBIT_CONF>"    << "EQUATORIAL"  << "</ORBIT_CONF>\n";
-	outputFile << "\t<LADDER_MASK_TOP>"    << dummyPKT.dummy_pkt.orbit_conf[1].ladder_mask[0] << "</LADDER_MASK_TOP>\n";
-	outputFile << "\t<LADDER_MASK_CENTR>"    << dummyPKT.dummy_pkt.orbit_conf[1].ladder_mask[1] << "</LADDER_MASK_CENTR>\n";
-	outputFile << "\t<LADDER_MASK_BOTT>"    << dummyPKT.dummy_pkt.orbit_conf[1].ladder_mask[2] << "</LADDER_MASK_BOTT>\n";
-	outputFile << "\t<TRIGGER_MASK_VETO>"    << (short)dummyPKT.dummy_pkt.orbit_conf[1].trigger_mask[0] << "</TRIGGER_MASK_VETO>\n";
-	outputFile << "\t<TRIGGER_MASK>"    << (short)dummyPKT.dummy_pkt.orbit_conf[1].trigger_mask[1] << "</TRIGGER_MASK>\n";
-	outputFile << "\t<RUN_DURATION>"    << dummyPKT.dummy_pkt.orbit_conf[1].run_duration << "</RUN_DURATION>\n";
-	outputFile << "\t<LATITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[1].lat1*pow(10,-7)<< ";"<< (double)dummyPKT.dummy_pkt.orbit_conf[1].lat2*pow(10,-7)<< "]" << "</LATITUDE_RANGE>\n";
-	outputFile << "\t<LONGITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[1].long1*pow(10,-7) <<";"<< (double)dummyPKT.dummy_pkt.orbit_conf[1].long2*pow(10,-7) <<"]" << "</LONGITUDE_RANGE>\n";
-      }
+	   if (i==1) {       
+	      outputFile << "\t<ORBIT_CONF>"    << "EQUATORIAL"  << "</ORBIT_CONF>\n";
+	      outputFile << "\t<LADDER_MASK_TOP>"    << dummyPKT.dummy_pkt.orbit_conf[1].ladder_mask[0] << "</LADDER_MASK_TOP>\n";
+	      outputFile << "\t<LADDER_MASK_CENTR>"    << dummyPKT.dummy_pkt.orbit_conf[1].ladder_mask[1] << "</LADDER_MASK_CENTR>\n";
+	      outputFile << "\t<LADDER_MASK_BOTT>"    << dummyPKT.dummy_pkt.orbit_conf[1].ladder_mask[2] << "</LADDER_MASK_BOTT>\n";
+	      outputFile << "\t<TRIGGER_MASK_VETO>"    << (short)dummyPKT.dummy_pkt.orbit_conf[1].trigger_mask[0] << "</TRIGGER_MASK_VETO>\n";
+	      outputFile << "\t<TRIGGER_MASK>"    << (short)dummyPKT.dummy_pkt.orbit_conf[1].trigger_mask[1] << "</TRIGGER_MASK>\n";
+	      outputFile << "\t<RUN_DURATION>"    << dummyPKT.dummy_pkt.orbit_conf[1].run_duration << "</RUN_DURATION>\n";
+	      outputFile << "\t<LATITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[1].lat1*pow(10,-7)<< ";"<< (double)dummyPKT.dummy_pkt.orbit_conf[1].lat2*pow(10,-7)<< "]" << "</LATITUDE_RANGE>\n";
+	      outputFile << "\t<LONGITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[1].long1*pow(10,-7) <<";"<< (double)dummyPKT.dummy_pkt.orbit_conf[1].long2*pow(10,-7) <<"]" << "</LONGITUDE_RANGE>\n";
+	   }
         
-      if (i==2) {       
-	outputFile << "\t<ORBIT_CONF>"    << "SOUTH POLAR"  << "</ORBIT_CONF>\n";
-	outputFile << "\t<LADDER_MASK_TOP>"    << dummyPKT.dummy_pkt.orbit_conf[2].ladder_mask[0] << "</LADDER_MASK_TOP>\n";
-	outputFile << "\t<LADDER_MASK_CENTR>"    << dummyPKT.dummy_pkt.orbit_conf[2].ladder_mask[1] << "</LADDER_MASK_CENTR>\n";
-	outputFile << "\t<LADDER_MASK_BOTT>"    << dummyPKT.dummy_pkt.orbit_conf[2].ladder_mask[2] << "</LADDER_MASK_BOTT>\n";
-	outputFile << "\t<TRIGGER_MASK_VETO>"    << (short)dummyPKT.dummy_pkt.orbit_conf[2].trigger_mask[0] << "</TRIGGER_MASK_VETO>\n";
-	outputFile << "\t<TRIGGER_MASK>"    << (short)dummyPKT.dummy_pkt.orbit_conf[2].trigger_mask[1] << "</TRIGGER_MASK>\n";
-	outputFile << "\t<RUN_DURATION>"    << dummyPKT.dummy_pkt.orbit_conf[2].run_duration << "</RUN_DURATION>\n";
-	outputFile << "\t<LATITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[2].lat1*pow(10,-7)<< ";"<< (double)dummyPKT.dummy_pkt.orbit_conf[2].lat2*pow(10,-7) << "]" << "</LATITUDE_RANGE>\n";
-	outputFile << "\t<LONGITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[2].long1*pow(10,-7)<< ";"<< (double)dummyPKT.dummy_pkt.orbit_conf[2].long2*pow(10,-7) << "]" << "</LONGITUDE_RANGE>\n";
-      }
+	   if (i==2) {       
+	      outputFile << "\t<ORBIT_CONF>"    << "SOUTH POLAR"  << "</ORBIT_CONF>\n";
+	      outputFile << "\t<LADDER_MASK_TOP>"    << dummyPKT.dummy_pkt.orbit_conf[2].ladder_mask[0] << "</LADDER_MASK_TOP>\n";
+	      outputFile << "\t<LADDER_MASK_CENTR>"    << dummyPKT.dummy_pkt.orbit_conf[2].ladder_mask[1] << "</LADDER_MASK_CENTR>\n";
+	      outputFile << "\t<LADDER_MASK_BOTT>"    << dummyPKT.dummy_pkt.orbit_conf[2].ladder_mask[2] << "</LADDER_MASK_BOTT>\n";
+	      outputFile << "\t<TRIGGER_MASK_VETO>"    << (short)dummyPKT.dummy_pkt.orbit_conf[2].trigger_mask[0] << "</TRIGGER_MASK_VETO>\n";
+	      outputFile << "\t<TRIGGER_MASK>"    << (short)dummyPKT.dummy_pkt.orbit_conf[2].trigger_mask[1] << "</TRIGGER_MASK>\n";
+	      outputFile << "\t<RUN_DURATION>"    << dummyPKT.dummy_pkt.orbit_conf[2].run_duration << "</RUN_DURATION>\n";
+	      outputFile << "\t<LATITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[2].lat1*pow(10,-7)<< ";"<< (double)dummyPKT.dummy_pkt.orbit_conf[2].lat2*pow(10,-7) << "]" << "</LATITUDE_RANGE>\n";
+	      outputFile << "\t<LONGITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[2].long1*pow(10,-7)<< ";"<< (double)dummyPKT.dummy_pkt.orbit_conf[2].long2*pow(10,-7) << "]" << "</LONGITUDE_RANGE>\n";
+	   }
 
-      if (i==3) {    
-	outputFile << "\t<ORBIT_CONF>"    << "NORTH POLAR"  << "</ORBIT_CONF>\n";
-	outputFile << "\t<LADDER_MASK_TOP>"    << dummyPKT.dummy_pkt.orbit_conf[3].ladder_mask[0] << "</LADDER_MASK_TOP>\n";
-	outputFile << "\t<LADDER_MASK_CENTR>"    << dummyPKT.dummy_pkt.orbit_conf[3].ladder_mask[1] << "</LADDER_MASK_CENTR>\n";
-	outputFile << "\t<LADDER_MASK_BOTT>"    << dummyPKT.dummy_pkt.orbit_conf[3].ladder_mask[2] << "</LADDER_MASK_BOTT>\n";
-	outputFile << "\t<TRIGGER_MASK_VETO>"    << (short)dummyPKT.dummy_pkt.orbit_conf[3].trigger_mask[0] << "</TRIGGER_MASK_VETO>\n";
-	outputFile << "\t<TRIGGER_MASK>"    << (short)dummyPKT.dummy_pkt.orbit_conf[3].trigger_mask[1] << "</TRIGGER_MASK>\n";
-	outputFile << "\t<RUN_DURATION>"    << dummyPKT.dummy_pkt.orbit_conf[3].run_duration << "</RUN_DURATION>\n";
-	outputFile << "\t<LATITUDE_RANGE>"<< "["<< (double)dummyPKT.dummy_pkt.orbit_conf[3].lat1*pow(10,-7)<< ";"<<(double)dummyPKT.dummy_pkt.orbit_conf[3].lat2*pow(10,-7)<< "]" << "</LATITUDE_RANGE>\n";
-	outputFile << "\t<LONGITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[3].long1*pow(10,-7) <<";" <<(double)dummyPKT.dummy_pkt.orbit_conf[3].long2*pow(10,-7)<< "]" << "</LONGITUDE_RANGE>\n";
-      }
+	   if (i==3) {    
+	      outputFile << "\t<ORBIT_CONF>"    << "NORTH POLAR"  << "</ORBIT_CONF>\n";
+	      outputFile << "\t<LADDER_MASK_TOP>"    << dummyPKT.dummy_pkt.orbit_conf[3].ladder_mask[0] << "</LADDER_MASK_TOP>\n";
+	      outputFile << "\t<LADDER_MASK_CENTR>"    << dummyPKT.dummy_pkt.orbit_conf[3].ladder_mask[1] << "</LADDER_MASK_CENTR>\n";
+	      outputFile << "\t<LADDER_MASK_BOTT>"    << dummyPKT.dummy_pkt.orbit_conf[3].ladder_mask[2] << "</LADDER_MASK_BOTT>\n";
+	      outputFile << "\t<TRIGGER_MASK_VETO>"    << (short)dummyPKT.dummy_pkt.orbit_conf[3].trigger_mask[0] << "</TRIGGER_MASK_VETO>\n";
+	      outputFile << "\t<TRIGGER_MASK>"    << (short)dummyPKT.dummy_pkt.orbit_conf[3].trigger_mask[1] << "</TRIGGER_MASK>\n";
+	      outputFile << "\t<RUN_DURATION>"    << dummyPKT.dummy_pkt.orbit_conf[3].run_duration << "</RUN_DURATION>\n";
+	      outputFile << "\t<LATITUDE_RANGE>"<< "["<< (double)dummyPKT.dummy_pkt.orbit_conf[3].lat1*pow(10,-7)<< ";"<<(double)dummyPKT.dummy_pkt.orbit_conf[3].lat2*pow(10,-7)<< "]" << "</LATITUDE_RANGE>\n";
+	      outputFile << "\t<LONGITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[3].long1*pow(10,-7) <<";" <<(double)dummyPKT.dummy_pkt.orbit_conf[3].long2*pow(10,-7)<< "]" << "</LONGITUDE_RANGE>\n";
+	   }
 
-      if (i==4) {       
-	outputFile << "\t<ORBIT_CONF>"    << "DEFAULT"  << "</ORBIT_CONF>\n";
-	outputFile << "\t<LADDER_MASK_TOP>"    << dummyPKT.dummy_pkt.orbit_conf[4].ladder_mask[0] << "</LADDER_MASK_TOP>\n";
-	outputFile << "\t<LADDER_MASK_CENTR>"    << dummyPKT.dummy_pkt.orbit_conf[4].ladder_mask[1] << "</LADDER_MASK_CENTR>\n";
-	outputFile << "\t<LADDER_MASK_BOTT>"    << dummyPKT.dummy_pkt.orbit_conf[4].ladder_mask[2] << "</LADDER_MASK_BOTT>\n";
-	outputFile << "\t<TRIGGER_MASK_VETO>"    << (short)dummyPKT.dummy_pkt.orbit_conf[4].trigger_mask[0] << "</TRIGGER_MASK_VETO>\n";
-	outputFile << "\t<TRIGGER_MASK>"    << (short)dummyPKT.dummy_pkt.orbit_conf[4].trigger_mask[1] << "</TRIGGER_MASK>\n";
-	outputFile << "\t<RUN_DURATION>"    << dummyPKT.dummy_pkt.orbit_conf[4].run_duration << "</RUN_DURATION>\n";
-	outputFile << "\t<LATITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[4].lat1*pow(10,-7) <<";"<<(double)dummyPKT.dummy_pkt.orbit_conf[4].lat2*pow(10,-7) <<"]" << "</LATITUDE_RANGE>\n";
-	outputFile << "\t<LONGITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[4].long1*pow(10,-7) <<";" <<(double)dummyPKT.dummy_pkt.orbit_conf[4].long2*pow(10,-7) <<"]" << "</LONGITUDE_RANGE>\n";
+	   if (i==4) {       
+	      outputFile << "\t<ORBIT_CONF>"    << "DEFAULT"  << "</ORBIT_CONF>\n";
+	      outputFile << "\t<LADDER_MASK_TOP>"    << dummyPKT.dummy_pkt.orbit_conf[4].ladder_mask[0] << "</LADDER_MASK_TOP>\n";
+	      outputFile << "\t<LADDER_MASK_CENTR>"    << dummyPKT.dummy_pkt.orbit_conf[4].ladder_mask[1] << "</LADDER_MASK_CENTR>\n";
+	      outputFile << "\t<LADDER_MASK_BOTT>"    << dummyPKT.dummy_pkt.orbit_conf[4].ladder_mask[2] << "</LADDER_MASK_BOTT>\n";
+	      outputFile << "\t<TRIGGER_MASK_VETO>"    << (short)dummyPKT.dummy_pkt.orbit_conf[4].trigger_mask[0] << "</TRIGGER_MASK_VETO>\n";
+	      outputFile << "\t<TRIGGER_MASK>"    << (short)dummyPKT.dummy_pkt.orbit_conf[4].trigger_mask[1] << "</TRIGGER_MASK>\n";
+	      outputFile << "\t<RUN_DURATION>"    << dummyPKT.dummy_pkt.orbit_conf[4].run_duration << "</RUN_DURATION>\n";
+	      outputFile << "\t<LATITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[4].lat1*pow(10,-7) <<";"<<(double)dummyPKT.dummy_pkt.orbit_conf[4].lat2*pow(10,-7) <<"]" << "</LATITUDE_RANGE>\n";
+	      outputFile << "\t<LONGITUDE_RANGE>"<< "[" <<(double)dummyPKT.dummy_pkt.orbit_conf[4].long1*pow(10,-7) <<";" <<(double)dummyPKT.dummy_pkt.orbit_conf[4].long2*pow(10,-7) <<"]" << "</LONGITUDE_RANGE>\n";
       
-	outputFile << "\t<INDEX>"<< 1 << "</INDEX>\n";
+	      outputFile << "\t<INDEX>"<< 1 << "</INDEX>\n";
 
-	outputFile << "\t<ORBITAL_SETTINGS>"    << dummyPKT.dummy_pkt.user_orbital_settings << "</ORBITAL_SETTINGS>\n";
-	outputFile << "\t<CONFIG_ID>"    << dummyPKT.dummy_pkt.WO_config_ID << "</CONFIG_ID>\n";
-	outputFile << "\t<CALIB_PERIOD>"    << dummyPKT.dummy_pkt.calib_period << "</CALIB_PERIOD>\n";
-	outputFile << "\t<SAFE_MODE>" << dummyPKT.dummy_pkt.safe_mode << "</SAFE_MODE>\n";
+	      outputFile << "\t<ORBITAL_SETTINGS>"    << dummyPKT.dummy_pkt.user_orbital_settings << "</ORBITAL_SETTINGS>\n";
+	      outputFile << "\t<CONFIG_ID>"    << dummyPKT.dummy_pkt.WO_config_ID << "</CONFIG_ID>\n";
+	      outputFile << "\t<CALIB_PERIOD>"    << dummyPKT.dummy_pkt.calib_period << "</CALIB_PERIOD>\n";
+	      outputFile << "\t<SAFE_MODE>" << dummyPKT.dummy_pkt.safe_mode << "</SAFE_MODE>\n";
  
-      }
-       outputFile << "</DUMP_CONFIG>\n"; 
-    }
+	   }
+	   outputFile << "</DUMP_CONFIG>\n"; 
+	}
   
 
-  }
-  outputFile << "</ROOT_SOURCE>\n"; 
-  outputFile.close();
+     }
+     outputFile << "</ROOT_SOURCE>\n"; 
+     outputFile.close();
   
   }  
-  else{
+  else
     return;
-  }
-    
+  
  
   }
 

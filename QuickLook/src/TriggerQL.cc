@@ -19,6 +19,7 @@
 #include <TFile.h>
 #include <TROOT.h>
 #include <TH2D.h>
+#include <TError.h>
 #include <TGraph.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,10 +47,11 @@ using namespace std;
 
 void TriggerScan(TString rootname)
 {
-  TString outname = rootname;
-  outname.ReplaceAll(".root", 5, "_TriggerQL.pdf", 14);
-  
- 
+   gErrorIgnoreLevel = 5000 ;
+   
+   TString outname = rootname;
+   outname.ReplaceAll(".root", 5, "_TriggerQL.pdf", 14);
+   
    UShort_t first_run_nr;
    UShort_t last_run_nr;
    UInt_t event_time;
@@ -408,5 +410,6 @@ void TriggerScan(TString rootname)
    const char *char_outname = outname;
    gROOT->ProcessLine(Form(".!convert `ls -v *.png` %s",char_outname));
    gROOT->ProcessLine(".!rm *.png");
-   
+
+   gErrorIgnoreLevel = 1;
 }

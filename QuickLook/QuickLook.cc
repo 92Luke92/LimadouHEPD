@@ -25,7 +25,6 @@ int main(int argc, char **argv){
    TString tel;
    TString dump;
    
-   
    if (argc < 2)
    {
       PrintHelp();
@@ -77,9 +76,8 @@ int main(int argc, char **argv){
    TriggerScan(argv[1]);
    PMTScan(argv[1]);
    
-   if (TrackerQuickLook(argv[1]) == -1 )
-      std::cout << "Not Virgin run: " << std::endl;
-   
+   TrackerQuickLook(argv[1]);
+      
    broad1 = xslPath+"TimeBroadcastTemplate.xsl";
    broad2 = xslPath+"GPSBroadcastTemplate.xsl";
 
