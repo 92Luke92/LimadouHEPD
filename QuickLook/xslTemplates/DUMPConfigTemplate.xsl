@@ -18,7 +18,7 @@
    <xsl:template match="/" name="ArrDumpTemplate">
      <html>
        <body STYLE="font-family:Arial, helvetica, sans-serif; font-size:12pt">
-	 <h2>DUMP Configuration </h2>
+	 <h2>DUMP Configurations </h2>
 
 
 	   
@@ -60,7 +60,7 @@
 		   <td>
 		     <table border="1">
 		       <tr  bgcolor="#999999">
-			 <td height="30" align="center" colspan="6"> <strong> Orbit Zone Configurations </strong> </td>
+			 <td height="30" align="center" colspan="6"> <strong> Orbit Zones Configuration </strong> </td>
 		       </tr>
 		       <tr>
 			 
