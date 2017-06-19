@@ -204,5 +204,41 @@ public:
    
 };
 
+/* °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°*/
+struct orbit_conf_out_t           
+{
+   bool             ladder_mask[3];
+   unsigned char    trigger_mask[2];
+   unsigned short   run_duration;
+   int     lat1;
+   int     lat2;
+   int     long1;
+   int     long2;
+} ;
 
+
+
+/* °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°*/
+struct dummy_packet_out_t
+{
+   unsigned short    len;
+   unsigned short    boot_nr;
+   unsigned short    run_id;
+   orbit_conf_out_t  orbit_conf[5];
+   bool              user_orbital_settings;
+   unsigned short    WO_config_ID;
+   unsigned short    calib_period;
+   bool              safe_mode;
+} ;
+
+
+class LEvRec0Conf {
+
+public:
+  LEvRec0Conf();
+
+  dummy_packet_out_t    dummy_pkt;
+  
+};
 #endif
+

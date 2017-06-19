@@ -1,8 +1,11 @@
 #include <iostream>
 #include "LTrackerQuicklook.hh"
+#include "housekeeping.hh"
 #include <stdlib.h>
 #include <TSystem.h>
 #include <TROOT.h>
+
+
 
 
 int main(int argc, char **argv){
@@ -20,6 +23,7 @@ int main(int argc, char **argv){
    TString scint;
    TString sil;
    TString tel;
+   TString dump;
    
    
    if (argc < 2)
@@ -85,7 +89,9 @@ int main(int argc, char **argv){
    scint = xslPath+"ScintConfigTemplate.xsl";
    sil = xslPath+"SilConfigTemplate.xsl";
    tel = xslPath+"TelemetryTemplate.xsl";
+   dump= xslPath+"DUMPConfigTemplate.xsl";
 
+   DUMPConfigToXML(argv[1], dump);
    BroadcastToXML(argv[1], broad1, broad2);
    CPUTimeTempToXML(argv[1], cpu);
    HVPSConfigToXML(argv[1], hvps);
@@ -93,6 +99,7 @@ int main(int argc, char **argv){
    ScintConfigToXML(argv[1], scint);
    SilConfigToXML(argv[1], sil);
    TelemetryToXML(argv[1], tel);
+  
 
    const char *char_outPath = outPath;
 //   gROOT->ProcessLine(Form(".!mkdir -p %s",char_outPath));         not required anymore
