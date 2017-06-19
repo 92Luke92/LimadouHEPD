@@ -152,90 +152,90 @@ int TrackerQuickLook(std::string namefile){
     std::cout<<"The run is Virgin mode??? "<<ev.IsVirgin()<<std::endl;
     
     for(int ipk = 0; ipk < N_PKG; ++ipk){
-      std::cout<<"Processing events "<< ipk<<std::endl;
-    double *sigmaraw_chan = cal->GetSigmaRaw(ipk);
-    double *sigma_chan = cal->GetSigma(ipk);
-    double *mean_chan = cal->GetPedestal(ipk);
-    double *NGindex_chan = cal->GetNGIndex(ipk);
-    bool *CNmask = cal->GetCNMask(ipk);
-    LTrackerMask hotchan_tmp = cal->GetMaskOnSigma(ipk, -999., HOTCHANNELTHRESHOLD);
-    LTrackerMask coldchan_tmp = cal->GetMaskOnSigma(ipk, COLDCHANNELTHRESHOLD, 999.);
-    LTrackerMask nongauschan_tmp = cal->GetMaskOnNGI(ipk, -999., GAUSCHANNELTHRESHOLD);
+       std::cout<<"Processing events "<< ipk<<std::endl;
+       double *sigmaraw_chan = cal->GetSigmaRaw(ipk);
+       double *sigma_chan = cal->GetSigma(ipk);
+       double *mean_chan = cal->GetPedestal(ipk);
+       double *NGindex_chan = cal->GetNGIndex(ipk);
+       bool *CNmask = cal->GetCNMask(ipk);
+       LTrackerMask hotchan_tmp = cal->GetMaskOnSigma(ipk, -999., HOTCHANNELTHRESHOLD);
+       LTrackerMask coldchan_tmp = cal->GetMaskOnSigma(ipk, COLDCHANNELTHRESHOLD, 999.);
+       LTrackerMask nongauschan_tmp = cal->GetMaskOnNGI(ipk, -999., GAUSCHANNELTHRESHOLD);
       
-    bool *evmask=(hotchan_tmp&&nongauschan_tmp).GetBool();
+       bool *evmask=(hotchan_tmp&&nongauschan_tmp).GetBool();
     
-    short data[NCHAN];
-    double CN_va[N_VA];
-    double counts_clean_chan[NCHAN];
-    double sign_noise[NCHAN];
+       short data[NCHAN];
+       double CN_va[N_VA];
+       double counts_clean_chan[NCHAN];
+       double sign_noise[NCHAN];
     
     
-    for(int iev = 0; iev < NCALIBEVENTS_QL; ++iev){
-    input.GetEntry(NCALIBEVENTS_QL*ipk + iev);
-    for(int ichan=0; ichan < NCHAN; ichan++){
-    data[ichan] = ev.strip[ichan];
-    }
-    ComputeCN(data,mean_chan,CNmask,CN_va);
+       for(int iev = 0; iev < NCALIBEVENTS_QL; ++iev){
+	  input.GetEntry(NCALIBEVENTS_QL*ipk + iev);
+	  for(int ichan=0; ichan < NCHAN; ichan++){
+	     data[ichan] = ev.strip[ichan];
+	  }
+	  ComputeCN(data,mean_chan,CNmask,CN_va);
 	
-    for(int ichan = 0; ichan < NCHAN; ++ichan){
-    int chanva = ChanToVA(ichan);
-    int chanside = ChanToSide(ichan);
-    int chanladder = ChanToLadder(ichan);
-    int chanonside = ChanToSideChan(ichan);
-    int chanVAside = ChanToVA(ichan)%SIDE_VA;
-    int chanonVA = ChanToVAChan(ichan);
+	  for(int ichan = 0; ichan < NCHAN; ++ichan){
+	     int chanva = ChanToVA(ichan);
+	     int chanside = ChanToSide(ichan);
+	     int chanladder = ChanToLadder(ichan);
+	     int chanonside = ChanToSideChan(ichan);
+	     int chanVAside = ChanToVA(ichan)%SIDE_VA;
+	     int chanonVA = ChanToVAChan(ichan);
 	
-    counts_clean_chan[ichan] = data[ichan] - CN_va[chanva] - mean_chan[ichan];
-    sign_noise[ichan] = counts_clean_chan[ichan]/sigma_chan[ichan];
-    counts_clean[chanside][chanladder]->Fill(chanonside, counts_clean_chan[ichan]);
-    signal_noise[chanside][chanladder]->Fill(chanonside, sign_noise[ichan]);
+	     counts_clean_chan[ichan] = data[ichan] - CN_va[chanva] - mean_chan[ichan];
+	     sign_noise[ichan] = counts_clean_chan[ichan]/sigma_chan[ichan];
+	     counts_clean[chanside][chanladder]->Fill(chanonside, counts_clean_chan[ichan]);
+	     signal_noise[chanside][chanladder]->Fill(chanonside, sign_noise[ichan]);
 	    
-    }
+	  }
     
-    std::vector<LTrackerCluster> *clusters=GetClusters(counts_clean_chan,sigma_chan,evmask);
+	  std::vector<LTrackerCluster> *clusters=GetClusters(counts_clean_chan,sigma_chan,evmask);
    
-    /*
-    for(int cl=0;cl<clusters->size();++cl){
+	  /*
+	    for(int cl=0;cl<clusters->size();++cl){
       
-    int seed=clusters->at(cl).seed;
+	    int seed=clusters->at(cl).seed;
     
-    int clusterside=ChanToSide(seed);
-    int clusterladder=ChanToLadder(seed);
-    double etacounts=clusters->at(cl).GetEtaCounts();
-    double clsize=clusters->at(cl).ClusterSize(3.);
+	    int clusterside=ChanToSide(seed);
+	    int clusterladder=ChanToLadder(seed);
+	    double etacounts=clusters->at(cl).GetEtaCounts();
+	    double clsize=clusters->at(cl).ClusterSize(3.);
      
-    clustersize[clusterside][clusterladder]->Fill(clsize);
-    landau[clusterside][clusterladder]->Fill(etacounts);
+	    clustersize[clusterside][clusterladder]->Fill(clsize);
+	    landau[clusterside][clusterladder]->Fill(etacounts);
     
-    }
-    */
-    for(int ld=0;ld<N_LADDER;++ld){
-    for(int sd=0;sd<N_SIDES;++sd){
-    for(int vaside=0;vaside<SIDE_VA;++vaside)
-    CN[sd][ld]->Fill(vaside,CN_va[vaside + sd*SIDE_VA + ld*LADDER_VA]);
-    }
-    }
-    }
-    bool *hot_bool=hotchan_tmp.GetBool();
-    bool *cold_bool=coldchan_tmp.GetBool();
-    bool *nongaus_bool=nongauschan_tmp.GetBool();    
+	    }
+	  */
+	  for(int ld=0;ld<N_LADDER;++ld){
+	     for(int sd=0;sd<N_SIDES;++sd){
+		for(int vaside=0;vaside<SIDE_VA;++vaside)
+		   CN[sd][ld]->Fill(vaside,CN_va[vaside + sd*SIDE_VA + ld*LADDER_VA]);
+	     }
+	  }
+       }
+       bool *hot_bool=hotchan_tmp.GetBool();
+       bool *cold_bool=coldchan_tmp.GetBool();
+       bool *nongaus_bool=nongauschan_tmp.GetBool();    
 
-    for(int ichan=0;ichan<NCHAN;++ichan){
-    int chanside=ChanToSide(ichan);
-    int chanladder=ChanToLadder(ichan);
-    int chanonside=ChanToSideChan(ichan);
-    int chanVAside=ChanToVA(ichan)%SIDE_VA;
-    int chanonVA=ChanToVAChan(ichan);
+       for(int ichan=0;ichan<NCHAN;++ichan){
+	  int chanside=ChanToSide(ichan);
+	  int chanladder=ChanToLadder(ichan);
+	  int chanonside=ChanToSideChan(ichan);
+	  int chanVAside=ChanToVA(ichan)%SIDE_VA;
+	  int chanonVA=ChanToVAChan(ichan);
       
-    sigmaraw[chanside][chanladder]->Fill(chanonside,sigmaraw_chan[ichan]);
-    pedestal[chanside][chanladder]->Fill(chanonside,mean_chan[ichan]);
-    sigmaped[chanside][chanladder]->Fill(chanonside,sigma_chan[ichan]);
-    NGindex[chanside][chanladder]->Fill(chanonside,NGindex_chan[ichan]);
-    if(!hot_bool[ichan]) temp_map[chanside][chanladder]->Fill(chanonVA,chanVAside,+10);
-    if(!cold_bool[ichan])temp_map[chanside][chanladder]->Fill(chanonVA,chanVAside,-10.);
-    if(!nongaus_bool[ichan])gaus_map[chanside][chanladder]->Fill(chanonVA,chanVAside);
+	  sigmaraw[chanside][chanladder]->Fill(chanonside,sigmaraw_chan[ichan]);
+	  pedestal[chanside][chanladder]->Fill(chanonside,mean_chan[ichan]);
+	  sigmaped[chanside][chanladder]->Fill(chanonside,sigma_chan[ichan]);
+	  NGindex[chanside][chanladder]->Fill(chanonside,NGindex_chan[ichan]);
+	  if(!hot_bool[ichan]) temp_map[chanside][chanladder]->Fill(chanonVA,chanVAside,+10);
+	  if(!cold_bool[ichan])temp_map[chanside][chanladder]->Fill(chanonVA,chanVAside,-10.);
+	  if(!nongaus_bool[ichan])gaus_map[chanside][chanladder]->Fill(chanonVA,chanVAside);
       
-    }
+       }
     
     }
     
@@ -246,13 +246,13 @@ int TrackerQuickLook(std::string namefile){
     ss << input.GetEntries();
     TString numEvents = ss.str(); 
     ss.str("");
-    input.GetEntry(0);
+    input.GetTmdEntry(0);
     ss << metaData.run_id;
     // ss << input.GetRunId();
     TString runID = ss.str();
     runID += "-";
     ss.str("");
-    input.GetEntry(input.GetTmdEntries() -1);
+    input.GetTmdEntry(input.GetTmdEntries() -1);
     ss << metaData.run_id;
     runID += ss.str();
     // ss << input.GetBootNr();
