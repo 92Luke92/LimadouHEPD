@@ -1,3 +1,12 @@
+// here to start documentation
+// author: vincenzo vitale, vvitale@roma2.infn.it
+//
+// class purpose: collection of algorithm for level2 observables
+// obtained with the calorimeter and vetos measuremets
+
+
+
+
 #include "TH1.h"
 #include "LEvRec1File.hh"
 #include "LScintillatorsL2.hh"
@@ -74,16 +83,30 @@ int LScintillatorsL2::Calc(int hw_condition) {
 TH1D *h1 = new TH1D("","",330,0,200);
 //---------------------------------------------------------------------------
 
-// this is a development version, 
-// all the needed constants are hardcoded
 
-double act_threshold= 5.00;
+
+
+// as this is a development version, several needed constants  are temp. hardcoded
+// these will be in futere read from energy calibration input cards
+//---
+
+
+
+
+double act_threshold= 5.00;// general threshold to declare a device hit
+
+// here varibles which contain the future output
 int tsum=0, tmult=0, hitbar[6]={0}; double tene=0; // trigger vars
 int sumall=0,suma=0,sumb=0, mult=0, conn[16]={0}, enUC=0;// calo vars
 
+
+// here temp hardcoded calibration constants
+
 // Trigger equalization array, it follows HEPD L1 mapping
-double teq[12]={172, 100, 178, 207, 471, 324, 244, 462, 174, 191, 100, 380};
-for(int t=0;t<12;t++){teq[t]=100./teq[t];}
+
+double teq[12]={40.5,28.0, 52.8,58.5,87.7,70.5,57.3,95.3,50.5,56.3,30.1,80};
+
+for(int t=0;t<12;t++){teq[t]=100./teq[t];}// setting equ peaks at 100!
 
 // Upper Calo equalization array it follows HEPD L1 mapping
 double eq[32]={
@@ -105,9 +128,10 @@ double eq[32]={
 166.352, 152.972};
 for(int t=0;t<32;t++){eq[t]=100./eq[t];}
 
-// energy calibration
-double Ek[2]={164, 1./104.5};//MeV/adc_counts
+// energy calibration constants
 
+double Ek[2]={164, 1./104.5};//MeV/adc_counts
+double TriggerP0[6]={728,593,1227,1066, 616, 801}, TriggerP1[6]={-44,+45,-517,-361,-15,-98};// S=(p0*E) + p1
 
 
 
@@ -152,6 +176,7 @@ tsum=0, tmult=0, hitbar[6]={0}, tene=0;
          tsum=tsum+c1+c2;
          tmult++;
          hitbar[bar]=1;     
+         tene = tene+((tsum-TriggerP1[bar])/TriggerP0[bar]); 
          }
          
    }// end loop on t bars
