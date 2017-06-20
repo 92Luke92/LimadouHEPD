@@ -148,9 +148,9 @@ void DUMPConfigToXML(TString rootname, TString xslPath = "")
 	      outputFile << "\t<INDEX>"<< 1 << "</INDEX>\n";
 
 	      outputFile << "\t<ORBITAL_SETTINGS>"    << dummyPKT.dummy_pkt.user_orbital_settings << "</ORBITAL_SETTINGS>\n";
-	      outputFile << "\t<CONFIG_ID>"    << dummyPKT.dummy_pkt.WO_config_ID << "</CONFIG_ID>\n";
-	      outputFile << "\t<CALIB_PERIOD>"    << dummyPKT.dummy_pkt.calib_period << "</CALIB_PERIOD>\n";
-	      outputFile << "\t<SAFE_MODE>" << dummyPKT.dummy_pkt.safe_mode << "</SAFE_MODE>\n";
+	      outputFile << showbase << hex << uppercase <<  "\t<CONFIG_ID>"    << dummyPKT.dummy_pkt.WO_config_ID << "</CONFIG_ID>\n";
+	      outputFile << dec << "\t<CALIB_PERIOD>"    << dummyPKT.dummy_pkt.calib_period << "</CALIB_PERIOD>\n";
+	      outputFile << dec << "\t<SAFE_MODE>" << dummyPKT.dummy_pkt.safe_mode << "</SAFE_MODE>\n";
  
 	   }
 	   outputFile << "</DUMP_CONFIG>\n"; 
