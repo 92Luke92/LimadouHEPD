@@ -125,7 +125,7 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum,
   // std::cout << "Num of Events on File " << nEvents << std::endl;
 
   // fill spectrum
-  for (int loop = __skipEv; loop < __nEv; ++loop) {
+  for (int loop = __skipEv; loop <  __skipEv+__nEv; ++loop) {
     calRunFile->GetEntry(loop);
     int cursor = (isHG ? static_cast<int>(cev.pmt_high[pmtnum])
                    : static_cast<int>(cev.pmt_low[pmtnum]));
@@ -215,7 +215,7 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
 
   // If we don't use independently outcnts[0] and  [1], reduce through MapCalibFromPredicate
 
-  for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
+  for (int iEv = __skipEv; iEv <  __skipEv+__nEv; ++iEv) {  // Event loop
     calRunFile->GetEntry(iEv);
     for (int iCh = 0; iCh < NPMT; ++iCh) {
       double content = (isHG ? static_cast<double>(cev.pmt_high[iCh])
@@ -326,7 +326,7 @@ void LCaloCalibrationManager::PMTsMeanRmsData(const int pmt,
   const double maxv = DATACALWINDOWMAX;
   const double minv = DATACALWINDOWMIN;
 
-  for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
+  for (int iEv = __skipEv; iEv <  __skipEv+__nEv; ++iEv) {  // Event loop
     calRunFile->GetEntry(iEv);
     double signal = static_cast<double>(cev.pmt_high[pmt]);
     if (minv < signal && signal < maxv && cev.trigger_flag[pmt] == 0) calc[signal] ++;
@@ -419,7 +419,7 @@ std::vector <std::map  <int, float>> LCaloCalibrationManager::MapCalibFromPredic
   LEvRec0 cev;
   bool MixedFLAG = calRunFile->IsMixed(); // important to see if we have to skip half the events
   calRunFile->SetTheEventPointer(cev);
-  for (int iEv = __skipEv; iEv < __nEv; iEv++) {  // Event loop
+  for (int iEv = __skipEv; iEv <  __skipEv+__nEv; iEv++) {  // Event loop
     calRunFile->GetEntry(iEv);
     if(MixedFLAG==true && cev.IsZeroSuppressed()) continue;
     for (int iCh = 0; iCh < NPMT; iCh++) {
