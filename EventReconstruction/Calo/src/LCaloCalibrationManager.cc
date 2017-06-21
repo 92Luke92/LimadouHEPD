@@ -1,3 +1,12 @@
+// here to start documentation
+// co-author: vincenzo vitale, vvitale@roma2.infn.it
+//
+// class purpose: pedestal calibration
+// and management of output files
+
+
+
+
 #include "LCaloCalibrationManager.hh"
 #include "LEvRec0.hh"
 #include "LEvRec0File.hh"
@@ -48,6 +57,7 @@ int LCaloCalibrationManager::LoadRun(const char *fileInp) {
 //---------------------------------------------------------------------------
 
 void LCaloCalibrationManager::GetPeaksHG(int *result) const {
+
   const bool isHG=true;
   auto predicate = [&](int cursor, bool trigger_flag, int iCh)
     {(void)iCh; return cursor < HGPEAKFINDERWINDOW && trigger_flag==0;};
@@ -110,6 +120,14 @@ int LCaloCalibrationManager::GetPeakLG(const int pmtnum) const {
 int LCaloCalibrationManager::FindPeak(const int pmtnum,
                                       const int PeakFinderWindowWidth,
                                       const bool isHG) const {
+
+//docum.
+// FindPeak is a methods to search for a peak within the PMT adc spectrum. 
+// Data are binned within the spectrum array. Then a maximum search is applied.
+// It is used to seed the PMTsWindowedRms method.
+
+
+
   std::cout << __LCALOCALIBRATIONMANAGER__ << "Finding peak for pmt number "
             << pmtnum << std::endl;
   int* spectrum= new int[PeakFinderWindowWidth];
@@ -175,6 +193,16 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
                                               const bool isHG, double *new_mean,
                                               double *new_rms,
                                               int *cntssxdx) const {
+
+//docum.
+// PMTsWindowedRms is a more general method for the pedestal (and pedestal rms) calculation in respect of PMTsWindowedRms.
+// Currently (june 2017) PMTsWindowedRms provides the same results of PMTsRawMeanRms only if used with 
+// "fake-calibration data". With run-data the obtained rms are not under control.
+// With PMTsWindowedRms the  pedestal search is limited within an acceptable window, hence the method name.
+// A correction factor is used to correct the rms calculation, because the used window cuts the
+// distribution lateral tails. It needs in input an estimate of the pedestal position.
+
+
   int outcnts[NPMT][2]={{0}};
 
 
@@ -202,8 +230,6 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
     maxv[iCh] = new_mean[iCh] + (sizew * new_rms[iCh]);
     minv[iCh] = new_mean[iCh] - (sizew * new_rms[iCh]);
   }
-
-
 
 
   LEvRec0 cev;
@@ -256,6 +282,7 @@ void LCaloCalibrationManager::PMTsMomenta34(const double *pedestal,
                                             double *m4Out) const {
 
 
+
   auto predicate = [&](int content, bool trigger_flag, int iCh)
   {return (float(content) < pedestal[iCh] + SKEWKURTFINDINGHALFWINDOW * sigmaIN[iCh] &&
           float(content) > pedestal[iCh] - SKEWKURTFINDINGHALFWINDOW * sigmaIN[iCh] &&
@@ -294,6 +321,16 @@ void LCaloCalibrationManager::PMTsRawMeanRmsLG(double *mean,
 
 void LCaloCalibrationManager::PMTsRawMeanRms(const bool isHG, double *meanOut,
                                              double *rmsOut) const {
+//docum.
+// PMTsMeanRms is the main method for the pedestal (and pedestal rms) calculation.
+// It can be used only on "fake-calibration data" as the run-data provide polluted pedestals
+// and no pedestals for the PMT in trigger.
+// the pedestal peak is the mean of the adc spectrum, while the pedestal rms is the 
+// rms associated at the pedstal peak.
+// Mean and sigma calculation are now performed with LStatTools::mean and ::sigma. Previuosly they 
+// where hardcoded here.
+
+
 
   auto predicate = [&](int content, bool trigger_flag, int iCh)
     {(void)content; (void) iCh; return trigger_flag == 0;};
@@ -313,6 +350,8 @@ void LCaloCalibrationManager::PMTsRawMeanRms(const bool isHG, double *meanOut,
 
 void LCaloCalibrationManager::PMTsMeanRmsData(const int pmt,
                                               double *res) const {
+
+
    std::map  <int, float>   calc;
 
   LEvRec0 cev;
