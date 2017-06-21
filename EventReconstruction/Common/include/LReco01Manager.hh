@@ -32,6 +32,7 @@ private:
   std::string calFileName;
   LCalibration *cal;
   std::string outDirectory;
+  int skipEvents;  // events to be skipped
   int maxFileEvents; // max events to be processed for in the file
   bool verboseFLAG;
   bool steeringLoadedFLAG;

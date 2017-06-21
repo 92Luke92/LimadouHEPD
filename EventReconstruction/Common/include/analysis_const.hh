@@ -25,7 +25,7 @@ const double HOTSIGMA=25.;
 const double COLDSIGMA=1.;
 const double NGILOW=-999.;
 const double NGIHIGH=3.;
-const double HOLDCORRCONST=0.018;//0.018;
+const double HOLDCORRCONST=0.018;
 
 
 //eta manage
