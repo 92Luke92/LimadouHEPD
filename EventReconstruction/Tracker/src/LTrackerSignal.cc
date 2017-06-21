@@ -42,6 +42,15 @@ void LTrackerSignal::FillRandom(void) {
   return;
 }
 
+void LTrackerSignal::HoldTimeCorrectionSig(){
+  if(HTCFLAG == true) return; // no double correction
+  for (int icls = 0; icls<cls.size(); ++icls){
+    cls.at(icls).HoldTimeCorrectionCls(HOLDCORRCONST);
+  }
+  HTCFLAG = true;
+  return;
+}
+/*
 void LTrackerSignal::HoldTimeCorrection(const double HOLDCORRCONST){
   if(HTCFLAG == true) return; // no double correction
   for (int icls = 0; icls<cls.size(); ++icls){
@@ -52,3 +61,4 @@ void LTrackerSignal::HoldTimeCorrection(const double HOLDCORRCONST){
   HTCFLAG = true;
   return;
 }
+*/
