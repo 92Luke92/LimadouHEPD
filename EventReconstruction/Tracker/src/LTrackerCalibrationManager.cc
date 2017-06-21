@@ -54,7 +54,8 @@ LTrackerCalibration* LTrackerCalibrationManager::Calibrate(const int nEvents, co
     int nEntries=calRunFile->GetEntries();
     if(nEntries<skipEvents+nEvents) return 0;
     int *pivot=0;
-    int nSlots = CalculateCalibrationSlots(nEvents, skipEvents, nEntries, pivot);
+    //int nSlots = CalculateCalibrationSlots(nEvents, skipEvents, nEntries, pivot); // 1 slot only by default!!!!
+    int nSlots = 1;
     
     for(int is=0; is<nSlots; ++is) result->Add(CalibrateSlot(pivot[is],pivot[is+1]));
   //}
