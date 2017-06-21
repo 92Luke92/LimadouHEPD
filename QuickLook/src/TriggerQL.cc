@@ -19,6 +19,7 @@
 #include <TFile.h>
 #include <TROOT.h>
 #include <TH2D.h>
+#include <TError.h>
 #include <TGraph.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,10 +47,11 @@ using namespace std;
 
 void TriggerScan(TString rootname)
 {
-  TString outname = rootname;
-  outname.ReplaceAll(".root", 5, "_TriggerQL.pdf", 14);
-  
- 
+   gErrorIgnoreLevel = 5000 ;
+   
+   TString outname = rootname;
+   outname.ReplaceAll(".root", 5, "_TriggerQL.pdf", 14);
+   
    UShort_t first_run_nr;
    UShort_t last_run_nr;
    UInt_t event_time;
@@ -185,20 +187,15 @@ void TriggerScan(TString rootname)
       
    }      
    
-   
    for(int i = 0; i < nEvents; i++) //Event loop
    {
       rootfile.GetEntry(i);
-      
-      if (ev.run_id > last_run_nr) // to avoid processing run without tail
-	 break;
       
       if(metaData.run_type == 0x634E) // to skip mixed virgin event
 	 continue;
       
       event_time = cpu_startRunTime_vect[ev.run_id - first_run_nr] + ev.hepd_time/1e+2; //unit = ms
-      
-      
+            
       lost_triggers_vs_time->SetPoint(i, event_time, ev.lost_trigger);
       alive_time_vs_time->SetPoint(i, event_time, ev.alive_time*0.005);
       dead_time_vs_time->SetPoint(i, event_time, ev.dead_time*0.005);
@@ -413,5 +410,6 @@ void TriggerScan(TString rootname)
    const char *char_outname = outname;
    gROOT->ProcessLine(Form(".!convert `ls -v *.png` %s",char_outname));
    gROOT->ProcessLine(".!rm *.png");
-   
+
+   gErrorIgnoreLevel = 1;
 }

@@ -29,7 +29,7 @@ add_executable(L1Reader L1Reader.cc ${sources})
 add_executable(EqualizeCalo EqualizeCalo.cc ${sources})
 add_executable(dictest dictest.cc ${sources})
 add_executable(stattest stattest.cc ${sources})
-
+add_executable(VVtest VVtest.cc ${sources})
 
 
 target_link_libraries(CalibrateTracker ${ROOT_LIBRARIES})
@@ -40,7 +40,7 @@ target_link_libraries(L1Reader ${ROOT_LIBRARIES})
 target_link_libraries(EqualizeCalo ${ROOT_LIBRARIES})
 target_link_libraries(dictest ${ROOT_LIBRARIES})
 target_link_libraries(stattest ${ROOT_LIBRARIES})
-
+target_link_libraries(VVtest ${ROOT_LIBRARIES})
 
 
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)

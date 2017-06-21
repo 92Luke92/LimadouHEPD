@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <algorithm>
 #include "LSteeringManager.hh"
 #include "TF1.h"
 #include "TH1I.h"
@@ -36,13 +37,23 @@ void LCaloEqualizationManager::LoadSteering(const std::string steerFileIN) {
   steer.outDirectory = steerMan.GetParameter<std::string>("OUTFOLD");
   // Verbose Flag
   steer.verboseFLAG = steerMan.GetParameter<bool>("VERBOSE");
+  // Min ADC counts to search for peak
+  steer.minADC = steerMan.GetParameter<double>("MINADCCOUNTS");
+
+  // Min ADC counts to search for peak
+  steer.minADC = steerMan.GetParameter<double>("MINADCCOUNTS");
+
+  // fit NBINSBEFOREPEAK
+  steer.nBinsBeforePeak = steerMan.GetParameter<int>("NBINSBEFOREPEAK");
+  // fit NBINSBEFOREPEAK
+  steer.nBinsAfterPeak = steerMan.GetParameter<int>("NBINSAFTERPEAK");
+
   // Sigma for peak searching
   steer.sigma = steerMan.GetParameter<double>("SIGMA");
 
   // Threshold for peak searching
   steer.threshold = steerMan.GetParameter<double>("THRESHOLD");
-  std::cout << "steer.sigma: " << steer.sigma
-            << "steer.threshold: " << steer.threshold << std::endl;
+  
   std::cout << __LCALOEQUALIZATIONMANAGER__ << "Steering file loaded."
             << std::endl;
 }
@@ -111,7 +122,7 @@ int LCaloEqualizationManager::LoadRun(const std::string inputFileROOT,
 LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
   if (calRunFile == 0 || !(calRunFile->IsOpen())) {
     std::cerr << __LCALOEQUALIZATIONMANAGER__
-              << "Error! Attempt to call the \"Calibrate\" method, but no "
+              << "Error! Attempt to call the \"Equalize\" method, but no "
                  "calibration run loaded."
               << std::endl;
     return 0;
@@ -146,6 +157,8 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
               << int(double(iEv) / double(nEvents - 1) * 100) << "%"
               << std::flush;
     calRunFile->GetEntry(iEv);
+	if (!selectEvent(cev))
+		continue;
     int idPMT = 0;
     // trigger
     int nTriggerUnits = cev.trig.GetNUnits();
@@ -205,15 +218,15 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
     Int_t nfound = s.Search(&(h_pmt[ch]), steer.sigma, "", steer.threshold);
     Int_t nPeaks = s.GetNPeaks();               // Get number of peaks
     Double_t *peakPositions = s.GetPositionX();  // Get peak positions
-    Double_t *peakHeights = s.GetPositionY();    // Get height of the peaksù
-    bool isPeakFound = false;
+	std::sort(peakPositions, peakPositions + nPeaks);
+	bool isPeakFound = false;
 
     for (int ip = 0; ip < nPeaks; ip++) {
-      if (peakPositions[ip] > 15) {
+      if (peakPositions[ip] > steer.minADC) {
         // double maxFit = 2 * peakPositions[ip];
         double binWidth = h_pmt[ch].GetBinWidth(1);
-        h_pmt[ch].Fit("landau", "", "q", peakPositions[ip] - 2 * binWidth,
-                      peakPositions[ip] + 5 * binWidth);
+        h_pmt[ch].Fit("landau", "", "q", peakPositions[ip] - steer.nBinsBeforePeak * binWidth,
+                      peakPositions[ip] + steer.nBinsAfterPeak * binWidth);
         isPeakFound = true;
         break;
       }
@@ -232,6 +245,20 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
 }
 
 //---------------------------------------------------------------------------
+
+bool LCaloEqualizationManager::selectEvent(LEvRec1 &cev) {
+  bool isSelected = false;
+
+  if ((cev.scint.cont_hg[0][0] > steer.minADC || cev.scint.cont_hg[0][1] >  steer.minADC) &&
+      (cev.scint.cont_hg[1][0] > steer.minADC || cev.scint.cont_hg[1][1] >  steer.minADC) &&
+      (cev.scint.cont_hg[14][0] >  steer.minADC || cev.scint.cont_hg[14][1] >  steer.minADC) &&
+      (cev.scint.cont_hg[15][0] >  steer.minADC || cev.scint.cont_hg[15][1] >  steer.minADC)) {
+    isSelected = true;
+	
+  }
+  
+  return isSelected;
+}
 
 LCaloEqualizationManager::~LCaloEqualizationManager() {
   // do not care about singleton destructor

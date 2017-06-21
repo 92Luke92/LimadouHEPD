@@ -17,7 +17,7 @@ LStatTools::LStatTools(std::vector<int> data) {
 };
 
 LStatTools::LStatTools(std::vector<int> data, std::vector<float> weight) {
-   for (int i=0; i<data.size(); i++) {
+   for (uint i=0; i<data.size(); i++) {
       datamap[data[i]]=weight[i];
    }
    init();
@@ -62,8 +62,8 @@ void LStatTools::dump() {
 
 
 
-float LStatTools::moment(uint n) {
-   float accu=0, sum=0;
+float LStatTools::moment(uint16_t n) {
+   float accu=0;
    float mu=mean();
    for (const auto& elt : datamap) {
       accu += pow((elt.first-mu), n)*elt.second;

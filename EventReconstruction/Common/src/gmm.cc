@@ -8,7 +8,7 @@
 
 
 #include "gmm.hh"
-
+#include <array>
 
 void GMM::init() {
    std::vector<int> bins=distrib_init.getBins();
@@ -49,9 +49,9 @@ void GMM::EMstep () {
    std::vector<float> vals=distrib_init.getNormalizedBinContent();
 
    // Expectation
-   std::vector<float> w_vals[ngaus];
+   std::array<std::vector<float>,ngaus> w_vals;
 
-   for (int ib=0; ib<bins.size(); ib++) {
+   for (uint ib=0; ib<bins.size(); ib++) {
       float tot_prob=0;
       std::vector<float> prob;
       for (int ig=0; ig<ngaus; ig++) {
@@ -78,9 +78,9 @@ void GMM::EMstep () {
 
 
 
-void GMM::iterate (uint niter) {
+void GMM::iterate (uint16_t niter) {
 
-   for (uint iEM=0; iEM<niter; iEM++) {
+   for (uint16_t iEM=0; iEM<niter; iEM++) {
       EMstep();
 
       if (verbose) {

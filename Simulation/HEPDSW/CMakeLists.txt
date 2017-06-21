@@ -24,7 +24,7 @@ set(CMAKE_MODULE_PATH
     ${PROJECT_SOURCE_DIR}/cmake/Modules
     ${CMAKE_MODULE_PATH})
 
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -std=c++11")
 
 #----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions

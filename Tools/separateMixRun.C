@@ -10,36 +10,23 @@
  *
  * INSTRUCTIONS:
  *     compile:    g++ -Wall separateMixRun.C -o separate `root-config --cflags --libs`
- *     run:        ./separate <root file> 
+ *     run:        ./separate <root file> <outdir>
  *
  *
  * =============================================================================
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <TVector3.h>
-#include <TTimeStamp.h>
-#include <TTree.h>
-#include <TProfile.h>
-#include <TGraph.h>
-#include <TCanvas.h>
-#include <TFile.h>
-#include <TBranch.h>
-#include <iostream>
 
-#include "bin2root.h"
+#include "separateMixRun.h"
 
 using namespace std;
 
-void separateMixedRun(TString rootname);
 
 
-void separateMixedRun(TString rootname)
+
+void separateMixedRun(TString rootname, TString outdir)
 {
 
-   tail_run_t tail_run;
+   root_struct root_st;
 
    //T Tree
    UShort_t run_type;
@@ -60,52 +47,43 @@ void separateMixedRun(TString rootname)
    UInt_t alive_time;
    UInt_t dead_time;
 
-   bool   pmt_mask[64];
-   bool   hv_mask[12];
-   bool   generic_trig_mask[18];
-
-   UShort_t PMT_rate_meter[65];
-   Short_t CPU_temp[2];
-   Short_t PMT_temp[2];
-   UInt_t CPU_time[2];
-
 
    //TFile *rootfile = new TFile(rootname,"read");
    TFile *rootfile = new TFile(rootname,"read");
 
    TTree* Tmd = (TTree*)rootfile->Get("Tmd");
-   Tmd->SetBranchAddress("boot_nr", &tail_run.boot_nr);
-   Tmd->SetBranchAddress("run_id", &tail_run.run_id);
-   Tmd->SetBranchAddress("run_type", &tail_run.run_type);
-   Tmd->SetBranchAddress("run_duration", &tail_run.run_duration);
-   Tmd->SetBranchAddress("orbitZone", &tail_run.orbit_Zone);
+   Tmd->SetBranchAddress("boot_nr", &root_st.boot_nr);
+   Tmd->SetBranchAddress("run_id", &root_st.run_id);
+   Tmd->SetBranchAddress("run_type", &root_st.run_type);
+   Tmd->SetBranchAddress("run_duration", &root_st.run_duration);
+   Tmd->SetBranchAddress("orbitZone", &root_st.orbit_Zone);
 
-   Tmd->SetBranchAddress("silConfiguration", &tail_run.silConfig.ladder_on);
+   Tmd->SetBranchAddress("silConfiguration", &root_st.silConfig.ladder_on);
 
-   Tmd->SetBranchAddress("trigger_mask[2]", &tail_run.trigger_mask[2]);
-   Tmd->SetBranchAddress("easiroc_conf[60]", &tail_run.easiroc_config[0]); // todo: fix header/tail size
-   Tmd->SetBranchAddress("PMT_mask[64]", &pmt_mask[0]);
-   Tmd->SetBranchAddress("HV_mask[12]", &hv_mask[0]);
-   Tmd->SetBranchAddress("HV_value[10]", &tail_run.HV_value[0]);
-   Tmd->SetBranchAddress("gen_trig_mask[18]", &generic_trig_mask[0]);
+   Tmd->SetBranchAddress("trigger_mask[2]", &root_st.trigger_mask[2]);
+   Tmd->SetBranchAddress("easiroc_conf[60]", &root_st.easiroc_config[0]); // todo: fix header/tail size
+   Tmd->SetBranchAddress("PMT_mask[64]", &root_st.PMT_mask[0]);
+   Tmd->SetBranchAddress("HV_mask[12]", &root_st.HV_mask[0]);
+   Tmd->SetBranchAddress("HV_value[10]", &root_st.HV_value[0]);
+   Tmd->SetBranchAddress("gen_trig_mask[18]", &root_st.gen_trig_mask[0]);
 
    // broadcasta data
-   Tmd->SetBranchAddress("OBDH_info", &tail_run.broadcast.OBDH.sec);
-   Tmd->SetBranchAddress("GPS_info", &tail_run.broadcast.GPS.sec);
-   Tmd->SetBranchAddress("AOCC_info", &tail_run.broadcast.AOCC.sec);
-   Tmd->SetBranchAddress("star_sensor_info", &tail_run.broadcast.star_sensor.sec_ss11);
+   Tmd->SetBranchAddress("OBDH_info", &root_st.broadcast.OBDH.sec);
+   Tmd->SetBranchAddress("GPS_info", &root_st.broadcast.GPS.sec);
+   Tmd->SetBranchAddress("AOCC_info", &root_st.broadcast.AOCC.sec);
+   Tmd->SetBranchAddress("star_sensor_info", &root_st.broadcast.star_sensor.sec_ss11);
    
    // scinentific packet
-   Tmd->SetBranchAddress("PMT_rate_meter[65]", &PMT_rate_meter[0]);
-   Tmd->SetBranchAddress("CPU_temp_start_stop_Run[2]", &CPU_temp[0]);
-   Tmd->SetBranchAddress("PMT_temp_start_stop_Run[2]", &PMT_temp[0]);
-   Tmd->SetBranchAddress("CPU_time_start_stop_Run[2]", &CPU_time[0]);
+   Tmd->SetBranchAddress("PMT_rate_meter[65]", &root_st.PMT_rate_meter[0]);
+   Tmd->SetBranchAddress("CPU_temp_start_stop_Run[2]", &root_st.CPU_temp[0]);
+   Tmd->SetBranchAddress("PMT_temp_start_stop_Run[2]", &root_st.PMT_temp[0]);
+   Tmd->SetBranchAddress("CPU_time_start_stop_Run[2]", &root_st.CPU_time[0]);
    
    // timestamp CPU
-   Tmd->SetBranchAddress("CPU_timestamp", &tail_run.timestamp.OBDH);
+   Tmd->SetBranchAddress("CPU_timestamp", &root_st.timestamp.OBDH);
    
    // board status
-   Tmd->SetBranchAddress("status_register", &tail_run.status_reg.statusDAQ);
+   Tmd->SetBranchAddress("status_register", &root_st.status_reg.statusDAQ);
    
    
    TTree* T = (TTree*)rootfile->Get("T");
@@ -132,24 +110,30 @@ void separateMixedRun(TString rootname)
    // silicon data
    T->SetBranchAddress("strip[4608]", &strip[0]);
 
-   TString outnameCOMP = rootname;
-   outnameCOMP.ReplaceAll(".root", 5, "_COMP.root", 10);
-   
-   TString outnameVIRGIN = rootname;
-   outnameVIRGIN.ReplaceAll(".root", 5, "_VIRGIN.root", 12);
+   TString outnameCOMP = outdir;
+   outnameCOMP += "/";
+   TSystem nopath;
+   TString tempname = nopath.BaseName(rootname);
+   tempname.ReplaceAll(".root", 5, "_COMP.root", 10);
+   outnameCOMP += tempname;
 
+   TString outnameVIRGIN = outdir;
+   outnameVIRGIN += "/";
+   tempname = nopath.BaseName(rootname);
+   tempname.ReplaceAll(".root", 5, "_VIRGIN.root", 12);
+   outnameVIRGIN += tempname;
    
    Int_t nEvents = T->GetEntries();
    
    
-   TFile *newfile2 = new TFile(outnameVIRGIN,"recreate");
+   TFile *newfile2 = new TFile(outnameVIRGIN, "recreate");
    TTree *virtree = T->CloneTree(0);
    TTree *newtmdv = Tmd->CloneTree(0);
-   
+   /*
    TFile *newfile1 = new TFile(outnameCOMP,"recreate");
    TTree *newtmdc = Tmd->CloneTree(0);
    TTree *comptree = T->CloneTree(0);
-
+   */
    
    for(int i=0;i<nEvents;i++)
    {
@@ -158,35 +142,37 @@ void separateMixedRun(TString rootname)
 
       if(run_type == 0x634E)
       	 virtree->Fill();
+      /*
       if(run_type == 0x6336) 
 	 comptree->Fill();
+      */
    }
 
    for(int i=0; i<2; i++) 
    {
       Tmd->GetEntry(i);
-      newtmdc->Fill();
+      //newtmdc->Fill();
       newtmdv->Fill();
    }
-
+   /*
    newfile1->cd();
    newtmdc->Write();
    comptree->Write();
-
+   */
    
    
    newfile2->cd();
    newtmdv->Write();
    virtree->Write();
    
-   newfile1->Close(); 
+   //newfile1->Close(); 
    newfile2->Close();
    rootfile->Close();
 }
 
 
 int main(int argc, char** argv){
-   separateMixedRun(argv[1]);
+  separateMixedRun(argv[1],argv[2]);
 
    return 0;
 }

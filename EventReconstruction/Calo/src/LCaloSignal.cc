@@ -43,6 +43,7 @@ LCaloSignal::LCaloSignal(const LCaloSignal &cs) {
 
 LCaloSignal& LCaloSignal::operator=(const LCaloSignal& cs) {  // copy assignment
   if (this != &cs) { // self-assignment check expected
+    ClearHEAP();
     nunits = cs.GetNUnits();
     npmts = cs.GetNPMTs();
     cont_hg = new double*[nunits];
@@ -68,7 +69,7 @@ LCaloSignal& LCaloSignal::operator=(const LCaloSignal& cs) {  // copy assignment
   return *this;
 }
 
-LCaloSignal::~LCaloSignal() {
+void LCaloSignal::ClearHEAP() {
   if(cont_hg) {
     for(int iu=0; iu<nunits; ++iu) if(cont_hg[iu]) delete[] cont_hg[iu];
     delete[] cont_hg;
@@ -89,6 +90,21 @@ LCaloSignal::~LCaloSignal() {
     for(int iu=0; iu<nunits; ++iu) if(trigger_flag[iu]) delete[] trigger_flag[iu];
     delete[] trigger_flag;
   }
+
+  nunits = 0;
+  npmts = 0;
+
+  cont_hg=0;
+  sn_hg=0;
+  cont_lg=0;
+  sn_lg=0;
+  trigger_flag=0;
+
+  return;
+}
+
+LCaloSignal::~LCaloSignal() {
+  ClearHEAP();
 }
 
 void LCaloSignal::Reset() {

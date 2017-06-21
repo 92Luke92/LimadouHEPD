@@ -1,6 +1,16 @@
 #include "LTrackerMask.hh"
 #include <iostream>
 
+LTrackerMask& LTrackerMask::operator= (const LTrackerMask& other) {
+  // check for self-assignment
+  if(&other == this)
+    return *this;
+   
+  // copy
+  for(int ichan=0; ichan<NCHAN; ++ichan) this->m[ichan] = other.Get(ichan); 
+  return *this;
+}
+
 LTrackerMask::LTrackerMask() {
   for(auto el : m) el=true;
 }
@@ -13,12 +23,6 @@ bool* LTrackerMask::GetBool(void) {
   bool *result = new bool[NCHAN];
   for(int iChan=0; iChan<NCHAN; ++iChan) result[iChan]=m[iChan];
   return result;
-}
-
-
-LTrackerMask& LTrackerMask::operator=(const LTrackerMask& other) {
-  for(int iChan=0; iChan<NCHAN; ++iChan) m[iChan]=other.Get(iChan);
-  return *this;
 }
 
 LTrackerMask operator&&(const LTrackerMask& m1, const LTrackerMask& m2) {

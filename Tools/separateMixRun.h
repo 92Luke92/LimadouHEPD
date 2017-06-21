@@ -1,44 +1,29 @@
-#include "detector_const.hh"
-#include "analysis_const.hh"
-
-#ifndef __LEVREC0__
-#define __LEVREC0__ 1
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+#include <iostream>
+#include <unistd.h>  
+#include <TSystem.h>
+#include <TVector3.h>
+#include <TTimeStamp.h>
+#include <TGraph.h>
+#include <TCanvas.h>
+#include <TFile.h>
+#include <TBranch.h>
+#include <TString.h>
+#include <TTree.h>
+#include <TProfile.h>
+#include <TCanvas.h>
 
 #pragma pack(push)
 #pragma pack(1)
 
-class LEvRec0 {
+#define EASIROC_CH               64                   
+#define SILLEN                   4608
+#define PMT_RATE_METER_SIZE      65
+#define EASIROC_CONF             60
 
-public:
-  LEvRec0();
-
-  unsigned short   runType;
-  unsigned short   boot_nr;
-  unsigned short   run_id;
-  unsigned int     event_index;
-  unsigned short   event_length;
-  unsigned int     trigger_index;
-  unsigned int     hepd_time;
-  
-  unsigned short   pmt_high[NPMT];
-  unsigned short   pmt_low[NPMT];
-  unsigned int     PMTBoard_trigger_counter;
-  unsigned short   lost_trigger;
-  unsigned short   rate_meter[NRATEMETER];
-  bool             trigger_flag[NPMT];
-  unsigned int     alive_time;
-  unsigned int     dead_time;
-
-  short            strip[NCHAN];
-   
-  void  DumpStrip(void);
-  void  DumpEventIndex();
-  bool   IsComp();
-  bool   IsVirgin();
-  
-};
-
-
+void separateMixedRun(TString rootname, TString outdir);
 
 struct silicon_config_t
 {  
@@ -76,7 +61,6 @@ struct GPS_struct_t
    unsigned char    NU[3];
 } ;
 
-
 struct AOCC_struct_t
 {
    unsigned int     sec;
@@ -98,7 +82,6 @@ struct AOCC_struct_t
    unsigned int     q3;
 } ;
 
-
 struct quaternion_t
 {
    int q0;
@@ -106,6 +89,8 @@ struct quaternion_t
    int q2;
    int q3;
 };
+
+
 
 
 struct star_sens_struct_t
@@ -140,7 +125,6 @@ struct star_sens_struct_t
    unsigned char    NU;
 } ;
 
-
 struct BroadCast_t
 {
    OBDH_struct_t        OBDH;        
@@ -170,12 +154,8 @@ struct Status_Register_t
 } ;
 
 
-
-
-class LEvRec0Md {
-
-public:
-  LEvRec0Md();
+struct root_struct
+{
    
    unsigned short     boot_nr;
    unsigned short     run_id;
@@ -201,44 +181,4 @@ public:
    short              PMT_temp[2];
 
    Status_Register_t  status_reg;
-   
 };
-
-/* °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°*/
-struct orbit_conf_out_t           
-{
-   bool             ladder_mask[3];
-   unsigned char    trigger_mask[2];
-   unsigned short   run_duration;
-   int     lat1;
-   int     lat2;
-   int     long1;
-   int     long2;
-} ;
-
-
-
-/* °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°*/
-struct dummy_packet_out_t
-{
-   unsigned short    len;
-   unsigned short    boot_nr;
-   unsigned short    run_id;
-   orbit_conf_out_t  orbit_conf[5];
-   bool              user_orbital_settings;
-   unsigned short    WO_config_ID;
-   unsigned short    calib_period;
-   bool              safe_mode;
-} ;
-
-
-class LEvRec0Conf {
-
-public:
-  LEvRec0Conf();
-
-  dummy_packet_out_t    dummy_pkt;
-  
-};
-#endif
-

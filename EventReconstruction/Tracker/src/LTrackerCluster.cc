@@ -8,6 +8,26 @@
 #include <random>
 #include <chrono>
 
+LTrackerCluster& LTrackerCluster::operator=(const LTrackerCluster& other) {
+  // check for self-assignment
+  if(&other == this)
+    return *this;
+
+  // Copy operations
+  this->seed = other.seed;
+  for(int nchan=0; nchan<CLUSTERCHANNELS; ++nchan) {
+    this->count[nchan] = other.count[nchan];
+    this->sigma[nchan] = other.sigma[nchan];
+    this->sn[nchan] = other.sn[nchan];
+  }
+  this->eta = other.eta;
+  this->etaCounts = other.etaCounts;
+  this->etaSN = other.etaSN;
+
+  return *this;
+}
+
+
 double LTrackerCluster::ComputeEta() {
   int seedIndex=CLUSTERCHANNELS/2;
   int max2Index=seedIndex;

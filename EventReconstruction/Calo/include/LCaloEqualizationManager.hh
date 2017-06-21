@@ -19,6 +19,9 @@ class LCaloEqualizationManager {
     bool verboseFLAG;
     double sigma;
     double threshold;
+	double minADC;
+	int nBinsBeforePeak;
+	int nBinsAfterPeak;
   } steer;
 
   LEvRec1File* calRunFile;
@@ -31,6 +34,7 @@ class LCaloEqualizationManager {
   LCaloEqualization* Equalize(const bool isHG);
   inline LCaloEqualization* EqualizeHG() { return Equalize(true); };
   inline LCaloEqualization* EqualizeLG() { return Equalize(false); };
+  bool selectEvent(LEvRec1 &cev);
 
  public:
   static LCaloEqualizationManager& GetInstance();

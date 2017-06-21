@@ -43,11 +43,11 @@ void LEvRec0::DumpEventIndex() {
   return;
 }
 
-int  LEvRec0::IsComp(void) {
-   int ret = 0;
-   std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
-   if (runType == 0x36 )
-      ret = 1;
+bool  LEvRec0::IsComp(void) {
+   int ret = false;
+   //std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
+   if (runType == 0x36 || runType == 0x6336)
+      ret = true;
    
    return ret;
    
@@ -55,7 +55,7 @@ int  LEvRec0::IsComp(void) {
 
 bool  LEvRec0::IsVirgin(void) {
    bool ret = false;
-   std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
+   //std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
    if (runType == 0x4e ||runType == 0x634e )
       ret = true;
    
@@ -107,11 +107,77 @@ LEvRec0Md::LEvRec0Md(){
    broadcast.GPS.lon = 0;
    broadcast.GPS.lat = 0;
    for(int i=0; i<3; ++i)
-      broadcast.GPS.NU[i] = 0;
-   
-   
-   
+      broadcast.GPS.NU[i] = 0; 
+      
 }
+
+LEvRec0Conf::LEvRec0Conf(){
+  
+  for(int i=0; i<3; ++i)
+    dummy_pkt.orbit_conf[0].ladder_mask[i]=false;
+  for(int i=0; i<2; ++i)
+    dummy_pkt.orbit_conf[0].trigger_mask[i]=0;
+  
+  dummy_pkt.orbit_conf[0].run_duration=0;
+  dummy_pkt.orbit_conf[0].lat1=0;
+  dummy_pkt.orbit_conf[0].lat2=0;
+  dummy_pkt.orbit_conf[0].long1=0;
+  dummy_pkt.orbit_conf[0].long2=0;
+
+  for(int i=0; i<3; ++i)
+    dummy_pkt.orbit_conf[1].ladder_mask[i]=false;
+  for(int i=0; i<2; ++i)
+    dummy_pkt.orbit_conf[1].trigger_mask[i]=0;
+  
+  dummy_pkt.orbit_conf[1].run_duration=0;
+  dummy_pkt.orbit_conf[1].lat1=0;
+  dummy_pkt.orbit_conf[1].lat2=0;
+  dummy_pkt.orbit_conf[1].long1=0;
+  dummy_pkt.orbit_conf[1].long2=0;
+
+  for(int i=0; i<3; ++i)
+    dummy_pkt.orbit_conf[2].ladder_mask[i]=false;
+  for(int i=0; i<2; ++i)
+    dummy_pkt.orbit_conf[2].trigger_mask[i]=0;
+  dummy_pkt.orbit_conf[2].run_duration=0;
+  dummy_pkt.orbit_conf[2].lat1=0;
+  dummy_pkt.orbit_conf[2].lat2=0;
+  dummy_pkt.orbit_conf[2].long1=0;
+  dummy_pkt.orbit_conf[2].long2=0;
+
+  for(int i=0; i<3; ++i)
+    dummy_pkt.orbit_conf[3].ladder_mask[i]=false;
+  for(int i=0; i<2; ++i)
+    dummy_pkt.orbit_conf[3].trigger_mask[i]=0;
+  
+  dummy_pkt.orbit_conf[3].run_duration=0;
+  dummy_pkt.orbit_conf[3].lat1=0;
+  dummy_pkt.orbit_conf[3].lat2=0;
+  dummy_pkt.orbit_conf[3].long1=0;
+  dummy_pkt.orbit_conf[3].long2=0;
+
+  for(int i=0; i<3; ++i)
+    dummy_pkt.orbit_conf[4].ladder_mask[i]=false;
+  for(int i=0; i<2; ++i)
+    dummy_pkt.orbit_conf[4].trigger_mask[i]=0;
+  
+  dummy_pkt.orbit_conf[4].run_duration=0;
+  dummy_pkt.orbit_conf[4].lat1=0;
+  dummy_pkt.orbit_conf[4].lat2=0;
+  dummy_pkt.orbit_conf[4].long1=0;
+  dummy_pkt.orbit_conf[4].long2=0;
+
+  dummy_pkt.boot_nr = 0;
+  dummy_pkt.run_id = 0;
+  dummy_pkt.user_orbital_settings=0;
+  dummy_pkt.WO_config_ID=0;
+  dummy_pkt.calib_period=0;
+  dummy_pkt.safe_mode=0;
+
+  }
+
+  
+    
 
 
 

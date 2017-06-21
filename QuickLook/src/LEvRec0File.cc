@@ -11,6 +11,8 @@ LEvRec0File::LEvRec0File(const char *inpFile) {
 
   treeCalib=(TTree*)inputCalib->Get("T");
   Tmd = (TTree*)inputCalib->Get("Tmd");
+  TConf=(TTree*)inputCalib->Get("TConf");
+
 
   unsigned short runid;
   Tmd->SetBranchAddress("run_id", &runid);
@@ -92,6 +94,39 @@ int LEvRec0File::SetTmdPointer(LEvRec0Md &metaData) {
    return 0;
 }
 
+int LEvRec0File::SetTConfPointer(LEvRec0Conf &dummyPKT) {
+
+  TConf->SetBranchAddress("boot_nr", &dummyPKT.dummy_pkt.boot_nr);
+  TConf->SetBranchAddress("run_id", &dummyPKT.dummy_pkt.run_id);
+  
+  // orbit zone 1 configuration
+   TConf->SetBranchAddress("orbit_conf_1", &dummyPKT.dummy_pkt.orbit_conf[0].ladder_mask);
+   
+
+   // orbit zone 2 configuration
+   TConf->SetBranchAddress("orbit_conf_2", &dummyPKT.dummy_pkt.orbit_conf[1].ladder_mask);
+
+
+   // orbit zone 3 configuration
+   TConf->SetBranchAddress("orbit_conf_3", &dummyPKT.dummy_pkt.orbit_conf[2].ladder_mask);
+
+
+   // orbit zone 4 configuration
+   TConf->SetBranchAddress("orbit_conf_4", &dummyPKT.dummy_pkt.orbit_conf[3].ladder_mask);
+
+  
+   // orbit zone 5 configuration
+   TConf->SetBranchAddress("orbit_conf_5", &dummyPKT.dummy_pkt.orbit_conf[4].ladder_mask);
+
+
+   // Other Configurations
+   TConf->SetBranchAddress("user_orbital_settings", &dummyPKT.dummy_pkt.user_orbital_settings);
+   TConf->SetBranchAddress("WO_config_ID", &dummyPKT.dummy_pkt.WO_config_ID);
+   TConf->SetBranchAddress("calib_period", &dummyPKT.dummy_pkt.calib_period);
+   TConf->SetBranchAddress("safe_mode", &dummyPKT.dummy_pkt.safe_mode);
+   
+   return 0;
+}  
 
 int LEvRec0File::GetEntry(int iEntry) {
   treeCalib->GetEntry(iEntry);
@@ -103,6 +138,11 @@ int LEvRec0File::GetTmdEntry(int iEntry) {
   return 0;
 }
 
+int LEvRec0File::GetTConfEntry(int iEntry) {
+  TConf->GetEntry(iEntry);
+  return 0;
+}
+
 int LEvRec0File::GetEntries() {
   return treeCalib->GetEntries();
 }
@@ -110,6 +150,10 @@ int LEvRec0File::GetEntries() {
 
 int LEvRec0File::GetTmdEntries() {
   return Tmd->GetEntries();
+}
+
+int LEvRec0File::GetTConfEntries() {
+  return TConf->GetEntries();
 }
 
 
@@ -123,12 +167,17 @@ int LEvRec0File::RunIDtoEntry(unsigned short runid) {
 }
 
 
+//////////////////////////
+
 void LEvRec0File::Close() {
   if(inputCalib) {
     treeCalib = 0;
     Tmd = 0;
+    TConf = 0;
     inputCalib->Close();
+
     inputCalib = 0;
+
   }
   return;
 }
@@ -137,6 +186,8 @@ LEvRec0File::~LEvRec0File() {
   if(inputCalib) {
      treeCalib = 0;
      Tmd = 0;
+     TConf = 0;
     inputCalib->Close();
+
   }
 }

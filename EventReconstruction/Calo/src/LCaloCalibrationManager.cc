@@ -47,9 +47,7 @@ int LCaloCalibrationManager::LoadRun(const char *fileInp) {
 
 //---------------------------------------------------------------------------
 
-int *LCaloCalibrationManager::GetPeaksHG() const {
-  int *result = new int[NPMT];
-
+void LCaloCalibrationManager::GetPeaksHG(int *result) const {
   const bool isHG=true;
   auto predicate = [&](int cursor, bool trigger_flag, int iCh)
     {(void)iCh; return cursor < HGPEAKFINDERWINDOW && trigger_flag==0;};
@@ -67,14 +65,12 @@ int *LCaloCalibrationManager::GetPeaksHG() const {
     result[iCh] = peakpos;
   }
 
-  return result;
+  return;
 }
 
 //---------------------------------------------------------------------------
 
-int *LCaloCalibrationManager::GetPeaksLG() const {
-  int *result = new int[NPMT];
-
+void LCaloCalibrationManager::GetPeaksLG(int *result) const {
   const bool isHG=false;
   auto predicate = [&](int cursor, bool trigger_flag, int iCh)
     {(void)iCh; return cursor < LGPEAKFINDERWINDOW && trigger_flag==0;};
@@ -92,7 +88,7 @@ int *LCaloCalibrationManager::GetPeaksLG() const {
     result[iCh] = peakpos;
   }
 
-  return result;
+  return;
 }
 
 //---------------------------------------------------------------------------
@@ -125,7 +121,11 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum,
   // std::cout << "Num of Events on File " << nEvents << std::endl;
 
   // fill spectrum
+<<<<<<< HEAD
   for (int loop = __skipEv; loop <  __skipEv+__nEv; ++loop) {
+=======
+  for (int loop = __skipEv; loop < __skipEv+__nEv; ++loop) {
+>>>>>>> 579ba56e8c2b695c449cd5f2eaddb8a6a14f601c
     calRunFile->GetEntry(loop);
     int cursor = (isHG ? static_cast<int>(cev.pmt_high[pmtnum])
                    : static_cast<int>(cev.pmt_low[pmtnum]));
@@ -143,7 +143,7 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum,
     }
   }
 
-  delete spectrum;
+  delete[] spectrum;
 
   return peakpos;
 }
@@ -215,7 +215,11 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
 
   // If we don't use independently outcnts[0] and  [1], reduce through MapCalibFromPredicate
 
+<<<<<<< HEAD
   for (int iEv = __skipEv; iEv <  __skipEv+__nEv; ++iEv) {  // Event loop
+=======
+  for (int iEv = __skipEv; iEv < __skipEv+__nEv; ++iEv) {  // Event loop
+>>>>>>> 579ba56e8c2b695c449cd5f2eaddb8a6a14f601c
     calRunFile->GetEntry(iEv);
     for (int iCh = 0; iCh < NPMT; ++iCh) {
       double content = (isHG ? static_cast<double>(cev.pmt_high[iCh])
@@ -326,7 +330,11 @@ void LCaloCalibrationManager::PMTsMeanRmsData(const int pmt,
   const double maxv = DATACALWINDOWMAX;
   const double minv = DATACALWINDOWMIN;
 
+<<<<<<< HEAD
   for (int iEv = __skipEv; iEv <  __skipEv+__nEv; ++iEv) {  // Event loop
+=======
+  for (int iEv = __skipEv; iEv < __skipEv+__nEv; ++iEv) {  // Event loop
+>>>>>>> 579ba56e8c2b695c449cd5f2eaddb8a6a14f601c
     calRunFile->GetEntry(iEv);
     double signal = static_cast<double>(cev.pmt_high[pmt]);
     if (minv < signal && signal < maxv && cev.trigger_flag[pmt] == 0) calc[signal] ++;
@@ -378,7 +386,9 @@ LCaloCalibration *LCaloCalibrationManager::Calibrate(const bool isHG,
   // double skewness[NPMT], kurtosis[NPMT];
 
   // Zero approximation initialization
-  int *peaks = isHG ? GetPeaksHG() : GetPeaksLG();
+  int peaks[NPMT];
+  if(isHG==true) GetPeaksHG(peaks);
+  else GetPeaksLG(peaks);
     
   for (int iCh = 0; iCh < NPMT; ++iCh) {
     ped0[iCh] = static_cast<double>(peaks[iCh]);
@@ -419,7 +429,11 @@ std::vector <std::map  <int, float>> LCaloCalibrationManager::MapCalibFromPredic
   LEvRec0 cev;
   bool MixedFLAG = calRunFile->IsMixed(); // important to see if we have to skip half the events
   calRunFile->SetTheEventPointer(cev);
+<<<<<<< HEAD
   for (int iEv = __skipEv; iEv <  __skipEv+__nEv; iEv++) {  // Event loop
+=======
+  for (int iEv = __skipEv; iEv < __skipEv+__nEv; iEv++) {  // Event loop
+>>>>>>> 579ba56e8c2b695c449cd5f2eaddb8a6a14f601c
     calRunFile->GetEntry(iEv);
     if(MixedFLAG==true && cev.IsZeroSuppressed()) continue;
     for (int iCh = 0; iCh < NPMT; iCh++) {
