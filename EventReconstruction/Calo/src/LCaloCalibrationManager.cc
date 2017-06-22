@@ -58,7 +58,7 @@ void LCaloCalibrationManager::GetPeaksHG(int *result) const {
 
   const bool isHG=true;
   auto predicate = [&](int cursor, bool trigger_flag, int iCh)
-    {(void)iCh; return cursor < HGPEAKFINDERWINDOW && trigger_flag==0;};
+    {(void)iCh; return cursor < HGPEAKFINDERWINDOW /*&& trigger_flag==0*/;};
   std::vector <std::map  <int, float>>  spectrum=MapCalibFromPredicate(predicate, isHG);
 
   for (int iCh=0; iCh< NPMT ; iCh++) {
@@ -81,7 +81,7 @@ void LCaloCalibrationManager::GetPeaksHG(int *result) const {
 void LCaloCalibrationManager::GetPeaksLG(int *result) const {
   const bool isHG=false;
   auto predicate = [&](int cursor, bool trigger_flag, int iCh)
-    {(void)iCh; return cursor < LGPEAKFINDERWINDOW && trigger_flag==0;};
+    {(void)iCh; return cursor < LGPEAKFINDERWINDOW /*&& trigger_flag==0*/;};
   std::vector <std::map  <int, float>>  spectrum=MapCalibFromPredicate(predicate, isHG);
 
   for (int iCh=0; iCh< NPMT ; iCh++) {
@@ -137,11 +137,11 @@ int LCaloCalibrationManager::FindPeak(const int pmtnum,
   // std::cout << "Num of Events on File " << nEvents << std::endl;
 
   // fill spectrum
-  for (int loop = __skipEv; loop < __nEv; ++loop) {
+  for (int loop = __skipEv; loop < __skipEv+__nEv; ++loop) {
     calRunFile->GetEntry(loop);
     int cursor = (isHG ? static_cast<int>(cev.pmt_high[pmtnum])
                    : static_cast<int>(cev.pmt_low[pmtnum]));
-    if (cursor < PeakFinderWindowWidth && cev.trigger_flag[pmtnum] == 0) {
+    if (cursor < PeakFinderWindowWidth /*&& cev.trigger_flag[pmtnum] == 0*/) {
       ++spectrum[cursor];
     }
   }  // end loop
@@ -213,7 +213,7 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
 
 
   auto predicate = [&](int content, bool trigger_flag, int iCh)
-    {return minv[iCh] < content && content < maxv[iCh] && trigger_flag == 0;};
+    {return minv[iCh] < content && content < maxv[iCh] /*&& trigger_flag == 0*/;};
   std::vector <std::map  <int, float>> calc=MapCalibFromPredicate(predicate, isHG);
 
   // output mean rms
@@ -235,7 +235,7 @@ void LCaloCalibrationManager::PMTsWindowedRms(const double *old_mean,
 
   // If we don't use independently outcnts[0] and  [1], reduce through MapCalibFromPredicate
 
-  for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
+  for (int iEv = __skipEv; iEv < __skipEv+__nEv; ++iEv) {  // Event loop
     calRunFile->GetEntry(iEv);
     for (int iCh = 0; iCh < NPMT; ++iCh) {
       double content = (isHG ? static_cast<double>(cev.pmt_high[iCh])
@@ -283,8 +283,8 @@ void LCaloCalibrationManager::PMTsMomenta34(const double *pedestal,
 
   auto predicate = [&](int content, bool trigger_flag, int iCh)
   {return (float(content) < pedestal[iCh] + SKEWKURTFINDINGHALFWINDOW * sigmaIN[iCh] &&
-          float(content) > pedestal[iCh] - SKEWKURTFINDINGHALFWINDOW * sigmaIN[iCh] &&
-          trigger_flag == 0);};
+          float(content) > pedestal[iCh] - SKEWKURTFINDINGHALFWINDOW * sigmaIN[iCh] /*&&
+          trigger_flag == 0*/);};
   std::vector <std::map  <int, float>> histo=MapCalibFromPredicate(predicate, isHG);
 
   // output
@@ -359,10 +359,10 @@ void LCaloCalibrationManager::PMTsMeanRmsData(const int pmt,
   const double maxv = DATACALWINDOWMAX;
   const double minv = DATACALWINDOWMIN;
 
-  for (int iEv = __skipEv; iEv < __nEv; ++iEv) {  // Event loop
+  for (int iEv = __skipEv; iEv < __skipEv+__nEv; ++iEv) {  // Event loop
     calRunFile->GetEntry(iEv);
     double signal = static_cast<double>(cev.pmt_high[pmt]);
-    if (minv < signal && signal < maxv && cev.trigger_flag[pmt] == 0) calc[signal] ++;
+    if (minv < signal && signal < maxv /*&& cev.trigger_flag[pmt] == 0*/) calc[signal] ++;
   }
 
  LStatTools stat(calc);
@@ -454,7 +454,7 @@ std::vector <std::map  <int, float>> LCaloCalibrationManager::MapCalibFromPredic
   LEvRec0 cev;
   bool MixedFLAG = calRunFile->IsMixed(); // important to see if we have to skip half the events
   calRunFile->SetTheEventPointer(cev);
-  for (int iEv = __skipEv; iEv < __nEv; iEv++) {  // Event loop
+  for (int iEv = __skipEv; iEv < __skipEv+__nEv; iEv++) {  // Event loop
     calRunFile->GetEntry(iEv);
     if(MixedFLAG==true && cev.IsZeroSuppressed()) continue;
     for (int iCh = 0; iCh < NPMT; iCh++) {
