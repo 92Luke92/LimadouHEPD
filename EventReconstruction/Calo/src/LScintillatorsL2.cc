@@ -175,6 +175,7 @@ tsum=0, tmult=0, hitbar[6]={0}, tene=0;
 // reset of calo vars
 sumall=0,suma=0,sumb=0, mult=0, conn[16]={0}, enUC=0, ChVsPlane[16]={0};
 
+
    for (int pln=0;pln<16;pln++){
 
     int  pmt1=(pln*2);
