@@ -195,6 +195,9 @@ void LEvRec1Stream::CopyFromLEvRec1(const LEvRec1 event) {
 	      << "MAXNCLUSTERS=" << MAXNCLUSTERS << std::endl;
     std::cerr << "nClusters too is set to this number." << std::endl;
     nClusters=MAXNCLUSTERS;
+    // Warning! This approach relies on the cls vector having decending order in SN.
+    // But it does not distinguish the single ladders! You may have the situation when
+    // all MAXNCLUSTERS belong to the same plane!
   }
   for(int icl=0; icl<nClusters; ++icl) {
     seed[icl] = event.tracker.cls.at(icl).seed;
