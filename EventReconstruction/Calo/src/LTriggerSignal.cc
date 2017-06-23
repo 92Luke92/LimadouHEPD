@@ -35,3 +35,15 @@ double LTriggerSignal::GetZ(const int iu, const int ipmt) const {
   double result = OFFSET+0.5*TRIGBARTHICKNESS;
   return result;
 }
+
+  
+bool LTriggerSignal::SignalSharedAmongBars(const bool isHG, const double threshold) const {
+  int maxbar = GetTheMostSignificantUnit(isHG,threshold);
+  if(maxbar=-999) return false;
+  int max2bar = GetThe2ndMostSignificantUnit(isHG,threshold);
+  if(max2bar=-999) return false;
+  if(maxbar-max2bar==1 ||
+     maxbar-max2bar==-1) return true;
+  else return false;
+}
+

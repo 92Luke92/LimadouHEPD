@@ -192,3 +192,99 @@ void LCaloSignal::FillRandom(void) {
   }
   return;
 }
+
+double LCaloSignal::GetSNOfUnit(const int unit, const bool isHG) const {
+  int result=0;
+  for(int ipmt=0; ipmt<npmts; ++ipmt) result += (isHG ? sn_hg[unit][ipmt] : sn_lg[unit][ipmt]);
+  return result;  
+}
+
+double LCaloSignal::GetCountsOfUnit(const int unit, const bool isHG) const {
+  int result=0;
+  for(int ipmt=0; ipmt<npmts; ++ipmt) result += (isHG ? cont_hg[unit][ipmt] : cont_lg[unit][ipmt]);
+  return result;  
+}
+
+
+int LCaloSignal::GetNOfSignificantUnits(const bool isHG, const double threshold) const {
+  int result=0;
+  double snu=0.; 
+  for(int iu=0; iu<nunits; ++iu) {
+    snu=GetSNOfUnit(iu,isHG);
+    if(!(snu<threshold)) ++result;
+  }
+  return result;
+}
+  
+int LCaloSignal::GetTheMostSignificantUnit(const bool isHG, const double threshold) const {
+  if(GetNOfSignificantUnits(isHG, threshold)<1) return -999;
+  int result=-999;
+  double sn_max=-999.; 
+  for(int iu=0; iu<nunits; ++iu) {
+    double snu=GetSNOfUnit(iu,isHG);
+    if(snu<threshold) continue;
+    if(snu>sn_max) {
+      sn_max=snu;
+      result=iu;
+    }
+  }
+  return result;  
+}
+
+int LCaloSignal::GetThe2ndMostSignificantUnit(const bool isHG, const double threshold) const {
+  if(GetNOfSignificantUnits(isHG, threshold)<2) return -999;
+  int maxu = GetTheMostSignificantUnit(isHG, threshold);
+  int result=-999;
+  double sn_max=-999.; 
+  for(int iu=0; iu<nunits; ++iu) {
+    if(iu==maxu) continue;
+    double snu=GetSNOfUnit(iu,isHG);
+    if(snu<threshold) continue;
+    if(snu>sn_max) {
+      sn_max=snu;
+      result=iu;
+    }
+  }
+  return result;  
+}
+
+double LCaloSignal::GetSNOfMSU(const bool isHG, const double threshold) const {
+  int msu=GetTheMostSignificantUnit(isHG, threshold);
+  double result=-999.;
+  if(msu!=-999) {
+    result=GetSNOfUnit(msu,isHG);
+  } 
+  
+  return result;
+}
+
+double LCaloSignal::GetSNOf2ndMSU(const bool isHG, const double threshold) const {
+  int msu2=GetThe2ndMostSignificantUnit(isHG, threshold);
+  double result=-999.;
+  if(msu2!=-999){
+    result=GetSNOfUnit(msu2,isHG);
+  } 
+  
+  return result;
+}
+  
+double LCaloSignal::GetCountsOfMSU(const bool isHG, const double threshold) const {
+  int msu=GetTheMostSignificantUnit(isHG, threshold);
+  double result=-999.;
+  if(msu!=-999) {
+    result=GetCountsOfUnit(msu,isHG);
+  } 
+  
+  return result;
+}
+
+double LCaloSignal::GetCountsOf2ndMSU(const bool isHG, const double threshold) const {
+  int msu2=GetThe2ndMostSignificantUnit(isHG, threshold);
+  double result=-999.;
+  if(msu2!=-999){
+    result=GetCountsOfUnit(msu2,isHG);
+  } 
+  
+  return result;
+}
+  

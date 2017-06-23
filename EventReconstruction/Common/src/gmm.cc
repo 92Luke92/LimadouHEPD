@@ -51,7 +51,7 @@ void GMM::EMstep () {
    // Expectation
    std::array<std::vector<float>,ngaus> w_vals;
 
-   for (uint ib=0; ib<bins.size(); ib++) {
+   for (uint16_t ib=0; ib<bins.size(); ib++) {
       float tot_prob=0;
       std::vector<float> prob;
       for (int ig=0; ig<ngaus; ig++) {
