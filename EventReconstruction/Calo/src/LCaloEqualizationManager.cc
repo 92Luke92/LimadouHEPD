@@ -165,8 +165,8 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
     int nTriggerPMTs = cev.trig.GetNPMTs();
     for (int itu = 0; itu < nTriggerUnits; itu++) {
       for (int itpmt = 0; itpmt < nTriggerPMTs; itpmt++) {
-        (isHG ? h_pmt[idPMT].Fill(cev.trig.sn_hg[itu][itpmt])
-              : h_pmt[idPMT].Fill(cev.trig.sn_lg[itu][itpmt]));
+        (isHG ? h_pmt[idPMT].Fill(cev.trig.cont_hg[itu][itpmt])
+              : h_pmt[idPMT].Fill(cev.trig.cont_lg[itu][itpmt]));
         idPMT++;
       }
     }
@@ -175,8 +175,8 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
     int nScintPMTs = cev.scint.GetNPMTs();
     for (int isu = 0; isu < nScintUnits; isu++) {
       for (int ispmt = 0; ispmt < nScintPMTs; ispmt++) {
-        (isHG ? h_pmt[idPMT].Fill(cev.scint.sn_hg[isu][ispmt])
-              : h_pmt[idPMT].Fill(cev.scint.sn_lg[isu][ispmt]));
+        (isHG ? h_pmt[idPMT].Fill(cev.scint.cont_hg[isu][ispmt])
+              : h_pmt[idPMT].Fill(cev.scint.cont_lg[isu][ispmt]));
         idPMT++;
       }
     }
@@ -185,8 +185,8 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
     int nVetoPMTs = cev.veto.GetNPMTs();
     for (int ivu = 0; ivu < nVetoUnits; ivu++) {
       for (int ivpmt = 0; ivpmt < nVetoPMTs; ivpmt++) {
-        (isHG ? h_pmt[idPMT].Fill(cev.veto.sn_hg[ivu][ivpmt])
-              : h_pmt[idPMT].Fill(cev.veto.sn_lg[ivu][ivpmt]));
+        (isHG ? h_pmt[idPMT].Fill(cev.veto.cont_hg[ivu][ivpmt])
+              : h_pmt[idPMT].Fill(cev.veto.cont_lg[ivu][ivpmt]));
         idPMT++;
       }
     }
@@ -196,8 +196,8 @@ LCaloEqualization *LCaloEqualizationManager::Equalize(const bool isHG) {
 
     for (int ilu = 0; ilu < nLysoUnits; ilu++) {
       for (int ilpmt = 0; ilpmt < nLysoPMTs; ilpmt++) {
-        (isHG ? h_pmt[idPMT].Fill(cev.lyso.sn_hg[ilu][ilpmt])
-              : h_pmt[idPMT].Fill(cev.lyso.sn_lg[ilu][ilpmt]));
+        (isHG ? h_pmt[idPMT].Fill(cev.lyso.cont_hg[ilu][ilpmt])
+              : h_pmt[idPMT].Fill(cev.lyso.cont_lg[ilu][ilpmt]));
         idPMT++;
       }
     }

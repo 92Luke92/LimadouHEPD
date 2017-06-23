@@ -17,7 +17,7 @@ LStatTools::LStatTools(std::vector<int> data) {
 };
 
 LStatTools::LStatTools(std::vector<int> data, std::vector<float> weight) {
-   for (uint i=0; i<data.size(); i++) {
+   for (uint16_t i=0; i<data.size(); i++) {
       datamap[data[i]]=weight[i];
    }
    init();
