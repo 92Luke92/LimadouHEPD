@@ -136,7 +136,7 @@ void ComputeCN(const short *counts, const double *pedestal, const bool *CN_mask,
 
   for(int iVA=0; iVA<N_VA; ++iVA) {
     CN[iVA]=(sumVA[iVA]/countVA[iVA]);
-    if(countVA[iVA]==0) std::cout << "Warning! ComputeCN dividing by zero!" << std::endl;
+    //if(countVA[iVA]==0) std::cout << "Warning! ComputeCN dividing by zero!" << std::endl;
   }
 
   return;
