@@ -11,7 +11,7 @@ if [ "$#" -eq 1 ]; then
     if [ $1 = "-h" ]; then
         echo " _________________________________________________________________________"  
         echo "|                                                                         |"
-        echo "|  export PATH=/your/path/LimadouHEPD/QuickLook/bin:$PATH   (required)    |"
+        echo '|  export PATH=/your/path/LimadouHEPD/QuickLook/bin:$PATH   (required)    |'
         echo "|                                                                         |" 
         echo "|  use:  HEPDquickLook  <root files dir>  <output dir> (absolute paths)   |"
         echo "|                                                                         |"
