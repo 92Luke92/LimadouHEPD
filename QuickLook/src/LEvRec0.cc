@@ -176,6 +176,24 @@ LEvRec0Conf::LEvRec0Conf(){
 
   }
 
+LEvRec0HVpmt::LEvRec0HVpmt(){
+
+  boot_nr = 0;
+  run_id = 0;
+
+  for(int i=0; i<10; ++i)
+    HV_pmt_mon[i] = 0;
+
+  for(int l=0; l<2; ++l)
+    HV_sil_mon[l] = 0;
+
+
+}
+ 
+  
+
+  
+
   
     
 

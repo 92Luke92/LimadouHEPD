@@ -28,6 +28,151 @@
 #include <TDatime.h>
 
 
+void HVPSMonitorToXML(TString rootname, TString xslPath = "")
+{
+
+  LEvRec0File rootfile(rootname.Data());
+  LEvRec0 ev;
+  LEvRec0Md metaData;
+  LEvRec0Conf dummyPKT;
+  LEvRec0HVpmt HVpkt;
+  rootfile.SetTheEventPointer(ev);
+  rootfile.SetTmdPointer(metaData);
+  
+
+  if (rootfile.IsTConf()){
+     
+     rootfile.SetTHVpmtPointer(HVpkt);
+     cout << endl << "HVPS Monitor to xml:" << rootname << endl;
+
+  
+     int THVpmt_entries = rootfile.GetTHVpmtEntries(); 
+     cout << "Number of THVpmt entries: " << THVpmt_entries << endl;
+  
+     TString filename = rootname;
+     filename.ReplaceAll(".root", 5, "_HVPSMonitor.xml", 16);
+
+     ofstream outputFile;
+     outputFile.open(filename.Data(), ios::trunc);
+
+
+     if (!outputFile.is_open()){
+	printf("Cannot open the file %s for the output", filename.Data());
+	exit(0);
+     }
+
+     outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
+     outputFile << "<!-- Prologo XML -->\n";
+     outputFile << "<?xml-stylesheet type='text/xsl' href='" << xslPath.Data() << "'?>\n";
+     outputFile << "<ROOT_SOURCE>\n";
+
+     Double_t HV_pmt_mon_table[10];
+     Double_t HV_sil_mon_table[2];
+  
+  
+  for(int j=0;j<THVpmt_entries;j++)
+    {
+      
+      rootfile.GetTHVpmtEntry(j);
+      
+      for(int h=0;h<10;h++)
+	{
+	  HV_pmt_mon_table[h]=(double)HVpkt.HV_pmt_mon[h]*0.24-0.78;
+	}
+
+      for(int l=0;l<2;l++)
+	{
+      	 HV_sil_mon_table[l]= (double)HVpkt.HV_sil_mon[l]*0.030-0.10;
+	}
+
+      outputFile << "<HVPSMONITOR>\n";
+      
+      outputFile << "\t<HEADER>"<< 0 << "</HEADER>\n";
+      
+      if(j%2==0) 
+	outputFile << "\t<HEADER>" << 1 << "</HEADER>\n";
+
+      outputFile << "\t<HEADER_VAL>" << "H" << "</HEADER_VAL>\n";
+      outputFile << "\t<TAIL_VAL>" << "T" << "</TAIL_VAL>\n";
+      
+      outputFile << "\t<HV_MON_PLANE_A_error>"  <<  0 << "</HV_MON_PLANE_A_error>\n";
+      outputFile << "\t<HV_MON_PLANE_B_error>"  <<  0 << "</HV_MON_PLANE_B_error>\n";
+      outputFile << "\t<HV_MON_PMT0_error>"  <<  0 << "</HV_MON_PMT0_error>\n";
+      outputFile << "\t<HV_MON_PMT1_error>"  <<  0 << "</HV_MON_PMT1_error>\n";
+      outputFile << "\t<HV_MON_PMT2_error>"  <<  0 << "</HV_MON_PMT2_error>\n";
+      outputFile << "\t<HV_MON_PMT3_error>"  <<  0 << "</HV_MON_PMT3_error>\n";
+      outputFile << "\t<HV_MON_PMT4_error>"  <<  0 << "</HV_MON_PMT4_error>\n";
+      outputFile << "\t<HV_MON_PMT5_error>"  <<  0 << "</HV_MON_PMT5_error>\n";
+      outputFile << "\t<HV_MON_PMT6_error>"  <<  0 << "</HV_MON_PMT6_error>\n";
+      outputFile << "\t<HV_MON_PMT7_error>"  <<  0 << "</HV_MON_PMT7_error>\n";
+      outputFile << "\t<HV_MON_PMT8_error>"  <<  0 << "</HV_MON_PMT8_error>\n";
+      outputFile << "\t<HV_MON_PMT9_error>"  <<  0 << "</HV_MON_PMT9_error>\n"; 
+      
+      outputFile << "\t<BOOT_NR>" << HVpkt.boot_nr << "</BOOT_NR>\n";
+      outputFile << "\t<RUN_NR>"  << HVpkt.run_id  << "</RUN_NR>\n";
+
+      if (HV_sil_mon_table[0]<0 || HV_sil_mon_table[0]>150.8)
+	outputFile << "\t<HV_MON_PLANE_A_error>"  <<  1   << "</HV_MON_PLANE_A_error>\n";
+
+      if (HV_sil_mon_table[1]<0 || HV_sil_mon_table[1]>150.8)
+	outputFile << "\t<HV_MON_PLANE_B_error>"  <<  1  << "</HV_MON_PLANE_B_error>\n";
+
+      if (HV_pmt_mon_table[0]<0 || HV_pmt_mon_table[0]>1200)
+	outputFile << "\t<HV_MON_PMT0_error>"  <<  1 << "</HV_MON_PMT0_error>\n";
+
+      if (HV_pmt_mon_table[1]<0 || HV_pmt_mon_table[1]>1200)
+	outputFile << "\t<HV_MON_PMT1_error>"  <<  1 << "</HV_MON_PMT1_error>\n";
+
+      if (HV_pmt_mon_table[2]<0 || HV_pmt_mon_table[2]>1200)
+	outputFile << "\t<HV_MON_PMT2_error>"  <<  1 << "</HV_MON_PMT2_error>\n";
+
+      if (HV_pmt_mon_table[3]<0 || HV_pmt_mon_table[3]>1200)
+	outputFile << "\t<HV_MON_PMT3_error>"  <<  1 << "</HV_MON_PMT3_error>\n";
+
+      if (HV_pmt_mon_table[4]<0 || HV_pmt_mon_table[4]>1200)
+	outputFile << "\t<HV_MON_PMT4_error>"  <<  1 << "</HV_MON_PMT4_error>\n";
+
+      if (HV_pmt_mon_table[5]<0 || HV_pmt_mon_table[5]>1200)
+	outputFile << "\t<HV_MON_PMT5_error>"  <<  1 << "</HV_MON_PMT5_error>\n";
+
+      if (HV_pmt_mon_table[6]<0 || HV_pmt_mon_table[6]>1200)
+	outputFile << "\t<HV_MON_PMT6_error>"  <<  1 << "</HV_MON_PMT6_error>\n";
+
+      if (HV_pmt_mon_table[7]<0 || HV_pmt_mon_table[7]>1200)
+	outputFile << "\t<HV_MON_PMT7_error>"  <<  1 << "</HV_MON_PMT7_error>\n";
+
+      if (HV_pmt_mon_table[8]<0 || HV_pmt_mon_table[8]>1200)
+	outputFile << "\t<HV_MON_PMT8_error>"  <<  1 << "</HV_MON_PMT8_error>\n";
+
+      if (HV_pmt_mon_table[9]<0 || HV_pmt_mon_table[9]>1200)
+	outputFile << "\t<HV_MON_PMT9_error>"  <<  1 << "</HV_MON_PMT9_error>\n";
+
+      
+      outputFile << setprecision(3) << "\t<HV_MON_PLANE_A>"  << HV_sil_mon_table[0] << "</HV_MON_PLANE_A>\n";
+      outputFile << setprecision(3) << "\t<HV_MON_PLANE_B>"  << HV_sil_mon_table[1] << "</HV_MON_PLANE_B>\n";
+
+      outputFile << setprecision(4) << "\t<HV_MON_PMT0>" <<  HV_pmt_mon_table[0] << "</HV_MON_PMT0>\n";
+      outputFile << setprecision(4) << "\t<HV_MON_PMT1>" <<  HV_pmt_mon_table[1] << "</HV_MON_PMT1>\n";
+      outputFile << setprecision(4) << "\t<HV_MON_PMT2>" <<  HV_pmt_mon_table[2] << "</HV_MON_PMT2>\n";
+      outputFile << setprecision(4) << "\t<HV_MON_PMT3>" <<  HV_pmt_mon_table[3] << "</HV_MON_PMT3>\n";
+      outputFile << setprecision(4) << "\t<HV_MON_PMT4>" <<  HV_pmt_mon_table[4] << "</HV_MON_PMT4>\n";
+      outputFile << setprecision(4) << "\t<HV_MON_PMT5>" <<  HV_pmt_mon_table[5] << "</HV_MON_PMT5>\n";
+      outputFile << setprecision(4) << "\t<HV_MON_PMT6>" <<  HV_pmt_mon_table[6] << "</HV_MON_PMT6>\n";
+      outputFile << setprecision(4) << "\t<HV_MON_PMT7>" <<  HV_pmt_mon_table[7] << "</HV_MON_PMT7>\n";
+      outputFile << setprecision(4) << "\t<HV_MON_PMT8>" <<  HV_pmt_mon_table[8] << "</HV_MON_PMT8>\n";
+      outputFile << setprecision(4) << "\t<HV_MON_PMT9>" <<  HV_pmt_mon_table[9] << "</HV_MON_PMT9>\n";
+
+      outputFile << "</HVPSMONITOR>\n";
+
+    }
+  outputFile << "</ROOT_SOURCE>\n";
+  outputFile.close();
+
+    }
+    else
+    return;
+}
+
 
 void DUMPConfigToXML(TString rootname, TString xslPath = "")
 {
@@ -167,9 +312,6 @@ void DUMPConfigToXML(TString rootname, TString xslPath = "")
   
  
   }
-
-
-
 
 
 

@@ -12,6 +12,7 @@ LEvRec0File::LEvRec0File(const char *inpFile) {
   treeCalib=(TTree*)inputCalib->Get("T");
   Tmd = (TTree*)inputCalib->Get("Tmd");
   TConf=(TTree*)inputCalib->Get("TConf");
+  THVpmt=(TTree*)inputCalib->Get("THVpmt");
 
 
   unsigned short runid;
@@ -126,7 +127,20 @@ int LEvRec0File::SetTConfPointer(LEvRec0Conf &dummyPKT) {
    TConf->SetBranchAddress("safe_mode", &dummyPKT.dummy_pkt.safe_mode);
    
    return 0;
-}  
+}
+
+int LEvRec0File::SetTHVpmtPointer(LEvRec0HVpmt &HVpkt) {
+
+  THVpmt->SetBranchAddress("boot_nr", &HVpkt.boot_nr);
+  THVpmt->SetBranchAddress("run_id", &HVpkt.run_id);
+
+  THVpmt->SetBranchAddress("HV_pmt_mon[10]", &HVpkt.HV_pmt_mon[0]);
+  THVpmt->SetBranchAddress("HV_sil_mon[2]", &HVpkt.HV_sil_mon[0]);
+
+  return 0;
+
+ } 
+
 
 int LEvRec0File::GetEntry(int iEntry) {
   treeCalib->GetEntry(iEntry);
@@ -143,6 +157,12 @@ int LEvRec0File::GetTConfEntry(int iEntry) {
   return 0;
 }
 
+int LEvRec0File::GetTHVpmtEntry(int iEntry) {
+  THVpmt->GetEntry(iEntry);
+  return 0;
+}
+
+
 int LEvRec0File::GetEntries() {
   return treeCalib->GetEntries();
 }
@@ -154,6 +174,10 @@ int LEvRec0File::GetTmdEntries() {
 
 int LEvRec0File::GetTConfEntries() {
   return TConf->GetEntries();
+}
+
+int LEvRec0File::GetTHVpmtEntries() {
+  return THVpmt->GetEntries();
 }
 
 
@@ -174,6 +198,7 @@ void LEvRec0File::Close() {
     treeCalib = 0;
     Tmd = 0;
     TConf = 0;
+    THVpmt = 0;
     inputCalib->Close();
 
     inputCalib = 0;
@@ -187,6 +212,7 @@ LEvRec0File::~LEvRec0File() {
      treeCalib = 0;
      Tmd = 0;
      TConf = 0;
+     THVpmt = 0;
     inputCalib->Close();
 
   }

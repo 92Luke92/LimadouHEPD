@@ -60,7 +60,7 @@
 		   <td>
 		     <table border="1">
 		       <tr  bgcolor="#999999">
-			 <td height="30" align="center" colspan="6"> <strong> Orbit Zones Configuration </strong> </td>
+			 <td height="30" align="center" colspan="6"> <strong> Orbit Zone Configurations </strong> </td>
 		       </tr>
 		       <tr>
 			 

@@ -24,6 +24,7 @@ int main(int argc, char **argv){
    TString sil;
    TString tel;
    TString dump;
+   TString hvps_mon;
    
    if (argc < 2)
    {
@@ -88,7 +89,9 @@ int main(int argc, char **argv){
    sil = xslPath+"SilConfigTemplate.xsl";
    tel = xslPath+"TelemetryTemplate.xsl";
    dump= xslPath+"DUMPConfigTemplate.xsl";
+   hvps_mon = xslPath+"HVPSMonitorTemplate.xsl";
 
+   HVPSMonitorToXML(argv[1], hvps_mon);
    DUMPConfigToXML(argv[1], dump);
    BroadcastToXML(argv[1], broad1, broad2);
    CPUTimeTempToXML(argv[1], cpu);
