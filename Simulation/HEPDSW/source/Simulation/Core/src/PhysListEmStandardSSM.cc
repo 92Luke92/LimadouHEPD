@@ -29,7 +29,7 @@
 // $Id$
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "PhysListEmStandardSSM.hh"
 
@@ -77,31 +77,31 @@ void PhysListEmStandardSSM::ConstructProcess()
 {
   // Add standard EM Processes
 
-  theParticleIterator->reset();
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
+  aParticleIterator->reset();
+  while( (*aParticleIterator)() ){
+    G4ParticleDefinition* particle = aParticleIterator->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
     G4String particleName = particle->GetParticleName();
-     
+
     if (particleName == "gamma") {
       // gamma
       pmanager->AddDiscreteProcess(new G4PhotoElectricEffect);
       pmanager->AddDiscreteProcess(new G4ComptonScattering);
       pmanager->AddDiscreteProcess(new G4GammaConversion);
-      
+
     } else if (particleName == "e-") {
       //electron
       pmanager->AddProcess(new G4eIonisation,        -1, 1, 1);
       pmanager->AddProcess(new G4eBremsstrahlung,    -1, 2, 2);
 
       G4CoulombScattering* cs = new G4CoulombScattering();
-      G4eSingleCoulombScatteringModel* model = 
+      G4eSingleCoulombScatteringModel* model =
         new G4eSingleCoulombScatteringModel();
       //model->SetLowEnergyThreshold(10*eV);
       model->SetPolarAngleLimit(0.0);
       cs->AddEmModel(0, model);
-      pmanager->AddDiscreteProcess(cs);            
-            
+      pmanager->AddDiscreteProcess(cs);
+
     } else if (particleName == "e+") {
       //positron
 
@@ -110,13 +110,13 @@ void PhysListEmStandardSSM::ConstructProcess()
       pmanager->AddProcess(new G4eplusAnnihilation,   0,-1, 3);
 
       G4CoulombScattering* cs = new G4CoulombScattering();
-      G4eSingleCoulombScatteringModel* model = 
+      G4eSingleCoulombScatteringModel* model =
         new G4eSingleCoulombScatteringModel();
       model->SetPolarAngleLimit(0.0);
       cs->AddEmModel(0, model);
-      pmanager->AddDiscreteProcess(cs);            
-            
-    } else if (particleName == "mu+" || 
+      pmanager->AddDiscreteProcess(cs);
+
+    } else if (particleName == "mu+" ||
                particleName == "mu-"    ) {
       //muon
       pmanager->AddProcess(new G4MuIonisation,       -1, 1, 1);
@@ -126,29 +126,29 @@ void PhysListEmStandardSSM::ConstructProcess()
       G4eCoulombScatteringModel* model = new G4eCoulombScatteringModel();
       model->SetPolarAngleLimit(0.0);
       cs->AddEmModel(0, model);
-      pmanager->AddDiscreteProcess(cs);            
+      pmanager->AddDiscreteProcess(cs);
 
-             
+
     } else if (particleName == "alpha" || particleName == "He3") {
       pmanager->AddProcess(new G4ionIonisation,      -1, 1, 1);
       G4CoulombScattering* cs = new G4CoulombScattering();
       cs->AddEmModel(0, new G4IonCoulombScatteringModel());
       cs->SetBuildTableFlag(false);
-      pmanager->AddDiscreteProcess(cs);            
+      pmanager->AddDiscreteProcess(cs);
 
-    } else if (particleName == "GenericIon" ) { 
-      pmanager->AddProcess(new G4ionIonisation,      -1, 1, 1);      
+    } else if (particleName == "GenericIon" ) {
+      pmanager->AddProcess(new G4ionIonisation,      -1, 1, 1);
       G4CoulombScattering* cs = new G4CoulombScattering();
       cs->AddEmModel(0, new G4IonCoulombScatteringModel());
       cs->SetBuildTableFlag(false);
       pmanager->AddDiscreteProcess(cs);
-     
+
     } else if ((!particle->IsShortLived()) &&
-               (particle->GetPDGCharge() != 0.0) && 
+               (particle->GetPDGCharge() != 0.0) &&
                (particle->GetParticleName() != "chargedgeantino")) {
       //all others charged particles except geantino
       pmanager->AddProcess(new G4hIonisation,        -1, 1, 1);
-      pmanager->AddDiscreteProcess(new G4CoulombScattering);            
+      pmanager->AddDiscreteProcess(new G4CoulombScattering);
     }
   }
   // scattering

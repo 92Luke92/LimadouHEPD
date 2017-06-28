@@ -32,10 +32,10 @@ HEPDSWProducerManager* HEPDSWProducerManager::instance = 0;
 HEPDSWProducerManager::HEPDSWProducerManager():theEvent(0),theRootFile(0),theEventTree(0),thePathDir(0)
 {
   theMessenger = new HEPDSWProducerMessenger(this);
-  vetoHitCollID=-1;	
-  trackerHitCollID=-1;	
-  trackCollID=-1;	
-  vertexCollID=-1;	
+  vetoHitCollID=-1;
+  trackerHitCollID=-1;
+  trackCollID=-1;
+  vertexCollID=-1;
   theAutoSaveLimit = 1000;
   eventID=0;
   verboseLevel = 0;
@@ -45,8 +45,8 @@ HEPDSWProducerManager::HEPDSWProducerManager():theEvent(0),theRootFile(0),theEve
   theEvent = new RootEvent();
 }
 ////////////////////////////////////////////////////////////////////////////////
-//  
-HEPDSWProducerManager::~HEPDSWProducerManager() 
+//
+HEPDSWProducerManager::~HEPDSWProducerManager()
 {
   delete theMessenger;
   delete theEventTree;
@@ -56,10 +56,10 @@ HEPDSWProducerManager::~HEPDSWProducerManager()
 ////////////////////////////////////////////////////////////////////////////////
 //
 
-void HEPDSWProducerManager::SetRootFile(G4String aFileName,G4String aDirName) 
+void HEPDSWProducerManager::SetRootFile(G4String aFileName,G4String aDirName)
 {
   theRootFile = new TFile(aFileName,"RECREATE","Storing of HEPD info");
-  
+
   G4String aNameDir = aDirName;
   thePathDir = theRootFile->mkdir(aNameDir);
 
@@ -92,9 +92,9 @@ void HEPDSWProducerManager::BeginOfEventAction(const G4Event*)
       trackCollID = SDman->GetCollectionID("trackCollection");
       vertexCollID = SDman->GetCollectionID("vertexCollection");
     }
-  } 
+  }
 }
-  
+
 
 
 void HEPDSWProducerManager::StoreRootFile()
@@ -109,15 +109,15 @@ void HEPDSWProducerManager::BeginOfRunAction(const G4Run*)
 ///////////////////////////////////////////////////////////////////////////////
 //
 void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
-{ 
+{
   if(verboseLevel>0)
     G4cout << "entering in EndOfEventAction..." << G4endl;
 
   eventID = evt->GetEventID();
 
-  
+
   G4HCofThisEvent * HCE = evt->GetHCofThisEvent();
-  
+
   CaloHitsCollection * caloHC  = 0;
   CaloHitsCollection * vetoHC  = 0;
   TrackerHitsCollection * trackerHC   = 0;
@@ -159,20 +159,20 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
     if(!(caloHitCollID<0)){
       caloHC = (CaloHitsCollection*)(HCE->GetHC(caloHitCollID));
       for(int i=0;i<caloHC->entries();i++){
-	theCaloHitContainer.push_back(RootCaloHit((*caloHC)[i]->GetVolume(),(*caloHC)[i]->GetTotalEdep()/MeV,(*caloHC)[i]->GetEdepMap()));
+	theCaloHitContainer.push_back(RootCaloHit((*caloHC)[i]->GetVolume(),(*caloHC)[i]->GetTotalEdep()/CLHEP::MeV,(*caloHC)[i]->GetEdepMap()));
 	if(verboseLevel>0)
-	  std::cout<<"CaloHit  # "<<i<<" ; Volume = "<<(*caloHC)[i]->GetVolume()<<" ; Edep = "<<(*caloHC)[i]->GetTotalEdep()/MeV<<" MeV"<<std::endl;
+	  std::cout<<"CaloHit  # "<<i<<" ; Volume = "<<(*caloHC)[i]->GetVolume()<<" ; Edep = "<<(*caloHC)[i]->GetTotalEdep()/CLHEP::MeV<<" MeV"<<std::endl;
       }
     }
     if(!(vetoHitCollID<0)){
       vetoHC = (CaloHitsCollection*)(HCE->GetHC(vetoHitCollID));
       for(int i=0;i<vetoHC->entries();i++){
-	theVetoHitContainer.push_back(RootCaloHit((*vetoHC)[i]->GetVolume(),(*vetoHC)[i]->GetTotalEdep()/MeV,(*vetoHC)[i]->GetEdepMap()));
+	theVetoHitContainer.push_back(RootCaloHit((*vetoHC)[i]->GetVolume(),(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV,(*vetoHC)[i]->GetEdepMap()));
 	if(verboseLevel>0)
-	  std::cout<<"VetoHit  # "<<i<<" ; Volume = "<<(*vetoHC)[i]->GetVolume()<<" ; Edep = "<<(*vetoHC)[i]->GetTotalEdep()/MeV<<" MeV"<<std::endl;
+	  std::cout<<"VetoHit  # "<<i<<" ; Volume = "<<(*vetoHC)[i]->GetVolume()<<" ; Edep = "<<(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV<<" MeV"<<std::endl;
       }
     }
-    
+
     if(!(trackCollID<0)){
       trackHC = (TracksCollection*)(HCE->GetHC(trackCollID));
       for(int i=0;i<trackHC->entries();i++){
@@ -200,7 +200,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 	theVertexContainer.push_back(RootVertex(false,false,"NA",TVector3(0,0,0)));
       }
     }
-    
+
 
     if(verboseLevel>0)
       std::cout<<"=============================================================================================="<<std::endl;
