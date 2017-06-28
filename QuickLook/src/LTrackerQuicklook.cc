@@ -49,7 +49,7 @@ int TrackerQuickLook(std::string namefile){
    outnameStart = outname+"(";
    outnameEnd = outname+")";
   
-   //TH2D *test[N_SIDES];
+  
    TH2D *sigmaraw[N_SIDES][N_LADDER];
    TH2D *pedestal[N_SIDES][N_LADDER];
    TH2D *sigmaped[N_SIDES][N_LADDER];
@@ -172,7 +172,7 @@ int TrackerQuickLook(std::string namefile){
       LTrackerMask coldchan_tmp = cal->GetMaskOnSigma(ipk, COLDCHANNELTHRESHOLD, 999.);
       LTrackerMask nongauschan_tmp = cal->GetMaskOnNGI(ipk, -999., GAUSCHANNELTHRESHOLD);
       
-      bool *evmask=(hotchan_tmp&&nongauschan_tmp).GetBool();
+      LTrackerMask evmask=(hotchan_tmp&&nongauschan_tmp);
     
       short data[NCHAN];
       double CN_va[N_VA];
@@ -185,7 +185,7 @@ int TrackerQuickLook(std::string namefile){
          for(int ichan=0; ichan < NCHAN; ichan++){
             data[ichan] = ev.strip[ichan];
          }
-         ComputeCN(data,mean_chan,CNmask,CN_va);
+         ComputeCN(data,mean_chan,&evmask,CN_va);
         
          for(int ichan = 0; ichan < NCHAN; ++ichan){
             int chanva = ChanToVA(ichan);
@@ -202,23 +202,23 @@ int TrackerQuickLook(std::string namefile){
             
          }
     
-         std::vector<LTrackerCluster> *clusters=GetClusters(counts_clean_chan,sigma_chan,evmask);
+         std::vector<LTrackerCluster> signal=GetClusters(counts_clean_chan,sigma_chan,&evmask);
    
-         /*
-           for(int cl=0;cl<clusters->size();++cl){
+	 /*
+	 for(int cl=0;cl<signal.size();++cl){
       
-           int seed=clusters->at(cl).seed;
+	     int seed=signal.at(cl).seed;
     
            int clusterside=ChanToSide(seed);
            int clusterladder=ChanToLadder(seed);
-           double etacounts=clusters->at(cl).GetEtaCounts();
-           double clsize=clusters->at(cl).ClusterSize(3.);
+           double etacounts=signal.at(cl).GetEtaCounts();
+           double clsize=signal.at(cl).ClusterSize(3.);
      
            clustersize[clusterside][clusterladder]->Fill(clsize);
-           landau[clusterside][clusterladder]->Fill(etacounts);
+	   landau[clusterside][clusterladder]->Fill(etacounts);
     
            }
-         */
+	 */
          for(int ld=0;ld<N_LADDER;++ld){
             for(int sd=0;sd<N_SIDES;++sd){
                for(int vaside=0;vaside<SIDE_VA;++vaside)

@@ -19,7 +19,7 @@ void LTrackerCalibrationSlot::Write(std::ofstream *output) {
   return;
 }
 
-LTrackerCalibrationSlot* LTrackerCalibrationSlot::Read(std::ifstream *input) {
+LTrackerCalibrationSlot LTrackerCalibrationSlot::Read(std::ifstream *input) {
   char word[100];
   int StartEventST, StopEventST;
   double sigmarawST[NCHAN], pedestalST[NCHAN], sigmaST[NCHAN], ngindexST[NCHAN];
@@ -28,7 +28,7 @@ LTrackerCalibrationSlot* LTrackerCalibrationSlot::Read(std::ifstream *input) {
   for(int iChan=0; iChan<NCHAN; ++iChan)
     *input >> sigmarawST[iChan] >> pedestalST[iChan] >>  sigmaST[iChan] >> ngindexST[iChan] >> cnmST[iChan];
   
-  LTrackerCalibrationSlot *result = new LTrackerCalibrationSlot(StartEventST, StopEventST, sigmarawST, pedestalST, sigmaST, ngindexST, cnmST);
+  LTrackerCalibrationSlot result(StartEventST, StopEventST, sigmarawST, pedestalST, sigmaST, ngindexST, cnmST);
   return result;
 }
 

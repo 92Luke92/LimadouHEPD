@@ -8,7 +8,7 @@
 class LTrackerCalibration {
 public:
   LTrackerCalibration(const int RunIdINP, const int InitialTargetRunINP, const int FinalTargetRun);
-  void Add(const LTrackerCalibrationSlot *lcal);
+  void Add(const LTrackerCalibrationSlot lcal);
   void Write(const char *fileOut);
   static LTrackerCalibration* Read(const char *fileIn);
   inline int GetNSlots(){return nSlots;};

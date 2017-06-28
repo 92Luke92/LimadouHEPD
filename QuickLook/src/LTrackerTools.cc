@@ -66,8 +66,8 @@ int ChanToSideChan(const int Chan) {
   return result;
 }
 
-std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigma, const bool *maskIn, const bool __emulateOnline){
-  auto result= new std::vector<LTrackerCluster>;
+std::vector<LTrackerCluster> GetClusters(const double* cont, const double *sigma, const LTrackerMask *maskIn, const bool __emulateOnline){
+  std::vector<LTrackerCluster> result;
   double sn[NCHAN];
   for(int ich=0; ich<NCHAN; ++ich){
     if(sigma[ich]==0.) sn[ich]=-999.;
@@ -76,9 +76,9 @@ std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigm
   }
   
   // Prepare mask even for default case
-  double mask[NCHAN];
+  bool mask[NCHAN];
   if(maskIn==0) for(int ich=0; ich<NCHAN; ++ich) mask[ich]=true;
-  else for(int ich=0; ich<NCHAN; ++ich) mask[ich]=maskIn[ich];
+  else for(int ich=0; ich<NCHAN; ++ich) mask[ich]=maskIn->Get(ich);
   // Apply the mask
   for(int ich=0; ich<NCHAN; ++ich) sn[ich]*=(static_cast<double>(mask[ich]));
   
@@ -110,8 +110,8 @@ std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigm
     }
    
     LTrackerCluster mycl(maxindex1, cont, sigma);
-    if(maskIn[maxindex1]&&maskIn[maxindex1-1]&&maskIn[maxindex1+1])
-      result->push_back(mycl);
+    if(maskIn->Get(maxindex1)&&maskIn->Get(maxindex1-1)&&maskIn->Get(maxindex1+1))
+      result.push_back(mycl);
     ich=maxindex1+2; // already explored up there.
   
   } // end of the main loop:: Warning, possible overlap between clusters' boundaries
@@ -119,7 +119,7 @@ std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigm
   return result;
 }
 
-void ComputeCN(const short *counts, const double *pedestal, const bool *CN_mask, double *CN) {
+void ComputeCN(const short *counts, const double *pedestal, const LTrackerMask *CN_mask, double *CN) {
   double sumVA[N_VA];
   int countVA[N_VA];
   for(int iVA=0; iVA<N_VA; ++iVA) {
@@ -128,7 +128,7 @@ void ComputeCN(const short *counts, const double *pedestal, const bool *CN_mask,
   }
     
   for(int iChan=0; iChan<NCHAN; ++iChan) {
-    if(CN_mask[iChan]==false) continue;
+    if(CN_mask->Get(iChan)==false) continue;
     int iVA=ChanToVA(iChan);
     sumVA[iVA]+=(static_cast<double>(counts[iChan])-pedestal[iChan]);
     ++countVA[iVA];
