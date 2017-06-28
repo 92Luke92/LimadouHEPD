@@ -111,40 +111,40 @@ void HVPSMonitorToXML(TString rootname, TString xslPath = "")
       outputFile << "\t<BOOT_NR>" << HVpkt.boot_nr << "</BOOT_NR>\n";
       outputFile << "\t<RUN_NR>"  << HVpkt.run_id  << "</RUN_NR>\n";
 
-      if (HV_sil_mon_table[0]<0 || HV_sil_mon_table[0]>150.8)
+      if (HV_sil_mon_table[0]<0 || HV_sil_mon_table[0]>100)
 	outputFile << "\t<HV_MON_PLANE_A_error>"  <<  1   << "</HV_MON_PLANE_A_error>\n";
 
-      if (HV_sil_mon_table[1]<0 || HV_sil_mon_table[1]>150.8)
+      if (HV_sil_mon_table[1]<0 || HV_sil_mon_table[1]>100)
 	outputFile << "\t<HV_MON_PLANE_B_error>"  <<  1  << "</HV_MON_PLANE_B_error>\n";
 
-      if (HV_pmt_mon_table[0]<0 || HV_pmt_mon_table[0]>1200)
+      if (HV_pmt_mon_table[0]<0 || HV_pmt_mon_table[0]>980)
 	outputFile << "\t<HV_MON_PMT0_error>"  <<  1 << "</HV_MON_PMT0_error>\n";
 
-      if (HV_pmt_mon_table[1]<0 || HV_pmt_mon_table[1]>1200)
+      if (HV_pmt_mon_table[1]<0 || HV_pmt_mon_table[1]>980)
 	outputFile << "\t<HV_MON_PMT1_error>"  <<  1 << "</HV_MON_PMT1_error>\n";
 
-      if (HV_pmt_mon_table[2]<0 || HV_pmt_mon_table[2]>1200)
+      if (HV_pmt_mon_table[2]<0 || HV_pmt_mon_table[2]>980)
 	outputFile << "\t<HV_MON_PMT2_error>"  <<  1 << "</HV_MON_PMT2_error>\n";
 
-      if (HV_pmt_mon_table[3]<0 || HV_pmt_mon_table[3]>1200)
+      if (HV_pmt_mon_table[3]<0 || HV_pmt_mon_table[3]>980)
 	outputFile << "\t<HV_MON_PMT3_error>"  <<  1 << "</HV_MON_PMT3_error>\n";
 
-      if (HV_pmt_mon_table[4]<0 || HV_pmt_mon_table[4]>1200)
+      if (HV_pmt_mon_table[4]<0 || HV_pmt_mon_table[4]>980)
 	outputFile << "\t<HV_MON_PMT4_error>"  <<  1 << "</HV_MON_PMT4_error>\n";
 
-      if (HV_pmt_mon_table[5]<0 || HV_pmt_mon_table[5]>1200)
+      if (HV_pmt_mon_table[5]<0 || HV_pmt_mon_table[5]>980)
 	outputFile << "\t<HV_MON_PMT5_error>"  <<  1 << "</HV_MON_PMT5_error>\n";
 
-      if (HV_pmt_mon_table[6]<0 || HV_pmt_mon_table[6]>1200)
+      if (HV_pmt_mon_table[6]<0 || HV_pmt_mon_table[6]>980)
 	outputFile << "\t<HV_MON_PMT6_error>"  <<  1 << "</HV_MON_PMT6_error>\n";
 
-      if (HV_pmt_mon_table[7]<0 || HV_pmt_mon_table[7]>1200)
+      if (HV_pmt_mon_table[7]<0 || HV_pmt_mon_table[7]>980)
 	outputFile << "\t<HV_MON_PMT7_error>"  <<  1 << "</HV_MON_PMT7_error>\n";
 
-      if (HV_pmt_mon_table[8]<0 || HV_pmt_mon_table[8]>1200)
+      if (HV_pmt_mon_table[8]<0 || HV_pmt_mon_table[8]>980)
 	outputFile << "\t<HV_MON_PMT8_error>"  <<  1 << "</HV_MON_PMT8_error>\n";
 
-      if (HV_pmt_mon_table[9]<0 || HV_pmt_mon_table[9]>1200)
+      if (HV_pmt_mon_table[9]<0 || HV_pmt_mon_table[9]>980)
 	outputFile << "\t<HV_MON_PMT9_error>"  <<  1 << "</HV_MON_PMT9_error>\n";
 
       

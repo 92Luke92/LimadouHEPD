@@ -39,7 +39,7 @@
 	     <td>
 	       <table border="1">
 		 <tr  bgcolor="#1acd32">
-		   <td height="30" align="center" colspan="10">PMT HV Value (V) </td>
+		   <td height="30" align="center" colspan="10">PMT HVPS Value (V) </td>
 		 </tr>
 		 <tr>
 		   <td width="80" height="60" align="center"> 0 </td>
