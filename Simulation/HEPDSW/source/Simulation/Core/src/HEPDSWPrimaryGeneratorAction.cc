@@ -118,7 +118,7 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   //
   //randomize the beam, if requested.
   if(random){
-    G4double phi = 2*pi*G4RandFlat::shoot();
+    G4double phi = 2*CLHEP::pi*G4RandFlat::shoot();
     G4double theta = std::sqrt(G4RandFlat::shoot());
     float atheta = theta;
     theta = std::acos(theta);

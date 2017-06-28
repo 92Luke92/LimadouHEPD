@@ -32,19 +32,19 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -std=c++11")
 #
 include(${Geant4_USE_FILE})
 
-set(hepdsw_include_dirs 
-	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/Core/include 
-	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/MCTruth/include 
-	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/Tracker/include 
-	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/Calorimeter/include 
-            ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Common/include 
-            ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Tracker/include 
-            ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Calorimeter/include 
-            ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Satellite/include 
-            ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/HEPDBox/include 
-            ${CMAKE_CURRENT_SOURCE_DIR}/source/Dataformats/include 
-	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Producer/include 		   
-	    ${Geant4_INCLUDE_DIR})   
+set(hepdsw_include_dirs
+	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/Core/include
+	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/MCTruth/include
+	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/Tracker/include
+	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/Calorimeter/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Common/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Tracker/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Calorimeter/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Satellite/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/HEPDBox/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/Dataformats/include
+	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Producer/include
+	    ${Geant4_INCLUDE_DIR})
 
 include_directories(${hepdsw_include_dirs})
 #----------------------------------------------------------------------------
@@ -80,11 +80,11 @@ get_directory_property(DataFormatsHeaders DIRECTORY source/Dataformats DEFINITIO
 ROOT_GENERATE_DICTIONARY("${DataFormatsHeaders}" "${DataFormats_LINKDEF}" "${DataFormats_DICTIONARY}" "${hepdsw_include_dirs}")
 
 # add the dictionary to the list of source files
-set(sources ${sources} ${DataFormats_DICTIONARY}) 
+set(sources ${sources} ${DataFormats_DICTIONARY})
 
 if(Geant4_gdml_FOUND)
     MESSAGE( STATUS "HEPDSW will be compiled with GDML!")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHEPDSW_USE_G4GDML") 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHEPDSW_USE_G4GDML")
     find_package(XercesC)
     include_directories(${XERCESC_INCLUDE_DIR})
 endif(Geant4_gdml_FOUND)
@@ -101,15 +101,15 @@ if (test_res)
 
 else()
     add_library(hepdsw_lib SHARED ${sources} ${headers})
-    
+
 endif()
 set_target_properties(hepdsw_lib PROPERTIES OUTPUT_NAME "hepdsw")
-target_link_libraries(hepdsw_lib  ${Geant4_LIBRARIES} ${ROOT_LIBRARIES}) 
+target_link_libraries(hepdsw_lib  ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 
 
 #----------------------------------------------------------------------------
 # HEPDSW executable
-add_executable(hepdsw_exe ${PROJECT_SOURCE_DIR}/source/Executable/HEPDSW.cc ${headers}) 
+add_executable(hepdsw_exe ${PROJECT_SOURCE_DIR}/source/Executable/HEPDSW.cc ${headers})
 add_dependencies(hepdsw_exe hepdsw_lib)
 
 set_target_properties(hepdsw_exe PROPERTIES OUTPUT_NAME "hepdsw")
@@ -122,7 +122,7 @@ target_link_libraries(hepdsw_exe hepdsw_lib)
 set(HEPDSW_INSTALL_PREFIX ${PROJECT_BINARY_DIR} CACHE PATH "Prefix for the HEPDSW installation")
 
 #--------------------------------------
-#Building of hepdsw-env.sh 
+#Building of hepdsw-env.sh
 
 set (HEPDSW_BASH_BINPATH_SETUP "export PATH=${HEPDSW_INSTALL_PREFIX}/bin:$PATH")
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
@@ -130,24 +130,24 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 else()
     set(libpathname LD_LIBRARY_PATH)
 endif()
-set (HEPDSW_BASH_LIBPATH_SETUP "export ${libpathname}=${HEPDSW_INSTALL_PREFIX}/lib:$${libpathname}")   
+set (HEPDSW_BASH_LIBPATH_SETUP "export ${libpathname}=${HEPDSW_INSTALL_PREFIX}/lib:$${libpathname}")
 configure_file(${PROJECT_SOURCE_DIR}/cmake/Templates/hepdsw-env.sh.in
     ${PROJECT_BINARY_DIR}/config/hepdsw-env.sh
     @ONLY)
 
 #--------------------------------------
-#Building of hepdsw-env.csh 
+#Building of hepdsw-env.csh
 
-set (HEPDSW_CSH_BINPATH_SETUP "setenv  PATH ${HEPDSW_INSTALL_PREFIX}/bin:$PATH")     
+set (HEPDSW_CSH_BINPATH_SETUP "setenv  PATH ${HEPDSW_INSTALL_PREFIX}/bin:$PATH")
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     set(libpathname DYLD_LIBRARY_PATH)
 else()
     set(libpathname LD_LIBRARY_PATH)
 endif()
-set (HEPDSW_CSH_LIBPATH_SETUP "setenv ${libpathname} ${HEPDSW_INSTALL_PREFIX}/lib:$${libpathname}")   
+set (HEPDSW_CSH_LIBPATH_SETUP "setenv ${libpathname} ${HEPDSW_INSTALL_PREFIX}/lib:$${libpathname}")
 configure_file(${PROJECT_SOURCE_DIR}/cmake/Templates/hepdsw-env.csh.in
     ${PROJECT_BINARY_DIR}/config/hepdsw-env.csh
-    @ONLY) 
+    @ONLY)
 
 
 #----------------------------------------------------------------------------
