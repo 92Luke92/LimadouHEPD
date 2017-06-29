@@ -6,12 +6,13 @@
 
 #include <iostream>
 #include <math.h>
+#include <stdlib.h> 
 
 LTrackerCalibrationManager::LTrackerCalibrationManager() {
    calRunFile = 0;
    InitialTargetRun = -1;
    FinalTargetRun = -1;
-   verboseFLAG = true;
+   verboseFLAG = false;
 }
 
 
@@ -94,12 +95,12 @@ int LTrackerCalibrationManager::CalculateCalibrationSlots(const int nEvents, con
    return nSlots;
 }
 
-LTrackerCalibrationSlot* LTrackerCalibrationManager::CalibrateSlot(const int StartEntry, const int StopEntry) {
+LTrackerCalibrationSlot LTrackerCalibrationManager::CalibrateSlot(const int StartEntry, const int StopEntry) {
 
    if(calRunFile==0 || !(calRunFile->IsOpen())) {
       std::cerr << "Error! Attempt to call the \"CalibrateSlot\" method, but no calibration run loaded."
 		<< std::endl;
-      return 0;
+      exit;
    }
 
    // RawMeanSigma
@@ -134,7 +135,7 @@ LTrackerCalibrationSlot* LTrackerCalibrationManager::CalibrateSlot(const int Sta
    int StopEvent=static_cast<int>(cev.event_index);
 
    // Result
-   LTrackerCalibrationSlot *result = new LTrackerCalibrationSlot(StartEvent, StopEvent, sigma0, mean2, sigma2, ngindex, CN_mask);
+   LTrackerCalibrationSlot result(StartEvent, StopEvent, sigma0, mean2, sigma2, ngindex, CN_mask);
    return result;
 }
 
@@ -182,9 +183,9 @@ void LTrackerCalibrationManager::ComputeCNMask(const double *sigma1, bool *CN_ma
       else CN_mask[iChan]=true;
    }  
   
-   if(verboseFLAG) {
+   if(verboseFLAG) 
       std::cout << "CNmask computed" << std::endl;
-   }
+   
    return;
 }
 
@@ -218,7 +219,9 @@ void LTrackerCalibrationManager::RawMeanSigma(const int StartEntry, const int St
       sigma0[iChan]=sqrt(sumsq0[iChan]/counter0[iChan]-mean0[iChan]*mean0[iChan]);
    }
   
-   if(verboseFLAG) std::cout << "RawMeanSigma computed" << std::endl;
+   if(verboseFLAG)
+      std::cout << "RawMeanSigma computed" << std::endl;
+
    return;
 }
 
@@ -255,7 +258,9 @@ void LTrackerCalibrationManager::CleanedMeanSigma(const int StartEntry, const in
       sigma1[iChan]=sqrt(sumsq1[iChan]/counter1[iChan]-mean1[iChan]*mean1[iChan]);
    }
   
-   if(verboseFLAG) std::cout << "CleanedMeanSigma computed" << std::endl;
+   if(verboseFLAG)
+      std::cout << "CleanedMeanSigma computed" << std::endl;
+
    return;
 }
 
@@ -274,12 +279,14 @@ void LTrackerCalibrationManager::CNCorrectedSigma(const int StartEntry, const in
       sumsq2[iChan]=0.;
       counter2[iChan]=0;
    }
+   // LTrackerMask instead of bool array
+   LTrackerMask CN_maskk = LTrackerMask(CN_mask);
   
    // Average counts and squares
    for(int iEntry=StartEntry; iEntry<StopEntry; ++iEntry) {
       calRunFile->GetEntry(iEntry);
       double CN[N_VA];
-      ComputeCN(cev.strip,mean1,CN_mask,CN);
+      ComputeCN(cev.strip,mean1,&CN_maskk,CN);
       for(int iChan=0; iChan<NCHAN; ++iChan) {
 	 double x = static_cast<double>(cev.strip[iChan]);
 	 double diff = (x-mean1[iChan]);
@@ -295,7 +302,9 @@ void LTrackerCalibrationManager::CNCorrectedSigma(const int StartEntry, const in
       sigma2[iChan]=sqrt(sumsq2[iChan]/counter2[iChan]-mean2[iChan]*mean2[iChan]);
    }
   
-   if(verboseFLAG) std::cout << "CNCorrectedSigma computed" << std::endl;
+   if(verboseFLAG)
+      std::cout << "CNCorrectedSigma computed" << std::endl;
+
    return;
 }
 
@@ -311,11 +320,12 @@ void LTrackerCalibrationManager::GaussianityIndex(const int StartEntry, const in
       ngindex[iChan]=0.;
       ngcounter[iChan]=0;
    }
-  
+   // LTrackerMask instead of bool array
+   LTrackerMask CN_maskk = LTrackerMask(CN_mask);
    for(int iEntry=StartEntry; iEntry<StopEntry; ++iEntry) {
       calRunFile->GetEntry(iEntry);
       double CN[N_VA];
-      ComputeCN(cev.strip,mean2,CN_mask,CN);
+      ComputeCN(cev.strip,mean2,&CN_maskk,CN);
       for(int iChan=0; iChan<NCHAN; ++iChan) {
 	 double x = (static_cast<double>(cev.strip[iChan])-mean2[iChan]-CN[ChanToVA(iChan)]);
 	 if(std::fabs(x)>GAUSSIANITYSIGMATHRESHOLD*sigma2[iChan]) ++ngindex[iChan];
@@ -330,7 +340,9 @@ void LTrackerCalibrationManager::GaussianityIndex(const int StartEntry, const in
       ngindex[iChan]=(delta/denominator);
    }
   
-   if(verboseFLAG) std::cout << "GaussianityIndex computed" << std::endl;
+   if(verboseFLAG)
+      std::cout << "GaussianityIndex computed" << std::endl;
+
    return;
 }
 

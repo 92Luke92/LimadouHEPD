@@ -45,7 +45,7 @@ void LEvRec0::DumpEventIndex() {
 
 bool  LEvRec0::IsComp(void) {
    int ret = false;
-   std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
+   //std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
    if (runType == 0x36 || runType == 0x6336)
       ret = true;
    
@@ -55,7 +55,7 @@ bool  LEvRec0::IsComp(void) {
 
 bool  LEvRec0::IsVirgin(void) {
    bool ret = false;
-   std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
+   //std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
    if (runType == 0x4e ||runType == 0x634e )
       ret = true;
    
@@ -175,6 +175,24 @@ LEvRec0Conf::LEvRec0Conf(){
   dummy_pkt.safe_mode=0;
 
   }
+
+LEvRec0HVpmt::LEvRec0HVpmt(){
+
+  boot_nr = 0;
+  run_id = 0;
+
+  for(int i=0; i<10; ++i)
+    HV_pmt_mon[i] = 0;
+
+  for(int l=0; l<2; ++l)
+    HV_sil_mon[l] = 0;
+
+
+}
+ 
+  
+
+  
 
   
     

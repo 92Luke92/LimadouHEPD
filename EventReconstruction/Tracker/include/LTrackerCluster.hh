@@ -37,11 +37,13 @@ public:
   inline double GetEtaSN(){return etaSN;};
   double ComputeEta();
   double ComputeEta3();
+  void HoldTimeCorrectionCls(const double HoldCorrConst);
   
 private:
   double eta;
   double etaCounts;
   double etaSN;
+  //bool HTCFLAG;
 };
 
 

@@ -6,7 +6,7 @@ std::string	INPFILE	  inputFile		// input file
 
 std::string	OUTFOLD	  outdir		// output dir
 
-int		MAXEVTS	  -1			// max number of events to process (-1 is all)
-int		MAXFEVTS  100000		// max number of events to process for each file
+int		SKIPEVTS  -1			// events to skip
+int		MAXFEVTS  100000		// max number of events to process (-1 is all)
 
 bool		VERBOSE	  true			// set the verbosity level

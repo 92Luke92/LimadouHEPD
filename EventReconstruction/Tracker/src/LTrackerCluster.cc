@@ -191,3 +191,13 @@ bool LTrackerCluster::operator > (const LTrackerCluster& cl) const {
   bool result = etaSN > cl.etaSN;
   return result;
 }
+
+void LTrackerCluster::HoldTimeCorrectionCls(const double HoldCorrConst=HOLDCORRCONST){
+    for(int icchan = 1; icchan < CLUSTERCHANNELS-1; ++icchan){ //shift of the central channels of the clusters (NOT BORDERS!)
+      count[icchan] = (count[icchan]-HoldCorrConst*count[icchan+1])/(1.-HoldCorrConst);
+      sn[icchan]=count[icchan]/sigma[icchan];
+    }
+  ComputeEta();
+  return;
+}
+

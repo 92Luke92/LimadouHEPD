@@ -26,6 +26,8 @@ void LReco01Manager::LoadSteering(const char* steerFileIN) {
   L0fname = steer.GetParameter<std::string>("INPFILE");
   // Output folder
   outDirectory = steer.GetParameter<std::string>("OUTFOLD");
+  // Skip Events
+  skipEvents = steer.GetParameter<int>("SKIPEVTS");
   // Max File Events
   maxFileEvents = steer.GetParameter<int>("MAXFEVTS");
   // Verbosity
@@ -42,6 +44,7 @@ void LReco01Manager::Reset(void) {
   steerFile="";
   calFileName="";
   outDirectory="";
+  skipEvents=0;
   maxFileEvents=0;
   verboseFLAG=true;
   steeringLoadedFLAG=false;
@@ -73,6 +76,7 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
     std::cout <<  __LRECO01MANAGER__ << "Error: the file " << L0fname << " has been checked and found not to work." << std::endl;
     result=false;
   }
+  if(skipEvents<0 && skipEvents!=-1) result=false;
   if(maxFileEvents<0 && maxFileEvents!=-1) result=false;
   if(result==false) {
     std::cout << __LRECO01MANAGER__ << "something is wrong or missing in the steering file" << std::endl;
@@ -84,6 +88,7 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
       std::cout << __LRECO01MANAGER__ << "calFileName  " << calFileName << std::endl;
       std::cout << __LRECO01MANAGER__ << "inpFile  " << L0fname << std::endl;
       std::cout << __LRECO01MANAGER__ << "outDirectory " << outDirectory << std::endl;
+      std::cout << __LRECO01MANAGER__ << "skipEvents    " << skipEvents << std::endl;
       std::cout << __LRECO01MANAGER__ << "maxFileEvents    " << maxFileEvents << std::endl;
     }
   }
@@ -106,7 +111,8 @@ void LReco01Manager::Run(void) {
   inFile->SetTheEventPointer(lev0);
   int nentries=inFile->GetEntries();
   std::cout << __LRECO01MANAGER__ << "Looping on file " << L0fname << " (" << nentries << " entries)" << std::endl;
-  for(int i0=0; i0<nentries; ++i0){
+  int startEvent = (skipEvents==-1 ? 0 : skipEvents);
+  for(int i0=startEvent; i0<nentries; ++i0){
     if(i0%PRINTOUTEVENTS==0) {
       std::cout << __LRECO01MANAGER__
 		<<"event " << i0 << "/" <<nentries << std::endl;

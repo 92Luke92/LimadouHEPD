@@ -240,5 +240,17 @@ public:
   dummy_packet_out_t    dummy_pkt;
   
 };
+
+class LEvRec0HVpmt {
+
+public:
+  LEvRec0HVpmt();
+
+  unsigned short     boot_nr;
+  unsigned short     run_id;
+  unsigned short     HV_pmt_mon[10];
+  unsigned short     HV_sil_mon[2]; 
+ 
+};
 #endif
 

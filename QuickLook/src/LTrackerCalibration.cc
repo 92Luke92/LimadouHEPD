@@ -2,10 +2,14 @@
 #include <fstream>
 #include <iostream>
 
-void LTrackerCalibration::Add(const LTrackerCalibrationSlot *lcal) {
-  calarray.push_back(*lcal);
+void LTrackerCalibration::Add(const LTrackerCalibrationSlot lcal) {
+  calarray.push_back(lcal);
+  
+  if(nSlots%50 == 0)
+     std::cout << "LTrackerCalibration: " << "current slot number " << nSlots<< std::endl;
+
   ++nSlots;
-  std::cout << "LTrackerCalibration: " << "current slot number " << nSlots << std::endl;;
+
   return;
 }
 

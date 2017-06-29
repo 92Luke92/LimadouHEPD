@@ -15,6 +15,7 @@
 
 using namespace std;
 
+void HVPSMonitorToXML(TString rootname, TString xslPath);
 void DUMPConfigToXML(TString rootname, TString xslPath);
 void BroadcastToXML(TString rootname, TString xslPath, TString xslPath2);
 void CPUTimeTempToXML(TString rootname, TString xslPath);
