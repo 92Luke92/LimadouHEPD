@@ -36,9 +36,12 @@ endif()
 
 include(${ROOT_USE_FILE})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/Tracker/include ${CMAKE_SOURCE_DIR}/Calo/include ${CMAKE_SOURCE_DIR}/Tracker/include)
-
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
+add_executable(testDetID ${PROJECT_SOURCE_DIR}/src/testDetID.cc ${sources})
+#target_link_libraries(TrackerQuickLook ${ROOT_LD_FLAGS})
+target_link_libraries(testDetID ${ROOT_LIBRARIES})
+
 
 
 #other cmakelists to be added here when written
