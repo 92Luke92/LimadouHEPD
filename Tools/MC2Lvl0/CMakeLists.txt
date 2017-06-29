@@ -36,6 +36,8 @@ endif()
 
 include(${ROOT_USE_FILE})
 
+set(EXECUTABLE_OUTPUT_PATH "exe/")
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 add_executable(testDetID ${PROJECT_SOURCE_DIR}/src/testDetID.cc ${sources})

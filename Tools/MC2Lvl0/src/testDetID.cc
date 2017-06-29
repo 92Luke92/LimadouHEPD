@@ -1,9 +1,13 @@
 #include "detectorID.h"
+#include "PMTID.h"
 #include <iostream>
 
 
 int main() {
 
-   for (auto v : detectorID) std::cout << v.first << " -> " << v.second << std::endl;
+   std::cout << " >>> Map of detector IDs "  << std::endl;
+   for (auto iv : detectorID) std::cout << iv.first << " -> " << iv.second << std::endl;
+   std::cout << " >>> Vector of PMT IDs "  << std::endl;
+   for (uint iv=0; iv<PMTID.size() ; iv++) std::cout << iv << " -> " << PMTID[iv] << std::endl;
    return 0;
 }
