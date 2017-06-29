@@ -9,7 +9,7 @@ class LTrackerCalibrationSlot {
 public:
   LTrackerCalibrationSlot(int StartE, int StopE, double* rawsig, double *ped, double *sig, double *ngi, bool *cnm);
   void Write(std::ofstream *output);
-  static LTrackerCalibrationSlot* Read(std::ifstream *input);
+  static LTrackerCalibrationSlot Read(std::ifstream *input);
   inline int GetStartEvent(){return StartEvent;};
   inline int GetStopEvent(){return StopEvent;};
   inline double* GetPedestal(){return pedestal;};

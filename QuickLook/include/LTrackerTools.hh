@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "LTrackerCluster.hh"
+#include "LTrackerMask.hh"
 
 int ChanToLadder(const int nStrip);
 int ChanToADC(const int nStrip);
@@ -16,8 +17,8 @@ int ChanToLadderPlane (const int nChan); // return 0,1,....11
 bool SameLadderPlane(const int Chan1, const int Chan2);
 int ChanToLadderChan(const int Chan); // channel inside the ladder
 int ChanToSideChan(const int Chan); // channel inside the side
-std::vector<LTrackerCluster>* GetClusters(const double* cont, const double *sigma, const bool *mask, const bool __emulateOnline=false);
-void ComputeCN(const short *counts, const double *pedestal, const bool *CN_mask, double *CN);
+std::vector<LTrackerCluster> GetClusters(const double* cont, const double *sigma, const LTrackerMask *mask, const bool __emulateOnline=false);
+void ComputeCN(const short *counts, const double *pedestal, const LTrackerMask *CN_mask, double *CN);
 
 
 template<class T> T* Symmetrise(const int inpsize, const T* inp) {
