@@ -77,8 +77,8 @@ void HEPDSWPrimaryGeneratorAction::SetDefaultKinematic()
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,-1.));
   fParticleGun->SetParticleEnergy(1.*GeV);
-  G4double position = 0.5*(fDetector->GetWorldSizeZ());
-  fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm,position));
+  G4double zposition = 0.5*(fDetector->GetWorldSizeZ());
+  fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm, zposition));
 }
 
 void HEPDSWPrimaryGeneratorAction::SetEnergy(G4double ene)
@@ -120,16 +120,15 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if(random){
     G4double phi = 2*CLHEP::pi*G4RandFlat::shoot();
     G4double theta = std::sqrt(G4RandFlat::shoot());
-    float atheta = theta;
     theta = std::acos(theta);
     G4double Xmax = 0.5*(fDetector->GetWorldSizeX());
     G4double Ymax = 0.5*(fDetector->GetWorldSizeY());
     G4double Zmax = 0.5*(fDetector->GetWorldSizeZ());
-    //    G4cout << "xmax " << Xmax << " ymax " << Ymax << " theta " << theta << " cos theta " << atheta << " cos theta " << cos(theta) << G4endl; 
+    //    G4cout << "xmax " << Xmax << " ymax " << Ymax << " theta " << theta << " cos theta " << atheta << " cos theta " << cos(theta) << G4endl;
     position = G4ThreeVector(-Xmax+2*Xmax*G4RandFlat::shoot(),-Ymax+2*Ymax*G4RandFlat::shoot(),Zmax);
     if(powerlaw)
       fParticleGun->SetParticleEnergy(SpectrumPowerLaw(eminPL,emaxPL,gammaPL));
-    
+
     if(centerpointing)
       direction = -1*position;
     else

@@ -45,9 +45,9 @@ class HEPDSWPrimaryGeneratorMessenger;
 class HEPDSWPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-  HEPDSWPrimaryGeneratorAction(HEPDSWDetectorConstruction*);    
+  HEPDSWPrimaryGeneratorAction(HEPDSWDetectorConstruction*);
   ~HEPDSWPrimaryGeneratorAction();
-  
+
 public:
   void SetDefaultKinematic();
   void SetParticle(G4String part);
@@ -58,17 +58,17 @@ public:
   inline void SetRandomPosition() { random = true;}
   inline void SetDirectionToCenter() { centerpointing = true;}
 
-  virtual 
-  void GeneratePrimaries(G4Event*);  
+  virtual
+  void GeneratePrimaries(G4Event*);
   G4ParticleGun* GetParticleGun() {return fParticleGun;};
-  
+
 private:
   G4double SpectrumPowerLaw(G4double Emin,G4double Emax, G4double gamma);
 
   G4ThreeVector          position;
   G4ThreeVector          direction;
   G4ParticleGun*         fParticleGun;
-  HEPDSWDetectorConstruction*  fDetector;   
+  HEPDSWDetectorConstruction*  fDetector;
   G4bool                 random;
   G4bool                 centerpointing;
   G4bool                 dummy;
@@ -77,7 +77,7 @@ private:
   G4double eminPL,emaxPL,gammaPL;
 
 
-  HEPDSWPrimaryGeneratorMessenger* fGunMessenger; 
+  HEPDSWPrimaryGeneratorMessenger* fGunMessenger;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
