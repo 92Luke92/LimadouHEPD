@@ -40,13 +40,22 @@ set(EXECUTABLE_OUTPUT_PATH "exe/")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # MC includes ("RootEvent.hh", etc.)
+message(${PROJECT_SOURCE_DIR})
+include(${PROJECT_SOURCE_DIR}/../../Simulation/HEPDSW/source/Dataformats/CMakeLists.txt)
+include(${PROJECT_SOURCE_DIR}/../../EventReconstruction/Common/CMakeLists.txt)
 include_directories(${PROJECT_SOURCE_DIR}/../../Simulation/HEPDSW/source/Dataformats/include/)
-file(GLOB_RECURSE sources ${CMAKE_SOURCE_DIR}/*/src/*.cc)
+include_directories(${PROJECT_SOURCE_DIR}/../../EventReconstruction/Common/include/)
+include_directories(${PROJECT_SOURCE_DIR}/include)
+LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../Simulation/HEPDSW/build/lib/)
+file(GLOB_RECURSE MCsources ${PROJECT_SOURCE_DIR}/../../Simulation/HEPDSW/source/Dataformats/src/*.cc)
+file(GLOB_RECURSE LVL0sources ${PROJECT_SOURCE_DIR}/../../EventReconstruction/Common/src/LEvRec0.cc)
+file(GLOB_RECURSE sources ${PROJECT_SOURCE_DIR}/*/src/*.cc)
 add_executable(testDetID src/testDetID.cc ${sources})
-add_executable(MC2Lvl0 src/MC2Lvl0.cc ${sources})
+add_executable(MC2Lvl0 src/MC2Lvl0.cc ${sources}  ${LVL0sources} )
 #target_link_libraries(TrackerQuickLook ${ROOT_LD_FLAGS})
 target_link_libraries(testDetID ${ROOT_LIBRARIES})
-target_link_libraries(MC2Lvl0 ${ROOT_LIBRARIES})
+target_link_libraries(MC2Lvl0 ${ROOT_LIBRARIES} hepdsw)
+
 
 
 
