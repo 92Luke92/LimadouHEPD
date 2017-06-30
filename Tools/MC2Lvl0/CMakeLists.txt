@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-project("Limadou MC to LVL0 files")
+project("MC2LVL0")
 
 # The project version number.
 set(VERSION_MAJOR   0   CACHE STRING "Project major version number.")
@@ -23,8 +23,6 @@ if(DOXYGEN_FOUND)
 		)
 endif(DOXYGEN_FOUND)
 
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-#project(Common)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
@@ -38,11 +36,17 @@ include(${ROOT_USE_FILE})
 
 set(EXECUTABLE_OUTPUT_PATH "exe/")
 
+# Regular includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
-add_executable(testDetID ${PROJECT_SOURCE_DIR}/src/testDetID.cc ${sources})
+
+# MC includes ("RootEvent.hh", etc.)
+include_directories(${PROJECT_SOURCE_DIR}/../../Simulation/HEPDSW/source/Dataformats/include/)
+file(GLOB_RECURSE sources ${CMAKE_SOURCE_DIR}/*/src/*.cc)
+add_executable(testDetID src/testDetID.cc ${sources})
+add_executable(MC2Lvl0 src/MC2Lvl0.cc ${sources})
 #target_link_libraries(TrackerQuickLook ${ROOT_LD_FLAGS})
 target_link_libraries(testDetID ${ROOT_LIBRARIES})
+target_link_libraries(MC2Lvl0 ${ROOT_LIBRARIES})
 
 
 
