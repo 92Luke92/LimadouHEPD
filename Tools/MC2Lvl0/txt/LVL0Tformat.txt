@@ -1,0 +1,75 @@
+******************************************************************************
+*Tree    :T         : Data                                                   *
+*Entries :    24717 : Total =       237504734 bytes  File  Size =  237373496 *
+*        :          : Tree compression factor =   1.00                       *
+******************************************************************************
+*Br    0 :strip[4608] : strip[4608]/S                                        *
+*Entries :    24717 : Total  Size=  228574885 bytes  File Size  =  228409797 *
+*Baskets :     8239 : Basket Size=      32000 bytes  Compression=   1.00     *
+*............................................................................*
+*Br    1 :trigger_index : trigger_index/i                                    *
+*Entries :    24717 : Total  Size=      99682 bytes  File Size  =      99176 *
+*Baskets :        4 : Basket Size=      32000 bytes  Compression=   1.00     *
+*............................................................................*
+*Br    2 :hepd_time : hepd_time/i                                            *
+*Entries :    24717 : Total  Size=      99650 bytes  File Size  =      99160 *
+*Baskets :        4 : Basket Size=      32000 bytes  Compression=   1.00     *
+*............................................................................*
+*Br    3 :event_index : event_index/i                                        *
+*Entries :    24717 : Total  Size=      99666 bytes  File Size  =      99168 *
+*Baskets :        4 : Basket Size=      32000 bytes  Compression=   1.00     *
+*............................................................................*
+*Br    4 :event_length : event_length/s                                      *
+*Entries :    24717 : Total  Size=      50084 bytes  File Size  =      49586 *
+*Baskets :        2 : Basket Size=      32000 bytes  Compression=   1.00     *
+*............................................................................*
+*Br    5 :pmt_high[64] : pmt_high[64]/s                                      *
+*Entries :    24717 : Total  Size=    3173690 bytes  File Size  =    3171376 *
+*Baskets :      100 : Basket Size=      32000 bytes  Compression=   1.00     *
+*............................................................................*
+*Br    6 :pmt_low[64] : pmt_low[64]/s                                        *
+*Entries :    24717 : Total  Size=    3173586 bytes  File Size  =    3171276 *
+*Baskets :      100 : Basket Size=      32000 bytes  Compression=   1.00     *
+*............................................................................*
+*Br    7 :rate_meter[9] : rate_meter[9]/s                                    *
+*Entries :    24717 : Total  Size=     446583 bytes  File Size  =     445984 *
+*Baskets :       14 : Basket Size=      32000 bytes  Compression=   1.00     *
+*............................................................................*
+*Br    8 :trigger_flag[64] : trigger_flag[64]/O                              *
+*Entries :    24717 : Total  Size=    1587216 bytes  File Size  =    1585888 *
+*Baskets :       50 : Basket Size=      32000 bytes  Compression=   1.00     *
+*............................................................................*
+*Br    9 :alive_time : alive_time/i                                          *
+*Entries :    24717 : Total  Size=      99658 bytes  File Size  =      99164 *
+*Baskets :        4 : Basket Size=      32000 bytes  Compression=   1.00     *
+*............................................................................*
+*Br   10 :dead_time : dead_time/i                                            *
+*Entries :    24717 : Total  Size=      99650 bytes  File Size  =      99160 *
+*Baskets :        4 : Basket Size=      32000 bytes  Compression=   1.00     *
+*............................................................................*
+
+
+
+https://root.cern.ch/doc/master/classTBranch.html#ae30a4edb372811b4f02b485b7b0dfaca
+
+    C : a character string terminated by the 0 character
+    B : an 8 bit signed integer (Char_t)
+    b : an 8 bit unsigned integer (UChar_t)
+    S : a 16 bit signed integer (Short_t)
+    s : a 16 bit unsigned integer (UShort_t)
+    I : a 32 bit signed integer (Int_t)
+    i : a 32 bit unsigned integer (UInt_t)
+    F : a 32 bit floating point (Float_t)
+    D : a 64 bit floating point (Double_t)
+    L : a 64 bit signed integer (Long64_t)
+    l : a 64 bit unsigned integer (ULong64_t)
+    O : [the letter o, not a zero] a boolean (Bool_t)
+
+Arrays of values are supported with the following syntax:
+
+    If leaf name has the form var[nelem], where nelem is alphanumeric, then if nelem is a leaf name, it is used as the variable size of the array, otherwise return 0. The leaf referred to by nelem MUST be an int (/I),
+    If leaf name has the form var[nelem], where nelem is a non-negative integers, then it is used as the fixed size of the array.
+    If leaf name has the form of a multi dimension array (e.g. var[nelem][nelem2]) where nelem and nelem2 are non-negative integers) then it is used as a 2 dimensional array of fixed size.
+    Any of other form is not supported.
+
+Consistent with LevRec0.hh
