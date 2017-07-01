@@ -27,6 +27,10 @@ private:
 	bool I_T2_OR_T3_I_AND_S15(const LEvRec1 ev) const; // flag: (T2.OR.T3).AND.S15
 	bool I_T2_OR_T3_I_AND_VB(const LEvRec1 ev) const; // flag: (T2.OR.T3).AND.VB
 	bool central_muon_tight(const LEvRec1 ev) const; // flag: central_muon_tight
+	bool central_muon(const LEvRec1 ev) const; // flag: central_muon
+	bool right_muon(const LEvRec1 ev) const; // flag: right_muon
+	bool left_muon(const LEvRec1 ev) const; // flag: left_muon
+	bool right_muon_lyso5(const LEvRec1 ev) const;// flag:right_muon_lyso5
 	bool VL(const LEvRec1 ev) const; // flag: VL
 };
 
