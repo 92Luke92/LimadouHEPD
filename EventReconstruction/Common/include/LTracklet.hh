@@ -12,6 +12,7 @@ public:
   LTracklet(){;};
   LTracklet(const LTracklet& other); 
   LTracklet(const LTrackerCluster*, const LTriggerCluster); 
+  void Dump(const int iev);
   LTracklet& operator=(const LTracklet& other);
   LTrackerCluster tracker_cl[TRACKERCLUSTERS];
   LTriggerCluster trigger_cl;
