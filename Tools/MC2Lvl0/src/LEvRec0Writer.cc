@@ -14,6 +14,10 @@ void LEvRec0Writer::Init(std::string filename) {
   return;
 }
 
+void LEvRec0Writer::Close() {
+  fFile->Close();
+
+}
 
 
 void LEvRec0Writer::SetTheEventPointer() {

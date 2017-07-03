@@ -64,6 +64,10 @@ int main(int argc, char** argv) {
    LoopOnEvents(&lvl0writer, Tmc);
 
    lvl0writer.Write();
+   lvl0writer.Close();
+   delete Tmc;
+   filemc->Close();
+   delete filemc;
 
    return 0;
 
@@ -78,9 +82,11 @@ int main(int argc, char** argv) {
 void LoopOnEvents(LEvRec0Writer* lvl0writer, TTree* Tmc) {
    long ne=Tmc->GetEntries();
    for (long ie=0; ie<ne; ie++) {
-      std::cout << ie << std::endl;
-      lvl0writer->pev()->Reset();
-      lvl0writer->pev()->pmt_high[int(ie%50)]=3;
+      std::cout << ie << "\r" << std::flush;
+      LEvRec0* ev=lvl0writer->pev();
+      ev->Reset();
+      //ev->pmt_high=3
       lvl0writer->Fill();
    }
+   std::cout << std::endl;
 }

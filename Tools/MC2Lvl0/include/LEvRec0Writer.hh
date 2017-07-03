@@ -15,6 +15,7 @@ public:
   void Fill() {fTree->Fill();}
   void Write() {fTree->Write();}
   void Init(std::string filename);
+  void Close();
 
   LEvRec0* pev() {return &ev;}
 
