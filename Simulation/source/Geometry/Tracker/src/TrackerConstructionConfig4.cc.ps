@@ -1,0 +1,2148 @@
+%!PS-Adobe-3.0
+%%Title: TrackerConstructionConfig4.cc
+%%For: wjb
+%%Creator: a2ps version 4.14
+%%CreationDate: Wed Feb  4 16:17:50 2015
+%%BoundingBox: 24 24 588 768
+%%DocumentData: Clean7Bit
+%%Orientation: Landscape
+%%Pages: 6
+%%PageOrder: Ascend
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: font Courier
+%%+ font Courier-Bold
+%%+ font Courier-BoldOblique
+%%+ font Courier-Oblique
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Roman
+%%DocumentProcessColors: Black 
+%%DocumentSuppliedResources: procset a2ps-a2ps-hdr
+%%+ procset a2ps-black+white-Prolog
+%%+ encoding ISO-8859-1Encoding
+%%EndComments
+/a2psdict 200 dict def
+a2psdict begin
+%%BeginProlog
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+
+% EPSF import as in the Red Book
+/BeginInclude {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack 
+  userdict begin
+    0 setgray 0 setlinecap
+    1 setlinewidth 0 setlinejoin
+    10 setmiterlimit [ ] 0 setdash newpath
+    gs_languagelevel 1 ne {
+      false setstrokeadjust false setoverprint 
+    } if
+} bind def
+
+/EndInclude {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+/BeginEPSF {
+  BeginInclude
+  /showpage { } def
+} bind def
+
+/EndEPSF {
+  EndInclude
+} bind def
+
+% Page prefeed
+/page_prefeed {         % bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% Function c-show (str => -)
+% centers text only according to x axis.
+/c-show { 
+  dup stringwidth pop
+  2 div neg 0 rmoveto
+  show
+} bind def
+
+% Function l-show (str => -)
+% prints texts so that it ends at currentpoint
+/l-show {
+  dup stringwidth pop neg 
+  0 
+  rmoveto show
+} bind def
+
+% center-fit show (str w => -)
+% show centered, and scale currentfont so that the width is less than w
+/cfshow {
+  exch dup stringwidth pop
+  % If the title is too big, try to make it smaller
+  3 2 roll 2 copy
+  gt
+  { % if, i.e. too big
+    exch div
+    currentfont exch scalefont setfont
+  } { % ifelse
+    pop pop 
+  }
+  ifelse
+  c-show			% center title
+} bind def
+
+% Return the y size of the current font
+% - => fontsize
+/currentfontsize {
+  currentfont /FontType get 0 eq {
+    currentfont /FontMatrix get 3 get
+  }{
+    currentfont /FontMatrix get 3 get 1000 mul
+  } ifelse
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      % <vector> <key> <val>
+      1 index /FID ne 
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def % -
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Get the underline position and thickness if they're defined.
+    % Use 1 if they are not defined.
+    currentdict /FontInfo 2 copy known
+    { get
+      /UnderlinePosition 2 copy % <FontInfo> /UP <FontInfo> /UP
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+
+      /UnderlineThickness 2 copy % <FontInfo> /UT <FontInfo> /UT
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+      pop % -
+    }{ pop pop
+    } ifelse
+
+    currentdict
+  end 
+} bind def
+
+% composite fonts for ASCII-EUC mixed string
+% Version 1.2 1/31/1990
+% Orignal Ken'ichi HANDA (handa@etl.go.jp)
+% Modified Norio Katayama (katayama@rd.nacsis.ac.jp),1998
+% Extend & Fix Koji Nakamaru (maru@on.cs.keio.ac.jp), 1999
+% Anyone can freely copy, modify, distribute this program.
+
+/copyfont {	% font-dic extra-entry-count  copyfont  font-dic
+	1 index maxlength add dict begin
+	{	1 index /FID ne 2 index /UniqueID ne and
+		{def} {pop pop} ifelse
+	} forall
+	currentdict
+	end
+} bind def
+
+/compositefont { % ASCIIFontName EUCFontName RomanScale RomanOffset Rot(T/F) compositefont font
+    /RomanRotation exch def
+    /RomanOffset exch def
+    /RomanScale exch def
+    userdict /fixeucfont_dict known not {
+	userdict begin
+	    /fixeucfont_dict 2 dict begin
+		/UpperByteEncoding [
+		    16#00 1 16#20 { pop 0 } for
+		    16#21 1 16#28 { 16#20 sub } for
+		    16#29 1 16#2F { pop 0 } for
+		    16#30 1 16#74 { 16#27 sub } for
+		    16#75 1 16#FF { pop 0 } for
+		] def
+	        /LowerByteEncoding [
+		    16#00 1 16#A0 { pop /.notdef } for
+		    16#A1 1 16#FE { 16#80 sub 16 2 string cvrs
+				    (cXX) dup 1 4 -1 roll
+				    putinterval cvn } for
+		    /.notdef
+		] def
+		currentdict
+	    end def
+	end
+    } if
+    findfont dup /FontType get 0 eq {
+	14 dict begin
+	    %
+	    % 7+8 bit EUC font
+	    %
+	    12 dict begin
+		/EUCFont exch def
+		/FontInfo (7+8 bit EUC font) readonly def
+		/PaintType 0 def
+		/FontType 0 def
+		/FontMatrix matrix def
+		% /FontName
+		/Encoding fixeucfont_dict /UpperByteEncoding get def
+		/FMapType 2 def
+		EUCFont /WMode known
+		{ EUCFont /WMode get /WMode exch def }
+		{ /WMode 0 def } ifelse
+		/FDepVector [
+		    EUCFont /FDepVector get 0 get
+		    [ 16#21 1 16#28 {} for 16#30 1 16#74 {} for ]
+		    {
+			13 dict begin
+			    /EUCFont EUCFont def
+			    /UpperByte exch 16#80 add def	
+			    % /FontName
+			    /FontInfo (EUC lower byte font) readonly def
+			    /PaintType 0 def
+			    /FontType 3 def
+			    /FontMatrix matrix def
+			    /FontBBox {0 0 0 0} def
+			    /Encoding
+				fixeucfont_dict /LowerByteEncoding get def
+			    % /UniqueID
+			    % /WMode
+			    /BuildChar {
+				gsave
+				exch dup /EUCFont get setfont
+				/UpperByte get
+				2 string
+				dup 0 4 -1 roll put
+				dup 1 4 -1 roll put
+				dup stringwidth setcharwidth
+				0 0 moveto show
+				grestore
+			    } bind def
+			    currentdict
+			end
+			/lowerbytefont exch definefont
+		    } forall
+		] def
+		currentdict
+	    end
+	    /eucfont exch definefont
+	    exch
+	    findfont 1 copyfont dup begin
+		RomanRotation {
+			/FontMatrix FontMatrix
+			[ 0 RomanScale neg RomanScale 0 RomanOffset neg 0 ]
+			matrix concatmatrix def
+		}{
+			/FontMatrix FontMatrix
+			[ RomanScale 0 0 RomanScale 0 RomanOffset ] matrix concatmatrix
+			def
+			/CDevProc
+			    {pop pop pop pop 0 exch -1000 exch 2 div 880} def
+		} ifelse
+	    end
+	    /asciifont exch definefont
+	    exch
+	    /FDepVector [ 4 2 roll ] def
+	    /FontType 0 def
+	    /WMode 0 def
+	    /FMapType 4 def
+	    /FontMatrix matrix def
+	    /Encoding [0 1] def
+	    /FontBBox {0 0 0 0} def
+%	    /FontHeight 1.0 def % XXXX
+	    /FontHeight RomanScale 1.0 ge { RomanScale }{ 1.0 } ifelse def
+	    /Descent -0.3 def   % XXXX
+	    currentdict
+	end
+	/tmpfont exch definefont
+	pop
+	/tmpfont findfont
+    }{
+	pop findfont 0 copyfont
+    } ifelse
+} def	
+
+/slantfont {	% FontName slant-degree  slantfont  font'
+    exch findfont 1 copyfont begin
+    [ 1 0 4 -1 roll 1 0 0 ] FontMatrix exch matrix concatmatrix
+    /FontMatrix exch def
+    currentdict
+    end
+} def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+
+% -------- Some routines to enlight plain b/w printings ---------
+
+% Underline
+% width --
+/dounderline {
+  currentpoint
+  gsave
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    0 rlineto
+    stroke
+  grestore
+} bind def
+
+% Underline a string
+% string --
+/dounderlinestring {
+  stringwidth pop
+  dounderline
+} bind def
+
+/UL {
+  /ul exch store
+} bind def
+
+% Draw a box of WIDTH wrt current font
+% width --
+/dobox {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    stroke
+  grestore
+} bind def
+
+/BX {
+  /bx exch store
+} bind def
+
+% Box a string
+% string --
+/doboxstring {
+  stringwidth pop
+  dobox
+} bind def
+
+%
+% ------------- Color routines ---------------
+%
+/FG /setrgbcolor load def
+
+% Draw the background
+% width --
+/dobackground {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    bgcolor aload pop setrgbcolor
+    fill
+  grestore
+} bind def
+
+% Draw bg for a string
+% string --
+/dobackgroundstring {
+  stringwidth pop
+  dobackground
+} bind def
+
+
+/BG {
+  dup /bg exch store
+  { mark 4 1 roll ] /bgcolor exch store } if
+} bind def
+
+
+/Show {
+  bg { dup dobackgroundstring } if
+  ul { dup dounderlinestring } if
+  bx { dup doboxstring } if
+  show
+} bind def
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T {
+  cw mul x0 add
+  bg { dup currentpoint pop sub dobackground } if
+  ul { dup currentpoint pop sub dounderline } if
+  bx { dup currentpoint pop sub dobox } if
+  y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n {
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+/S {
+  Show
+} bind def
+
+%%BeginResource: procset a2ps-a2ps-hdr 2.0 2
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Function title: prints page header.
+% <ct> <rt> <lt> are passed as argument
+/title { 
+  % 1. Draw the background
+  x v get y v get moveto
+  gsave
+    0 th 2 div neg rmoveto 
+    th setlinewidth
+    0.95 setgray
+    pw 0 rlineto stroke
+  grestore
+  % 2. Border it
+  gsave
+    0.7 setlinewidth
+    pw 0 rlineto
+    0 th neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+  % stk: ct rt lt
+  x v get y v get th sub 1 add moveto
+%%IncludeResource: font Helvetica
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  % 3. The left title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    fnfs 0.8 mul hm rmoveto
+    show			% left title
+  grestore
+  exch
+  % stk: ct ltw rt
+  % 4. the right title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    dup
+    pw exch stringwidth pop fnfs 0.8 mul add sub
+    hm
+    rmoveto
+    show			% right title
+  grestore
+  % stk: ct ltw rtw
+  % 5. the center title
+  gsave
+    pw 3 1 roll
+    % stk: ct pw ltw rtw
+    3 copy 
+    % Move to the center of the left room
+    sub add 2 div hm rmoveto
+    % What is the available space in here?
+    add sub fnfs 0.8 mul sub fnfs 0.8 mul sub
+    % stk: ct space_left
+%%IncludeResource: font Helvetica-Bold
+  fHelvetica-Bold fnfs scalefont setfont
+    cfshow
+  grestore
+} bind def
+
+% Function border: prints virtual page border
+/border { %def
+  gsave				% print four sides
+    0 setgray
+    x v get y v get moveto
+    0.7 setlinewidth		% of the square
+    pw 0 rlineto
+    0 ph neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+} bind def
+
+% Function water: prints a water mark in background
+/water { %def
+  gsave
+    scx scy moveto rotate
+%%IncludeResource: font Times-Bold
+  fTimes-Bold 100 scalefont setfont
+    .97 setgray
+    dup stringwidth pop 2 div neg -50 rmoveto
+    show
+  grestore
+} bind def
+
+% Function rhead: prints the right header
+/rhead {  %def
+  lx ly moveto
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  l-show
+} bind def
+
+% Function footer (cf rf lf -> -)
+/footer {
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  dx dy moveto
+  show
+
+  snx sny moveto
+  l-show
+  
+  fnx fny moveto
+  c-show
+} bind def
+%%EndResource
+%%BeginResource: procset a2ps-black+white-Prolog 2.0 1
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T { 
+  cw mul x0 add y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n { %def
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+}  bind def
+
+/S {
+  Show
+} bind def
+
+/p {
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/sy {
+  false UL
+  false BX
+  fSymbol bfs scalefont setfont
+  Show
+} bind def
+
+/k {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/K {
+  false UL
+  false BX
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/c {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/C {
+  false UL
+  false BX
+  fCourier-BoldOblique bfs scalefont setfont
+  Show 
+} bind def
+
+/l {
+  false UL
+  false BX
+  fHelvetica bfs scalefont setfont
+  Show
+} bind def
+
+/L {
+  false UL
+  false BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show 
+} bind def
+
+/str{
+  false UL
+  false BX
+  fTimes-Roman bfs scalefont setfont
+  Show
+} bind def
+
+/e{
+  false UL
+  true BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show
+} bind def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Symbol
+%%IncludeResource: font Courier-BoldOblique
+%%BeginResource: encoding ISO-8859-1Encoding
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright 
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash 
+/zero /one /two /three /four /five /six /seven 
+/eight /nine /colon /semicolon /less /equal /greater /question 
+/at /A /B /C /D /E /F /G 
+/H /I /J /K /L /M /N /O 
+/P /Q /R /S /T /U /V /W 
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore 
+/quoteleft /a /b /c /d /e /f /g 
+/h /i /j /k /l /m /n /o 
+/p /q /r /s /t /u /v /w 
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron 
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet 
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown 
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla 
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis 
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply 
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls 
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla 
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis 
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide 
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+] def
+%%EndResource
+% Initialize page description variables.
+/sh 612 def
+/sw 792 def
+/llx 24 def
+/urx 768 def
+/ury 588 def
+/lly 24 def
+/#copies 1 def
+/th 15.000000 def
+/fnfs 11 def
+/bfs 7.493857 def
+/cw 4.496314 def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 8 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
+  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+/bgcolor [ 0 0 0 ] def
+/bg false def
+/ul false def
+/bx false def
+% The font for line numbering
+/f# /Helvetica findfont bfs .6 mul scalefont def
+/fSymbol /Symbol findfont def
+/hm fnfs 0.25 mul def
+/pw
+   cw 81.400000 mul
+def
+/ph
+   522.321860 th add
+def
+/pmw urx llx sub pw 2 mul sub 1 div def
+/pmh 0 def
+/v 0 def
+/x [
+  0
+  dup pmw add pw add
+] def
+/y [
+  pmh ph add 0 mul ph add
+  dup
+] def
+/scx sw 2 div def
+/scy sh 2 div def
+/snx urx def
+/sny lly 2 add def
+/dx llx def
+/dy sny def
+/fnx scx def
+/fny dy def
+/lx snx def
+/ly ury fnfs 0.8 mul sub def
+/sx 0 def
+/tab 8 def
+/x0 0 def
+/y0 0 def
+%%EndSetup
+
+%%Page: (1-2) 1
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(//) c n
+(// ********************************************************************) N
+(// * License and Disclaimer                                           *) N
+(// *                                                                  *) N
+(// * The  Geant4 software  is  copyright of the Copyright Holders  of *) N
+(// * the Geant4 Collaboration.  It is provided  under  the terms  and *) N
+(// * conditions of the Geant4 Software License,  included in the file *) N
+(// * LICENSE and available at  http://cern.ch/geant4/license .  These *) N
+(// * include a list of copyright holders.                             *) N
+(// *                                                                  *) N
+(// * Neither the authors of this software system, nor their employing *) N
+(// * institutes,nor the agencies providing financial support for this *) N
+(// * work  make  any representation or  warranty, express or implied, *) N
+(// * regarding  this  software system or assume any liability for its *) N
+(// * use.  Please see the license in the file  LICENSE  and URL above *) N
+(// * for the full disclaimer and the limitation of liability.         *) N
+(// *                                                                  *) N
+(// * This  code  implementation is the result of  the  scientific and *) N
+(// * technical work of the GEANT4 collaboration.                      *) N
+(// * By using,  copying,  modifying or  distributing the software \(or *) N
+(// * any work based  on the software\)  you  agree  to acknowledge its *) N
+(// * use  in  resulting  scientific  publications,  and indicate your *) N
+(// * acceptance of all terms of the Geant4 Software license.          *) N
+(// ********************************************************************) N
+(//) N
+(//          Filippo Ambroglini : filippo.ambroglini@pg.infn.it) N
+(//) N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) N
+() p n
+(#include) K
+( ") p
+(TrackerConstructionConfig4.hh) str
+(") p n
+() N
+(#include) K
+( ") p
+(G4NistManager.hh) str
+(") p n
+(#include) K
+( ") p
+(HEPDSWMaterial.hh) str
+(") p n
+(#include) K
+( ") p
+(G4Box.hh) str
+(") p n
+(#include) K
+( ") p
+(G4SubtractionSolid.hh) str
+(") p n
+(#include) K
+( ") p
+(G4UnionSolid.hh) str
+(") p n
+(#include) K
+( ") p
+(G4LogicalVolume.hh) str
+(") p n
+(#include) K
+( ") p
+(G4PVPlacement.hh) str
+(") p n
+(#include) K
+( ") p
+(G4PVReplica.hh) str
+(") p n
+() N
+(#include) K
+( ") p
+(G4GeometryManager.hh) str
+(") p n
+(#include) K
+( ") p
+(G4PhysicalVolumeStore.hh) str
+(") p n
+(#include) K
+( ") p
+(G4LogicalVolumeStore.hh) str
+(") p n
+(#include) K
+( ") p
+(G4SolidStore.hh) str
+(") p n
+(#include) K
+( ") p
+(G4VisAttributes.hh) str
+(") p n
+(#include) K
+( ") p
+(G4SDManager.hh) str
+(") p n
+(#include) K
+( ") p
+(TrackerSD.hh) str
+(") p n
+() N
+() N
+(#include) K
+( ") p
+(G4UImanager.hh) str
+(") p n
+(#include) K
+( ") p
+(G4UnitsTable.hh) str
+(") p n
+(#include) K
+( ") p
+(G4PhysicalConstants.hh) str
+(") p n
+(#include) K
+( ") p
+(G4SystemOfUnits.hh) str
+(") p n
+(#include) K
+( <iomanip>) p n
+() N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) c n
+() p n
+(TrackerConstructionConfig4::TrackerConstructionConfig4\(\)) N
+(  :fSolidTracker\(0\),fSolidLayer\(0\),fSolidCFFrameHole\(0\),fSolidCFFrame\(0\),) N
+(   fSolidPoronFrameHole\(0\),fSolidPoronFrame\(0\),fSolidSiliconPlate\(0\),fSolidSilic) N
+(onSensor\(0\),) N
+(   fSolidLadderBox\(0\),fSolidLadder\(0\),fSolidKaptonS\(0\),fSolidKaptonK\(0\),fSolidHy) N
+(brid\(0\),) N
+(   fSolidHeatSink\(0\),fSolidRingK\(0\),fSolidRingS\(0\),) N
+(   fLogicTracker\(0\),fLogicLayer\(0\),fLogicCFFrame\(0\),fLogicPoronFrame\(0\),fLogicSi) N
+(liconPlateP\(0\),fLogicSiliconPlateM\(0\),) N
+(   fLogicSiliconSensor\(0\),fLogicLadderBox\(0\),fLogicLadder\(0\),fLogicKaptonS\(0\),fL) N
+(ogicKaptonK\(0\),) N
+(TrackerConstructionConfig4.cc) (Page 1/11) (Jan 09, 15 16:56) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(   fLogicHybrid\(0\),fLogicHeatSink\(0\),fLogicRingK\(0\),fLogicRingS\(0\),) p n
+(   fPhysiTracker\(0\),fPhysiLayer\(0\),fPhysiCFFrame\(0\),fPhysiPoronFrame\(0\),fPhysiLa) N
+(dderBox\(0\),) N
+(   fPhysiLadder\(0\),fPhysiRingK\(0\),fPhysiKaptonK\(0\),fPhysiHybridK\(0\),fPhysiSilico) N
+(nPlateP\(0\),) N
+(   fPhysiSiliconSensorP\(0\),fPhysiSiliconPlateM\(0\),fPhysiSiliconSensorM\(0\),fPhysi) N
+(KaptonS\(0\),) N
+(  fPhysiHybridS\(0\),fPhysiRingS\(0\),fPhysiHeatSink\(0\)) N
+({) N
+(  pMaterial = ) S
+(new) K
+( HEPDSWMaterial\(\);) p n
+(  fLayerNumber = 2;) N
+(  fLadderNumber = 3;) N
+() N
+(  fTracker_X = 267.3*mm;) N
+(  fTracker_Y = 305.5*mm;) N
+(  fTracker_Z = 20.0*mm;) N
+() N
+(  fLayer_X = 267.3*mm;) N
+(  fLayer_Y = 305.5*mm;) N
+(  fLayer_Z = 10.0*mm;) N
+() N
+(  fCFFrame_X = 267.3*mm;) N
+(  fCFFrame_Y = 305.5*mm;) N
+(  fCFFrame_Z = 10.0*mm;) N
+(  ) N
+(  fCFMiddleFrameHole_X = 255.3*mm;) N
+(  fCFMiddleFrameHole_Y = 305.5*mm;) N
+(  fCFMiddleFrameHole_Z = 6.3*mm;) N
+() N
+(  fCFFrameHole1_X = 247.9*mm;) N
+(  fCFFrameHole1_Y = 60.5*mm;) N
+(  fCFFrameHole1_Z = 6.0*mm;) N
+() N
+(  fCFFrameHole2_X = 72.6*mm;) N
+(  fCFFrameHole2_Y = 215.0*mm;) N
+(  fCFFrameHole2_Z = 11.0*mm;) N
+() N
+(  fPoronFrame_X = 255.3*mm;) N
+(  fPoronFrame_Y = 299.5*mm;) N
+(  fPoronFrame_Z = 6.3*mm;) N
+() S 8 T (      ) N
+(  fPoronMiddleFrameHole_X = 247.3*mm;) N
+(  fPoronMiddleFrameHole_Y = 299.5*mm;) N
+(  fPoronMiddleFrameHole_Z = 2.8*mm;) N
+() N
+(  fPoronFrameHole1_X = 247.9*mm;) N
+(  fPoronFrameHole1_Y = 66.5*mm;) N
+(  fPoronFrameHole1_Z = 7.0*mm;) N
+() N
+(  fPoronFrameHole2_X = 72.6*mm;) N
+(  fPoronFrameHole2_Y = 224.3*mm;) N
+(  fPoronFrameHole2_Z = 7.0*mm;) N
+() N
+(  fSiSens_X = 77.606*mm;) N
+(  fSiSens_Y = 109.65*mm;) N
+(  fSiSens_Z = 0.3*mm;) N
+() N
+(  fSiActiveSens_X = 71.606*mm;) N
+(  fSiActiveSens_Y = 105.85*mm;) N
+(  fSiActiveSens_Z = 0.3*mm;) N
+() N
+(  fLadderBox_X = 246.9*mm;) N
+(  fLadderBox_Y = 295.5*mm;) N
+(  fLadderBox_Z = 2.8*mm;) N
+() N
+(  fLadderBoxEnd_X = 246.9*mm;) N
+(  fLadderBoxEnd_Y = 60.5*mm;) N
+(  fLadderBoxEnd_Z = 4.41*mm;) N
+() N
+(TrackerConstructionConfig4.cc) (Page 2/11) (Jan 09, 15 16:56) title
+border
+grestore
+(Printed by wjb) rhead
+(TrackerConstructionConfig4.cc) (1/6) (Wednesday February 04, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3-4) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  fLadder_X = 82.3*mm;) p n
+(  fLadder_Y = 295.5*mm;) N
+(  fLadder_Z = 2.8*mm;) N
+(  ) N
+(  fLadderEnd_X = 82.3*mm;) N
+(  fLadderEnd_Y = 60.5*mm;) N
+(  fLadderEnd_Z = 4.41*mm;) N
+(  ) N
+(  fKaptonS_X = 72.0*mm;) N
+(  fKaptonS_Y = 9.01*mm;) N
+(  fKaptonS_Z = 2.4*mm;) N
+() N
+(  fKaptonK_X = 68.7*mm;) N
+(  fKaptonK_Y = 222.69*mm;) N
+(  fKaptonK_Z = 0.1*mm;) N
+() N
+(  fHybrid_X = 76*mm;) N
+(  fHybrid_Y = 60*mm;) N
+(  fHybrid_Z = 0.5*mm;) N
+() N
+(  fHeatSink_X = 78.3*mm;) N
+(  fHeatSink_Y = 60*mm;) N
+(  fHeatSink_Z = 2.32*mm;) N
+() N
+(  fRingK_X = 82.3*mm;) N
+(  fRingK_Y = 295.5*mm;) N
+(  fRingK_Z = 2.8*mm;) N
+() N
+(  fRingKHole1_X = 78.3*mm;) N
+(  fRingKHole1_Y = 295.5*mm;) N
+(  fRingKHole1_Z = 2*mm;) N
+() N
+(  fRingKHole2_X = 72.6*mm;) N
+(  fRingKHole2_Y = 215*mm;) N
+(  fRingKHole2_Z = 2.9*mm;) N
+() N
+(  fRingKHole3_X = 72.6*mm;) N
+(  fRingKHole3_Y = 63.5*mm;) N
+(  fRingKHole3_Z = 2.9*mm;) N
+() N
+(  fRingS_X = 78*mm;) N
+(  fRingS_Y = 221*mm;) N
+(  fRingS_Z = 1*mm;) N
+() N
+(  fRingSHole_X = 72.6*mm;) N
+(  fRingSHole_Y = 215*mm;) N
+(  fRingSHole_Z = 1.5*mm;) N
+() N
+(  ComputeObjectsPositioning\(\);) N
+() N
+(  siliconMaterial = ") S
+(Silicon) str
+(";) p n
+(  cfiberMaterial  = ") S
+(CarbonFiber) str
+(";) p n
+(  kaptonMaterial  = ") S
+(Kapton) str
+(";) p n
+(  poronMaterial   = ") S
+(Poron) str
+(";) p n
+() N
+(}) N
+() N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) c n
+() p n
+(TrackerConstructionConfig4::~TrackerConstructionConfig4\(\)) N
+({) N
+(  ) S
+(if) K
+( \(pMaterial\) ) p
+(delete) K
+( pMaterial;) p n
+(}) N
+() N
+(void) k
+( TrackerConstructionConfig4::ComputeObjectsPositioning\(\){) p n
+() N
+(  transCFFrameHole0_Y =-6*mm;) N
+(  transCFFrameHole0_Z =-0.15*mm;) N
+(  transCFFrameHole1_Y =-\(fCFFrame_Y/2.-fCFFrameHole1_Y/2.\);) N
+(TrackerConstructionConfig4.cc) (Page 3/11) (Jan 09, 15 16:56) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  transCFFrameHole1_Z =-3*mm;) p n
+(  transCFFrameHole2_X =82.5*mm;) N
+(  transCFFrameHole2_Y =fCFFrame_Y/2.-fCFFrameHole2_Y/2.-22*mm;) N
+(  transCFFrameHole3_X =0;) N
+(  transCFFrameHole3_Y =fCFFrame_Y/2.-fCFFrameHole2_Y/2.-22*mm;) N
+(  transCFFrameHole4_X =-82.5*mm;) N
+(  transCFFrameHole4_Y =fCFFrame_Y/2.-fCFFrameHole2_Y/2.-22*mm;) N
+(  transCFFrameHole5_X =82.5*mm;) N
+(  transCFFrameHole5_Y =fCFFrame_Y/2.-fCFFrameHole2_Y/2.-248*mm;) N
+(  transCFFrameHole6_X =0;) N
+(  transCFFrameHole6_Y =fCFFrame_Y/2.-fCFFrameHole2_Y/2.-248*mm;) N
+(  transCFFrameHole7_X =-82.5*mm;) N
+(  transCFFrameHole7_Y =fCFFrame_Y/2.-fCFFrameHole2_Y/2.-248*mm;) N
+() N
+(  transPoronFrameHole0_Y =-4*mm;) N
+(  transPoronFrameHole0_Z =-0.61*mm;) N
+(  transPoronFrameHole1_Y =-\(fPoronFrame_Y/2.-fPoronFrameHole1_Y/2.\);) N
+(  transPoronFrameHole2_X =82.5*mm;) N
+(  transPoronFrameHole2_Y =fPoronFrame_Y/2.-fPoronFrameHole2_Y/2.-6.7*mm;) N
+(  transPoronFrameHole3_X =0;) N
+(  transPoronFrameHole3_Y =fPoronFrame_Y/2.-fPoronFrameHole2_Y/2.-6.7*mm;) N
+(  transPoronFrameHole4_X =-82.5*mm;) N
+(  transPoronFrameHole4_Y =fPoronFrame_Y/2.-fPoronFrameHole2_Y/2.-6.7*mm;;) N
+() N
+(  transRingKHole1_Y = -9*mm;) N
+(  transRingKHole1_Z = fRingK_Z/2.-fRingKHole1_Z/2.-1*mm;) N
+(  transRingKHole2_Y = fRingK_Y/2.-fRingKHole2_Y/2.-12*mm;) N
+(  transRingKHole3_Y = fRingK_Y/2.-fRingKHole3_Y/2.-233*mm;) N
+(  transRingSHole_Y = fRingS_Y/2.-fRingSHole_Y/2.-3*mm;  ) N
+() N
+(  transLadderBox_Y = -\(fLadderBox_Y/2.-fLadderBoxEnd_Y/2.\);) N
+(  transLadderBox_Z = fLadderBox_Z/2.-fLadderBoxEnd_Z/2.;) N
+() N
+(  transLadder_Y = -\(fLadder_Y/2.-fLadderEnd_Y/2.\);) N
+(  transLadder_Z = fLadder_Z/2.-fLadderEnd_Z/2.;) N
+() N
+(  transKaptonS_Y = 0.1*mm;) N
+(  transKaptonS_Z = -0.1*mm;) N
+() N
+(  fPhysiTracker_X = 0;) N
+(  fPhysiTracker_Y = -23.55;) N
+(  fPhysiTracker_Z = 353.2*mm;) N
+(  ) N
+(  fPhysiPoronFrame_X = 0;) N
+(  fPhysiPoronFrame_Y = -\(fCFFrame_Y/2.-fPoronFrame_Y/2.\);) N
+(  fPhysiPoronFrame_Z = -0.15*mm;) N
+(  ) N
+(  fPhysiLadderBox_X = 0;) N
+(  fPhysiLadderBox_Y = -\(fCFFrame_Y/2.-fLadderBox_Y/2.\);) N
+(  fPhysiLadderBox_Z = -0.76*mm;) N
+() N
+(  fPhysiRingK_X = 0;) N
+(  fPhysiRingK_Y = 0;) N
+(  fPhysiRingK_Z = 0;) N
+() N
+(  fPhysiKaptonK_X = 0;) N
+(  fPhysiKaptonK_Y = fLadder_Y/2.-fKaptonK_Y/2.-12.71*mm;) N
+(  fPhysiKaptonK_Z = fLadder_Z/2.-fKaptonK_Z/2.-1.09*mm;) N
+() N
+(  fPhysiHybridK_X = 0;) N
+(  fPhysiHybridK_Y = -\(fLadder_Y/2.-fHybrid_Y/2.\);) N
+(  fPhysiHybridK_Z = 0.06*mm;) N
+() N
+(  fPhysiSiliconPlateP_X = 0;) N
+(  fPhysiSiliconPlateP_Y = fLadder_Y/2.-fSiSens_Y/2.-9.5*mm;) N
+(  fPhysiSiliconPlateP_Z = fLadder_Z/2.-fSiSens_Z/2.-1.24*mm;) N
+() N
+(  fPhysiSiliconSensorP_X = 0;) N
+(  fPhysiSiliconSensorP_Y = fSiSens_Y/2.-fSiActiveSens_Y/2.-3*mm;) N
+(TrackerConstructionConfig4.cc) (Page 4/11) (Jan 09, 15 16:56) title
+border
+grestore
+(Printed by wjb) rhead
+(TrackerConstructionConfig4.cc) (2/6) (Wednesday February 04, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (5-6) 3
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  fPhysiSiliconSensorP_Z = 0;) p n
+() N
+(  fPhysiSiliconPlateM_X = 0;) N
+(  fPhysiSiliconPlateM_Y = fLadder_Y/2.-fSiSens_Y/2.-119.25*mm;) N
+(  fPhysiSiliconPlateM_Z = fLadder_Z/2.-fSiSens_Z/2.-1.24*mm;) N
+() N
+(  fPhysiSiliconSensorM_X = 0;) N
+(  fPhysiSiliconSensorM_Y = fSiSens_Y/2.-fSiActiveSens_Y/2.-0.8*mm;) N
+(  fPhysiSiliconSensorM_Z = 0;) N
+() N
+(  fPhysiKaptonS_X = 0;) N
+(  fPhysiKaptonS_Y = fLadder_Y/2.-fKaptonS_Y/2.-226.4*mm;) N
+(  fPhysiKaptonS_Z = fLadder_Z/2.-fKaptonS_Z/2.-1.61*mm;) N
+() N
+(  fPhysiHybridS_X = 0;) N
+(  fPhysiHybridS_Y = -\(fLadder_Y/2.-fHybrid_Y/2.\);) N
+(  fPhysiHybridS_Z = -2.76*mm;) N
+() N
+(  fPhysiRingS_X = 0;) N
+(  fPhysiRingS_Y = fLadder_Y/2.-fRingS_Y/2.-9*mm;) N
+(  fPhysiRingS_Z = fLadder_Z/2.-fRingS_Z/2.-1.8*mm;) N
+(  ) N
+(  fPhysiHeatSink_X = 0;) N
+(  fPhysiHeatSink_Y = -\(fLadder_Y/2.-fHeatSink_Y/2.\);) N
+(  fPhysiHeatSink_Z = -1.35*mm;) N
+(}) N
+() N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) c n
+() p n
+(void) k
+( TrackerConstructionConfig4::Builder\(G4VPhysicalVolume* motherVolume\)) p n
+({) N
+(  G4SDManager* SDman = G4SDManager::GetSDMpointer\(\);) N
+(  G4String tkSDname = ") S
+(/hepd/silicon) str
+(";) p n
+(  TrackerSD * tkSD = ) S
+(new) K
+( TrackerSD\(tkSDname\);) p n
+(  SDman->AddNewDetector\(tkSD\);) N
+() N
+(  pMaterial->DefineMaterials\(\);) N
+(  G4Material* vacuum    = pMaterial->GetMaterial\(") S
+(Galactic) str
+("\);) p n
+(  G4Material* poronMat  = pMaterial->GetMaterial\(poronMaterial\);) N
+(  G4Material* cfMat     = pMaterial->GetMaterial\(cfiberMaterial\);) N
+(  G4Material* kapMat    = pMaterial->GetMaterial\(kaptonMaterial\);) N
+(  G4Material* silMat    = pMaterial->GetMaterial\(siliconMaterial\);) N
+(  G4Material* fr4Mat    = pMaterial->GetMaterial\(") S
+(FR4) str
+("\);) p n
+(  G4Material* copperMat = pMaterial->GetMaterial\(") S
+(Copper) str
+("\);) p n
+() N
+(  G4RotationMatrix* myRot = ) S
+(new) K
+( G4RotationMatrix; ) p n
+() N
+(  fSolidTracker = ) S
+(new) K
+( G4Box\(") p
+(fSolidTracker) str
+(",fTracker_X/2.,fTracker_Y/2.,fTracker_Z/) p n
+(2.\);) N
+(  fSolidLayer  = ) S
+(new) K
+( G4Box\(") p
+(fSolidLayer) str
+(",fLayer_X/2.,fLayer_Y/2.,fLayer_Z/2.\);) p n
+() N
+(  G4ThreeVector transCFFrameHole0\(0,transCFFrameHole0_Y,transCFFrameHole0_Z\);) N
+(  G4ThreeVector transCFFrameHole1\(0,transCFFrameHole1_Y,transCFFrameHole1_Z\);) N
+(  G4ThreeVector transCFFrameHole2\(transCFFrameHole2_X,transCFFrameHole2_Y,0\);) N
+(  G4ThreeVector transCFFrameHole3\(transCFFrameHole3_X,transCFFrameHole3_Y,0\);) N
+(  G4ThreeVector transCFFrameHole4\(transCFFrameHole4_X,transCFFrameHole4_Y,0\);) N
+(  G4ThreeVector transCFFrameHole5\(transCFFrameHole5_X,transCFFrameHole5_Y,0\);) N
+(  G4ThreeVector transCFFrameHole6\(transCFFrameHole6_X,transCFFrameHole6_Y,0\);) N
+(  G4ThreeVector transCFFrameHole7\(transCFFrameHole7_X,transCFFrameHole7_Y,0\);) N
+() N
+(  fSolidCFFrameHole = ) S
+(new) K
+( G4Box\(") p
+(fSolidCFFrameHole) str
+(",fCFFrameHole2_X/2.,fCFFrameHole) p n
+(2_Y/2.,fCFFrameHole2_Z/2.\);) N
+() N
+(  fSolidCFFrame = ) S
+(new) K
+( G4SubtractionSolid\(") p
+(fSolidCFFrame) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T ( ) S
+(new) K
+( G4SubtractionSolid\(") p
+(CFFrame7) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S
+(new) K
+( G4Subtractio) p n
+(nSolid\(") S
+(CFFrame6) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+(       ) S
+(new) K
+( G4SubtractionSolid\(") p
+(CFFrame5) str
+(",) p n
+(TrackerConstructionConfig4.cc) (Page 5/11) (Jan 09, 15 16:56) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T (      ) S
+(new) K
+( G4SubtractionSolid\(") p
+(CFFrame4) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (     ) S
+(new) K
+( G4SubtractionSolid\(") p
+(CFFrame3) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T (    ) S
+(new) K
+( G4Subtra) p n
+(ctionSolid\(") S
+(CFFrame2) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T (   ) S
+(new) K
+( G4SubtractionSolid\(") p
+(CFFrame1) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T (  ) S
+(new) K
+( G4Box\(") p
+(CFFrameBox) str
+(",fCFFrame_X/2.,fCFFrame_Y/2.,fCF) p n
+(Frame_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T (  ) S
+(new) K
+( G4Box\(") p
+(CFMiddleFrameHole) str
+(",fCFMiddleFrameHole_X/2.,fC) p n
+(FMiddleFrameHole_Y/2.,fCFMiddleFrameHole_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T (  myRot,transCFFrameHole0\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T (   ) S
+(new) K
+( G4Box\(") p
+(CFBottomFrameHole) str
+(",fCFFrameHole1_X/2.,fCFFrameHole1_Y/2.,fCFFrameHol) p n
+(e1_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T (   myRot,transCFFrameHole1\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T (    fSolidCFFram) N
+(eHole,myRot,transCFFrameHole2\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (     fSolidCFFrameHole,myRot,transCFFram) N
+(eHole3\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T (      fSolidCFFrameHole,myRot,transCFFrameHole4\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+(       fSolidCFFrameHole,myRot,transCFFrameHole5\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T (fSolidCFFrameHol) N
+(e,myRot,transCFFrameHole6\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T ( fSolidCFFrameHole,myRot,transCFFrameHol) N
+(e7\);) N
+() N
+(  G4ThreeVector transPoronFrameHole0\(0,transPoronFrameHole0_Y,transPoronFrameHol) N
+(e0_Z\);) N
+(  G4ThreeVector transPoronFrameHole1\(0,transPoronFrameHole1_Y,0\);) N
+(  G4ThreeVector transPoronFrameHole2\(transPoronFrameHole2_X,transPoronFrameHole2) N
+(_Y,0\);) N
+(  G4ThreeVector transPoronFrameHole3\(transPoronFrameHole3_X,transPoronFrameHole3) N
+(_Y,0\);) N
+(  G4ThreeVector transPoronFrameHole4\(transPoronFrameHole4_X,transPoronFrameHole4) N
+(_Y,0\);) N
+(  fSolidPoronFrameHole = ) S
+(new) K
+( G4Box\(") p
+(fSolidPoronFrameHole) str
+(",fPoronFrameHole2_X/2.,fPor) p n
+(onFrameHole2_Y/2.,fPoronFrameHole2_Z/2.\);) N
+() N
+(  fSolidPoronFrame = ) S
+(new) K
+( G4SubtractionSolid\(") p
+(fSolidPoronFrame) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (    ) S
+(new) K
+( G4SubtractionSolid\(") p
+(PoronFrame4) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T (   ) S
+(new) K
+( G4Subtrac) p n
+(tionSolid\(") S
+(PoronFrame3) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T (  ) S
+(new) K
+( G4SubtractionSolid\(") p
+(PoronFrame2) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T ( ) S
+(new) K
+( G4SubtractionSolid\(") p
+(PoronFrame1) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S
+(new) K
+( G4Box\(") p
+(PoronFrameBox) str
+(",fPoronF) p n
+(rame_X/2.,fPoronFrame_Y/2.,fPoronFrame_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S
+(new) K
+( G4Box\(") p
+(PoronMiddleFrameHole) str
+(",fP) p n
+(oronMiddleFrameHole_X/2.,fPoronMiddleFrameHole_Y/2.,fPoronMiddleFrameHole_Z/2.\),) N
+(TrackerConstructionConfig4.cc) (Page 6/11) (Jan 09, 15 16:56) title
+border
+grestore
+(Printed by wjb) rhead
+(TrackerConstructionConfig4.cc) (3/6) (Wednesday February 04, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (7-8) 4
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T (myRot,transPoronFrameHole0\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T ( ) S
+(new) K
+( G4Box\(") p
+(PoronBottomFrameHole) str
+(",fPoronFrameHole1_X/2.,fPo) p n
+(ronFrameHole1_Y/2.,fPoronFrameHole1_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T ( myRot,transPoronFrameHole1\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+() S 0 T (  fSolidPoronFrameHole,myRot,transPoronFrameHole2\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T (   fSolidPoronFr) N
+(ameHole,myRot,transPoronFrameHole3\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (    fSolidPoronFrameHole,myRot,transPoro) N
+(nFrameHole4\);) N
+(  ) N
+(  ) N
+(  ) N
+(  fSolidSiliconPlate   = ) S
+(new) K
+( G4Box\(") p
+(fSolidSiliconPlate) str
+(",fSiSens_X/2.,fSiSens_Y/2.,fSi) p n
+(Sens_Z/2.\);) N
+(  fSolidSiliconSensor  = ) S
+(new) K
+( G4Box\(") p
+(fSolidSiliconSensor) str
+(",fSiActiveSens_X/2.,fSiActive) p n
+(Sens_Y/2.,fSiActiveSens_Z/2.\);) N
+() N
+(  G4ThreeVector transLadderBox\(0,transLadderBox_Y,transLadderBox_Z\);) N
+(  fSolidLadderBox      = ) S
+(new) K
+( G4UnionSolid\(") p
+(fSolidLadderBox) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  ) S
+(new) K
+( G4Box\(") p
+(LadderBox) str
+(",fLadderBox_X/2.,f) p n
+(LadderBox_Y/2.,fLadderBox_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  ) S
+(new) K
+( G4Box\(") p
+(LadderBoxEnd) str
+(",fLadderBoxEnd_) p n
+(X/2.,fLadderBoxEnd_Y/2.,fLadderBoxEnd_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  myRot,transLadderBox\);) N
+() N
+(  G4ThreeVector transLadder\(0,transLadder_Y,transLadder_Z\);) N
+(  fSolidLadder        = ) S
+(new) K
+( G4UnionSolid\(") p
+(fSolidLadder) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T ( ) S
+(new) K
+( G4Box\(") p
+(Ladder) str
+(",fLadder_X/2.,fLadder_) p n
+(Y/2.,fLadder_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T ( ) S
+(new) K
+( G4Box\(") p
+(LadderEnd) str
+(",fLadderEnd_X/2.,fL) p n
+(adderEnd_Y/2.,fLadderEnd_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T ( myRot,transLadder\);) N
+(  ) N
+(  G4ThreeVector transKaptonS\(0,transKaptonS_Y,transKaptonS_Z\);) N
+(  fSolidKaptonS        = ) S
+(new) K
+( G4SubtractionSolid\(") p
+(fSolidKaptonS) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S
+(new) K
+( G4Box\(") p
+(fKaptonS1) str
+(",fKaptonS_X/) p n
+(2.,fKaptonS_Y/2.,fKaptonS_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S
+(new) K
+( G4Box\(") p
+(fKaptonS2) str
+(",fKaptonS_X/) p n
+(2.+3*mm,fKaptonS_Y/2.,fKaptonS_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T (myRot,transKaptonS\);) N
+(  ) N
+(  fSolidKaptonK        = ) S
+(new) K
+( G4Box\(") p
+(fSolidKaptonK) str
+(",fKaptonK_X/2.,fKaptonK_Y/2.,fKa) p n
+(ptonK_Z/2.\);) N
+(  fSolidHybrid         = ) S
+(new) K
+( G4Box\(") p
+(fSolidHybrid) str
+(",fHybrid_X/2.,fHybrid_Y/2.,fHybrid) p n
+(_Z/2.\);) N
+(  fSolidHeatSink       = ) S
+(new) K
+( G4Box\(") p
+(fSolidHeatSink) str
+(",fHeatSink_X/2.,fHeatSink_Y/2.,f) p n
+(HeatSink_Z/2.\);) N
+(  ) N
+(  G4ThreeVector transRingKHole1\(0,transRingKHole1_Y,transRingKHole1_Z\);) N
+(  G4ThreeVector transRingKHole2\(0,transRingKHole2_Y,0\);) N
+(  G4ThreeVector transRingKHole3\(0,transRingKHole3_Y,0\);) N
+(  ) N
+(  fSolidRingK = ) S
+(new) K
+( G4SubtractionSolid\(") p
+(fSolidRingK) str
+(",  ) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (       ) S
+(new) K
+( G4SubtractionSolid\(") p
+(RingKStep2) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T (      ) S
+(new) K
+( G4SubtractionS) p n
+(olid\(") S
+(RingKStep1) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+(     ) S
+(new) K
+( G4Box\(") p
+(RingKBlock) str
+(",fRingK_X/2.,fRingK_Y/2.,fRingK_Z/2.\),) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+(     ) S
+(new) K
+( G4Box\(") p
+(RingKHole1) str
+(",fRingKHole1_X/2.,fRingKHole1_Y/2.,fRingKHole1_Z/2.\),) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T () S 80 T () N
+(     myRot,transRingKHole1\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T (      ) S
+(new) K
+( G4Box\(") p
+(RingKHol) str n
+(e2) S
+(",fRingKHole2_X/2.,fRingKHole2_Y/2.,fRingKHole2_Z/2.\),) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T () S 48 T () S 56 T (      myRot,transRingKHo) N
+(TrackerConstructionConfig4.cc) (Page 7/11) (Jan 09, 15 16:56) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(le2\),) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (       ) S
+(new) K
+( G4Box\(") p
+(RingKHole3) str
+(",fRingKHole3_X/2.,fR) p n
+(ingKHole3_Y/2.,fRingKHole3_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       myRot,transRingKHole3\);) N
+(  ) N
+(  G4ThreeVector transRingSHole\(0,transRingSHole_Y,0\);) N
+(  fSolidRingS = ) S
+(new) K
+( G4SubtractionSolid\(") p
+(fSolidRingS) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (       ) S
+(new) K
+( G4Box\(") p
+(RingSBlock) str
+(",fRingS_X/2.,fRingS_) p n
+(Y/2.,fRingS_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       ) S
+(new) K
+( G4Box\(") p
+(RingSHole) str
+(",fRingSHole_X/2.,fRin) p n
+(gSHole_Y/2.,fRingSHole_Z/2.\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       myRot,transRingSHole\);) N
+(  ) N
+(  fLogicTracker       = ) S
+(new) K
+( G4LogicalVolume\(fSolidTracker,vacuum,") p
+(fLogicTracker) str
+("\);) p n
+(  fLogicLayer         = ) S
+(new) K
+( G4LogicalVolume\(fSolidLayer,vacuum,") p
+(fLogicLayer) str
+("\);) p n
+(  fLogicCFFrame       = ) S
+(new) K
+( G4LogicalVolume\(fSolidCFFrame,cfMat,") p
+(fLogicCFFrame) str
+("\);) p n
+(  fLogicPoronFrame    = ) S
+(new) K
+( G4LogicalVolume\(fSolidPoronFrame,poronMat,") p
+(fLogicPoron) str n
+(Frame) S
+("\);) p n
+(  fLogicSiliconPlateP = ) S
+(new) K
+( G4LogicalVolume\(fSolidSiliconPlate,silMat,") p
+(fLogicSilico) str n
+(nPlateP) S
+("\);) p n
+(  fLogicSiliconPlateM = ) S
+(new) K
+( G4LogicalVolume\(fSolidSiliconPlate,silMat,") p
+(fLogicSilico) str n
+(nPlateM) S
+("\);) p n
+(  fLogicSiliconSensor = ) S
+(new) K
+( G4LogicalVolume\(fSolidSiliconSensor,silMat,") p
+(fLogicSilic) str n
+(onSensor) S
+("\);) p n
+(  fLogicLadderBox     = ) S
+(new) K
+( G4LogicalVolume\(fSolidLadderBox,vacuum,") p
+(fLogicLadderBox) str
+() p n
+("\);) N
+(  fLogicLadder        = ) S
+(new) K
+( G4LogicalVolume\(fSolidLadder,vacuum,") p
+(fLogicLadder) str
+("\);) p n
+(  fLogicKaptonS       = ) S
+(new) K
+( G4LogicalVolume\(fSolidKaptonS,kapMat,") p
+(fLogicKaptonS) str
+("\);) p n
+(  fLogicKaptonK       = ) S
+(new) K
+( G4LogicalVolume\(fSolidKaptonK,kapMat,") p
+(fLogicKaptonK) str
+("\);) p n
+(  fLogicHybrid        = ) S
+(new) K
+( G4LogicalVolume\(fSolidHybrid,fr4Mat,") p
+(fLogicHybrid) str
+("\);) p n
+(  fLogicHeatSink      = ) S
+(new) K
+( G4LogicalVolume\(fSolidHeatSink,copperMat,") p
+(fLogicHeatSin) str n
+(k) S
+("\);) p n
+(  fLogicRingK         = ) S
+(new) K
+( G4LogicalVolume\(fSolidRingK,cfMat,") p
+(fLogicRingK) str
+("\);) p n
+(  fLogicRingS         = ) S
+(new) K
+( G4LogicalVolume\(fSolidRingS,cfMat,") p
+(fLogicRingS) str
+("\);) p n
+(  ) N
+(  fLogicSiliconSensor->SetSensitiveDetector\(tkSD\);) N
+() N
+() N
+(  G4RotationMatrix * rotTracker = ) S
+(new) K
+( G4RotationMatrix;) p n
+(  rotTracker->rotateZ\(180*deg\);) N
+(  rotTracker->rotateX\(180*deg\);) N
+() N
+(  fPhysiTracker = ) S
+(new) K
+( G4PVPlacement\(rotTracker,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    G4ThreeVector\(fPhysiTracker_X,fPhysiTracker_) N
+(Y,fPhysiTracker_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ") S
+(Tracker) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    fLogicTracker,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    motherVolume,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p n
+() N
+(  fPhysiLayer = ) S
+(new) K
+( G4PVReplica\(") p
+(Layer) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (fLogicLayer,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (fPhysiTracker,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (kZAxis,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (fLayerNumber,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (fLayer_Z\);) N
+() N
+(  fPhysiCFFrame = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    G4ThreeVector\(0,0,0\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ") S
+(CFFrame) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    fLogicCFFrame,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    fPhysiLayer,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p n
+() N
+() N
+(  fPhysiPoronFrame = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (       G4ThreeVector\(fPhysiPoronFrame_X,fPhysiPo) N
+(ronFrame_Y,fPhysiPoronFrame_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       ") S
+(PoronFrame) str
+(",) p n
+(TrackerConstructionConfig4.cc) (Page 8/11) (Jan 09, 15 16:56) title
+border
+grestore
+(Printed by wjb) rhead
+(TrackerConstructionConfig4.cc) (4/6) (Wednesday February 04, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (9-10) 5
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T () S 16 T () S 24 T () S 32 T (       fLogicPoronFrame,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       fPhysiLayer,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p n
+() N
+(  fPhysiLadderBox = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (      G4ThreeVector\(fPhysiLadderBox_X,fPhysiLadd) N
+(erBox_Y,fPhysiLadderBox_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (      ") S
+(LadderBox) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (      fLogicLadderBox,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (      fPhysiLayer,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (      ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p n
+(  ) N
+(  fPhysiLadder = ) S
+(new) K
+( G4PVReplica\(") p
+(Ladder) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T ( fLogicLadder,) N
+() S 8 T () S 16 T () S 24 T () S 32 T ( fPhysiLadderBox,) N
+() S 8 T () S 16 T () S 24 T () S 32 T ( kXAxis,) N
+() S 8 T () S 16 T () S 24 T () S 32 T ( fLadderNumber,) N
+() S 8 T () S 16 T () S 24 T () S 32 T ( fLadder_X\);) N
+() N
+(  fPhysiRingK = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (  G4ThreeVector\(fPhysiRingK_X,fPhysiRingK_Y,fPhy) N
+(siRingK_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (  ") S
+(RingK) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (  fLogicRingK,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (  fPhysiLadder,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (  ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p 56 T () S 64 T () S 72 T () S 80 T () N
+(  ) N
+() N
+(  fPhysiKaptonK = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    G4ThreeVector\(fPhysiKaptonK_X,fPhysiKaptonK_) N
+(Y,fPhysiKaptonK_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ") S
+(KaptonK) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    fLogicKaptonK,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    fPhysiLadder,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p 56 T () S 64 T () S 72 T () S 80 T () N
+(  ) N
+(  ) N
+(  fPhysiHybridK = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    G4ThreeVector\(fPhysiHybridK_X,fPhysiHybridK_) N
+(Y,fPhysiHybridK_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ") S
+(HybridK) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    fLogicHybrid,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    fPhysiLadder,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p 56 T () S 64 T () S 72 T () S 80 T () N
+(  ) N
+(  ) N
+(  fPhysiSiliconPlateP = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  G4ThreeVector\(fPhysiSiliconPlateP_X,fP) N
+(hysiSiliconPlateP_Y,fPhysiSiliconPlateP_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  ") S
+(SiliconPlateP) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  fLogicSiliconPlateP,) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  fPhysiLadder,) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p 64 T () S 72 T () S 80 T () N
+() S 0 T (  ) N
+() N
+(  fPhysiSiliconSensorP = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (   G4ThreeVector\(fPhysiSiliconSensorP_X,) N
+(fPhysiSiliconSensorP_Y,fPhysiSiliconSensorP_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  ") S
+(SiliconSensorP) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  fLogicSiliconSensor,) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  fPhysiSiliconPlateP,) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p 64 T () S 72 T () S 80 T () N
+() S 0 T (  ) N
+(  ) N
+(  fPhysiSiliconPlateM = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  G4ThreeVector\(fPhysiSiliconPlateM_X,fP) N
+(hysiSiliconPlateM_Y,fPhysiSiliconPlateM_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  ") S
+(SiliconPlateM) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  fLogicSiliconPlateM,) N
+(TrackerConstructionConfig4.cc) (Page 9/11) (Jan 09, 15 16:56) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  fPhysiLadder,) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p 64 T () S 72 T () S 80 T () N
+() S 0 T (  ) N
+() N
+(  fPhysiSiliconSensorM = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (   G4ThreeVector\(fPhysiSiliconSensorM_X,) N
+(fPhysiSiliconSensorM_Y,fPhysiSiliconSensorM_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  ") S
+(SiliconSensorM) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  fLogicSiliconSensor,) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  fPhysiSiliconPlateM,) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (  ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p 64 T () S 72 T () S 80 T () N
+() S 0 T (  ) N
+(  ) N
+(  fPhysiKaptonS = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    G4ThreeVector\(fPhysiKaptonS_X,fPhysiKaptonS_) N
+(Y,fPhysiKaptonS_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ") S
+(KaptonS) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    fLogicKaptonS,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    fPhysiLadder,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p 56 T () S 64 T () S 72 T () S 80 T () N
+(  ) N
+(  ) N
+(  fPhysiHybridS = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    G4ThreeVector\(fPhysiHybridS_X,fPhysiHybridS_) N
+(Y,fPhysiHybridS_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ") S
+(HybridS) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    fLogicHybrid,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    fPhysiLadder,) N
+(  ) S 8 T () S 16 T () S 24 T () S 32 T (    ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p 56 T () N
+(  ) N
+() N
+(  fPhysiHeatSink = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    G4ThreeVector\(fPhysiHeatSink_X,fPhysiHeatSin) N
+(k_Y,fPhysiHeatSink_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ") S
+(HeatSink) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (    fLogicHeatSink,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    fPhysiLadder,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (    ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p 56 T () N
+(  ) N
+(  fPhysiRingS = ) S
+(new) K
+( G4PVPlacement\(0,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (  G4ThreeVector\(fPhysiRingS_X,fPhysiRingS_Y,fPhy) N
+(siRingS_Z\),) N
+() S 8 T () S 16 T () S 24 T () S 32 T (  ") S
+(RingS) str
+(",) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (  fLogicRingS,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (  fPhysiLadder,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (  ) S
+(false) k
+(,0,) p
+(true) k
+(\);) p n
+(  ) S 8 T () S 16 T () S 24 T (  ) N
+(  ) N
+(  ) S
+(//Visualization Attribute) c n
+(  G4VisAttributes* attBlue = ) p
+(new) K
+( G4VisAttributes\(G4Colour::Blue\(\)\);) p n
+(  attBlue->SetVisibility\() S
+(true) k
+(\);) p n
+(  attBlue->SetForceAuxEdgeVisible\() S
+(true) k
+(\);) p n
+(  fLogicSiliconPlateP->SetVisAttributes\(attBlue\); ) N
+(  fLogicSiliconPlateM->SetVisAttributes\(attBlue\); ) N
+() N
+(  G4VisAttributes* attGray = ) S
+(new) K
+( G4VisAttributes\(G4Colour::Gray\(\)\);) p n
+(  attGray->SetVisibility\() S
+(true) k
+(\);) p n
+(  attGray->SetForceAuxEdgeVisible\() S
+(true) k
+(\);) p n
+(  fLogicSiliconSensor->SetVisAttributes\(attGray\);) N
+() N
+(  G4VisAttributes* attYellow = ) S
+(new) K
+( G4VisAttributes\(G4Colour::Yellow\(\)\);) p n
+(  attYellow->SetVisibility\() S
+(true) k
+(\);) p n
+(  attYellow->SetForceAuxEdgeVisible\() S
+(true) k
+(\);) p n
+(  fLogicPoronFrame->SetVisAttributes\(attYellow\);   ) N
+() N
+(  G4VisAttributes* attMagenta = ) S
+(new) K
+( G4VisAttributes\(G4Colour::Magenta\(\)\);) p n
+(  attMagenta->SetVisibility\() S
+(true) k
+(\);) p n
+(  attMagenta->SetForceAuxEdgeVisible\() S
+(true) k
+(\);) p n
+(  fLogicKaptonS->SetVisAttributes\(attMagenta\);      ) N
+(TrackerConstructionConfig4.cc) (Page 10/11) (Jan 09, 15 16:56) title
+border
+grestore
+(Printed by wjb) rhead
+(TrackerConstructionConfig4.cc) (5/6) (Wednesday February 04, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (11) 6
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  fLogicKaptonK->SetVisAttributes\(attMagenta\);      ) p n
+() N
+(  G4VisAttributes* attBrown = ) S
+(new) K
+( G4VisAttributes\(G4Colour::Brown\(\)\);) p n
+(  attBrown->SetVisibility\() S
+(true) k
+(\);) p n
+(  attBrown->SetForceAuxEdgeVisible\() S
+(true) k
+(\);) p n
+(  fLogicCFFrame->SetVisAttributes\(attBrown\);) N
+(  fLogicRingK->SetVisAttributes\(attBrown\);        ) N
+(  fLogicRingS->SetVisAttributes\(attBrown\);        ) N
+(      ) N
+(  G4VisAttributes* attGreen = ) S
+(new) K
+( G4VisAttributes\(G4Colour::Green\(\)\);) p n
+(  attGreen->SetVisibility\() S
+(true) k
+(\);) p n
+(  attGreen->SetForceAuxEdgeVisible\() S
+(true) k
+(\);) p n
+(  fLogicHybrid->SetVisAttributes\(attGreen\);       ) N
+() N
+(  G4VisAttributes* attRed = ) S
+(new) K
+( G4VisAttributes\(G4Colour::Red\(\)\);) p n
+(  attRed->SetVisibility\() S
+(true) k
+(\);) p n
+(  attRed->SetForceAuxEdgeVisible\() S
+(true) k
+(\);) p n
+(  fLogicHybrid->SetVisAttributes\(attRed\); ) N
+(      ) N
+(  G4VisAttributes* attBlack = ) S
+(new) K
+( G4VisAttributes\(G4Colour::Black\(\)\);) p n
+(  attBlack->SetVisibility\() S
+(true) k
+(\);) p n
+(  attBlack->SetForceAuxEdgeVisible\() S
+(true) k
+(\);) p n
+(  fLogicHeatSink->SetVisAttributes\(attBlack\);     ) N
+(  ) N
+(  G4VisAttributes * attInvisible = ) S
+(new) K
+( G4VisAttributes\(\);) p n
+(  attInvisible->SetVisibility\() S
+(false) k
+(\);) p n
+(  attInvisible->SetForceAuxEdgeVisible\() S
+(false) k
+(\);) p n
+(  fLogicTracker->SetVisAttributes\(attInvisible\);) N
+(  fLogicLayer->SetVisAttributes\(attInvisible\);        ) N
+(  fLogicLadderBox->SetVisAttributes\(attInvisible\);    ) N
+(  fLogicLadder->SetVisAttributes\(attInvisible\);       ) N
+() N
+(}) N
+() N
+() N
+(TrackerConstructionConfig4.cc) (Page 11/11) (Jan 09, 15 16:56) title
+border
+grestore
+(Printed by wjb) rhead
+(TrackerConstructionConfig4.cc) (6/6) (Wednesday February 04, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+
+%%Trailer
+end
+%%EOF

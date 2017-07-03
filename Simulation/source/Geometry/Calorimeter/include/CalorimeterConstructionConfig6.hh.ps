@@ -1,0 +1,2896 @@
+%!PS-Adobe-3.0
+%%Title: CalorimeterConstructionConfig6.hh
+%%For: wjb
+%%Creator: a2ps version 4.14
+%%CreationDate: Tue Feb 24 13:22:49 2015
+%%BoundingBox: 24 24 588 768
+%%DocumentData: Clean7Bit
+%%Orientation: Landscape
+%%Pages: 8
+%%PageOrder: Ascend
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: font Courier
+%%+ font Courier-Bold
+%%+ font Courier-BoldOblique
+%%+ font Courier-Oblique
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Roman
+%%DocumentProcessColors: Black 
+%%DocumentSuppliedResources: procset a2ps-a2ps-hdr
+%%+ procset a2ps-black+white-Prolog
+%%+ encoding ISO-8859-1Encoding
+%%EndComments
+/a2psdict 200 dict def
+a2psdict begin
+%%BeginProlog
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+
+% EPSF import as in the Red Book
+/BeginInclude {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack 
+  userdict begin
+    0 setgray 0 setlinecap
+    1 setlinewidth 0 setlinejoin
+    10 setmiterlimit [ ] 0 setdash newpath
+    gs_languagelevel 1 ne {
+      false setstrokeadjust false setoverprint 
+    } if
+} bind def
+
+/EndInclude {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+/BeginEPSF {
+  BeginInclude
+  /showpage { } def
+} bind def
+
+/EndEPSF {
+  EndInclude
+} bind def
+
+% Page prefeed
+/page_prefeed {         % bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% Function c-show (str => -)
+% centers text only according to x axis.
+/c-show { 
+  dup stringwidth pop
+  2 div neg 0 rmoveto
+  show
+} bind def
+
+% Function l-show (str => -)
+% prints texts so that it ends at currentpoint
+/l-show {
+  dup stringwidth pop neg 
+  0 
+  rmoveto show
+} bind def
+
+% center-fit show (str w => -)
+% show centered, and scale currentfont so that the width is less than w
+/cfshow {
+  exch dup stringwidth pop
+  % If the title is too big, try to make it smaller
+  3 2 roll 2 copy
+  gt
+  { % if, i.e. too big
+    exch div
+    currentfont exch scalefont setfont
+  } { % ifelse
+    pop pop 
+  }
+  ifelse
+  c-show			% center title
+} bind def
+
+% Return the y size of the current font
+% - => fontsize
+/currentfontsize {
+  currentfont /FontType get 0 eq {
+    currentfont /FontMatrix get 3 get
+  }{
+    currentfont /FontMatrix get 3 get 1000 mul
+  } ifelse
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      % <vector> <key> <val>
+      1 index /FID ne 
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def % -
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Get the underline position and thickness if they're defined.
+    % Use 1 if they are not defined.
+    currentdict /FontInfo 2 copy known
+    { get
+      /UnderlinePosition 2 copy % <FontInfo> /UP <FontInfo> /UP
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+
+      /UnderlineThickness 2 copy % <FontInfo> /UT <FontInfo> /UT
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+      pop % -
+    }{ pop pop
+    } ifelse
+
+    currentdict
+  end 
+} bind def
+
+% composite fonts for ASCII-EUC mixed string
+% Version 1.2 1/31/1990
+% Orignal Ken'ichi HANDA (handa@etl.go.jp)
+% Modified Norio Katayama (katayama@rd.nacsis.ac.jp),1998
+% Extend & Fix Koji Nakamaru (maru@on.cs.keio.ac.jp), 1999
+% Anyone can freely copy, modify, distribute this program.
+
+/copyfont {	% font-dic extra-entry-count  copyfont  font-dic
+	1 index maxlength add dict begin
+	{	1 index /FID ne 2 index /UniqueID ne and
+		{def} {pop pop} ifelse
+	} forall
+	currentdict
+	end
+} bind def
+
+/compositefont { % ASCIIFontName EUCFontName RomanScale RomanOffset Rot(T/F) compositefont font
+    /RomanRotation exch def
+    /RomanOffset exch def
+    /RomanScale exch def
+    userdict /fixeucfont_dict known not {
+	userdict begin
+	    /fixeucfont_dict 2 dict begin
+		/UpperByteEncoding [
+		    16#00 1 16#20 { pop 0 } for
+		    16#21 1 16#28 { 16#20 sub } for
+		    16#29 1 16#2F { pop 0 } for
+		    16#30 1 16#74 { 16#27 sub } for
+		    16#75 1 16#FF { pop 0 } for
+		] def
+	        /LowerByteEncoding [
+		    16#00 1 16#A0 { pop /.notdef } for
+		    16#A1 1 16#FE { 16#80 sub 16 2 string cvrs
+				    (cXX) dup 1 4 -1 roll
+				    putinterval cvn } for
+		    /.notdef
+		] def
+		currentdict
+	    end def
+	end
+    } if
+    findfont dup /FontType get 0 eq {
+	14 dict begin
+	    %
+	    % 7+8 bit EUC font
+	    %
+	    12 dict begin
+		/EUCFont exch def
+		/FontInfo (7+8 bit EUC font) readonly def
+		/PaintType 0 def
+		/FontType 0 def
+		/FontMatrix matrix def
+		% /FontName
+		/Encoding fixeucfont_dict /UpperByteEncoding get def
+		/FMapType 2 def
+		EUCFont /WMode known
+		{ EUCFont /WMode get /WMode exch def }
+		{ /WMode 0 def } ifelse
+		/FDepVector [
+		    EUCFont /FDepVector get 0 get
+		    [ 16#21 1 16#28 {} for 16#30 1 16#74 {} for ]
+		    {
+			13 dict begin
+			    /EUCFont EUCFont def
+			    /UpperByte exch 16#80 add def	
+			    % /FontName
+			    /FontInfo (EUC lower byte font) readonly def
+			    /PaintType 0 def
+			    /FontType 3 def
+			    /FontMatrix matrix def
+			    /FontBBox {0 0 0 0} def
+			    /Encoding
+				fixeucfont_dict /LowerByteEncoding get def
+			    % /UniqueID
+			    % /WMode
+			    /BuildChar {
+				gsave
+				exch dup /EUCFont get setfont
+				/UpperByte get
+				2 string
+				dup 0 4 -1 roll put
+				dup 1 4 -1 roll put
+				dup stringwidth setcharwidth
+				0 0 moveto show
+				grestore
+			    } bind def
+			    currentdict
+			end
+			/lowerbytefont exch definefont
+		    } forall
+		] def
+		currentdict
+	    end
+	    /eucfont exch definefont
+	    exch
+	    findfont 1 copyfont dup begin
+		RomanRotation {
+			/FontMatrix FontMatrix
+			[ 0 RomanScale neg RomanScale 0 RomanOffset neg 0 ]
+			matrix concatmatrix def
+		}{
+			/FontMatrix FontMatrix
+			[ RomanScale 0 0 RomanScale 0 RomanOffset ] matrix concatmatrix
+			def
+			/CDevProc
+			    {pop pop pop pop 0 exch -1000 exch 2 div 880} def
+		} ifelse
+	    end
+	    /asciifont exch definefont
+	    exch
+	    /FDepVector [ 4 2 roll ] def
+	    /FontType 0 def
+	    /WMode 0 def
+	    /FMapType 4 def
+	    /FontMatrix matrix def
+	    /Encoding [0 1] def
+	    /FontBBox {0 0 0 0} def
+%	    /FontHeight 1.0 def % XXXX
+	    /FontHeight RomanScale 1.0 ge { RomanScale }{ 1.0 } ifelse def
+	    /Descent -0.3 def   % XXXX
+	    currentdict
+	end
+	/tmpfont exch definefont
+	pop
+	/tmpfont findfont
+    }{
+	pop findfont 0 copyfont
+    } ifelse
+} def	
+
+/slantfont {	% FontName slant-degree  slantfont  font'
+    exch findfont 1 copyfont begin
+    [ 1 0 4 -1 roll 1 0 0 ] FontMatrix exch matrix concatmatrix
+    /FontMatrix exch def
+    currentdict
+    end
+} def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+
+% -------- Some routines to enlight plain b/w printings ---------
+
+% Underline
+% width --
+/dounderline {
+  currentpoint
+  gsave
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    0 rlineto
+    stroke
+  grestore
+} bind def
+
+% Underline a string
+% string --
+/dounderlinestring {
+  stringwidth pop
+  dounderline
+} bind def
+
+/UL {
+  /ul exch store
+} bind def
+
+% Draw a box of WIDTH wrt current font
+% width --
+/dobox {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    stroke
+  grestore
+} bind def
+
+/BX {
+  /bx exch store
+} bind def
+
+% Box a string
+% string --
+/doboxstring {
+  stringwidth pop
+  dobox
+} bind def
+
+%
+% ------------- Color routines ---------------
+%
+/FG /setrgbcolor load def
+
+% Draw the background
+% width --
+/dobackground {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    bgcolor aload pop setrgbcolor
+    fill
+  grestore
+} bind def
+
+% Draw bg for a string
+% string --
+/dobackgroundstring {
+  stringwidth pop
+  dobackground
+} bind def
+
+
+/BG {
+  dup /bg exch store
+  { mark 4 1 roll ] /bgcolor exch store } if
+} bind def
+
+
+/Show {
+  bg { dup dobackgroundstring } if
+  ul { dup dounderlinestring } if
+  bx { dup doboxstring } if
+  show
+} bind def
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T {
+  cw mul x0 add
+  bg { dup currentpoint pop sub dobackground } if
+  ul { dup currentpoint pop sub dounderline } if
+  bx { dup currentpoint pop sub dobox } if
+  y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n {
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+/S {
+  Show
+} bind def
+
+%%BeginResource: procset a2ps-a2ps-hdr 2.0 2
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Function title: prints page header.
+% <ct> <rt> <lt> are passed as argument
+/title { 
+  % 1. Draw the background
+  x v get y v get moveto
+  gsave
+    0 th 2 div neg rmoveto 
+    th setlinewidth
+    0.95 setgray
+    pw 0 rlineto stroke
+  grestore
+  % 2. Border it
+  gsave
+    0.7 setlinewidth
+    pw 0 rlineto
+    0 th neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+  % stk: ct rt lt
+  x v get y v get th sub 1 add moveto
+%%IncludeResource: font Helvetica
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  % 3. The left title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    fnfs 0.8 mul hm rmoveto
+    show			% left title
+  grestore
+  exch
+  % stk: ct ltw rt
+  % 4. the right title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    dup
+    pw exch stringwidth pop fnfs 0.8 mul add sub
+    hm
+    rmoveto
+    show			% right title
+  grestore
+  % stk: ct ltw rtw
+  % 5. the center title
+  gsave
+    pw 3 1 roll
+    % stk: ct pw ltw rtw
+    3 copy 
+    % Move to the center of the left room
+    sub add 2 div hm rmoveto
+    % What is the available space in here?
+    add sub fnfs 0.8 mul sub fnfs 0.8 mul sub
+    % stk: ct space_left
+%%IncludeResource: font Helvetica-Bold
+  fHelvetica-Bold fnfs scalefont setfont
+    cfshow
+  grestore
+} bind def
+
+% Function border: prints virtual page border
+/border { %def
+  gsave				% print four sides
+    0 setgray
+    x v get y v get moveto
+    0.7 setlinewidth		% of the square
+    pw 0 rlineto
+    0 ph neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+} bind def
+
+% Function water: prints a water mark in background
+/water { %def
+  gsave
+    scx scy moveto rotate
+%%IncludeResource: font Times-Bold
+  fTimes-Bold 100 scalefont setfont
+    .97 setgray
+    dup stringwidth pop 2 div neg -50 rmoveto
+    show
+  grestore
+} bind def
+
+% Function rhead: prints the right header
+/rhead {  %def
+  lx ly moveto
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  l-show
+} bind def
+
+% Function footer (cf rf lf -> -)
+/footer {
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  dx dy moveto
+  show
+
+  snx sny moveto
+  l-show
+  
+  fnx fny moveto
+  c-show
+} bind def
+%%EndResource
+%%BeginResource: procset a2ps-black+white-Prolog 2.0 1
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T { 
+  cw mul x0 add y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n { %def
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+}  bind def
+
+/S {
+  Show
+} bind def
+
+/p {
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/sy {
+  false UL
+  false BX
+  fSymbol bfs scalefont setfont
+  Show
+} bind def
+
+/k {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/K {
+  false UL
+  false BX
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/c {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/C {
+  false UL
+  false BX
+  fCourier-BoldOblique bfs scalefont setfont
+  Show 
+} bind def
+
+/l {
+  false UL
+  false BX
+  fHelvetica bfs scalefont setfont
+  Show
+} bind def
+
+/L {
+  false UL
+  false BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show 
+} bind def
+
+/str{
+  false UL
+  false BX
+  fTimes-Roman bfs scalefont setfont
+  Show
+} bind def
+
+/e{
+  false UL
+  true BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show
+} bind def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Symbol
+%%IncludeResource: font Courier-BoldOblique
+%%BeginResource: encoding ISO-8859-1Encoding
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright 
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash 
+/zero /one /two /three /four /five /six /seven 
+/eight /nine /colon /semicolon /less /equal /greater /question 
+/at /A /B /C /D /E /F /G 
+/H /I /J /K /L /M /N /O 
+/P /Q /R /S /T /U /V /W 
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore 
+/quoteleft /a /b /c /d /e /f /g 
+/h /i /j /k /l /m /n /o 
+/p /q /r /s /t /u /v /w 
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron 
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet 
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown 
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla 
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis 
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply 
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls 
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla 
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis 
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide 
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+] def
+%%EndResource
+% Initialize page description variables.
+/sh 612 def
+/sw 792 def
+/llx 24 def
+/urx 768 def
+/ury 588 def
+/lly 24 def
+/#copies 1 def
+/th 15.000000 def
+/fnfs 11 def
+/bfs 7.493857 def
+/cw 4.496314 def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 8 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
+  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+/bgcolor [ 0 0 0 ] def
+/bg false def
+/ul false def
+/bx false def
+% The font for line numbering
+/f# /Helvetica findfont bfs .6 mul scalefont def
+/fSymbol /Symbol findfont def
+/hm fnfs 0.25 mul def
+/pw
+   cw 81.400000 mul
+def
+/ph
+   522.321860 th add
+def
+/pmw urx llx sub pw 2 mul sub 1 div def
+/pmh 0 def
+/v 0 def
+/x [
+  0
+  dup pmw add pw add
+] def
+/y [
+  pmh ph add 0 mul ph add
+  dup
+] def
+/scx sw 2 div def
+/scy sh 2 div def
+/snx urx def
+/sny lly 2 add def
+/dx llx def
+/dy sny def
+/fnx scx def
+/fny dy def
+/lx snx def
+/ly ury fnfs 0.8 mul sub def
+/sx 0 def
+/tab 8 def
+/x0 0 def
+/y0 0 def
+%%EndSetup
+
+%%Page: (1-2) 1
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(//) c n
+(// ********************************************************************) N
+(// * License and Disclaimer                                           *) N
+(// *                                                                  *) N
+(// * The  Geant4 software  is  copyright of the Copyright Holders  of *) N
+(// * the Geant4 Collaboration.  It is provided  under  the terms  and *) N
+(// * conditions of the Geant4 Software License,  included in the file *) N
+(// * LICENSE and available at  http://cern.ch/geant4/license .  These *) N
+(// * include a list of copyright holders.                             *) N
+(// *                                                                  *) N
+(// * Neither the authors of this software system, nor their employing *) N
+(// * institutes,nor the agencies providing financial support for this *) N
+(// * work  make  any representation or  warranty, express or implied, *) N
+(// * regarding  this  software system or assume any liability for its *) N
+(// * use.  Please see the license in the file  LICENSE  and URL above *) N
+(// * for the full disclaimer and the limitation of liability.         *) N
+(// *                                                                  *) N
+(// * This  code  implementation is the result of  the  scientific and *) N
+(// * technical work of the GEANT4 collaboration.                      *) N
+(// * By using,  copying,  modifying or  distributing the software \(or *) N
+(// * any work based  on the software\)  you  agree  to acknowledge its *) N
+(// * use  in  resulting  scientific  publications,  and indicate your *) N
+(// * acceptance of all terms of the Geant4 Software license.          *) N
+(// ********************************************************************) N
+(//) N
+(/// \\file electromagnetic/TestEm3/include/CalorimeterConstructionConfig6.hh) N
+(/// \\brief Definition of the CalorimeterConstructionConfig6 class) N
+(//) N
+(// $Id$) N
+(//) N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) N
+() p n
+(#ifndef) K
+( CalorimeterConstructionConfig6_h) p n
+(#define) K
+( CalorimeterConstructionConfig6_h 1) p n
+() N
+(#include) K
+( ") p
+(globals.hh) str
+(") p n
+(#include) K
+( <vector>) p n
+() N
+(class) K
+( G4IntersectionSolid;) p n
+(class) K
+( G4SubtractionSolid;) p n
+(class) K
+( G4Box;) p n
+(class) K
+( G4Trap;) p n
+(class) K
+( G4Cons;) p n
+(class) K
+( G4UnionSolid;) p n
+(class) K
+( G4LogicalVolume;) p n
+(class) K
+( G4VPhysicalVolume;) p n
+(class) K
+( HEPDSWMaterial;) p n
+(class) K
+( G4UniformMagField;) p n
+(class) K
+( DetectorMessenger;) p n
+() N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) c n
+() p n
+(class) K
+( CalorimeterConstructionConfig6 ) p n
+({) N
+(public) K
+(:) p n
+(  ) N
+(   CalorimeterConstructionConfig6\(\);) N
+(  ~CalorimeterConstructionConfig6\(\);) N
+() N
+(  ) S
+(inline) K
+( ) p
+(void) k
+( SetVetoMaterial\(G4String aMat\){vetoMaterial=aMat;}) p n
+(  ) S
+(inline) K
+( ) p
+(void) k
+( SetCaloMaterial\(G4String aMat1,G4String aMat2\){scintMaterial=aMat1) p n
+(;crystalMaterial=aMat2;}) N
+(  ) S
+(inline) K
+( ) p
+(void) k
+( SetPoronMaterial\(G4String aMat\){poronMaterial=aMat;}) p n
+(  ) S
+(inline) K
+( ) p
+(void) k
+( SetCarbonFiberMaterial\(G4String aMat\){cfiberMaterial=aMat;}) p n
+(  ) S
+(inline) K
+( ) p
+(void) k
+( SetHoneyCombMaterial\(G4String aMat\){honeycombMaterial=aMat;}) p n
+(  ) S
+(inline) K
+( ) p
+(void) k
+( SetTeflonMaterial\(G4String aMat\){teflonMaterial=aMat;}) p n
+(  ) N
+(  ) S
+(void) k
+( Builder\(G4VPhysicalVolume* motherVolume\);) p n
+(CalorimeterConstructionConfig6.hh) (Page 1/15) (Jan 09, 15 22:50) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  ) p n
+(private) K
+(:) p n
+(  ) S
+(void) k
+( ComputeObjectsPositioning\(\);) p n
+() N
+(  G4String scintMaterial;) N
+(  G4String carbonFiberMaterial;) N
+(  G4String poronMaterial;) N
+() N
+(  G4) S
+(int) k
+(    fS1ScintNumber;) p n
+() N
+(  G4) S
+(double) k
+( fS1_X;) p n
+(  G4) S
+(double) k
+( fS1_Y;) p n
+(  G4) S
+(double) k
+( fS1_Z;) p n
+() N
+(  G4) S
+(double) k
+( fS1SuppBottom_X;) p n
+(  G4) S
+(double) k
+( fS1SuppBottom_Y;) p n
+(  G4) S
+(double) k
+( fS1SuppBottom_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fS1SuppHoleBar_X;) p n
+(  G4) S
+(double) k
+( fS1SuppHoleBar_Y;) p n
+(  G4) S
+(double) k
+( fS1SuppHoleBar_Z;) p n
+() N
+(  G4) S
+(double) k
+( fS1SuppBar_X;) p n
+(  G4) S
+(double) k
+( fS1SuppBar_Y;) p n
+(  G4) S
+(double) k
+( fS1SuppBar_Z;) p n
+() N
+(  G4) S
+(double) k
+( fS1SuppTopBase_X;) p n
+(  G4) S
+(double) k
+( fS1SuppTopBase_Y;) p n
+(  G4) S
+(double) k
+( fS1SuppTopBase_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fS1SuppTopHole_X;) p n
+(  G4) S
+(double) k
+( fS1SuppTopHole_Y;) p n
+(  G4) S
+(double) k
+( fS1SuppTopHole_Z; ) p n
+() N
+(  G4) S
+(double) k
+( fS1SuppThinBar_X;) p n
+(  G4) S
+(double) k
+( fS1SuppThinBar_Y;) p n
+(  G4) S
+(double) k
+( fS1SuppThinBar_Z;) p n
+() N
+(  G4) S
+(double) k
+( fS1SuppThinBarBack_X;) p n
+(  G4) S
+(double) k
+( fS1SuppThinBarBack_Y;) p n
+(  G4) S
+(double) k
+( fS1SuppThinBarBack_Z;) p n
+() N
+(  G4) S
+(double) k
+( fS1SuppPoron_X;) p n
+(  G4) S
+(double) k
+( fS1SuppPoron_Y;) p n
+(  G4) S
+(double) k
+( fS1SuppPoron_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fS1ScintContainer_X;) p n
+(  G4) S
+(double) k
+( fS1ScintContainer_Y;) p n
+(  G4) S
+(double) k
+( fS1ScintContainer_Z;) p n
+() N
+(  G4) S
+(double) k
+( fS1Scint_X;) p n
+(  G4) S
+(double) k
+( fS1Scint_Y;) p n
+(  G4) S
+(double) k
+( fS1Scint_Z;) p n
+() N
+(  G4) S
+(double) k
+( fSolidS1SuppFront_X;) p n
+(  G4) S
+(double) k
+( fSolidS1SuppFront_Y;) p n
+(  G4) S
+(double) k
+( fSolidS1SuppFront_Z;) p n
+() N
+(  G4) S
+(int) k
+(              fNbOfScintLayers;) p n
+(  G4) S
+(int) k
+( fNbOfReplicatedScintLayers;) p n
+() N
+(  G4String           vetoMaterial;) N
+(  G4String           caloMaterial;) N
+(  G4String           crystalMaterial;) N
+(  G4String           cfiberMaterial;) N
+(  G4String           honeycombMaterial;) N
+(  G4String           teflonMaterial;) N
+(  ) N
+(  G4) S
+(double) k
+(  fCaloLayer_X;) p n
+(CalorimeterConstructionConfig6.hh) (Page 2/15) (Jan 09, 15 22:50) title
+border
+grestore
+(Printed by wjb) rhead
+(CalorimeterConstructionConfig6.hh) (1/8) (Tuesday February 24, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3-4) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  G4) p
+(double) k
+(  fCaloLayer_Y;) p n
+(  G4) S
+(double) k
+(  fCaloLayer_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fCaloLastLayer_X;) p n
+(  G4) S
+(double) k
+(  fCaloLastLayer_Y;) p n
+(  G4) S
+(double) k
+(  fCaloLastLayer_Z;) p n
+() N
+() N
+(  G4) S
+(double) k
+(  fCalo_X;) p n
+(  G4) S
+(double) k
+(  fCalo_Y;) p n
+(  G4) S
+(double) k
+(  fCalo_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fScint_X;) p n
+(  G4) S
+(double) k
+(  fScint_Y;) p n
+(  G4) S
+(double) k
+(  fScint_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fCrystal_X;) p n
+(  G4) S
+(double) k
+(  fCrystal_Y;) p n
+(  G4) S
+(double) k
+(  fCrystal_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fCFBlockContainerExt_X;) p n
+(  G4) S
+(double) k
+(  fCFBlockContainerExt_Y;) p n
+(  G4) S
+(double) k
+(  fCFBlockContainerExt_Z;) p n
+() N
+(  G4) S
+(double) k
+( TeflonContainerExt_X;) p n
+(  G4) S
+(double) k
+( TeflonContainerExt_Y;) p n
+(  G4) S
+(double) k
+( TeflonContainerExt_Z;) p n
+() N
+(  G4) S
+(double) k
+( fTeflonLYSO_X;) p n
+(  G4) S
+(double) k
+( fTeflonLYSO_Y;) p n
+(  G4) S
+(double) k
+( fTeflonLYSO_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fCrystalBlock_X;) p n
+(  G4) S
+(double) k
+(  fCrystalBlock_Y;) p n
+(  G4) S
+(double) k
+(  fCrystalBlock_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fCFCrystalPanelUp_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fCFCrystalPanelDown_X;) p n
+(  G4) S
+(double) k
+(  fCFCrystalPanelDown_Y;) p n
+(  G4) S
+(double) k
+(  fCFCrystalPanelDown_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFCrystalPanelDown2_X;) p n
+(  G4) S
+(double) k
+( fCFCrystalPanelDown2_Y;) p n
+(  G4) S
+(double) k
+( fCFCrystalPanelDown2_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFCrystalHole_X;) p n
+(  G4) S
+(double) k
+( fCFCrystalHole_Y;) p n
+(  G4) S
+(double) k
+( fCFCrystalHole_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fCylinderRadiusMax1;) p n
+(  G4) S
+(double) k
+( fCylinderRadiusMin1;) p n
+(  G4) S
+(double) k
+( fCylinderRadiusMax2;) p n
+(  G4) S
+(double) k
+( fCylinderRadiusMin2;) p n
+(  G4) S
+(double) k
+( fCylinderZ;) p n
+() N
+(  G4) S
+(double) k
+(  fCrystalBlockContainer_X;) p n
+(  G4) S
+(double) k
+(  fCrystalBlockContainer_Y;) p n
+(  G4) S
+(double) k
+(  fCrystalBlockContainer_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fCrystalBlockRawContainer_X;) p n
+(  G4) S
+(double) k
+(  fCrystalBlockRawContainer_Y;) p n
+(  G4) S
+(double) k
+(  fCrystalBlockRawContainer_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fCFCrystalSideX_X;) p n
+(  G4) S
+(double) k
+(  fCFCrystalSideX_Y;) p n
+(  G4) S
+(double) k
+(  fCFCrystalSideX_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fCFCrystalSideYSmall_X;) p n
+(CalorimeterConstructionConfig6.hh) (Page 3/15) (Jan 09, 15 22:50) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  G4) p
+(double) k
+(  fCFCrystalSideYSmall_Y;) p n
+(  G4) S
+(double) k
+(  fCFCrystalSideYSmall_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fCFCrystalSideYBig_X;) p n
+(  G4) S
+(double) k
+(  fCFCrystalSideYBig_Y;) p n
+(  G4) S
+(double) k
+(  fCFCrystalSideYBig_Z;) p n
+() N
+( ) N
+(  G4) S
+(double) k
+( fCFLat_X;) p n
+(  G4) S
+(double) k
+( fCFLat_Y;) p n
+(  G4) S
+(double) k
+( fCFLat_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFFront_X;) p n
+(  G4) S
+(double) k
+( fCFFront_Y;) p n
+(  G4) S
+(double) k
+( fCFFront_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFSuppO_X;) p n
+(  G4) S
+(double) k
+( fCFSuppO_Y;) p n
+(  G4) S
+(double) k
+( fCFSuppO_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFSuppV_X;) p n
+(  G4) S
+(double) k
+( fCFSuppV_Y;) p n
+(  G4) S
+(double) k
+( fCFSuppV_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fCFSuppAO_X;) p n
+(  G4) S
+(double) k
+( fCFSuppAO_Y;) p n
+(  G4) S
+(double) k
+( fCFSuppAO_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFSuppAV_X;) p n
+(  G4) S
+(double) k
+( fCFSuppAV_Y;) p n
+(  G4) S
+(double) k
+( fCFSuppAV_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fCFSuppPorO_X;) p n
+(  G4) S
+(double) k
+( fCFSuppPorO_Y;) p n
+(  G4) S
+(double) k
+( fCFSuppPorO_Z;  ) p n
+(  ) N
+(  G4) S
+(double) k
+( fCFSuppPorV_X;) p n
+(  G4) S
+(double) k
+( fCFSuppPorV_Y;) p n
+(  G4) S
+(double) k
+( fCFSuppPorV_Z;  ) p n
+() N
+() N
+(  G4) S
+(double) k
+( fCFSuppLat_X;) p n
+(  G4) S
+(double) k
+( fCFSuppLat_Y;) p n
+(  G4) S
+(double) k
+( fCFSuppLat_Z;) p n
+(    ) N
+(  G4) S
+(double) k
+( fCFSuppFront_X;) p n
+(  G4) S
+(double) k
+( fCFSuppFront_Y;) p n
+(  G4) S
+(double) k
+( fCFSuppFront_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fCFSuppLatA_X;) p n
+(  G4) S
+(double) k
+( fCFSuppLatA_Y;) p n
+(  G4) S
+(double) k
+( fCFSuppLatA_Z;) p n
+(    ) N
+(  G4) S
+(double) k
+( fCFSuppFrontA_X;) p n
+(  G4) S
+(double) k
+( fCFSuppFrontA_Y;) p n
+(  G4) S
+(double) k
+( fCFSuppFrontA_Z;) p n
+(  ) N
+() N
+(  G4) S
+(double) k
+( fCFLatPO_X ;) p n
+(  G4) S
+(double) k
+( fCFLatPO_Y ;) p n
+(  G4) S
+(double) k
+( fCFLatPO_Z ;) p n
+() N
+(  G4) S
+(double) k
+( fCFFrontPO_X ;) p n
+(  G4) S
+(double) k
+( fCFFrontPO_Y ;) p n
+(  G4) S
+(double) k
+( fCFFrontPO_Z ;) p n
+(  ) N
+(  G4) S
+(double) k
+( fPoronFrontPO_X ; ) p n
+(  G4) S
+(double) k
+( fPoronFrontPO_Y ;) p n
+(  G4) S
+(double) k
+( fPoronFrontPO_Z ;) p n
+(CalorimeterConstructionConfig6.hh) (Page 4/15) (Jan 09, 15 22:50) title
+border
+grestore
+(Printed by wjb) rhead
+(CalorimeterConstructionConfig6.hh) (2/8) (Tuesday February 24, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (5-6) 3
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  ) p n
+(  G4) S
+(double) k
+( fPoronLatPO_X ;) p n
+(  G4) S
+(double) k
+( fPoronLatPO_Y ; ) p n
+(  G4) S
+(double) k
+( fPoronLatPO_Z ;) p n
+(  ) N
+(  G4) S
+(double) k
+( fPoronLat_X;) p n
+(  G4) S
+(double) k
+( fPoronLat_Y;) p n
+(  G4) S
+(double) k
+( fPoronLat_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronFront_X;) p n
+(  G4) S
+(double) k
+( fPoronFront_Y;) p n
+(  G4) S
+(double) k
+( fPoronFront_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fActiveLayer_X;) p n
+(  G4) S
+(double) k
+(  fActiveLayer_Y;) p n
+(  G4) S
+(double) k
+(  fActiveLayer_Z;) p n
+() N
+(  G4) S
+(double) k
+( fActiveRectLayer_X;) p n
+(  G4) S
+(double) k
+( fActiveRectLayer_Y;) p n
+(  G4) S
+(double) k
+( fActiveRectLayer_Z;) p n
+() N
+(  G4) S
+(double) k
+( fActiveTrapLayerX1;) p n
+(  G4) S
+(double) k
+( fActiveTrapLayerX2;) p n
+(  G4) S
+(double) k
+( fActiveTrapLayerY1;) p n
+(  G4) S
+(double) k
+( fActiveTrapLayerY2;) p n
+(  G4) S
+(double) k
+( fActiveTrapLayerZ;) p n
+() N
+(  G4) S
+(double) k
+( fTrapPoronX1;) p n
+(  G4) S
+(double) k
+( fTrapPoronX2;) p n
+(  G4) S
+(double) k
+( fTrapPoronY1;) p n
+(  G4) S
+(double) k
+( fTrapPoronY2;) p n
+(  G4) S
+(double) k
+( fTrapPoronZ;) p n
+() N
+(  G4) S
+(double) k
+( fTrapVetoX1;) p n
+(  G4) S
+(double) k
+( fTrapVetoX2;) p n
+(  G4) S
+(double) k
+( fTrapVetoY1;) p n
+(  G4) S
+(double) k
+( fTrapVetoY2;) p n
+(  G4) S
+(double) k
+( fTrapVetoZ;) p n
+() N
+(  G4) S
+(double) k
+( fTrapCFX1;) p n
+(  G4) S
+(double) k
+( fTrapCFX2;) p n
+(  G4) S
+(double) k
+( fTrapCFY1;) p n
+(  G4) S
+(double) k
+( fTrapCFY2;) p n
+(  G4) S
+(double) k
+( fTrapCFZ;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLatX_X;) p n
+(  G4) S
+(double) k
+( fPoronLatX_Y;) p n
+(  G4) S
+(double) k
+( fPoronLatX_Z;) p n
+() N
+(  G4) S
+(double) k
+( fVetoLatX_X;) p n
+(  G4) S
+(double) k
+( fVetoLatX_Y;) p n
+(  G4) S
+(double) k
+( fVetoLatX_Z;) p n
+() N
+(  G4) S
+(double) k
+( fVetoLatXRight_X;) p n
+(  G4) S
+(double) k
+( fVetoLatXRight_Y;) p n
+(  G4) S
+(double) k
+( fVetoLatXRight_Z;) p n
+() N
+(   G4) S
+(double) k
+( fVetoLatXLeft_X;) p n
+(  G4) S
+(double) k
+( fVetoLatXLeft_Y;) p n
+(  G4) S
+(double) k
+( fVetoLatXLeft_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLatY_X;) p n
+(  G4) S
+(double) k
+( fPoronLatY_Y;) p n
+(  G4) S
+(double) k
+( fPoronLatY_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLatXRight_X;) p n
+(  G4) S
+(double) k
+( fPoronLatXRight_Y;) p n
+(  G4) S
+(double) k
+( fPoronLatXRight_Z;) p n
+() N
+(CalorimeterConstructionConfig6.hh) (Page 5/15) (Jan 09, 15 22:50) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  G4) p
+(double) k
+( fPoronLatXHole_X;) p n
+(  G4) S
+(double) k
+( fPoronLatXHole_Y;) p n
+(  G4) S
+(double) k
+( fPoronLatXHole_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLatXHoleLeft_X;) p n
+(  G4) S
+(double) k
+( fPoronLatXHoleLeft_Y;) p n
+(  G4) S
+(double) k
+( fPoronLatXHoleLeft_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLatYUp_X;) p n
+(  G4) S
+(double) k
+( fPoronLatYUp_Y;) p n
+(  G4) S
+(double) k
+( fPoronLatYUp_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLatYHole_X;) p n
+(  G4) S
+(double) k
+( fPoronLatYHole_Y;) p n
+(  G4) S
+(double) k
+( fPoronLatYHole_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLatYHoleDown_X;) p n
+(  G4) S
+(double) k
+( fPoronLatYHoleDown_Y;) p n
+(  G4) S
+(double) k
+( fPoronLatYHoleDown_Z;) p n
+() N
+(  G4) S
+(double) k
+( fVetoLatY_X;) p n
+(  G4) S
+(double) k
+( fVetoLatY_Y;) p n
+(  G4) S
+(double) k
+( fVetoLatY_Z;) p n
+() N
+(  G4) S
+(double) k
+( fVetoLatYUp_X;) p n
+(  G4) S
+(double) k
+( fVetoLatYUp_Y;) p n
+(  G4) S
+(double) k
+( fVetoLatYUp_Z;) p n
+() N
+(  G4) S
+(double) k
+( fVetoLatYDown_X;) p n
+(  G4) S
+(double) k
+( fVetoLatYDown_Y;) p n
+(  G4) S
+(double) k
+( fVetoLatYDown_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFVetoLatX_X;) p n
+(  G4) S
+(double) k
+( fCFVetoLatX_Y;) p n
+(  G4) S
+(double) k
+( fCFVetoLatX_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fCFVetoLatY_X;) p n
+(  G4) S
+(double) k
+( fCFVetoLatY_Y;) p n
+(  G4) S
+(double) k
+( fCFVetoLatY_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronPlateO_X;) p n
+(  G4) S
+(double) k
+( fPoronPlateO_Y;) p n
+(  G4) S
+(double) k
+( fPoronPlateO_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronPlateV_X;) p n
+(  G4) S
+(double) k
+( fPoronPlateV_Y;) p n
+(  G4) S
+(double) k
+( fPoronPlateV_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fExternalPoronSupportA_X;) p n
+(  G4) S
+(double) k
+(  fExternalPoronSupportA_Y;) p n
+(  G4) S
+(double) k
+(  fExternalPoronSupportA_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fExternalPoronSupportB_X;) p n
+(  G4) S
+(double) k
+(  fExternalPoronSupportB_Y;) p n
+(  G4) S
+(double) k
+(  fExternalPoronSupportB_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fExternalPoronSupportC_X;) p n
+(  G4) S
+(double) k
+(  fExternalPoronSupportC_Y;) p n
+(  G4) S
+(double) k
+(  fExternalPoronSupportC_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fExternalPoronSupportD_X;) p n
+(  G4) S
+(double) k
+(  fExternalPoronSupportD_Y;) p n
+(  G4) S
+(double) k
+(  fExternalPoronSupportD_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fExternalPoronSupportE_X;) p n
+(  G4) S
+(double) k
+(  fExternalPoronSupportE_Y;) p n
+(  G4) S
+(double) k
+(  fExternalPoronSupportE_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fExternalPoronSupport_X;) p n
+(CalorimeterConstructionConfig6.hh) (Page 6/15) (Jan 09, 15 22:50) title
+border
+grestore
+(Printed by wjb) rhead
+(CalorimeterConstructionConfig6.hh) (3/8) (Tuesday February 24, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (7-8) 4
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  ) p n
+(  G4) S
+(double) k
+( fSolidCFSuppStepLat_X;) p n
+(  G4) S
+(double) k
+( fSolidCFSuppStepLat_Y;) p n
+(  G4) S
+(double) k
+( fSolidCFSuppStepLat_Z;) p n
+() N
+(  G4) S
+(double) k
+( fSolidCFSuppStepFront_X;) p n
+(  G4) S
+(double) k
+( fSolidCFSuppStepFront_Y;) p n
+(  G4) S
+(double) k
+( fSolidCFSuppStepFront_Z;) p n
+() N
+(  G4) S
+(double) k
+( ShiftOrigin;) p n
+(  ) N
+(  G4) S
+(double) k
+( fPhysiS1_X;) p n
+(  G4) S
+(double) k
+( fPhysiS1_Y;) p n
+(  G4) S
+(double) k
+( fPhysiS1_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiS1SuppHoleBar_X;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppHoleBar_Y;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppHoleBar_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fPhysiS1SuppBar_X;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppBar_Y;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppBar_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiS1SuppBack_X;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppBack_Y;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppBack_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiS1SuppThinBar_X;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppThinBar_Y;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppThinBar_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fPhysiS1SuppThinBarBack_X;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppThinBarBack_Y;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppThinBarBack_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiS1SuppFrontM_X;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppFrontM_Y;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppFrontM_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiS1SuppPoronFrontM_X;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppPoronFrontM_Y;) p n
+(  G4) S
+(double) k
+( fPhysiS1SuppPoronFrontM_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fPhysiS1ScintContainer_X;) p n
+(  G4) S
+(double) k
+( fPhysiS1ScintContainer_Y;) p n
+(  G4) S
+(double) k
+( fPhysiS1ScintContainer_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+(  fPhysiScintBox_X;) p n
+(  G4) S
+(double) k
+(  fPhysiScintBox_Y;) p n
+(  G4) S
+(double) k
+(  fPhysiScintBox_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fPhysiLastScintLayer_X;) p n
+(  G4) S
+(double) k
+(  fPhysiLastScintLayer_Y;) p n
+(  G4) S
+(double) k
+(  fPhysiLastScintLayer_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fPhysiLastSuppPor_X;) p n
+(  G4) S
+(double) k
+(  fPhysiLastSuppPor_Y;) p n
+(  G4) S
+(double) k
+(  fPhysiLastSuppPor_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fPhysiCrystalBox_X;) p n
+(  G4) S
+(double) k
+(  fPhysiCrystalBox_Y;) p n
+(  G4) S
+(double) k
+(  fPhysiCrystalBox_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fPhysiCFCrystalPanelUp_X;) p n
+(  G4) S
+(double) k
+(  fPhysiCFCrystalPanelUp_Y;) p n
+(  G4) S
+(double) k
+(  fPhysiCFCrystalPanelUp_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fPhysiCFCrystalPanelDown_X;) p n
+(  G4) S
+(double) k
+(  fPhysiCFCrystalPanelDown_Y;) p n
+(CalorimeterConstructionConfig6.hh) (Page 7/15) (Jan 09, 15 22:50) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  G4) p
+(double) k
+(  fPhysiCFCrystalPanelDown_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fPhysiCFCrystalPanelDown2_X;) p n
+(  G4) S
+(double) k
+(  fPhysiCFCrystalPanelDown2_Y;) p n
+(  G4) S
+(double) k
+(  fPhysiCFCrystalPanelDown2_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fPhysiCFCrystalSideX_X;) p n
+(  G4) S
+(double) k
+(  fPhysiCFCrystalSideX_Y;) p n
+(  G4) S
+(double) k
+(  fPhysiCFCrystalSideX_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fPhysiCFCrystalSideYBig_X;) p n
+(  G4) S
+(double) k
+(  fPhysiCFCrystalSideYBig_Y;) p n
+(  G4) S
+(double) k
+(  fPhysiCFCrystalSideYBig_Z;) p n
+() N
+(  G4) S
+(double) k
+(  fPhysiCrystalBlockPlaneContainer_X;) p n
+(  G4) S
+(double) k
+(  fPhysiCrystalBlockPlaneContainer_Y;) p n
+(  G4) S
+(double) k
+(  fPhysiCrystalBlockPlaneContainer_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiCFSupp_X;) p n
+(  G4) S
+(double) k
+( fPhysiCFSupp_Y;) p n
+(  G4) S
+(double) k
+( fPhysiCFSupp_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiCFSuppPor_X;) p n
+(  G4) S
+(double) k
+( fPhysiCFSuppPor_Y;) p n
+(  G4) S
+(double) k
+( fPhysiCFSuppPor_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiCFSuppPor2_X;) p n
+(  G4) S
+(double) k
+( fPhysiCFSuppPor2_Y;) p n
+(  G4) S
+(double) k
+( fPhysiCFSuppPor2_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiActiveLayer_X;) p n
+(  G4) S
+(double) k
+( fPhysiActiveLayer_Y;) p n
+(  G4) S
+(double) k
+( fPhysiActiveLayer_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiCFFront_X;) p n
+(  G4) S
+(double) k
+( fPhysiCFFront_Y;) p n
+(  G4) S
+(double) k
+( fPhysiCFFront_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiCFLat_X;) p n
+(  G4) S
+(double) k
+( fPhysiCFLat_Y;) p n
+(  G4) S
+(double) k
+( fPhysiCFLat_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiPoronLat_X;) p n
+(  G4) S
+(double) k
+( fPhysiPoronLat_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPoronLat_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiPoronFront_X;) p n
+(  G4) S
+(double) k
+( fPhysiPoronFront_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPoronFront_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiCFFrontPO_X;) p n
+(  G4) S
+(double) k
+( fPhysiCFFrontPO_Y;) p n
+(  G4) S
+(double) k
+( fPhysiCFFrontPO_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiCFLatPO_X;) p n
+(  G4) S
+(double) k
+( fPhysiCFLatPO_Y;) p n
+(  G4) S
+(double) k
+( fPhysiCFLatPO_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiPoronLatPO_X;) p n
+(  G4) S
+(double) k
+( fPhysiPoronLatPO_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPoronLatPO_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiPoronFrontPO_X;) p n
+(  G4) S
+(double) k
+( fPhysiPoronFrontPO_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPoronFrontPO_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiExternalPoronSupport_X;) p n
+(  G4) S
+(double) k
+( fPhysiExternalPoronSupport_Y;) p n
+(  G4) S
+(double) k
+( fPhysiExternalPoronSupport_Z;) p n
+(CalorimeterConstructionConfig6.hh) (Page 8/15) (Jan 09, 15 22:50) title
+border
+grestore
+(Printed by wjb) rhead
+(CalorimeterConstructionConfig6.hh) (4/8) (Tuesday February 24, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (9-10) 5
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p n
+(  G4) S
+(double) k
+( fExternalPoronSupport1_X;) p n
+(  G4) S
+(double) k
+( fExternalPoronSupport1_Y;) p n
+(  G4) S
+(double) k
+( fExternalPoronSupport2_X;) p n
+(  G4) S
+(double) k
+( fExternalPoronSupport3_X;) p n
+(  G4) S
+(double) k
+( fExternalPoronSupport3_Y;) p n
+(  G4) S
+(double) k
+( fExternalPoronSupport4_X;) p n
+(  G4) S
+(double) k
+( fExternalPoronSupport4_Y;) p n
+(  G4) S
+(double) k
+( fExternalPoronSupport4_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFVetoLatXHole_X;) p n
+(  G4) S
+(double) k
+( fCFVetoLatXHole_Y;) p n
+(  G4) S
+(double) k
+( fCFVetoLatXHole_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFVetoLatXHoleRight_X;) p n
+(  G4) S
+(double) k
+( fCFVetoLatXHoleRight_Y;) p n
+(  G4) S
+(double) k
+( fCFVetoLatXHoleRight_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFVetoLatYHole_X;) p n
+(  G4) S
+(double) k
+( fCFVetoLatYHole_Y;) p n
+(  G4) S
+(double) k
+( fCFVetoLatYHole_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFVetoLatYHoleDown_X;) p n
+(  G4) S
+(double) k
+( fCFVetoLatYHoleDown_Y;) p n
+(  G4) S
+(double) k
+( fCFVetoLatYHoleDown_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiPoronLatX3_X;) p n
+(  G4) S
+(double) k
+( fPhysiPoronLatX3_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPoronLatX3_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fPhysiPoronLatY3_X;) p n
+(  G4) S
+(double) k
+( fPhysiPoronLatY3_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPoronLatY3_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fPhysiPoronLatX3Int_X;) p n
+(  G4) S
+(double) k
+( fPhysiPoronLatX3Int_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPoronLatX3Int_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fPhysiPoronLatY3Int_X;) p n
+(  G4) S
+(double) k
+( fPhysiPoronLatY3Int_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPoronLatY3Int_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiVetoLatX2_X;) p n
+(  G4) S
+(double) k
+( fPhysiVetoLatX2_Y;) p n
+(  G4) S
+(double) k
+( fPhysiVetoLatX2_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiVetoLatY2_X;) p n
+(  G4) S
+(double) k
+( fPhysiVetoLatY2_Y;) p n
+(  G4) S
+(double) k
+( fPhysiVetoLatY2_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiCFVetoLatX2_X;) p n
+(  G4) S
+(double) k
+( fPhysiCFVetoLatX2_Y;) p n
+(  G4) S
+(double) k
+( fPhysiCFVetoLatX2_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiCFVetoLatY2_X;) p n
+(  G4) S
+(double) k
+( fPhysiCFVetoLatY2_Y;) p n
+(  G4) S
+(double) k
+( fPhysiCFVetoLatY2_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLat1X_X;) p n
+(  G4) S
+(double) k
+( fPoronLat1X_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLat2X_X;) p n
+(  G4) S
+(double) k
+( fPoronLat2X_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLat3X_X;) p n
+() N
+(  G4) S
+(double) k
+( fVetoLat1X_X;) p n
+(  G4) S
+(double) k
+( fVetoLat1X_Z;) p n
+() N
+(CalorimeterConstructionConfig6.hh) (Page 9/15) (Jan 09, 15 22:50) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  G4) p
+(double) k
+( fVetoLat2X_X;) p n
+(  G4) S
+(double) k
+( fVetoLat2X_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFVetoLat1X_X;) p n
+(  G4) S
+(double) k
+( fCFVetoLat1X_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFVetoLat2X_X;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLat1Y_Y;) p n
+(  G4) S
+(double) k
+( fPoronLat1Y_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLat2Y_Y;) p n
+(  G4) S
+(double) k
+( fPoronLat2Y_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPoronLat3Y_Y;) p n
+() N
+(  G4) S
+(double) k
+( fVetoLat1Y_Y;) p n
+(  G4) S
+(double) k
+( fVetoLat1Y_Z;) p n
+() N
+(  G4) S
+(double) k
+( fVetoLat2Y_Y;) p n
+(  G4) S
+(double) k
+( fVetoLat2Y_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFVetoLat1Y_Y;) p n
+(  G4) S
+(double) k
+( fCFVetoLat1Y_Z;) p n
+() N
+(  G4) S
+(double) k
+( fCFVetoLat2Y_Y;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiCFSuppTop_X;) p n
+(  G4) S
+(double) k
+( fPhysiCFSuppTop_Y;) p n
+(  G4) S
+(double) k
+( fPhysiCFSuppTop_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fPhysiPORSuppTop_X;) p n
+(  G4) S
+(double) k
+( fPhysiPORSuppTop_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPORSuppTop_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fPhysiRealTrapCF_Z;) p n
+(  G4) S
+(double) k
+( fPhysiRealTrapCF2_Z;) p n
+(  G4) S
+(double) k
+( fPhysiRealTrapPoron1_Z;) p n
+(  G4) S
+(double) k
+( fPhysiRealTrapPoron2_Z;) p n
+(  G4) S
+(double) k
+( fPhysiRealTrapVeto_Z;) p n
+(  ) N
+(  G4) S
+(double) k
+( fPhysiPoronPlateOTop_X;) p n
+(  G4) S
+(double) k
+( fPhysiPoronPlateOTop_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPoronPlateOTop_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiPoronPlateVTop_X;) p n
+(  G4) S
+(double) k
+( fPhysiPoronPlateVTop_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPoronPlateVTop_Z;) p n
+( ) N
+(  G4) S
+(double) k
+( fPhysiPoronPlateOBottom_X;) p n
+(  G4) S
+(double) k
+( fPhysiPoronPlateOBottom_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPoronPlateOBottom_Z;) p n
+() N
+(  G4) S
+(double) k
+( fPhysiPoronPlateVBottom_X;) p n
+(  G4) S
+(double) k
+( fPhysiPoronPlateVBottom_Y;) p n
+(  G4) S
+(double) k
+( fPhysiPoronPlateVBottom_Z;) p n
+(  ) N
+(  HEPDSWMaterial*      pMaterial;) N
+(  ) N
+(  G4Box* fSolidS1;) N
+(  G4Box* fSolidS1SuppHoleBar;) N
+(  G4Box* fSolidS1SuppBar;) N
+(    ) N
+(  G4Box* fSolidS1SuppBack;) N
+(  G4Box* fSolidS1SuppTopBase;) N
+(  G4Box* fSolidS1SuppTopHole;) N
+(  G4SubtractionSolid* fSolidS1SuppFrontTemp0;) N
+(  G4SubtractionSolid* fSolidS1SuppFrontTemp1;) N
+(  G4SubtractionSolid* fSolidS1SuppFrontTemp2;) N
+(CalorimeterConstructionConfig6.hh) (Page 10/15) (Jan 09, 15 22:50) title
+border
+grestore
+(Printed by wjb) rhead
+(CalorimeterConstructionConfig6.hh) (5/8) (Tuesday February 24, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (11-12) 6
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  G4SubtractionSolid* fSolidS1SuppFront;) p n
+(  G4Box* fSolidS1SuppThinBar; ) N
+(  G4Box* fSolidS1SuppThinBarBack; ) N
+(  G4Box* fSolidS1SuppPoronFront; ) N
+(  G4Box* fSolidS1ScintContainer;) N
+(  G4Box* fSolidS1Scint;) N
+() N
+(  G4Box* fSolidCFSuppPorO;) N
+(  G4Box* fSolidCFSuppPorV;) N
+(  G4Box* fSolidCaloBox;) N
+(  G4Box* fSolidScintBox;) N
+(  G4Box* fSolidCrystalBox;) N
+(  G4Trap* fSolidActiveTrapLayer;) N
+(  ) N
+(  G4Trap* fSolidTrapPoronLayer;) N
+(  G4Trap* fSolidTrapVetoLayer;) N
+(  G4Trap* fSolidTrapCFLayer;) N
+() N
+(  G4Box* fSolidLayer;) N
+(  G4Box* fSolidLastLayer;) N
+(  G4Box * fSolidActiveRectLayer;) N
+(  G4UnionSolid* fSolidActiveLayer_1;) N
+(  G4UnionSolid* fSolidActiveLayer;) N
+() N
+(  G4UnionSolid* fSolidRealTrapPoronLayer;) N
+(  G4UnionSolid* fSolidRealTrapCFLayer;) N
+(  G4UnionSolid* fSolidRealTrapVetoLayer;) N
+() N
+(  G4Box* fSolidExternalPoronSupportA;) N
+(  G4Box* fSolidExternalPoronSupportB;) N
+(  G4Box* fSolidExternalPoronSupportC;) N
+(  G4Box* fSolidExternalPoronSupportD;) N
+(  G4Box* fSolidExternalPoronSupportE;) N
+(  G4UnionSolid* fSolidExternalPoronSupport1;) N
+(  G4UnionSolid* fSolidExternalPoronSupport2;) N
+(  G4UnionSolid* fSolidExternalPoronSupport3;) N
+(  G4UnionSolid* fSolidExternalPoronSupport;) N
+() N
+(  G4Box* fSolidCFBlockContainerExt;) N
+(  G4Box* fSolidCFBlockContainerInt;) N
+(  G4SubtractionSolid* fSolidCFBlockContainer;) N
+() N
+(  G4SubtractionSolid* fSolidCylinderPanelDown1;) N
+(  G4SubtractionSolid* fSolidCylinderPanelDown2;) N
+(  G4SubtractionSolid* fSolidCylinderPanelDown3;) N
+(  G4SubtractionSolid* fSolidCylinderPanelDown4;) N
+(  G4SubtractionSolid* fSolidCylinderPanelDown5;) N
+(  G4SubtractionSolid* fSolidCylinderPanelDown6;) N
+(  G4SubtractionSolid* fSolidCylinderPanelDown7;) N
+(  G4SubtractionSolid* fSolidCylinderPanelDown8;) N
+(  G4SubtractionSolid* fSolidPanelDown;) N
+(  ) N
+(  G4SubtractionSolid* fSolidSquarePanelDown1;) N
+(  G4SubtractionSolid* fSolidSquarePanelDown2;) N
+(  G4SubtractionSolid* fSolidSquarePanelDown3;) N
+(  G4SubtractionSolid* fSolidSquarePanelDown4;) N
+(  G4SubtractionSolid* fSolidSquarePanelDown5;) N
+(  G4SubtractionSolid* fSolidSquarePanelDown6;) N
+(  G4SubtractionSolid* fSolidSquarePanelDown7;) N
+(  G4SubtractionSolid* fSolidSquarePanelDown8;) N
+(  G4SubtractionSolid* fSolidPanelDown2;) N
+() N
+(  G4Box* fSolidSingleCrystalBlockContainer;) N
+(  G4Box* fSolidCrystalActiveBlock;) N
+(  G4Box*  fSolidTeflonLYSO;) N
+(  G4Box*  fSolidTeflonContainerExt;) N
+(  G4SubtractionSolid* fSolidTeflonContainer;) N
+(  G4Box* fSolidCFCrystalPanelDown;) N
+(  G4Box* fSolidCFCrystalPanelDownTemp;) N
+(CalorimeterConstructionConfig6.hh) (Page 11/15) (Jan 09, 15 22:50) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  G4Box* fSolidCFCrystalPanelDownHole;) p n
+(  G4Cons* fSolidCylinderPanelDown;) N
+(  G4Box* fSolidCrystalBlockContainer;) N
+(  G4Box* fSolidCrystalBlockRawContainer;) N
+(  G4Box* fSolidCFCrystalSideX;) N
+(  G4Box* fSolidCFCrystalSideYBig;) N
+(  G4Box* fSolidCFFront;) N
+(  G4Box* fSolidCFLat;) N
+(  G4Box* fSolidCFFrontPO;) N
+(  G4Box* fSolidCFLatPO;) N
+(  G4Box* fSolidCFSuppO;) N
+(  G4Box* fSolidCFSuppV;) N
+(  G4Box* fSolidCFSuppLat;) N
+(  G4Box* fSolidCFSuppFront;) N
+(  G4Box* fSolidCFSuppLatA;) N
+(  G4Box* fSolidCFSuppFrontA;) N
+(  G4Box* fSolidCFSuppOA;) N
+(  G4Box* fSolidCFSuppVA;) N
+(  G4UnionSolid* fSolidCFSuppPoron;) N
+(  G4UnionSolid* fSolidCFSuppStepOV;) N
+(  G4UnionSolid* fSolidCFSuppStepLat1;) N
+(  G4UnionSolid* fSolidCFSuppStepLat2;) N
+(  G4UnionSolid* fSolidCFSuppStepFront1;) N
+(  G4UnionSolid* fSolidCFSupp;) N
+(  G4UnionSolid* fSolidCFSuppStepLat1A;) N
+(  G4UnionSolid* fSolidCFSuppStepLat2A;) N
+(  G4UnionSolid* fSolidCFSuppStepFront1A;) N
+(  G4UnionSolid* fSolidCFSuppA;  ) N
+(  G4UnionSolid* fSolidCFSuppStepOVA;) N
+(  G4Box* fSolidPoronFront;) N
+(  G4Box* fSolidPoronLat; ) N
+(  G4Box* fSolidPoronFrontPO;) N
+(  G4Box* fSolidPoronLatPO;) N
+(  G4Box* fSolidPoronLatX;) N
+(  G4Box* fSolidPoronLatXRight;) N
+(  G4Box* fSolidPoronLatXHole;) N
+(  G4Box* fSolidPoronLatXHoleLeft;) N
+(  G4Box* fSolidPoronLatYUp;) N
+(  G4Box* fSolidPoronLatYHole;) N
+(  G4Box* fSolidPoronLatYHoleDown;) N
+() N
+() N
+(  G4UnionSolid* fSolidPoronLatX_1;) N
+(  G4UnionSolid* fSolidPoronLatX_2;) N
+(  G4UnionSolid* fSolidPoronLatX_3;) N
+() N
+(  G4UnionSolid* fSolidVetoLatX_1;) N
+(  G4UnionSolid* fSolidVetoLatX_2;) N
+(  ) N
+(  G4UnionSolid* fSolidPoronLatY_1;) N
+(  G4UnionSolid* fSolidPoronLatY_2;) N
+(  G4UnionSolid* fSolidPoronLatY_3;) N
+() N
+(  G4UnionSolid* fSolidVetoLatY_1;) N
+(  G4UnionSolid* fSolidVetoLatY_2;) N
+(  ) N
+(  G4UnionSolid* fSolidCFVetoLatX_1;) N
+(  G4UnionSolid* fSolidCFVetoLatX_2;) N
+(  ) N
+(  G4UnionSolid* fSolidCFVetoLatY_1;) N
+(  G4UnionSolid* fSolidCFVetoLatY_2;) N
+() N
+(  G4Box* fSolidCFVetoLatX;) N
+(  G4Box* fSolidCFVetoLatXHole;) N
+(  G4Box* fSolidCFVetoLatXHoleRight;) N
+(  ) N
+(  G4Box* fSolidCFVetoLatY;) N
+(  G4Box* fSolidCFVetoLatYHole;) N
+(  G4Box* fSolidCFVetoLatYHoleDown;) N
+(CalorimeterConstructionConfig6.hh) (Page 12/15) (Jan 09, 15 22:50) title
+border
+grestore
+(Printed by wjb) rhead
+(CalorimeterConstructionConfig6.hh) (6/8) (Tuesday February 24, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (13-14) 7
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  ) p n
+(  G4Box* fSolidVetoLatX;) N
+(  G4Box* fSolidVetoLatXRight;) N
+(  G4Box* fSolidVetoLatXLeft;) N
+(  G4Box* fSolidPoronLatY;) S 32 T (   ) N
+(  G4Box* fSolidVetoLatY;) N
+(  G4Box* fSolidVetoLatYUp;) N
+(  G4Box* fSolidVetoLatYDown;) N
+(  G4Box* fSolidPoronPlateO;) N
+(  G4Box* fSolidPoronPlateV;) N
+() N
+() N
+(  G4LogicalVolume* fLogicS1;) N
+(  G4LogicalVolume* fLogicS1SuppBack;) N
+(  G4LogicalVolume* fLogicS1SuppHoleBar;) N
+(  G4LogicalVolume* fLogicS1SuppBar;) N
+(  G4LogicalVolume* fLogicS1SuppFront;) N
+(  G4LogicalVolume* fLogicS1SuppThinBar;) N
+(  G4LogicalVolume* fLogicS1SuppThinBarBack;) N
+(  G4LogicalVolume* fLogicS1SuppPoronFront;) N
+(  G4LogicalVolume* fLogicS1ScintContainerP;) N
+(  G4LogicalVolume* fLogicS1ScintContainerM;) N
+(  G4LogicalVolume* fLogicS1Scint;) N
+() N
+() N
+(  G4LogicalVolume* fLogicCFSuppPoron;) N
+(  G4LogicalVolume* fLogicCaloBox;) N
+(  G4LogicalVolume* fLogicScintBox;) N
+(  G4LogicalVolume* fLogicCrystalBox;) N
+(  G4LogicalVolume* fLogicScintLayer;) N
+(  G4LogicalVolume* fLogicScintActiveLayer;) N
+(  G4LogicalVolume* fLogicCrystalBlockContainer;) N
+(  G4LogicalVolume* fLogicCrystalBlockPlaneContainer;) N
+(  G4LogicalVolume* fLogicCrystalBlockRawContainer;) N
+(  G4LogicalVolume* fLogicCrystalActiveBlock;) N
+(  G4LogicalVolume* fLogicTeflonLYSO;) N
+(  G4LogicalVolume* fLogicTeflonContainer;) N
+(  G4LogicalVolume* fLogicCFCrystalPanelDown;) N
+(  G4LogicalVolume* fLogicCFCrystalPanelDown2;) N
+(  G4LogicalVolume* fLogicCFBlockContainer;) N
+(  G4LogicalVolume* fLogicCFCrystalSideX;) N
+(  G4LogicalVolume* fLogicCFCrystalSideYBig;) N
+(  G4LogicalVolume* fLogicCFFront;) N
+(  G4LogicalVolume* fLogicCFLat; ) N
+(  G4LogicalVolume* fLogicCFFrontPO;) N
+(  G4LogicalVolume* fLogicCFLatPO;) N
+(  G4LogicalVolume* fLogicCFSupp;) N
+(  G4LogicalVolume* fLogicCFSuppTop;) N
+(  G4LogicalVolume* fLogicPoronLat;) N
+(  G4LogicalVolume* fLogicPoronFront; ) N
+(  G4LogicalVolume* fLogicPoronLatPO;) N
+(  G4LogicalVolume* fLogicPoronFrontPO;) N
+() N
+(  G4LogicalVolume*  fLogicPoronLatX;) N
+(  G4LogicalVolume*  fLogicPoronLatY;) N
+() N
+(  G4LogicalVolume*  fLogicVetoLatX;) N
+(  G4LogicalVolume*  fLogicVetoLatX2;) N
+(  G4LogicalVolume*  fLogicVetoLatY;) N
+(  G4LogicalVolume*  fLogicVetoLatY2;) N
+(  ) N
+(  G4LogicalVolume*  fLogicCFVetoLatX;) N
+(  G4LogicalVolume*  fLogicCFVetoLatY;) N
+() N
+(  G4LogicalVolume*  fLogicExternalPoronSupport;) N
+(  G4LogicalVolume*  fLogicRealTrapPoronLayer;) N
+(  G4LogicalVolume*  fLogicRealTrapVetoLayer;) N
+(  G4LogicalVolume*  fLogicRealTrapCFLayer;) N
+(  G4LogicalVolume*  fLogicPoronPlateO;) N
+(CalorimeterConstructionConfig6.hh) (Page 13/15) (Jan 09, 15 22:50) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  G4LogicalVolume*  fLogicPoronPlateV;) p n
+(  G4LogicalVolume* fLogicLastScintLayer;) N
+() N
+(  G4VPhysicalVolume* fPhysiS1;) N
+(  G4VPhysicalVolume* fPhysiS1SuppBack;) N
+(  G4VPhysicalVolume* fPhysiS1SuppHoleBar;) N
+(  G4VPhysicalVolume* fPhysiS1SuppBar1;) N
+(  G4VPhysicalVolume* fPhysiS1SuppBar2;) N
+(  G4VPhysicalVolume* fPhysiS1SuppThinBar1;) N
+(  G4VPhysicalVolume* fPhysiS1SuppThinBarBack1;) N
+(  G4VPhysicalVolume* fPhysiS1SuppFrontM;) N
+(  G4VPhysicalVolume* fPhysiS1SuppFrontPoronM;) N
+(  G4VPhysicalVolume* fPhysiS1SuppThinBar2;) N
+(  G4VPhysicalVolume* fPhysiS1SuppThinBarBack2;) N
+(  G4VPhysicalVolume* fPhysiS1ScintContainerP;) N
+(  G4VPhysicalVolume* fPhysiS1ScintContainerM;) N
+(  G4VPhysicalVolume* fPhysiS1ScintP;) N
+(  G4VPhysicalVolume* fPhysiS1ScintM;) N
+() N
+(  G4VPhysicalVolume* fPhysiCaloBox;) N
+(  G4VPhysicalVolume* fPhysiScintBox;) N
+(  G4VPhysicalVolume* fPhysiScintLayer;) N
+(  G4VPhysicalVolume* fPhysiScintCFSupp;) N
+(  G4VPhysicalVolume* fPhysiScintActiveLayer;) N
+(  G4VPhysicalVolume* fPhysiLastScintLayer;) N
+(  G4VPhysicalVolume* fPhysiScintCFFrontP;) N
+(  G4VPhysicalVolume* fPhysiScintCFFrontM;) N
+(  G4VPhysicalVolume* fPhysiScintCFLatP;) N
+(  G4VPhysicalVolume* fPhysiScintCFLatM;) N
+(  G4VPhysicalVolume* fPhysiScintPoronLatP;) N
+(  G4VPhysicalVolume* fPhysiScintPoronLatM;) N
+(  G4VPhysicalVolume* fPhysiScintPoronLatUp;) N
+(  G4VPhysicalVolume* fPhysiScintPoronLatDown;) N
+(  G4VPhysicalVolume* fPhysiScintCFFrontPPO;) N
+(  G4VPhysicalVolume* fPhysiScintCFFrontMPO;) N
+(  G4VPhysicalVolume* fPhysiScintCFLatPPO;) N
+(  G4VPhysicalVolume* fPhysiScintCFLatMPO;) N
+(  G4VPhysicalVolume* fPhysiScintPoronLatPPO;) N
+(  G4VPhysicalVolume* fPhysiScintPoronLatMPO;) N
+(  G4VPhysicalVolume* fPhysiScintPoronLatUpPO;) N
+(  G4VPhysicalVolume* fPhysiScintPoronLatDownPO;) N
+(  G4VPhysicalVolume* fPhysiCrystalBox;) N
+(  G4VPhysicalVolume* fPhysiCFCrystalPanelDown;) N
+(  G4VPhysicalVolume* fPhysiCFCrystalPanelDown2;) N
+(  G4VPhysicalVolume* fPhysiCFCrystalSideXP;) N
+(  G4VPhysicalVolume* fPhysiCFCrystalSideXM;) N
+(  G4VPhysicalVolume* fPhysiCFCrystalSideYBigP;) N
+(  G4VPhysicalVolume* fPhysiCFCrystalSideYBigM;) N
+(  G4VPhysicalVolume* fPhysiCrystalBlockPlaneContainer;) N
+(  G4VPhysicalVolume* fPhysiCrystalBlockRaw;) N
+(  G4VPhysicalVolume* fPhysiCrystalActiveBlock;) N
+(  G4VPhysicalVolume* fPhysiTeflonLYSO;) N
+(  G4VPhysicalVolume* fPhysiTeflonContainer;) N
+(  ) N
+(  G4VPhysicalVolume* fPhysiPoronLatXRight_3;) N
+(  G4VPhysicalVolume* fPhysiPoronLatXLeft_3;) N
+(  G4VPhysicalVolume* fPhysiPoronLatYUp_3;) N
+(  G4VPhysicalVolume* fPhysiPoronLatYDown_3;) N
+(  ) N
+(  G4VPhysicalVolume* fPhysiPoronLatXRightInt_3;) N
+(  G4VPhysicalVolume* fPhysiPoronLatXLeftInt_3;) N
+(  G4VPhysicalVolume* fPhysiPoronLatYUpInt_3;) N
+(  G4VPhysicalVolume* fPhysiPoronLatYDownInt_3;) N
+(  ) N
+(  G4VPhysicalVolume* fPhysiVetoLatXRight_2;) N
+(  G4VPhysicalVolume* fPhysiVetoLatXLeft_2;) N
+(  G4VPhysicalVolume* fPhysiVetoLatYUp_2;) N
+(  G4VPhysicalVolume* fPhysiVetoLatYDown_2;) N
+() N
+(CalorimeterConstructionConfig6.hh) (Page 14/15) (Jan 09, 15 22:50) title
+border
+grestore
+(Printed by wjb) rhead
+(CalorimeterConstructionConfig6.hh) (7/8) (Tuesday February 24, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (15) 8
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  G4VPhysicalVolume* fPhysiCFVetoLatXRight_2;) p n
+(  G4VPhysicalVolume* fPhysiCFVetoLatXLeft_2;) N
+(  G4VPhysicalVolume* fPhysiCFVetoLatYUp_2;) N
+(  G4VPhysicalVolume* fPhysiCFVetoLatYDown_2;) N
+() N
+(  G4VPhysicalVolume* fPhysiRealTrapPoronLayer1;) N
+(  G4VPhysicalVolume* fPhysiRealTrapPoronLayer2;) N
+(  G4VPhysicalVolume* fPhysiRealTrapVetoLayer;) N
+(  G4VPhysicalVolume* fPhysiRealTrapCFLayer;) N
+(  G4VPhysicalVolume* fPhysiRealTrapCFLayer2;) N
+(  ) N
+(  G4VPhysicalVolume* fPhysiExternalPoronSupport1;) N
+(  G4VPhysicalVolume* fPhysiExternalPoronSupport2;) N
+(  G4VPhysicalVolume* fPhysiExternalPoronSupport3;) N
+(  G4VPhysicalVolume* fPhysiExternalPoronSupport4;) N
+(    ) N
+(  G4VPhysicalVolume* fPhysiPoronPlateO1_Top;) N
+(  G4VPhysicalVolume* fPhysiPoronPlateV1_Top;) N
+(  G4VPhysicalVolume* fPhysiPoronPlateO2_Top;) N
+(  G4VPhysicalVolume* fPhysiPoronPlateV2_Top;) N
+(  G4VPhysicalVolume* fPhysiPoronPlateO1_Bottom;) N
+(  G4VPhysicalVolume* fPhysiPoronPlateV1_Bottom;) N
+(  G4VPhysicalVolume* fPhysiPoronPlateO2_Bottom;) N
+(  G4VPhysicalVolume* fPhysiPoronPlateV2_Bottom;) N
+() N
+(  G4VPhysicalVolume* fPhysiCFSuppTop;) N
+() N
+(};) N
+() N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) c n
+() p n
+(#endif) K n
+() p n
+() N
+() N
+() N
+() N
+() N
+() N
+() N
+() N
+() N
+() N
+() N
+() N
+() N
+() S 8 T () S 16 T () S 24 T () S 32 T () N
+() S 8 T () S 16 T () S 24 T () S 32 T () N
+() S 8 T () S 16 T () S 24 T () S 32 T () N
+(CalorimeterConstructionConfig6.hh) (Page 15/15) (Jan 09, 15 22:50) title
+border
+grestore
+(Printed by wjb) rhead
+(CalorimeterConstructionConfig6.hh) (8/8) (Tuesday February 24, 2015) footer
+end % of iso1dict
+pagesave restore
+showpage
+
+%%Trailer
+end
+%%EOF
