@@ -30,6 +30,7 @@
 #include "LTrackerQuicklook.hh"
 #include "LTrackerMask.hh"
 
+
 int TrackerQuickLook(std::string namefile){
    //gROOT->Reset();
    //gDirectory->GetList()->Delete();
@@ -163,11 +164,11 @@ int TrackerQuickLook(std::string namefile){
       if(ipk%50 == 0)
          std::cout<<"Processing events "<< ipk<<std::endl;
 
-      double *sigmaraw_chan = cal->GetSigmaRaw(ipk);
-      double *sigma_chan = cal->GetSigma(ipk);
-      double *mean_chan = cal->GetPedestal(ipk);
-      double *NGindex_chan = cal->GetNGIndex(ipk);
-      bool *CNmask = cal->GetCNMask(ipk);
+      const double *sigmaraw_chan = cal->GetSigmaRaw(ipk);
+      const double *sigma_chan = cal->GetSigma(ipk);
+      const double *mean_chan = cal->GetPedestal(ipk);
+      const double *NGindex_chan = cal->GetNGIndex(ipk);
+      const bool *CNmask = cal->GetCNMask(ipk);
       LTrackerMask hotchan_tmp = cal->GetMaskOnSigma(ipk, -999., HOTCHANNELTHRESHOLD);
       LTrackerMask coldchan_tmp = cal->GetMaskOnSigma(ipk, COLDCHANNELTHRESHOLD, 999.);
       LTrackerMask nongauschan_tmp = cal->GetMaskOnNGI(ipk, -999., GAUSCHANNELTHRESHOLD);
@@ -201,10 +202,13 @@ int TrackerQuickLook(std::string namefile){
             signal_noise[chanside][chanladder]->Fill(chanonside, sign_noise[ichan]);
             
          }
-    
-         std::vector<LTrackerCluster> signal=GetClusters(counts_clean_chan,sigma_chan,&evmask);
-   
 	 /*
+	 //std::cout<<"Clusterfinding algorithm running"<<std::endl;
+         std::vector<LTrackerCluster> signal2=GetClusters(counts_clean_chan,sigma_chan,&evmask);
+	 std::cout<<"signal size= "<< &signal2<<std::endl << std::flush;
+	 std::vector<LTrackerCluster> signal = signal2;
+	 
+	 
 	 for(int cl=0;cl<signal.size();++cl){
       
 	     int seed=signal.at(cl).seed;
@@ -218,7 +222,7 @@ int TrackerQuickLook(std::string namefile){
 	   landau[clusterside][clusterladder]->Fill(etacounts);
     
            }
-	 */
+	 */	 
          for(int ld=0;ld<N_LADDER;++ld){
             for(int sd=0;sd<N_SIDES;++sd){
                for(int vaside=0;vaside<SIDE_VA;++vaside)
