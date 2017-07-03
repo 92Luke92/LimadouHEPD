@@ -1,0 +1,39 @@
+./Calo/src/LCaloTools.cc:67:      result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestalHG[index];
+./Calo/src/LCaloTools.cc:69:      result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
+./Calo/src/LCaloTools.cc:71:      result.trigger_flag[iu][ipmt] = lev0.trigger_flag[index];
+./Calo/src/LCaloTools.cc:78:LLysoSignal GetLysoSignal(const LEvRec0 lev0, const LCalibration cal) {
+./Calo/src/LCaloTools.cc:92:      result.cont_hg[iu][ipmt] = static_cast<double>(lev0.pmt_high[index])-pedestalHG[index];
+./Calo/src/LCaloTools.cc:94:      result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
+./Calo/src/LCaloTools.cc:96:      result.trigger_flag[iu][ipmt] = lev0.trigger_flag[index];
+./Common/include/LReco01Manager.hh:27:  LEvRec1 L0ToL1(const LEvRec0 lev0, const LCalibration *cal);
+./Common/src/LReco01Manager.cc:110:  LEvRec0 lev0;
+./Common/src/LReco01Manager.cc:111:  inFile->SetTheEventPointer(lev0);
+./Common/src/LReco01Manager.cc:121:    LEvRec1 l1ev = L0ToL1(lev0,cal);
+./Common/src/LReco01Manager.cc:122:    outFile->Fill(L0ToL1(lev0,cal));
+./Tracker/include/LTrackerTools.hh:25:LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal);
+./Tracker/src/LTrackerTools.cc:199:LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal) {
+./Tracker/src/LTrackerTools.cc:211:  ComputeCN(lev0.strip,ped,&cnmask,CN);
+./Tracker/src/LTrackerTools.cc:212:  for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich])-ped[ich]-CN[ChanToVA(ich)];
+
+
+
+-bash-4.1$ cgrep -w lev0IN
+
+./Common/src/LReco01Manager.cc:186:LEvRec1 LReco01Manager::L0ToL1(const LEvRec0 lev0IN, const LCalibration *calIN) {
+./Common/src/LReco01Manager.cc:189:  result.runType = lev0IN.runType;
+./Common/src/LReco01Manager.cc:190:  result.boot_nr = lev0IN.boot_nr;
+./Common/src/LReco01Manager.cc:191:  result.run_id = lev0IN.run_id;
+./Common/src/LReco01Manager.cc:192:  result.event_index = lev0IN.event_index;
+./Common/src/LReco01Manager.cc:193:  result.event_length = lev0IN.event_length;
+./Common/src/LReco01Manager.cc:194:  result.trigger_index = lev0IN.trigger_index;
+./Common/src/LReco01Manager.cc:195:  result.hepd_time = lev0IN.hepd_time;
+./Common/src/LReco01Manager.cc:196:  result.PMTBoard_trigger_counter  = lev0IN.PMTBoard_trigger_counter;
+./Common/src/LReco01Manager.cc:197:  result.lost_trigger = lev0IN.lost_trigger;
+./Common/src/LReco01Manager.cc:198:  for(int i=0; i<NRATEMETER; ++i) result.rate_meter[i] = lev0IN.rate_meter[i];
+./Common/src/LReco01Manager.cc:199:  result.alive_time = lev0IN.alive_time;
+./Common/src/LReco01Manager.cc:200:  result.dead_time = lev0IN.dead_time;
+./Common/src/LReco01Manager.cc:202:  result.tracker=GetTrackerSignal(lev0IN, *calIN);
+./Common/src/LReco01Manager.cc:203:  result.trig=GetTriggerSignal(lev0IN, *calIN);
+./Common/src/LReco01Manager.cc:204:  result.scint=GetScintillatorSignal(lev0IN, *calIN);
+./Common/src/LReco01Manager.cc:205:  result.veto=GetVetoSignal(lev0IN, *calIN);
+./Common/src/LReco01Manager.cc:206:  result.lyso=GetLysoSignal(lev0IN, *calIN);
