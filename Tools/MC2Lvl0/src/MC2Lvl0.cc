@@ -60,6 +60,14 @@ int main(int argc, char** argv) {
    LEvRec0 evtstruc;
    lvl0writer.SetTheEventPointer(evtstruc);
 
+   for (int i=0; i<100; i++) {
+      evtstruc.Reset();
+      evtstruc.pmt_high[2]=i*i;
+      lvl0writer.Fill();
+   }
+
+   lvl0writer.Write();
+
    RootTrackerHit hit;
    std::cout << " >>> ELOSS 3" << hit.GetELoss() << std::endl;
    return 0;
