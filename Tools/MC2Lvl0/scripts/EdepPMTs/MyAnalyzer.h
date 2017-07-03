@@ -260,6 +260,14 @@ void MyAnalyzer::ImpactPoint_Plots(){
 	Plotfile->Close();
 }
 
+std::vector<blip> FromEdep2blip(RootEvent *Event){
+	MapEvents * Map = new MapEvents();
+	Map->LoadEvent(Event);
+	Map->Mappify();
+	std::vector<blip> PMTs =Map->FromEdep2blip();	
+	return PMTs;
+}
+
 
 void MyAnalyzer::LVL0Converter(){
 
@@ -270,10 +278,6 @@ void MyAnalyzer::LVL0Converter(){
 	for (Long64_t jentry=0; jentry<nentries;jentry++) {
 		Long64_t ientry = LoadTree(jentry);
 		int nb = fTreeChain->GetEntry(jentry);
-		MapEvents * Map = new MapEvents();
-		Map->LoadEvent(Event);
-		Map->Mappify();
-		std::vector<blip> PMTsLowGain =Map->FromEdep2blip(false);
-		std::vector<blip> PMTsHighGain=Map->FromEdep2blip(true);
+		std::vector<blip> PMTsLowGain =FromEdep2blip(Event);
 	}
 }
