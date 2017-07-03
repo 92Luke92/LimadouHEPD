@@ -47,6 +47,10 @@ std::string  getLvl0filename(const std::string mcfilename) {
 
 
 
+void LoopOnEvents(LEvRec0Writer* lvl0writer, TTree* Tmc);
+
+
+
 int main(int argc, char** argv) {
 
    const std::string mcfilename=getMCfilename(argc, argv);
@@ -57,19 +61,10 @@ int main(int argc, char** argv) {
    std::cout << Tmc->GetEntries() << std::endl;
 
    LEvRec0Writer lvl0writer(lvl0filename);
-   LEvRec0 evtstruc;
-   lvl0writer.SetTheEventPointer(evtstruc);
-
-   for (int i=0; i<100; i++) {
-      evtstruc.Reset();
-      evtstruc.pmt_high[2]=i*i;
-      lvl0writer.Fill();
-   }
+   LoopOnEvents(&lvl0writer, Tmc);
 
    lvl0writer.Write();
 
-   RootTrackerHit hit;
-   std::cout << " >>> ELOSS 3" << hit.GetELoss() << std::endl;
    return 0;
 
    TTree T("T", "T");
@@ -80,5 +75,12 @@ int main(int argc, char** argv) {
 
 
 
-
-
+void LoopOnEvents(LEvRec0Writer* lvl0writer, TTree* Tmc) {
+   long ne=Tmc->GetEntries();
+   for (long ie=0; ie<ne; ie++) {
+      std::cout << ie << std::endl;
+      lvl0writer->pev()->Reset();
+      lvl0writer->pev()->pmt_high[int(ie%50)]=3;
+      lvl0writer->Fill();
+   }
+}

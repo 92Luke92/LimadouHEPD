@@ -10,12 +10,13 @@ LEvRec0Writer::LEvRec0Writer(std::string filename) {
 void LEvRec0Writer::Init(std::string filename) {
   fFile=TFile::Open(filename.c_str(), "RECREATE");
   fTree=new TTree("T", "T");
+  SetTheEventPointer();
   return;
 }
 
 
 
-int LEvRec0Writer::SetTheEventPointer(LEvRec0 &ev) {
+void LEvRec0Writer::SetTheEventPointer() {
   fTree->Branch("run_type", &ev.runType);
   fTree->Branch("ev_boot_nr", &ev.boot_nr);
   fTree->Branch("ev_run_id", &ev.run_id);
@@ -33,7 +34,6 @@ int LEvRec0Writer::SetTheEventPointer(LEvRec0 &ev) {
   fTree->Branch("dead_time", &ev.dead_time);
   fTree->Branch("strip[4608]",ev.strip);
 
-  return 0;
 }
 
 
