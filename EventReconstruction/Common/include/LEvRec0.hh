@@ -8,7 +8,8 @@ class LEvRec0 {
 
 public:
   LEvRec0();
-  
+  void Reset();
+
   unsigned short   runType;
   unsigned short   boot_nr;
   unsigned short   run_id;
@@ -16,7 +17,7 @@ public:
   unsigned short   event_length;
   unsigned int     trigger_index;
   unsigned int     hepd_time;
-  
+
   unsigned short   pmt_high[NPMT];
   unsigned short   pmt_low[NPMT];
   unsigned int     PMTBoard_trigger_counter;
@@ -27,7 +28,7 @@ public:
   unsigned int     dead_time;
 
   short            strip[NCHAN];
-   
+
   void DumpStrip(void) const;
   void DumpEventIndex() const;
   bool IsZeroSuppressed() const;

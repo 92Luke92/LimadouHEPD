@@ -1,6 +1,7 @@
 // Local
 #include "detectorID.h"
 #include "PMTID.h"
+#include "LEvRec0Writer.hh"
 
 // C++ std
 #include <iostream>
@@ -18,10 +19,9 @@
 #include "TVector3.h"
 #include "TTree.h"
 #include "TFile.h"
-#include "TDirectory.h"
-
 //Various
 #include "LEvRec0.hh"
+
 
 float Vector3Dist(TVector3 v1, TVector3 v2)
 {
@@ -29,7 +29,6 @@ float Vector3Dist(TVector3 v1, TVector3 v2)
    return static_cast<float> (diff.Mag()); // get magnitude (=rho=Sqrt(x*x+y*y+z*z)))
 
 }
-
 
 
 
@@ -54,15 +53,13 @@ int main(int argc, char** argv) {
    const std::string lvl0filename=getLvl0filename(mcfilename);
 
    TFile* filemc= TFile::Open(mcfilename.c_str(), "READ");
-   TDirectoryFile* dir = (TDirectoryFile*) filemc->Get("HEPD");
-   TTree* Tmc = (TTree*)dir->Get("EventTree");
+   TTree* Tmc = (TTree*)filemc->Get("HEPD/EventTree");
    std::cout << Tmc->GetEntries() << std::endl;
 
-   TFile* filelvl0= TFile::Open(lvl0filename.c_str(), "RECREATE");
-   TTree* Tlvl0 = new TTree("T", "T");
-
+   LEvRec0Writer lvl0writer(lvl0filename);
    LEvRec0 evtstruc;
-   evtstruc.DumpEventIndex();
+   lvl0writer.SetTheEventPointer(evtstruc);
+
    RootTrackerHit hit;
    std::cout << " >>> ELOSS 3" << hit.GetELoss() << std::endl;
    return 0;
