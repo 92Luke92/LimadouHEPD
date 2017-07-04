@@ -10,7 +10,7 @@
  *                 from HEPD L0 ROOT file 
  *
  *
- * DATE:          April 6, 2017
+ * DATE:          July 4, 2017
  *     
  * =============================================================================
  **/
@@ -175,7 +175,7 @@ void TriggerScan(TString rootname)
       pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (CH%i); Run time (ms); PMT rate meter (Hz)", subdetector[kk-1], kk-1));
    }
    
-   Int_t cpu_startRunTime_vect[100];
+   Int_t cpu_startRunTime_vect[1000];
    
    for(int j=1; j<Tmd_entries; j+=2) //Tmd loop
    {
