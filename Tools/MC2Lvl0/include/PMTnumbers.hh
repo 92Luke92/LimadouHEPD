@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "MCcoorPhysicalFrame.hh"
 
 struct meansig {float mean; float sigma;};
 typedef std::map<std::string, meansig> pedmap;
@@ -61,12 +62,14 @@ pedmap getPMThgpeds () {
 typedef std::map<std::string, TVector3> posmap;
 
 posmap getPosMap () {
+   std::vector<float> PMTzMC={312.2,297.42,282.64,267.86,253.08,238.3,223.52,208.74,193.96,179.18,164.814,150.51,136.241,121.944,107.659,93.3685};
    posmap map;
    uint npmt=CaloPMTnames.size();
    for (int i=0; i<npmt; i++) {
       float x=(i%2 == 0)?8.25:-8.25;
       float y=(i < npmt/2)?8.25:-8.25;
-      float z=i+1; // :-( Check with CaloHit positions
+      TVector3 vecz=MCtoPhysicalDetectorFrame(TVector3(0, 0, PMTzMC[i]));
+      float z=vecz.z();
       map[CaloPMTnames[i]]=TVector3(x, y, z);
    }
    return map;

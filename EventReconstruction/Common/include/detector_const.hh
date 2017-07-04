@@ -2,10 +2,10 @@
 #define LIMADOU_CONST
 
 const int VA_CHAN=64;
-const int ADC_CHAN=3*VA_CHAN;
-const int LADDER_CHAN=4*ADC_CHAN;
-const int SIDE_CHAN=LADDER_CHAN/2;
-const int NCHAN = 6*LADDER_CHAN;
+const int ADC_CHAN=3*VA_CHAN;      //192
+const int LADDER_CHAN=4*ADC_CHAN;  //768
+const int SIDE_CHAN=LADDER_CHAN/2; //384
+const int NCHAN = 6*LADDER_CHAN;   //9216
 const int SIDE_VA=6;
 const int NADC = 4096;
 const int NPMT = 64;
