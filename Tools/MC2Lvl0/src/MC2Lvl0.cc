@@ -3,6 +3,7 @@
 #include "PMTID.h"
 #include "LEvRec0Writer.hh"
 #include "MCcoorPhysicalFrame.hh"
+#include "pedVals.hh"
 
 // C++ std
 #include <iostream>
@@ -168,8 +169,13 @@ std::vector<short> NormalizePMThg(std::vector<float> rawPMT) {
 
 std::vector<int> GetPMTHGPeds() {
     std::vector<int>  PMTHGPeds(NPMT);
+    pedmap Pmap=getPMThgpeds();
     for (int ip=0; ip<NPMT; ip++) {
-        PMTHGPeds[ip]=390;
+        int currentped=0;
+        std::string current_name=PMTID[ip];
+        pedmap::iterator iter=Pmap.find(current_name);
+        if (iter!=Pmap.end()) currentped=static_cast<int> (iter->second.mean);
+        PMTHGPeds[ip]=currentped;
     }
     return PMTHGPeds;
 }
