@@ -96,7 +96,7 @@ float Vector3Dist (TVector3 v1, TVector3 v2)
 
 std::string  getMCfilename (int argc, char** argv)
 {
-    std::string filename = "../../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
+    std::string filename = "../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
     if (argc > 1) filename = argv[1];
     std::cout << "MC2Lvl0: MC file name set to " << filename << std::endl;
     return filename;
