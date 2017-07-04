@@ -1,3 +1,24 @@
+#ifndef MAPEVENTS_H
+#define MAPEVENTS_H
+
+// C++ std
+#include <iostream>
+#include <string>
+
+// MCEventAnalyze
+#include "RootEvent.hh"
+#include "RootTrack.hh"
+#include "RootVertex.hh"
+#include "RootCaloHit.hh"
+#include "RootTrackerHit.hh"
+
+// ROOT libs
+#include "TVector3.h"
+#include <vector>
+
+//Local
+#include "PMTinfo.h"
+
 using namespace std;
 
 class MapEvents{
@@ -244,3 +265,5 @@ std::vector<PMTinfo> MapEvents::FromEdep2PMTinfo(float gain){
 	return LVL0;	
 	
 }
+
+#endif
