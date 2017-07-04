@@ -63,7 +63,7 @@ public:
 	TVector3  GetCaloHitImpactPoint(const std::string &detectorId,int layer);
 	void MapPMTs();
 	bool TestHitLayer(const std::string &detectorId,int layer);
-	std::vector<PMTinfo> FromEdep2PMTinfo(float gain);
+	std::vector<PMTinfo> FromEdep2PMTinfo();
 };
 
 void MapEvents::LoadEvent(RootEvent   *Event){
@@ -248,7 +248,7 @@ bool MapEvents::TestHitLayer(const std::string &detectorId,int layer){
 	return (detector[layer].size()>0);
 }
 
-std::vector<PMTinfo> MapEvents::FromEdep2PMTinfo(float gain){
+std::vector<PMTinfo> MapEvents::FromEdep2PMTinfo(){
 
 	std::vector<PMTinfo> LVL0;
 
@@ -258,7 +258,6 @@ std::vector<PMTinfo> MapEvents::FromEdep2PMTinfo(float gain){
 	}
 
 	for(int i=0;i<PMTMap.size();i++){
-		LVL0[i].gain=gain;
 		LVL0[i].totEdep=GetCaloHitTotalEdep(PMTMap[i]);
 		LVL0[i].position=GetImpactPoint(PMTMap[i]);
 	}		

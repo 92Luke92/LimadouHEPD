@@ -122,37 +122,37 @@ std::string  getLvl0filename (const std::string mcfilename)
 
 
 
-void getPMThigh(std::vector<RootCaloHit>, ushort* pmt_high) {
+void getPMThigh(std::vector<RootCaloHit> CaloHits, ushort* pmt_high) {
 
-   	std::vector<PMTinfo> pmt_info(NPMT) ;//=Edep2PMTinfoConverter(CaloHits,2.);
-   std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
-   std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
+	std::vector<PMTinfo> pmt_info =Edep2PMTinfoConverter(CaloHits);
+	std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
+	std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
 
-   for (uint ip=0; ip<NPMT; ip++) {
-      pmt_high[ip]=normalizedPMThg[ip];
-   }
-   return;
+	for (uint ip=0; ip<NPMT; ip++) {
+		pmt_high[ip]=normalizedPMThg[ip];
+	}
+	return;
 }
 
 
 void getPMTlow(std::vector<RootCaloHit> CaloHits, ushort* pmt_low) {
 
-	std::vector<PMTinfo> pmt_info(NPMT) ;//=Edep2PMTinfoConverter(CaloHits,1.);
-   std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
-   std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
- 	for (uint ip=0; ip<NPMT; ip++) {
-    	  pmt_low[ip]=ip;
-   	}
+	std::vector<PMTinfo> pmt_info =Edep2PMTinfoConverter(CaloHits);
+	std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
+	std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
+	for (uint ip=0; ip<NPMT; ip++) {
+		pmt_low[ip]=ip;
+	}
 
 	return;
 }
 
 
 void getStrips (std::vector<RootTrackerHit>, short* strips) {
-   for (uint ic=0; ic<NCHAN; ic++) {
-      strips[ic]=ic%20;
-   }
-   return;
+	for (uint ic=0; ic<NCHAN; ic++) {
+		strips[ic]=ic%20;
+	}
+	return;
 }
 
 
