@@ -20,6 +20,8 @@
 #include "TVector3.h"
 #include "TTree.h"
 #include "TFile.h"
+#include "TBranch.h"
+
 //Various
 #include "LEvRec0.hh"
 
@@ -72,8 +74,6 @@ int main(int argc, char** argv) {
 
    return 0;
 
-   TTree T("T", "T");
-   //TTree outtree=GetTTreeT();
 
 }
 
@@ -81,12 +81,28 @@ int main(int argc, char** argv) {
 
 
 void LoopOnEvents(LEvRec0Writer* lvl0writer, TTree* Tmc) {
-   long ne=Tmc->GetEntries();
-   for (long ie=0; ie<ne; ie++) {
-      std::cout << ie << "\r" << std::flush;
+   int ne=Tmc->GetEntries();
+
+   RootEvent* MCevt=0;
+   TBranch* b_Event=0;
+   Tmc->SetBranchAddress("Event", &MCevt, &b_Event);
+
+   for (int ie=0; ie<ne; ie++) {
+
+
+      int nb = Tmc->GetEntry(ie);
+      std::cout << ie << " " << nb << "\r" << std::flush;
+
+        int eventid =  MCevt->EventID();
+        //myTracks =  MCevt->GetTracks();
+        //myCaloHit =  MCevt->GetCaloHit();
+        //myVetoHit =  MCevt->GetVetoHit();
+        //myTrackerHit =  MCevt->GetTrackerHit();
+
       LEvRec0* ev=lvl0writer->pev();
       ev->Reset();
-      //ev->pmt_high=3
+      //ev->pmt_high=Getpmt_high();
+      //ev->pmt_low =Getpmt_low ();
       lvl0writer->Fill();
    }
    std::cout << "Done" << std::endl;
