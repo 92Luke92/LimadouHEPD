@@ -32,8 +32,8 @@ public:
 	};
 
 	void LoadEvent(RootEvent   *Event);
-	void LoadCaloHits(std::vector<RootCaloHit> calohit)       { myCaloHit   = calohit;}
-	void LoadTrackerHits(std::vector<RootTrackerHit> trackerhit) { myTrackerHit= trackerhit;}
+	void LoadCaloHits(std::vector<RootCaloHit> calohit)          { myCaloHit    = calohit;}
+	void LoadTrackerHits(std::vector<RootTrackerHit> trackerhit) { myTrackerHit = trackerhit;}
 
 
 	void  Mappify();

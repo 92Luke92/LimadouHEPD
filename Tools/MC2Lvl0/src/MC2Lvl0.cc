@@ -67,10 +67,10 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     for (int ie = 0; ie < ne; ie++) {
         int nb = Tmc->GetEntry (ie);
         int eventid =  MCevt->EventID();
-        std::vector<RootTrack> rootTracks =  MCevt->GetTracks();
+        
+	std::vector<RootTrack> rootTracks =  MCevt->GetTracks();
         std::vector<RootCaloHit> caloHits =  MCevt->GetCaloHit();
         std::vector<RootTrackerHit>  trackerHits =  MCevt->GetTrackerHit();
-
         LEvRec0* ev = lvl0writer->pev();
         ev->Reset();
         getPMThigh(caloHits, ev->pmt_high);
@@ -96,7 +96,7 @@ float Vector3Dist (TVector3 v1, TVector3 v2)
 
 std::string  getMCfilename (int argc, char** argv)
 {
-    std::string filename = "../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
+    std::string filename = "../../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
     if (argc > 1) filename = argv[1];
     std::cout << "MC2Lvl0: MC file name set to " << filename << std::endl;
     return filename;
@@ -124,7 +124,7 @@ void getPMTlow(std::vector<RootCaloHit> CaloHits, ushort* pmt_low) {
  	for (uint ip=0; ip<NPMT; ip++) {
     	  pmt_low[ip]=ip;
    	}
-	std::vector<PMTinfo> PMT_high=Edep2PMTinfoConverter(CaloHits,1.);
+	std::vector<PMTinfo> PMT_low=Edep2PMTinfoConverter(CaloHits,1.);
 	return;
 }
 
