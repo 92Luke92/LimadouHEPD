@@ -26,6 +26,12 @@
 #include "LEvRec0.hh"
 
 
+struct PMTinfo{
+        float gain=0;
+        float totEdep=0;
+        TVector3 position;
+};
+
 
 float Vector3Dist (TVector3 v1, TVector3 v2);
 std::string  getMCfilename (int argc, char** argv);
@@ -34,6 +40,10 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc);
 void getPMThigh(std::vector<RootCaloHit>, ushort* pmt_high);
 void getPMTlow (std::vector<RootCaloHit>, ushort* pmt_low);
 void getStrips (std::vector<RootTrackerHit>, short* strips);
+std::vector<float> CorrectPMThg(std::vector<PMTinfo>);
+std::vector<short> NormalizePMThg(std::vector<float>);
+std::vector<int> GetPMTHGPeds();
+
 
 
 
@@ -110,8 +120,13 @@ std::string  getLvl0filename (const std::string mcfilename)
 
 
 void getPMThigh(std::vector<RootCaloHit>, ushort* pmt_high) {
+
+   std::vector<PMTinfo> pmt_info(NPMT);
+   std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
+   std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
+
    for (uint ip=0; ip<NPMT; ip++) {
-      pmt_high[ip]=ip;
+      pmt_high[ip]=normalizedPMThg[ip];
    }
    return;
 }
@@ -129,4 +144,32 @@ void getStrips (std::vector<RootTrackerHit>, short* strips) {
       strips[ic]=ic%20;
    }
    return;
+}
+
+
+std::vector<float> CorrectPMThg(std::vector<PMTinfo> pmt_info) {
+    std::vector<float>   correctedPMTs(NPMT);
+    for (int ip=0; ip<NPMT; ip++) {
+        correctedPMTs[ip]=pmt_info[ip].totEdep;
+    }
+    return correctedPMTs;
+}
+
+std::vector<short> NormalizePMThg(std::vector<float> rawPMT) {
+    std::vector<short>  nPMTHG(NPMT);
+    std::vector<int> ped = GetPMTHGPeds();
+    for (int ip=0; ip<NPMT; ip++) {
+        int untrimmedPMT=static_cast<int>(rawPMT[ip])+ped[ip];
+        if (untrimmedPMT>NADC) untrimmedPMT=NADC-1;
+        nPMTHG[ip]=static_cast<short> (untrimmedPMT);
+    }
+    return nPMTHG;
+}
+
+std::vector<int> GetPMTHGPeds() {
+    std::vector<int>  PMTHGPeds(NPMT);
+    for (int ip=0; ip<NPMT; ip++) {
+        PMTHGPeds[ip]=390;
+    }
+    return PMTHGPeds;
 }
