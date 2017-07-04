@@ -1,3 +1,6 @@
+#ifndef MC2PHYSDET_HH
+#define MC2PHYSDET_HH
+
 #include <TROOT.h>
 #include <TString.h>
 #include <TMath.h>
@@ -32,3 +35,5 @@ TVector3 MCtoPhysicalDetectorFrame(TVector3 mcVector)
 
 	return physVector;
 }
+
+#endif /* MC2PHYSDET_HH */
