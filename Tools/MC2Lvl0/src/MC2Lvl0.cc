@@ -1,9 +1,12 @@
 // Local
 #include "detectorID.h"
 #include "PMTID.h"
+#include "PMTinfo.h"
 #include "LEvRec0Writer.hh"
 #include "MCcoorPhysicalFrame.hh"
 #include "pedVals.hh"
+//#include "MapEvents.hh"
+//#include "Edep2PMTinfoConverter.hh"
 
 // C++ std
 #include <iostream>
@@ -27,19 +30,14 @@
 #include "LEvRec0.hh"
 
 
-struct PMTinfo{
-        float gain=0;
-        float totEdep=0;
-        TVector3 position;
-};
 
 
 float Vector3Dist (TVector3 v1, TVector3 v2);
 std::string  getMCfilename (int argc, char** argv);
 std::string  getLvl0filename (const std::string mcfilename);
 void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc);
-void getPMThigh(std::vector<RootCaloHit>, ushort* pmt_high);
-void getPMTlow (std::vector<RootCaloHit>, ushort* pmt_low);
+void getPMThigh(std::vector<RootCaloHit>, ushort * pmt_high);
+void getPMTlow (std::vector<RootCaloHit>, ushort * pmt_low);
 void getStrips (std::vector<RootTrackerHit>, short* strips);
 std::vector<float> CorrectPMThg(std::vector<PMTinfo>);
 std::vector<short> NormalizePMThg(std::vector<float>);
@@ -77,10 +75,10 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     for (int ie = 0; ie < ne; ie++) {
         int nb = Tmc->GetEntry (ie);
         int eventid =  MCevt->EventID();
-        std::vector<RootTrack> rootTracks =  MCevt->GetTracks();
+
+	std::vector<RootTrack> rootTracks =  MCevt->GetTracks();
         std::vector<RootCaloHit> caloHits =  MCevt->GetCaloHit();
         std::vector<RootTrackerHit>  trackerHits =  MCevt->GetTrackerHit();
-
         LEvRec0* ev = lvl0writer->pev();
         ev->Reset();
         getPMThigh(caloHits, ev->pmt_high);
@@ -120,9 +118,10 @@ std::string  getLvl0filename (const std::string mcfilename)
 
 
 
+
 void getPMThigh(std::vector<RootCaloHit>, ushort* pmt_high) {
 
-   std::vector<PMTinfo> pmt_info(NPMT);
+   	std::vector<PMTinfo> pmt_info(NPMT) ;//=Edep2PMTinfoConverter(CaloHits,2.);
    std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
    std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
 
@@ -132,11 +131,17 @@ void getPMThigh(std::vector<RootCaloHit>, ushort* pmt_high) {
    return;
 }
 
-void getPMTlow(std::vector<RootCaloHit>, ushort* pmt_low) {
-   for (uint ip=0; ip<NPMT; ip++) {
-      pmt_low[ip]=ip;
-   }
-   return;
+
+void getPMTlow(std::vector<RootCaloHit> CaloHits, ushort* pmt_low) {
+
+	std::vector<PMTinfo> pmt_info(NPMT) ;//=Edep2PMTinfoConverter(CaloHits,1.);
+   std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
+   std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
+ 	for (uint ip=0; ip<NPMT; ip++) {
+    	  pmt_low[ip]=ip;
+   	}
+
+	return;
 }
 
 
