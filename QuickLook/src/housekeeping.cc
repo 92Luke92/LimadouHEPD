@@ -43,11 +43,11 @@ void HVPSMonitorToXML(TString rootname, TString xslPath = "")
   if (rootfile.IsTConf()){
      
      rootfile.SetTHVpmtPointer(HVpkt);
-     cout << endl << "HVPS Monitor to xml:" << rootname << endl;
+     //cout << endl << "HVPS Monitor to xml:" << rootname << endl;
 
   
      int THVpmt_entries = rootfile.GetTHVpmtEntries(); 
-     cout << "Number of THVpmt entries: " << THVpmt_entries << endl;
+     // cout << "Number of THVpmt entries: " << THVpmt_entries << endl;
   
      TString filename = rootname;
      filename.ReplaceAll(".root", 5, "_HVPSMonitor.xml", 16);
@@ -189,11 +189,11 @@ void DUMPConfigToXML(TString rootname, TString xslPath = "")
   if (rootfile.IsTConf()){
      
      rootfile.SetTConfPointer(dummyPKT);
-     cout << endl << "DUMP Config to xml:" << rootname << endl;
+     // cout << endl << "DUMP Config to xml:" << rootname << endl;
 
   
      int TConf_entries = rootfile.GetTConfEntries(); 
-     cout << "Number of TConf entries: " << TConf_entries << endl;
+     //cout << "Number of TConf entries: " << TConf_entries << endl;
   
      TString filename = rootname;
      filename.ReplaceAll(".root", 5, "_DUMPConfig.xml", 15);
@@ -318,7 +318,7 @@ void DUMPConfigToXML(TString rootname, TString xslPath = "")
 void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
 {
   
-  cout << endl << "Broadcast to xml:" << rootname << endl;
+  //cout << endl << "Broadcast to xml:" << rootname << endl;
 
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_Time.xml",9 );
@@ -359,16 +359,12 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
   
   // Metadata
   int Tmd_entries = rootfile.GetTmdEntries(); 
-  cout << "Number of Tmd entries: " << Tmd_entries << endl;
-
-
+  //cout << "Number of Tmd entries: " << Tmd_entries << endl;
 
   UInt_t OBDH_ms_vect[Tmd_entries];
   UInt_t  OBDH_sec_vect[Tmd_entries];
   UInt_t OBDH_timestamp_vect[Tmd_entries];
   UInt_t CPU_Time[Tmd_entries];
-
-
 
   for(int j=0;j<Tmd_entries;j++)
     {
@@ -568,7 +564,7 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
 void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 {
   
-  cout << endl << "CPU Time to xml:" << rootname << endl;
+  //cout << endl << "CPU Time to xml:" << rootname << endl;
 
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_CPUTimeTemp.xml", 16);
@@ -599,7 +595,7 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 
   // Metadata
   int Tmd_entries = rootfile.GetTmdEntries(); 
-  cout << "Number of Tmd entries: " << Tmd_entries << endl;
+  //cout << "Number of Tmd entries: " << Tmd_entries << endl;
 
   for(int j=0;j<Tmd_entries;j++)
     {
@@ -699,7 +695,7 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 void HVPSConfigToXML(TString rootname, TString xslPath = "")
 {
   
-  cout << endl <<  "HVPS to xml:" << rootname << endl;
+  //cout << endl <<  "HVPS to xml:" << rootname << endl;
 
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_HVPSConfig.xml", 15);
@@ -728,7 +724,7 @@ void HVPSConfigToXML(TString rootname, TString xslPath = "")
 
   // Metadata
   int Tmd_entries = rootfile.GetTmdEntries(); 
-  cout << "Number of Tmd entries: " << Tmd_entries << endl;
+  //cout << "Number of Tmd entries: " << Tmd_entries << endl;
   
   for(int j=0;j<Tmd_entries;j++)
     {
@@ -892,7 +888,7 @@ void HVPSConfigToXML(TString rootname, TString xslPath = "")
 void RunInfoToXML(TString rootname, TString xslPath = "")
 {
   
-  cout << endl << "Run Info to xml:" << rootname << endl;
+  //cout << endl << "Run Info to xml:" << rootname << endl;
   
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_RunInfo.xml", 12);
@@ -921,7 +917,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
   
   // Metadata
   int Tmd_entries = rootfile.GetTmdEntries(); 
-  cout << "Number of Tmd entries: " << Tmd_entries << endl;
+  //cout << "Number of Tmd entries: " << Tmd_entries << endl;
   
   UShort_t run_type_vect[Tmd_entries];
   UShort_t run_duration_vect[Tmd_entries];
@@ -1098,7 +1094,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 void ScintConfigToXML(TString rootname, TString xslPath = "")
 {
   
-  cout << endl <<  "Scint to xml:" << rootname << endl;
+  //cout << endl <<  "Scint to xml:" << rootname << endl;
 
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_ScintConfig.xml", 16);
@@ -1125,7 +1121,7 @@ void ScintConfigToXML(TString rootname, TString xslPath = "")
   
   // Metadata
   int Tmd_entries = rootfile.GetTmdEntries(); 
-  cout << "Number of Tmd entries: " << Tmd_entries << endl;
+  //cout << "Number of Tmd entries: " << Tmd_entries << endl;
   
   for(int j=0;j<Tmd_entries;j++)
     {
@@ -1244,7 +1240,7 @@ void ScintConfigToXML(TString rootname, TString xslPath = "")
 void SilConfigToXML(TString rootname, TString xslPath = "")
 {
   
-  cout << endl << "Sil to xml:" << rootname << endl;
+  //cout << endl << "Sil to xml:" << rootname << endl;
 
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_SilConfig.xml", 14);
@@ -1272,7 +1268,7 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
   
   // Metadata
   int Tmd_entries = rootfile.GetTmdEntries(); 
-  cout << "Number of Runs " << Tmd_entries << endl;
+  //cout << "Number of Runs " << Tmd_entries << endl;
   
   Bool_t ladder_on_top[Tmd_entries];
   Bool_t ladder_on_central[Tmd_entries];
@@ -1509,7 +1505,7 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
 void TelemetryToXML(TString rootname, TString xslPath = "")
 {
   
-  cout << endl << "Telemetry to xml:" << rootname << endl;
+  //cout << endl << "Telemetry to xml:" << rootname << endl;
   
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_Telemetry.xml", 14);
@@ -1572,7 +1568,7 @@ void TelemetryToXML(TString rootname, TString xslPath = "")
   UShort_t vect_boot_nr[k_start];
   UShort_t vect_run_id[k_start];
 
-  cout << "Number of Tmd entries: " << Tmd_entries << endl;
+  //cout << "Number of Tmd entries: " << Tmd_entries << endl;
    
   for(int j=0;j<Tmd_entries;j++)
     {
@@ -1648,18 +1644,12 @@ void TelemetryToXML(TString rootname, TString xslPath = "")
       if (vect_start_status_CPU_FSM[t]!=768)
 	outputFile << dec <<"\t<CPU_FSM_START_error>"   <<  1 << "</CPU_FSM_START_error>\n";
 
-      outputFile << showbase << hex << uppercase << "\t<DAQ_START>"
-		 << vect_start_status_DAQ[t] << "</DAQ_START>\n";
-      outputFile << showbase << hex << "\t<PMT_START>" <<
-	vect_start_status_PMT[t]  << "</PMT_START>\n";
-      outputFile << showbase << hex << "\t<TM_TC_START>" <<
-	vect_start_status_TM_TC[t] << "</TM_TC_START>\n";
-      outputFile << hex << "\t<HVPS_START>" <<   vect_start_status_HVPS[t]
-		 << "</HVPS_START>\n";
-      outputFile << hex << "\t<CPUboot_START>" <<   vect_start_status_CPU_boot[t]
-		 << "</CPUboot_START>\n";
-      outputFile << hex << "\t<CPU_FSM_START>" <<   vect_start_status_CPU_FSM[t]
-		 << "</CPU_FSM_START>\n";
+      outputFile << showbase << hex << uppercase << "\t<DAQ_START>" << vect_start_status_DAQ[t] << "</DAQ_START>\n";
+      outputFile << showbase << hex << "\t<PMT_START>" << vect_start_status_PMT[t]  << "</PMT_START>\n";
+      outputFile << showbase << hex << "\t<TM_TC_START>" << vect_start_status_TM_TC[t] << "</TM_TC_START>\n";
+      outputFile << hex << "\t<HVPS_START>" <<   vect_start_status_HVPS[t] << "</HVPS_START>\n";
+      outputFile << hex << "\t<CPUboot_START>" <<   vect_start_status_CPU_boot[t] << "</CPUboot_START>\n";
+      outputFile << hex << "\t<CPU_FSM_START>" <<   vect_start_status_CPU_FSM[t] << "</CPU_FSM_START>\n";
 
       stringstream ss;
       ss << hex << vect_stop_status_PMT[t];

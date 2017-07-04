@@ -20,7 +20,10 @@ private:
  public:
   static LScintillatorsL2& GetInstance();
   int LoadRun(const std::string inputFileROOT);
-  
+
+
+  void input_calib_pars(double *teq, double *equ, double *leq);
+  int DeviceStatus(double sn1, double sn2);
   int Test(int bar);
   int Calc(int hw_condition);//hw_condition = 0 all pmts; =1 no pmt 5east
   int Filter(int type, double *argums);//

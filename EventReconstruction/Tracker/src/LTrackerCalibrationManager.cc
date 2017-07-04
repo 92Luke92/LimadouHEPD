@@ -54,8 +54,9 @@ LTrackerCalibration* LTrackerCalibrationManager::Calibrate(const int nEvents, co
     int nEntries=calRunFile->GetEntries();
     if(nEntries<skipEvents+nEvents) return 0;
     int *pivot=0;
-    //int nSlots = CalculateCalibrationSlots(nEvents, skipEvents, nEntries, pivot); // 1 slot only by default!!!!
-    int nSlots = 1;
+    //int nSlots = CalculateCalibrationSlots(nEvents, skipEvents, nEntries, pivot); 
+    int nSlots = CalculateCalibrationUniqueSlot(nEvents, skipEvents, nEntries, pivot);// 1 slot only by default!!!!
+    //int nSlots = 1;
     
     for(int is=0; is<nSlots; ++is) result->Add(CalibrateSlot(pivot[is],pivot[is+1]));
   //}
@@ -75,6 +76,18 @@ int LTrackerCalibrationManager::CalculateCalibrationSlots(const int nEvents, con
   return nSlots;
 }
 
+int LTrackerCalibrationManager::CalculateCalibrationUniqueSlot(const int nEvents, const int skipEvents, const int nEntries, int* &pivot) {
+  int nEv=nEvents;
+  int skipEv=skipEvents;
+  if(nEvents==-1) nEv=nEntries;
+  if(skipEvents==-1) skipEv=0;
+  const int nSlots = 1;
+  pivot = new int[nSlots+1];
+  pivot[0] = skipEv;
+  pivot[1] = (skipEv+nEv<=nEntries ? skipEv+nEv : nEntries+1);
+
+  return nSlots;
+}
 LTrackerCalibrationSlot LTrackerCalibrationManager::CalibrateSlot(const int StartEntry, const int StopEntry) {
 
   if(calRunFile==0 || !(calRunFile->IsOpen())) {
