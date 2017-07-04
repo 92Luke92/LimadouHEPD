@@ -42,6 +42,7 @@ void getStrips (std::vector<RootTrackerHit>, short* strips);
 std::vector<float> CorrectPMThg(std::vector<PMTinfo>);
 std::vector<short> NormalizePMThg(std::vector<float>);
 std::vector<int> GetPMTHGPeds();
+int trackerMev2ADC (int channel);
 
 
 
@@ -183,4 +184,15 @@ std::vector<int> GetPMTHGPeds() {
         PMTHGPeds[ip]=currentped;
     }
     return PMTHGPeds;
+}
+
+
+int trackerMev2ADC (int channel) {
+
+//ladder 2 p-channel: 341.667 ADC/MeV
+//ladder 3 p-channel: 345.33 ADC/MeV
+//ladder 2 n-channel: 425.333 ADC/MeV
+//ladder 3 n-channel: not working
+    return 340;
+
 }
