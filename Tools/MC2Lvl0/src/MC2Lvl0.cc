@@ -4,7 +4,7 @@
 #include "PMTinfo.h"
 #include "LEvRec0Writer.hh"
 #include "MCcoorPhysicalFrame.hh"
-#include "pedVals.hh"
+#include "PMTnumbers.hh"
 //#include "MapEvents.hh"
 //#include "Edep2PMTinfoConverter.hh"
 
