@@ -36,7 +36,7 @@ float Vector3Dist(TVector3 v1, TVector3 v2)
 
 
 std::string  getMCfilename(int argc, char** argv) {
-   std::string filename="/storage/gpfs_data/limadou/mpuel/HEPDSW_had_v2/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root";
+   std::string filename="../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
    if (argc>1) filename=argv[1];
    std::cout << "MC2Lvl0: MC file name set to " << filename << std::endl;
    return filename;
@@ -83,15 +83,15 @@ int main(int argc, char** argv) {
 void LoopOnEvents(LEvRec0Writer* lvl0writer, TTree* Tmc) {
    int ne=Tmc->GetEntries();
 
-   RootEvent* MCevt=0;
-   TBranch* b_Event=0;
+   RootEvent* MCevt=new RootEvent;
+   TBranch* b_Event=new TBranch;
    Tmc->SetBranchAddress("Event", &MCevt, &b_Event);
 
    for (int ie=0; ie<ne; ie++) {
 
 
       int nb = Tmc->GetEntry(ie);
-      std::cout << ie << " " << nb << "\r" << std::flush;
+
 
         int eventid =  MCevt->EventID();
         //myTracks =  MCevt->GetTracks();
@@ -104,6 +104,9 @@ void LoopOnEvents(LEvRec0Writer* lvl0writer, TTree* Tmc) {
       //ev->pmt_high=Getpmt_high();
       //ev->pmt_low =Getpmt_low ();
       lvl0writer->Fill();
+      std::cout << ie << " " << nb << "\r" << std::flush;
    }
+   delete b_Event;
+   delete MCevt;
    std::cout << "Done" << std::endl;
 }
