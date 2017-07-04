@@ -26,40 +26,12 @@
 #include "LEvRec0.hh"
 
 
-struct PMTs {  ushort vals[NPMT]; };
-struct CHANs {  ushort vals[NCHAN]; };
 
-float Vector3Dist (TVector3 v1, TVector3 v2)
-{
-    TVector3 diff = v1 - v2;
-    return static_cast<float> (diff.Mag() ); // get magnitude (=rho=Sqrt(x*x+y*y+z*z)))
-}
-
-
-
-std::string  getMCfilename (int argc, char** argv)
-{
-    std::string filename = "../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
-    if (argc > 1) filename = argv[1];
-    std::cout << "MC2Lvl0: MC file name set to " << filename << std::endl;
-    return filename;
-}
-
-std::string  getLvl0filename (const std::string mcfilename)
-{
-    std::string lvl0filename = "test.root";
-    return lvl0filename;
-}
-
-
-
+float Vector3Dist (TVector3 v1, TVector3 v2);
+std::string  getMCfilename (int argc, char** argv);
+std::string  getLvl0filename (const std::string mcfilename);
 void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc);
-void getPMThigh(std::vector<RootCaloHit>, ushort* addresses) {
-   for (uint ip=0; ip<NPMT; ip++) {
-      addresses[ip]=ip;
-   }
-   return;
-}
+void getPMThigh(std::vector<RootCaloHit>, ushort* addresses);
 
 
 
@@ -108,4 +80,35 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     delete b_Event;
     delete MCevt;
     std::cout << "Done" << std::endl;
+}
+
+
+float Vector3Dist (TVector3 v1, TVector3 v2)
+{
+    TVector3 diff = v1 - v2;
+    return static_cast<float> (diff.Mag() ); // get magnitude (=rho=Sqrt(x*x+y*y+z*z)))
+}
+
+
+std::string  getMCfilename (int argc, char** argv)
+{
+    std::string filename = "../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
+    if (argc > 1) filename = argv[1];
+    std::cout << "MC2Lvl0: MC file name set to " << filename << std::endl;
+    return filename;
+}
+
+std::string  getLvl0filename (const std::string mcfilename)
+{
+    std::string lvl0filename = "test.root";
+    return lvl0filename;
+}
+
+
+
+void getPMThigh(std::vector<RootCaloHit>, ushort* addresses) {
+   for (uint ip=0; ip<NPMT; ip++) {
+      addresses[ip]=ip;
+   }
+   return;
 }
