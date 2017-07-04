@@ -26,87 +26,86 @@
 #include "LEvRec0.hh"
 
 
-float Vector3Dist(TVector3 v1, TVector3 v2)
+struct PMTs {  ushort vals[NPMT]; };
+struct CHANs {  ushort vals[NCHAN]; };
+
+float Vector3Dist (TVector3 v1, TVector3 v2)
 {
-   TVector3 diff= v1-v2;
-   return static_cast<float> (diff.Mag()); // get magnitude (=rho=Sqrt(x*x+y*y+z*z)))
-
+    TVector3 diff = v1 - v2;
+    return static_cast<float> (diff.Mag() ); // get magnitude (=rho=Sqrt(x*x+y*y+z*z)))
 }
 
 
 
-std::string  getMCfilename(int argc, char** argv) {
-   std::string filename="../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
-   if (argc>1) filename=argv[1];
-   std::cout << "MC2Lvl0: MC file name set to " << filename << std::endl;
-   return filename;
-
+std::string  getMCfilename (int argc, char** argv)
+{
+    std::string filename = "../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
+    if (argc > 1) filename = argv[1];
+    std::cout << "MC2Lvl0: MC file name set to " << filename << std::endl;
+    return filename;
 }
 
-std::string  getLvl0filename(const std::string mcfilename) {
-   std::string lvl0filename="test.root";
-   return lvl0filename;
-}
-
-
-
-void LoopOnEvents(LEvRec0Writer* lvl0writer, TTree* Tmc);
-
-
-
-int main(int argc, char** argv) {
-
-   const std::string mcfilename=getMCfilename(argc, argv);
-   const std::string lvl0filename=getLvl0filename(mcfilename);
-
-   TFile* filemc= TFile::Open(mcfilename.c_str(), "READ");
-   TTree* Tmc = (TTree*)filemc->Get("HEPD/EventTree");
-   std::cout << Tmc->GetEntries() << std::endl;
-
-   LEvRec0Writer lvl0writer(lvl0filename);
-   LoopOnEvents(&lvl0writer, Tmc);
-
-   lvl0writer.Write();
-   lvl0writer.Close();
-   delete Tmc;
-   filemc->Close();
-   delete filemc;
-
-   return 0;
-
-
+std::string  getLvl0filename (const std::string mcfilename)
+{
+    std::string lvl0filename = "test.root";
+    return lvl0filename;
 }
 
 
 
-
-void LoopOnEvents(LEvRec0Writer* lvl0writer, TTree* Tmc) {
-   int ne=Tmc->GetEntries();
-
-   RootEvent* MCevt=new RootEvent;
-   TBranch* b_Event=new TBranch;
-   Tmc->SetBranchAddress("Event", &MCevt, &b_Event);
-
-   for (int ie=0; ie<ne; ie++) {
-
-
-      int nb = Tmc->GetEntry(ie);
-
-
-        int eventid =  MCevt->EventID();
-        //myTracks =  MCevt->GetTracks();
-        //myCaloHit =  MCevt->GetCaloHit();
-        //myVetoHit =  MCevt->GetVetoHit();
-        //myTrackerHit =  MCevt->GetTrackerHit();
-
-      LEvRec0* ev=lvl0writer->pev();
-      ev->Reset();
-      //ev->pmt_high=Getpmt_high();
-      //ev->pmt_low =Getpmt_low ();
-      lvl0writer->Fill();
-      std::cout << ie << " " << nb << "\r" << std::flush;
+void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc);
+void getPMThigh(std::vector<RootCaloHit>, ushort* addresses) {
+   for (uint ip=0; ip<NPMT; ip++) {
+      addresses[ip]=ip;
    }
-   delete b_Event;
-   delete MCevt;
-   std::cout << "Done" << std::endl;
+   return;
+}
+
+
+
+int main (int argc, char** argv)
+{
+    const std::string mcfilename = getMCfilename (argc, argv);
+    const std::string lvl0filename = getLvl0filename (mcfilename);
+    TFile* filemc = TFile::Open (mcfilename.c_str(), "READ");
+    TTree* Tmc = (TTree*) filemc->Get ("HEPD/EventTree");
+    std::cout << Tmc->GetEntries() << std::endl;
+    LEvRec0Writer lvl0writer (lvl0filename);
+    LoopOnEvents (&lvl0writer, Tmc);
+    lvl0writer.Write();
+    lvl0writer.Close();
+    delete Tmc;
+    filemc->Close();
+    delete filemc;
+    return 0;
+}
+
+
+
+
+void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
+{
+    int ne = Tmc->GetEntries();
+    RootEvent* MCevt = new RootEvent;
+    TBranch* b_Event = new TBranch;
+    Tmc->SetBranchAddress ("Event", &MCevt, &b_Event);
+    for (int ie = 0; ie < ne; ie++) {
+        int nb = Tmc->GetEntry (ie);
+        int eventid =  MCevt->EventID();
+        std::vector<RootTrack> rootTracks =  MCevt->GetTracks();
+        std::vector<RootCaloHit> caloHits =  MCevt->GetCaloHit();
+        //Root  myVetoHit =  MCevt->GetVetoHit();
+        std::vector<RootTrackerHit>  trackerHits =  MCevt->GetTrackerHit();
+
+        LEvRec0* ev = lvl0writer->pev();
+        ev->Reset();
+        getPMThigh(caloHits, ev->pmt_high);
+        //GetPMThigh(caloHits, ev->pmt_high);
+
+        lvl0writer->Fill();
+        std::cout << ie << " " << nb << "\r" << std::flush;
+    }
+    delete b_Event;
+    delete MCevt;
+    std::cout << "Done" << std::endl;
 }
