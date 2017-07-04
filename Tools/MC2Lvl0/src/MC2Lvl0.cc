@@ -4,9 +4,11 @@
 #include "PMTinfo.h"
 #include "LEvRec0Writer.hh"
 #include "MCcoorPhysicalFrame.hh"
+
 #include "PMTnumbers.hh"
-//#include "MapEvents.hh"
-//#include "Edep2PMTinfoConverter.hh"
+#include "MapEvents.hh"
+#include "Edep2PMTinfoConverter.hh"
+
 
 // C++ std
 #include <iostream>

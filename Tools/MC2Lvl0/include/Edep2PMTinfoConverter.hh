@@ -1,3 +1,6 @@
+#include "MapEvents.hh"
+#include <vector>
+
 std::vector<PMTinfo> Edep2PMTinfoConverter(std::vector<RootCaloHit> CaloHits, float PMTgain){
 
    	MapEvents * Map= new MapEvents();
