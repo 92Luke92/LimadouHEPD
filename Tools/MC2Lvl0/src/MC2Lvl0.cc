@@ -185,7 +185,7 @@ std::vector<short> NormalizePMThg (std::vector<float> rawPMT)
 std::vector<int> GetPMTHGPeds()
 {
     std::vector<int>  PMTHGPeds (NPMT);
-    pedmap Pmap = getPMThgpeds();
+    pedmap Pmap = CaloPMTpedsHG;
     for (int ip = 0; ip < NPMT; ip++) {
         int currentped = 0;
         std::string current_name = PMTID[ip];
