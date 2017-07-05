@@ -49,6 +49,21 @@ std::vector<std::string> CaloPMTnames= {
 "P1se", "P2sw", "P3se", "P4sw", "P5se", "P6sw", "P7se", "P8sw", "P9se", "P10sw", "P11se", "P12sw", "P13se", "P14sw", "P15se", "P16sw",
 "P1nw", "P2ne", "P3nw", "P4ne", "P5nw", "P6ne", "P7nw", "P8ne", "P9nw", "P10ne", "P11nw", "P12ne", "P13nw", "P14ne", "P15nw", "P16ne"};
 
+std::vector<std::string> ScintPlanesNames () {
+   std::vector<std::string> planenames;
+   for (int ns=0; ns<2; ns++)
+      for (int il=CaloPMTnames.size()/2-1; il>=0; il--) {
+         std::string offset="Scintillator Layer[ Z";
+         if (il > 0 ) offset+="+"+std::to_string(il);
+         planenames.push_back(offset+" ]");
+
+      }
+   //for (auto v : planenames) std::cout << v << std::endl;
+   return planenames;
+}
+
+
+
 pedmap getPMThgpeds () {
    pedmap map;
    for (int i=0; i<CaloPMTnames.size(); i++) {
