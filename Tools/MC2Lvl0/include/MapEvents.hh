@@ -64,6 +64,7 @@ public:
 	void MapPMTs();
 	bool TestHitLayer(const std::string &detectorId,int layer);
 	std::vector<PMTinfo> FromEdep2PMTinfo();
+	std::vector<std::vector<PMTinfo>> TrackerHitInfo();
 };
 
 void MapEvents::LoadEvent(RootEvent   *Event){
@@ -115,7 +116,7 @@ void MapEvents::Mappify(){
 			if(layer==1215) Calo[1] .push_back(myCaloHit[ch]);
 			if(layer==1214) Calo[2] .push_back(myCaloHit[ch]);
 			if(layer==1213) Calo[3] .push_back(myCaloHit[ch]);
-			if(layer==1212) Calo[4] .push_back(myCaloHit[ch]);
+				if(layer==1212) Calo[4] .push_back(myCaloHit[ch]);
 			if(layer==1211) Calo[5] .push_back(myCaloHit[ch]);
 			if(layer==1210) Calo[6] .push_back(myCaloHit[ch]);
 			if(layer==1209) Calo[7] .push_back(myCaloHit[ch]);
@@ -147,6 +148,26 @@ void MapEvents::Mappify(){
 
 		MapPMTs();
 	}
+
+	if(myTrackerHit.size()>0){
+		for(size_t th=0;th<myTrackerHit.size();th++){
+			int layerTrack=myTrackerHit[th].GetDetectorId();
+			if(layerTrack==2211) Tracker[0] .push_back(myTrackerHit[th]);
+			if(layerTrack==2212) Tracker[1] .push_back(myTrackerHit[th]);
+			if(layerTrack==2221) Tracker[2] .push_back(myTrackerHit[th]);
+			if(layerTrack==2222) Tracker[3] .push_back(myTrackerHit[th]);
+			if(layerTrack==2231) Tracker[4] .push_back(myTrackerHit[th]);
+			if(layerTrack==2232) Tracker[5] .push_back(myTrackerHit[th]);
+			if(layerTrack==2111) Tracker[6] .push_back(myTrackerHit[th]);
+			if(layerTrack==2112) Tracker[7] .push_back(myTrackerHit[th]);
+			if(layerTrack==2121) Tracker[8] .push_back(myTrackerHit[th]);
+			if(layerTrack==2122) Tracker[9] .push_back(myTrackerHit[th]);
+			if(layerTrack==2131) Tracker[10].push_back(myTrackerHit[th]);
+			if(layerTrack==2132) Tracker[11].push_back(myTrackerHit[th]);
+
+		}
+	}	
+	return;
 }
 
 float GetCaloHitTotalEdep(RootCaloHit Hit){
@@ -173,7 +194,21 @@ float GetCaloHitEdepPrimary(RootCaloHit Hit){
 }
 
 
+float GetTrackerHitTotalEdep(RootTrackerHit Hit){
+        float edep=0;
+        edep=Hit.GetELoss();
+        return edep;
+}
+
 TVector3 GetImpactPoint(RootCaloHit Hit){
+	TVector3 ImpactPoint(0,0,0);
+	ImpactPoint.SetZ((Hit.GetExitPoint().z()+Hit.GetEntryPoint().z())/2);
+        ImpactPoint.SetX((Hit.GetExitPoint().x()+Hit.GetEntryPoint().x())/2);
+        ImpactPoint.SetY((Hit.GetExitPoint().y()+Hit.GetEntryPoint().y())/2);
+	return ImpactPoint;
+}
+
+TVector3 GetImpactPoint(RootTrackerHit Hit){
 	TVector3 ImpactPoint(0,0,0);
 	ImpactPoint.SetZ((Hit.GetExitPoint().z()+Hit.GetEntryPoint().z())/2);
         ImpactPoint.SetX((Hit.GetExitPoint().x()+Hit.GetEntryPoint().x())/2);
@@ -235,17 +270,26 @@ TVector3 MapEvents::GetCaloHitImpactPoint(const std::string &detectorId,int laye
 
 
 bool MapEvents::TestHitLayer(const std::string &detectorId,int layer){
-	std::vector<std::vector<RootCaloHit>> detector;
+	if((detectorId.compare("Tracker"))!=0){
+		std::vector<std::vector<RootCaloHit>> detector;
 
-	if((detectorId.compare("Trigger"))==0) detector=Trigger;
-        else if((detectorId.compare("Calo"))==0)    detector=Calo;
-        else if((detectorId.compare("LYSO"))==0)    detector=Lyso;
-        else if((detectorId.compare("Veto"))==0)    detector=Veto;
-        else { cout<<detectorId.compare("Calo")<<": "<<"Wrong detector ID"<<endl; return false;}
+		if((detectorId.compare("Trigger"))==0)      detector=Trigger;
+		else if((detectorId.compare("Calo"))==0)    detector=Calo;
+		else if((detectorId.compare("LYSO"))==0)    detector=Lyso;
+		else if((detectorId.compare("Veto"))==0)    detector=Veto;
 
-        if(layer>=detector.size()) { cout<<"Wrong layer ID"<<endl; return false;}
+		else { cout<<detectorId.compare("Calo")<<": "<<"Wrong detector ID"<<endl; return false;}
 
-	return (detector[layer].size()>0);
+		if(layer>=detector.size()) { cout<<"Wrong layer ID"<<endl; return false;}
+
+		return (detector[layer].size()>0);
+	}
+	else{
+		std::vector<std::vector<RootTrackerHit>> detector=Tracker;
+		if(layer>=detector.size()) { cout<<"Wrong layer ID"<<endl; return false;}
+		return (detector[layer].size()>0);
+	}
+
 }
 
 std::vector<PMTinfo> MapEvents::FromEdep2PMTinfo(){
@@ -264,5 +308,23 @@ std::vector<PMTinfo> MapEvents::FromEdep2PMTinfo(){
 	return LVL0;
 
 }
+
+
+std::vector<std::vector<PMTinfo>> MapEvents::TrackerHitInfo(){
+
+        std::vector<std::vector<PMTinfo>> trackerhitinfo;
+        for(int i=0;i<12;i++)  trackerhitinfo.push_back(std::vector<PMTinfo>());
+
+        for(int i=0;i<12;i++){
+                PMTinfo TrackerEdepPos;
+                trackerhitinfo[i].push_back(TrackerEdepPos);
+                if(TestHitLayer("Tracker",i)){
+                        trackerhitinfo[i][0].totEdep=GetTrackerHitTotalEdep(Tracker[i][0]);
+                        trackerhitinfo[i][0].position=GetImpactPoint(Tracker[i][0]);
+		}
+        }
+        return trackerhitinfo;
+}
+
 
 #endif

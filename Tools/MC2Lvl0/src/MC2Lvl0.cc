@@ -129,7 +129,7 @@ std::string  getLvl0filename (const std::string mcfilename)
 
 void getPMThigh(std::vector<RootCaloHit> CaloHits, ushort* pmt_high) {
 
-	std::vector<PMTinfo> pmt_info =Edep2PMTinfoConverter(CaloHits);
+	std::vector<PMTinfo> pmt_info =Calo2PMTinfoConverter(CaloHits);
 	std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
 	std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
 
@@ -142,7 +142,7 @@ void getPMThigh(std::vector<RootCaloHit> CaloHits, ushort* pmt_high) {
 
 void getPMTlow(std::vector<RootCaloHit> CaloHits, ushort* pmt_low) {
 
-	std::vector<PMTinfo> pmt_info =Edep2PMTinfoConverter(CaloHits);
+	std::vector<PMTinfo> pmt_info =Calo2PMTinfoConverter(CaloHits);
 	std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
 	std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
 	for (uint ip=0; ip<NPMT; ip++) {
@@ -153,7 +153,9 @@ void getPMTlow(std::vector<RootCaloHit> CaloHits, ushort* pmt_low) {
 }
 
 
-void getStrips (std::vector<RootTrackerHit>, short* strips) {
+void getStrips (std::vector<RootTrackerHit> TrackerHits, short* strips) {
+	std::vector<std::vector<PMTinfo>> TrackerEdepPos = Tracker2PMTinfoConverter(TrackerHits);
+
 	for (uint ic=0; ic<NCHAN; ic++) {
 		strips[ic]=ic%20;
 	}
