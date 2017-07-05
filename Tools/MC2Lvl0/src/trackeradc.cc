@@ -7,6 +7,7 @@
 
 
 #include "trackeradc.hh"
+#include <iostream>
 
 
 
@@ -51,11 +52,13 @@ std::vector<short> TrackerADC::getStripsForSide (trSides side) {
    float totEdep=0;
    std::vector<Edep_Pos> SidePMTinfos = allEpos[side];
    for (auto chaninfo: SidePMTinfos) totEdep+=chaninfo.totEdep;
-   float averagedEdep=totEdep / float(SIDE_CHAN);
+   //std::cout << " >> " << side<< " "<< totEdep << std::endl;
+   float averagedEdep=totEdep ; // / float(SIDE_CHAN);
    float averageADC= averagedEdep*Mev2ADCfactor;
    float dummypedvalue=100;
    short chanADC=TrimADC(averageADC, dummypedvalue);
-   for (auto strip : sideStrips) strip=chanADC;
+   sideStrips.assign (SIDE_CHAN, chanADC);
+
    return sideStrips;
 
 }

@@ -12,6 +12,7 @@
 // C++ std
 #include <iostream>
 #include <string>
+#include <cmath>
 
 // MCEventAnalyze
 #include "RootEvent.hh"
@@ -43,7 +44,7 @@ void getStrips (std::vector<RootTrackerHit>, short* strips);
 std::vector<float> CorrectPMThg (std::vector<Edep_Pos>);
 std::vector<short> NormalizePMThg (std::vector<float>);
 std::vector<int> GetPMTHGPeds();
-
+float PMTAttCorr (float dist);
 
 
 
@@ -85,11 +86,11 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
         getPMTlow (caloHits, ev->pmt_low);
         getStrips (trackerHits, ev->strip);
         lvl0writer->Fill();
-        std::cout << ie << " " << nb << "\r" << std::flush;
+        std::cout << ie << "\r" << std::flush;
     }
     delete b_Event;
     delete MCevt;
-    std::cout << "Done" << std::endl;
+    std::cout << "Done     " << std::endl;
 }
 
 
@@ -102,8 +103,8 @@ float Vector3Dist (TVector3 v1, TVector3 v2)
 
 float VectorXYDist (TVector3 v1, TVector3 v2)
 {
-    v2.SetZ(v1.Z());
-    return Vector3Dist(v1, v2);
+    v2.SetZ (v1.Z() );
+    return Vector3Dist (v1, v2);
 }
 
 
@@ -125,47 +126,58 @@ std::string  getLvl0filename (const std::string mcfilename)
 
 
 
-void getPMThigh(std::vector<RootCaloHit> CaloHits, ushort* pmt_high) {
-
-	std::vector<Edep_Pos> pmt_info =Calo2Edep_PosConverter(CaloHits);
-	std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
-	std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
-
-	for (uint ip=0; ip<NPMT; ip++) {
-		pmt_high[ip]=normalizedPMThg[ip];
-	}
-	return;
+void getPMThigh (std::vector<RootCaloHit> CaloHits, ushort* pmt_high)
+{
+    std::vector<Edep_Pos> pmt_info = Calo2Edep_PosConverter (CaloHits);
+    std::vector<float> correctedPMThg = CorrectPMThg (pmt_info);
+    std::vector<short> normalizedPMThg = NormalizePMThg (correctedPMThg);
+    for (uint ip = 0; ip < NPMT; ip++) {
+        pmt_high[ip] = normalizedPMThg[ip];
+    }
+    return;
 }
 
 
-void getPMTlow(std::vector<RootCaloHit> CaloHits, ushort* pmt_low) {
-
-	std::vector<Edep_Pos> pmt_info =Calo2Edep_PosConverter(CaloHits);
-	std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
-	std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
-	for (uint ip=0; ip<NPMT; ip++) {
-		pmt_low[ip]=ip;
-	}
-
-	return;
+void getPMTlow (std::vector<RootCaloHit> CaloHits, ushort* pmt_low)
+{
+    std::vector<Edep_Pos> pmt_info = Calo2Edep_PosConverter (CaloHits);
+    std::vector<float> correctedPMThg = CorrectPMThg (pmt_info);
+    std::vector<short> normalizedPMThg = NormalizePMThg (correctedPMThg);
+    for (uint ip = 0; ip < NPMT; ip++) {
+        pmt_low[ip] = ip;
+    }
+    return;
 }
 
 
-void getStrips (std::vector<RootTrackerHit> TrackerHits, short* strips) {
-	std::vector<std::vector<Edep_Pos>> TrackerEdepPos = Tracker2Edep_PosConverter(TrackerHits);
-
-	for (uint ic=0; ic<NCHAN; ic++) {
-		strips[ic]=ic%20;
-	}
-	return;
+void getStrips (std::vector<RootTrackerHit> TrackerHits, short* strips)
+{
+    std::vector<std::vector<Edep_Pos>> TrackerEdepPos = Tracker2Edep_PosConverter (TrackerHits);
+     TrackerADC trkadc(TrackerEdepPos);
+    std::vector<short> trkstrips=trkadc.GetStrips();
+    for (uint ic = 0; ic < NCHAN; ic++) {
+        strips[ic] = trkstrips[ic];
+    }
+    return;
 }
 
 
 std::vector<float> CorrectPMThg (std::vector<Edep_Pos> pmt_info)
 {
     std::vector<float>   correctedPMTs (NPMT);
+    posmap PMTposmap=getPosMap();
+
     for (int ip = 0; ip < NPMT; ip++) {
         correctedPMTs[ip] = pmt_info[ip].totEdep;
+        auto index = std::find (CaloPMTnames.begin(), CaloPMTnames.end(), PMTID[ip]);
+        if (index != CaloPMTnames.end() ) {
+            int PMTindex = std::distance (CaloPMTnames.begin(), index);
+            TVector3 PMTpos=PMTposmap[PMTID[ip]];
+            TVector3 ParticlePos=pmt_info[ip].position;
+            float distance=VectorXYDist(PMTpos, ParticlePos);
+            float attcor=PMTAttCorr(distance);
+            correctedPMTs[ip]*=attcor;
+        }
     }
     return correctedPMTs;
 }
@@ -197,3 +209,44 @@ std::vector<int> GetPMTHGPeds()
 }
 
 
+int GetScintLayer (std::string PMT)
+{
+    int layer = -1;
+    auto index = std::find (CaloPMTnames.begin(), CaloPMTnames.end(), PMT);
+    if (index != CaloPMTnames.end() ) {
+        int PMTindex = std::distance (CaloPMTnames.begin(), index);
+        layer = PMTindex % (CaloPMTnames.size() % 2);
+    }
+    return layer;
+}
+
+float EcalMev2ADCfactorHG (std::string PMT)
+{
+    float MaxMeVlayer = 15;
+    int layer = GetScintLayer (PMT);
+    if (layer >= 0)   MaxMeVlayer = MeVPeakLayer[layer];
+    float absMaxADCLayer = PMTMaxPeakHG[PMT];
+    float pedLayer = CaloPMTpedsHG[PMT].mean;
+    float relMaxADClayer = absMaxADCLayer - pedLayer;
+    float MeV2ADC = relMaxADClayer / MaxMeVlayer;
+    return MeV2ADC;
+}
+
+float EcalMev2ADCfactorLG (std::string PMT)
+{
+    float MaxMeVlayer = 15;
+    int layer = GetScintLayer (PMT);
+    if (layer >= 0)   MaxMeVlayer = MeVPeakLayer[layer];
+    float absMaxADCLayer = PMTMaxPeakLG[PMT];
+    float pedLayer = CaloPMTpedsLG[PMT].mean;
+    float relMaxADClayer = absMaxADCLayer - pedLayer;
+    float MeV2ADC = relMaxADClayer / MaxMeVlayer;
+    return MeV2ADC;
+}
+
+
+float PMTAttCorr (float dist)
+{
+    float lambda = 2764.; //mm
+    return exp (- dist / lambda);
+}
