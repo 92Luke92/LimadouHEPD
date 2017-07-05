@@ -38,11 +38,11 @@ float Vector3Dist (TVector3 v1, TVector3 v2);
 std::string  getMCfilename (int argc, char** argv);
 std::string  getLvl0filename (const std::string mcfilename);
 void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc);
-void getPMThigh(std::vector<RootCaloHit>, ushort * pmt_high);
+void getPMThigh (std::vector<RootCaloHit>, ushort * pmt_high);
 void getPMTlow (std::vector<RootCaloHit>, ushort * pmt_low);
 void getStrips (std::vector<RootTrackerHit>, short* strips);
-std::vector<float> CorrectPMThg(std::vector<PMTinfo>);
-std::vector<short> NormalizePMThg(std::vector<float>);
+std::vector<float> CorrectPMThg (std::vector<PMTinfo>);
+std::vector<short> NormalizePMThg (std::vector<float>);
 std::vector<int> GetPMTHGPeds();
 int trackerMev2ADC (int channel);
 
@@ -78,17 +78,14 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     for (int ie = 0; ie < ne; ie++) {
         int nb = Tmc->GetEntry (ie);
         int eventid =  MCevt->EventID();
-
-	std::vector<RootTrack> rootTracks =  MCevt->GetTracks();
+        std::vector<RootTrack> rootTracks =  MCevt->GetTracks();
         std::vector<RootCaloHit> caloHits =  MCevt->GetCaloHit();
         std::vector<RootTrackerHit>  trackerHits =  MCevt->GetTrackerHit();
         LEvRec0* ev = lvl0writer->pev();
         ev->Reset();
-        getPMThigh(caloHits, ev->pmt_high);
-        getPMTlow(caloHits, ev->pmt_low);
-        getStrips(trackerHits, ev->strip);
-
-
+        getPMThigh (caloHits, ev->pmt_high);
+        getPMTlow (caloHits, ev->pmt_low);
+        getStrips (trackerHits, ev->strip);
         lvl0writer->Fill();
         std::cout << ie << " " << nb << "\r" << std::flush;
     }
@@ -102,6 +99,13 @@ float Vector3Dist (TVector3 v1, TVector3 v2)
 {
     TVector3 diff = v1 - v2;
     return static_cast<float> (diff.Mag() ); // get magnitude (=rho=Sqrt(x*x+y*y+z*z)))
+}
+
+
+float VectorXYDist (TVector3 v1, TVector3 v2)
+{
+    v2.z()=v1.z()
+    return Vector3Dist(v1, v2);
 }
 
 
@@ -122,79 +126,80 @@ std::string  getLvl0filename (const std::string mcfilename)
 
 
 
-void getPMThigh(std::vector<RootCaloHit>, ushort* pmt_high) {
-
-   	std::vector<PMTinfo> pmt_info(NPMT) ;//=Edep2PMTinfoConverter(CaloHits,2.);
-   std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
-   std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
-
-   for (uint ip=0; ip<NPMT; ip++) {
-      pmt_high[ip]=normalizedPMThg[ip];
-   }
-   return;
+void getPMThigh (std::vector<RootCaloHit>, ushort* pmt_high)
+{
+    std::vector<PMTinfo> pmt_info (NPMT) ; //=Edep2PMTinfoConverter(CaloHits,2.);
+    std::vector<float> correctedPMThg = CorrectPMThg (pmt_info);
+    std::vector<short> normalizedPMThg = NormalizePMThg (correctedPMThg);
+    for (uint ip = 0; ip < NPMT; ip++) {
+        pmt_high[ip] = normalizedPMThg[ip];
+    }
+    return;
 }
 
 
-void getPMTlow(std::vector<RootCaloHit> CaloHits, ushort* pmt_low) {
-
-	std::vector<PMTinfo> pmt_info(NPMT) ;//=Edep2PMTinfoConverter(CaloHits,1.);
-   std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
-   std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
- 	for (uint ip=0; ip<NPMT; ip++) {
-    	  pmt_low[ip]=ip;
-   	}
-
-	return;
+void getPMTlow (std::vector<RootCaloHit> CaloHits, ushort* pmt_low)
+{
+    std::vector<PMTinfo> pmt_info (NPMT) ; //=Edep2PMTinfoConverter(CaloHits,1.);
+    std::vector<float> correctedPMThg = CorrectPMThg (pmt_info);
+    std::vector<short> normalizedPMThg = NormalizePMThg (correctedPMThg);
+    for (uint ip = 0; ip < NPMT; ip++) {
+        pmt_low[ip] = ip;
+    }
+    return;
 }
 
 
-void getStrips (std::vector<RootTrackerHit>, short* strips) {
-   for (uint ic=0; ic<NCHAN; ic++) {
-      strips[ic]=ic%20;
-   }
-   return;
+void getStrips (std::vector<RootTrackerHit>, short* strips)
+{
+    for (uint ic = 0; ic < NCHAN; ic++) {
+        strips[ic] = ic % 20;
+    }
+    return;
 }
 
 
-std::vector<float> CorrectPMThg(std::vector<PMTinfo> pmt_info) {
-    std::vector<float>   correctedPMTs(NPMT);
-    for (int ip=0; ip<NPMT; ip++) {
-        correctedPMTs[ip]=pmt_info[ip].totEdep;
+std::vector<float> CorrectPMThg (std::vector<PMTinfo> pmt_info)
+{
+    std::vector<float>   correctedPMTs (NPMT);
+    for (int ip = 0; ip < NPMT; ip++) {
+        correctedPMTs[ip] = pmt_info[ip].totEdep;
     }
     return correctedPMTs;
 }
 
-std::vector<short> NormalizePMThg(std::vector<float> rawPMT) {
-    std::vector<short>  nPMTHG(NPMT);
+std::vector<short> NormalizePMThg (std::vector<float> rawPMT)
+{
+    std::vector<short>  nPMTHG (NPMT);
     std::vector<int> ped = GetPMTHGPeds();
-    for (int ip=0; ip<NPMT; ip++) {
-        int untrimmedPMT=static_cast<int>(rawPMT[ip])+ped[ip];
-        if (untrimmedPMT>NADC) untrimmedPMT=NADC-1;
-        nPMTHG[ip]=static_cast<short> (untrimmedPMT);
+    for (int ip = 0; ip < NPMT; ip++) {
+        int untrimmedPMT = static_cast<int> (rawPMT[ip]) + ped[ip];
+        if (untrimmedPMT > NADC) untrimmedPMT = NADC - 1;
+        nPMTHG[ip] = static_cast<short> (untrimmedPMT);
     }
     return nPMTHG;
 }
 
-std::vector<int> GetPMTHGPeds() {
-    std::vector<int>  PMTHGPeds(NPMT);
-    pedmap Pmap=getPMThgpeds();
-    for (int ip=0; ip<NPMT; ip++) {
-        int currentped=0;
-        std::string current_name=PMTID[ip];
-        pedmap::iterator iter=Pmap.find(current_name);
-        if (iter!=Pmap.end()) currentped=static_cast<int> (iter->second.mean);
-        PMTHGPeds[ip]=currentped;
+std::vector<int> GetPMTHGPeds()
+{
+    std::vector<int>  PMTHGPeds (NPMT);
+    pedmap Pmap = getPMThgpeds();
+    for (int ip = 0; ip < NPMT; ip++) {
+        int currentped = 0;
+        std::string current_name = PMTID[ip];
+        pedmap::iterator iter = Pmap.find (current_name);
+        if (iter != Pmap.end() ) currentped = static_cast<int> (iter->second.mean);
+        PMTHGPeds[ip] = currentped;
     }
     return PMTHGPeds;
 }
 
 
-int trackerMev2ADC (int channel) {
-
+int trackerMev2ADC (int channel)
+{
 //ladder 2 p-channel: 341.667 ADC/MeV
 //ladder 3 p-channel: 345.33 ADC/MeV
 //ladder 2 n-channel: 425.333 ADC/MeV
 //ladder 3 n-channel: not working
     return 340;
-
 }
