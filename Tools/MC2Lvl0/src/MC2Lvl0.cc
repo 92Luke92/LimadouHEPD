@@ -104,9 +104,10 @@ float Vector3Dist (TVector3 v1, TVector3 v2)
 
 float VectorXYDist (TVector3 v1, TVector3 v2)
 {
-    v2.z()=v1.z()
+    v2.SetZ(v1.Z());
     return Vector3Dist(v1, v2);
 }
+
 
 
 std::string  getMCfilename (int argc, char** argv)
@@ -126,36 +127,37 @@ std::string  getLvl0filename (const std::string mcfilename)
 
 
 
-void getPMThigh (std::vector<RootCaloHit>, ushort* pmt_high)
-{
-    std::vector<PMTinfo> pmt_info (NPMT) ; //=Edep2PMTinfoConverter(CaloHits,2.);
-    std::vector<float> correctedPMThg = CorrectPMThg (pmt_info);
-    std::vector<short> normalizedPMThg = NormalizePMThg (correctedPMThg);
-    for (uint ip = 0; ip < NPMT; ip++) {
-        pmt_high[ip] = normalizedPMThg[ip];
-    }
-    return;
+void getPMThigh(std::vector<RootCaloHit> CaloHits, ushort* pmt_high) {
+
+	std::vector<PMTinfo> pmt_info =Edep2PMTinfoConverter(CaloHits);
+	std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
+	std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
+
+	for (uint ip=0; ip<NPMT; ip++) {
+		pmt_high[ip]=normalizedPMThg[ip];
+	}
+	return;
 }
 
 
-void getPMTlow (std::vector<RootCaloHit> CaloHits, ushort* pmt_low)
-{
-    std::vector<PMTinfo> pmt_info (NPMT) ; //=Edep2PMTinfoConverter(CaloHits,1.);
-    std::vector<float> correctedPMThg = CorrectPMThg (pmt_info);
-    std::vector<short> normalizedPMThg = NormalizePMThg (correctedPMThg);
-    for (uint ip = 0; ip < NPMT; ip++) {
-        pmt_low[ip] = ip;
-    }
-    return;
+void getPMTlow(std::vector<RootCaloHit> CaloHits, ushort* pmt_low) {
+
+	std::vector<PMTinfo> pmt_info =Edep2PMTinfoConverter(CaloHits);
+	std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
+	std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
+	for (uint ip=0; ip<NPMT; ip++) {
+		pmt_low[ip]=ip;
+	}
+
+	return;
 }
 
 
-void getStrips (std::vector<RootTrackerHit>, short* strips)
-{
-    for (uint ic = 0; ic < NCHAN; ic++) {
-        strips[ic] = ic % 20;
-    }
-    return;
+void getStrips (std::vector<RootTrackerHit>, short* strips) {
+	for (uint ic=0; ic<NCHAN; ic++) {
+		strips[ic]=ic%20;
+	}
+	return;
 }
 
 
