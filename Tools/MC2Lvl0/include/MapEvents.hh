@@ -17,7 +17,7 @@
 #include <vector>
 
 //Local
-#include "PMTinfo.h"
+#include "Edep_Pos.h"
 
 using namespace std;
 
@@ -63,8 +63,8 @@ public:
 	TVector3  GetCaloHitImpactPoint(const std::string &detectorId,int layer);
 	void MapPMTs();
 	bool TestHitLayer(const std::string &detectorId,int layer);
-	std::vector<PMTinfo> FromEdep2PMTinfo();
-	std::vector<std::vector<PMTinfo>> TrackerHitInfo();
+	std::vector<Edep_Pos> FromEdep2Edep_Pos();
+	std::vector<std::vector<Edep_Pos>> TrackerHitInfo();
 };
 
 void MapEvents::LoadEvent(RootEvent   *Event){
@@ -292,12 +292,12 @@ bool MapEvents::TestHitLayer(const std::string &detectorId,int layer){
 
 }
 
-std::vector<PMTinfo> MapEvents::FromEdep2PMTinfo(){
+std::vector<Edep_Pos> MapEvents::FromEdep2Edep_Pos(){
 
-	std::vector<PMTinfo> LVL0;
+	std::vector<Edep_Pos> LVL0;
 
 	for(int i=0;i<PMTMap.size();i++){
-		PMTinfo PMT;
+		Edep_Pos PMT;
 		LVL0.push_back(PMT);
 	}
 
@@ -310,13 +310,13 @@ std::vector<PMTinfo> MapEvents::FromEdep2PMTinfo(){
 }
 
 
-std::vector<std::vector<PMTinfo>> MapEvents::TrackerHitInfo(){
+std::vector<std::vector<Edep_Pos>> MapEvents::TrackerHitInfo(){
 
-        std::vector<std::vector<PMTinfo>> trackerhitinfo;
-        for(int i=0;i<12;i++)  trackerhitinfo.push_back(std::vector<PMTinfo>());
+        std::vector<std::vector<Edep_Pos>> trackerhitinfo;
+        for(int i=0;i<12;i++)  trackerhitinfo.push_back(std::vector<Edep_Pos>());
 
         for(int i=0;i<12;i++){
-                PMTinfo TrackerEdepPos;
+                Edep_Pos TrackerEdepPos;
                 trackerhitinfo[i].push_back(TrackerEdepPos);
                 if(TestHitLayer("Tracker",i)){
                         trackerhitinfo[i][0].totEdep=GetTrackerHitTotalEdep(Tracker[i][0]);

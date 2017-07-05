@@ -1,13 +1,13 @@
 // Local
 #include "detectorID.h"
 #include "PMTID.h"
-#include "PMTinfo.h"
+#include "Edep_Pos.h"
 #include "LEvRec0Writer.hh"
 #include "MCcoorPhysicalFrame.hh"
 
 #include "PMTnumbers.hh"
 #include "MapEvents.hh"
-#include "Edep2PMTinfoConverter.hh"
+#include "Edep2Edep_PosConverter.hh"
 
 
 // C++ std
@@ -41,7 +41,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc);
 void getPMThigh (std::vector<RootCaloHit>, ushort * pmt_high);
 void getPMTlow (std::vector<RootCaloHit>, ushort * pmt_low);
 void getStrips (std::vector<RootTrackerHit>, short* strips);
-std::vector<float> CorrectPMThg (std::vector<PMTinfo>);
+std::vector<float> CorrectPMThg (std::vector<Edep_Pos>);
 std::vector<short> NormalizePMThg (std::vector<float>);
 std::vector<int> GetPMTHGPeds();
 int trackerMev2ADC (int channel);
@@ -129,7 +129,7 @@ std::string  getLvl0filename (const std::string mcfilename)
 
 void getPMThigh(std::vector<RootCaloHit> CaloHits, ushort* pmt_high) {
 
-	std::vector<PMTinfo> pmt_info =Calo2PMTinfoConverter(CaloHits);
+	std::vector<Edep_Pos> pmt_info =Calo2Edep_PosConverter(CaloHits);
 	std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
 	std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
 
@@ -142,7 +142,7 @@ void getPMThigh(std::vector<RootCaloHit> CaloHits, ushort* pmt_high) {
 
 void getPMTlow(std::vector<RootCaloHit> CaloHits, ushort* pmt_low) {
 
-	std::vector<PMTinfo> pmt_info =Calo2PMTinfoConverter(CaloHits);
+	std::vector<Edep_Pos> pmt_info =Calo2Edep_PosConverter(CaloHits);
 	std::vector<float> correctedPMThg=CorrectPMThg(pmt_info);
 	std::vector<short> normalizedPMThg =NormalizePMThg(correctedPMThg);
 	for (uint ip=0; ip<NPMT; ip++) {
@@ -154,7 +154,7 @@ void getPMTlow(std::vector<RootCaloHit> CaloHits, ushort* pmt_low) {
 
 
 void getStrips (std::vector<RootTrackerHit> TrackerHits, short* strips) {
-	std::vector<std::vector<PMTinfo>> TrackerEdepPos = Tracker2PMTinfoConverter(TrackerHits);
+	std::vector<std::vector<Edep_Pos>> TrackerEdepPos = Tracker2Edep_PosConverter(TrackerHits);
 
 	for (uint ic=0; ic<NCHAN; ic++) {
 		strips[ic]=ic%20;
@@ -163,7 +163,7 @@ void getStrips (std::vector<RootTrackerHit> TrackerHits, short* strips) {
 }
 
 
-std::vector<float> CorrectPMThg (std::vector<PMTinfo> pmt_info)
+std::vector<float> CorrectPMThg (std::vector<Edep_Pos> pmt_info)
 {
     std::vector<float>   correctedPMTs (NPMT);
     for (int ip = 0; ip < NPMT; ip++) {
