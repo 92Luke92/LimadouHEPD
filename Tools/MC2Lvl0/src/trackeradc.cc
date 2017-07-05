@@ -49,7 +49,7 @@ std::vector<short> TrackerADC::getStripsForSide (trSides side) {
    std::vector<short> sideStrips (SIDE_CHAN);
    float Mev2ADCfactor=Mev2ADCFactor(side);
    float totEdep=0;
-   std::vector<PMTinfo> SidePMTinfos = PMTinfos[side];
+   std::vector<Edep_Pos> SidePMTinfos = allEpos[side];
    for (auto chaninfo: SidePMTinfos) totEdep+=chaninfo.totEdep;
    float averagedEdep=totEdep / float(SIDE_CHAN);
    float averageADC= averagedEdep*Mev2ADCfactor;

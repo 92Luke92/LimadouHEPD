@@ -1,5 +1,5 @@
 #include "detectorID.h"
-#include "PMTID.h"
+#include "PMTnumbers.hh"
 #include <iostream>
 
 

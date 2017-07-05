@@ -1,6 +1,5 @@
 // Local
 #include "detectorID.h"
-#include "PMTID.h"
 #include "Edep_Pos.h"
 #include "LEvRec0Writer.hh"
 #include "MCcoorPhysicalFrame.hh"
