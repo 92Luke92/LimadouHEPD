@@ -25,12 +25,12 @@ class MapEvents{
 
 private:
 
-	//Memory	
-	int eventid; 
+	//Memory
+	int eventid;
 	std::vector<RootTrack> myTracks;
 	std::vector<RootCaloHit> myCaloHit;
 	std::vector<RootCaloHit> myVetoHit;
-	std::vector<RootTrackerHit> myTrackerHit; 		
+	std::vector<RootTrackerHit> myTrackerHit;
 
 	//"Maps"
 	std::vector<std::vector<RootCaloHit>>    Trigger;
@@ -63,11 +63,11 @@ public:
 	TVector3  GetCaloHitImpactPoint(const std::string &detectorId,int layer);
 	void MapPMTs();
 	bool TestHitLayer(const std::string &detectorId,int layer);
-	std::vector<PMTinfo> FromEdep2PMTinfo(float gain);
+	std::vector<PMTinfo> FromEdep2PMTinfo();
 };
 
 void MapEvents::LoadEvent(RootEvent   *Event){
-	
+
 	eventid =  Event->EventID();
         myTracks =  Event->GetTracks();
         myCaloHit =  Event->GetCaloHit();
@@ -79,7 +79,7 @@ void MapEvents::MapPMTs(){
 	for(int PMTnr=0;PMTnr<6;PMTnr++)
 		if(TestHitLayer("Trigger",PMTnr)){ PMTMap[PMTnr+0] =Trigger[PMTnr][0];
                 PMTMap[PMTnr+32]=Trigger[PMTnr][0];
-        } 
+        }
 	for(int PMTnr=0;PMTnr<16;PMTnr++)
 		if(TestHitLayer("Calo",PMTnr)){ PMTMap[PMTnr+6] =Calo[PMTnr][0];
                 PMTMap[PMTnr+39]=Calo[PMTnr][0];
@@ -92,7 +92,7 @@ void MapEvents::MapPMTs(){
 		if(TestHitLayer("LYSO",PMTnr)) PMTMap[PMTnr+26] =Lyso[PMTnr][0];
        	for(int PMTnr=5;PMTnr<9;PMTnr++)
 		if(TestHitLayer("LYSO",PMTnr)) PMTMap[(PMTnr-5)+59] =Lyso[PMTnr][0];
-        						
+
 
 	return;
 }
@@ -145,7 +145,7 @@ void MapEvents::Mappify(){
 			if(layer==1430) Veto[4] .push_back(myCaloHit[ch]);
 		}
 
-		MapPMTs();	
+		MapPMTs();
 	}
 }
 
@@ -154,7 +154,7 @@ float GetCaloHitTotalEdep(RootCaloHit Hit){
 	std::vector<int> plist = Hit.GetParticleList();
         int nplist = (int) plist.size();
 
-	for(int p = 0; p < nplist; p++)	
+	for(int p = 0; p < nplist; p++)
 		edep+=Hit.GetEdep(plist[p]);
 
 	return edep;
@@ -166,7 +166,7 @@ float GetCaloHitEdepPrimary(RootCaloHit Hit){
 	std::vector<int> plist = Hit.GetParticleList();
         int nplist = (int) plist.size();
 
-	for(int p = 0; p < nplist; p++)	
+	for(int p = 0; p < nplist; p++)
 		if(plist[p]==1) edep+=Hit.GetEdep(plist[p]);
 
 	return edep;
@@ -184,32 +184,32 @@ TVector3 GetImpactPoint(RootCaloHit Hit){
 float MapEvents::GetCaloLayerEdep(const std::string &detectorId,int layer){
 
 	std::vector<std::vector<RootCaloHit>> detector;
-	
-	if((detectorId.compare("Trigger"))==0) detector=Trigger;	
-	else if((detectorId.compare("Calo"))==0)    detector=Calo;	
-	else if((detectorId.compare("LYSO"))==0)    detector=Lyso;	
-	else if((detectorId.compare("Veto"))==0)    detector=Veto;	
+
+	if((detectorId.compare("Trigger"))==0) detector=Trigger;
+	else if((detectorId.compare("Calo"))==0)    detector=Calo;
+	else if((detectorId.compare("LYSO"))==0)    detector=Lyso;
+	else if((detectorId.compare("Veto"))==0)    detector=Veto;
 	else { cout<<detectorId.compare("Calo")<<": "<<"Wrong detector ID"<<endl; return 0;}
-	
+
 	if(layer>=detector.size()) { cout<<"Wrong layer ID"<<endl; return 0;}
-	
-	if(detector[layer].size()>0) return GetCaloHitTotalEdep(detector[layer][0]);	
+
+	if(detector[layer].size()>0) return GetCaloHitTotalEdep(detector[layer][0]);
 	else return 0;
 }
 
 float MapEvents::GetCaloLayerEdepPrim(const std::string &detectorId,int layer){
 
 	std::vector<std::vector<RootCaloHit>> detector;
-	
-	if((detectorId.compare("Trigger"))==0) detector=Trigger;	
-	else if((detectorId.compare("Calo"))==0)    detector=Calo;	
-	else if((detectorId.compare("LYSO"))==0)    detector=Lyso;	
-	else if((detectorId.compare("Veto"))==0)    detector=Veto;	
+
+	if((detectorId.compare("Trigger"))==0) detector=Trigger;
+	else if((detectorId.compare("Calo"))==0)    detector=Calo;
+	else if((detectorId.compare("LYSO"))==0)    detector=Lyso;
+	else if((detectorId.compare("Veto"))==0)    detector=Veto;
 	else { cout<<detectorId.compare("Calo")<<": "<<"Wrong detector ID"<<endl; return 0;}
-	
+
 	if(layer>=detector.size()) { cout<<"Wrong layer ID"<<endl; return 0;}
-	
-	if(detector[layer].size()>0) return GetCaloHitEdepPrimary(detector[layer][0]);	
+
+	if(detector[layer].size()>0) return GetCaloHitEdepPrimary(detector[layer][0]);
 	else return 0;
 }
 
@@ -228,15 +228,15 @@ TVector3 MapEvents::GetCaloHitImpactPoint(const std::string &detectorId,int laye
 
         if(layer>=detector.size()) { cout<<"Wrong layer ID"<<endl; return ImpactPoint;}
 
-        if(detector[layer].size()>0) ImpactPoint=GetImpactPoint(detector[layer][0]); 
+        if(detector[layer].size()>0) ImpactPoint=GetImpactPoint(detector[layer][0]);
 
 	return ImpactPoint;
 }
 
 
-bool MapEvents::TestHitLayer(const std::string &detectorId,int layer){ 
+bool MapEvents::TestHitLayer(const std::string &detectorId,int layer){
 	std::vector<std::vector<RootCaloHit>> detector;
-	
+
 	if((detectorId.compare("Trigger"))==0) detector=Trigger;
         else if((detectorId.compare("Calo"))==0)    detector=Calo;
         else if((detectorId.compare("LYSO"))==0)    detector=Lyso;
@@ -244,26 +244,25 @@ bool MapEvents::TestHitLayer(const std::string &detectorId,int layer){
         else { cout<<detectorId.compare("Calo")<<": "<<"Wrong detector ID"<<endl; return false;}
 
         if(layer>=detector.size()) { cout<<"Wrong layer ID"<<endl; return false;}
-	
+
 	return (detector[layer].size()>0);
 }
 
-std::vector<PMTinfo> MapEvents::FromEdep2PMTinfo(float gain){
+std::vector<PMTinfo> MapEvents::FromEdep2PMTinfo(){
 
 	std::vector<PMTinfo> LVL0;
 
 	for(int i=0;i<PMTMap.size();i++){
 		PMTinfo PMT;
-		LVL0.push_back(PMT);		
+		LVL0.push_back(PMT);
 	}
 
 	for(int i=0;i<PMTMap.size();i++){
-		LVL0[i].gain=gain;
 		LVL0[i].totEdep=GetCaloHitTotalEdep(PMTMap[i]);
 		LVL0[i].position=GetImpactPoint(PMTMap[i]);
-	}		
-	return LVL0;	
-	
+	}
+	return LVL0;
+
 }
 
 #endif
