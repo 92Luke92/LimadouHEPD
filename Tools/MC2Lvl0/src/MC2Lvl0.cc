@@ -13,7 +13,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
-
+#include <sstream>
 
 // MCEventAnalyze
 #include "RootEvent.hh"
@@ -29,7 +29,6 @@
 #include "TTree.h"
 #include "TFile.h"
 #include "TBranch.h"
-
 
 //Various
 #include "LEvRec0.hh"
@@ -126,10 +125,17 @@ std::string  getMCfilename (int argc, char** argv)
 
 std::string  getLvl0filename (const std::string mcfilename)
 {
-    std::string lvl0filename = "test.root";
+	
+    vector<string> strings;
+    istringstream f(mcfilename.c_str());
+    string s;
+    while (std::getline(f, s, '/')) {
+	    strings.push_back(s);
+    }
+
+    std::string lvl0filename = ("MC2Lvl0_"+strings[strings.size()-1]).c_str();  
     return lvl0filename;
 }
-
 
 
 std::vector<float> CaloHitsToEdep (std::vector<RootCaloHit> CaloHits)
