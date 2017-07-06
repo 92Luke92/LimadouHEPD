@@ -14,6 +14,7 @@
 #include <string>
 #include <cmath>
 
+
 // MCEventAnalyze
 #include "RootEvent.hh"
 #include "RootTrack.hh"
@@ -21,12 +22,14 @@
 #include "RootCaloHit.hh"
 #include "RootTrackerHit.hh"
 
+
 // ROOT libs
 #include "TTree.h"
 #include "TVector3.h"
 #include "TTree.h"
 #include "TFile.h"
 #include "TBranch.h"
+
 
 //Various
 #include "LEvRec0.hh"
@@ -53,22 +56,20 @@ float EcalMev2ADCfactorLG (std::string PMT);
 
 
 
-int main (int argc, char** argv)
-{
+
+
+int main (int argc, char** argv) {
     const std::string mcfilename = getMCfilename (argc, argv);
     const std::string lvl0filename = getLvl0filename (mcfilename);
     TFile* filemc = TFile::Open (mcfilename.c_str(), "READ");
     TTree* Tmc = (TTree*) filemc->Get ("HEPD/EventTree");
-    std::cout << Tmc->GetEntries() << std::endl;
     LEvRec0Writer lvl0writer (lvl0filename);
     LoopOnEvents (&lvl0writer, Tmc);
     lvl0writer.Write();
-    lvl0writer.Close();
-    delete Tmc;
-    filemc->Close();
-    delete filemc;
+    lvl0writer.Close(); delete Tmc;
+    filemc->Close();    delete filemc;
     return 0;
-}
+} // main conclusion
 
 
 
