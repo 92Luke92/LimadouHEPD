@@ -49,6 +49,30 @@ void LScintillatorsL2::input_calib_pars(double *teq, double *equ, double *leq){
 }//--------------------------------------------------------------------------------------
 
 
+void LScintillatorsL2::input_energyrecon_pars(double *t_p0, double *t_p1, double *c_p0, double *c_p1){
+
+ //  calibration input-------------
+ //  t_p0 and t_p1 are trigger p0 and p1 X 6
+ //  c_p0 and c_p1  are upper calo and lyso p0 and p1
+ //  input file format is :
+ //  row = p0 p1
+ //  6 row trigger
+ //  1 row uc
+ //  1 row lyso
+
+
+ double dummy;
+ // high gain
+ ifstream er; er.open("energyrecon.off");
+ // trigger bars
+ for(int t=0;t<6;t++){er >> t_p0[t] >> t_p1[t];}
+ // UC 
+ {er >> c_p0[0] >> c_p1[0];}
+ // lyso
+ {er >> c_p0[1] >> c_p1[1];} 
+}
+
+
 
 
 int LScintillatorsL2::DeviceStatus(double sn1, double sn2){
@@ -87,16 +111,20 @@ int LScintillatorsL2::Calc(int hw_condition, int ascii_dump) {
 
 // calibration constants and analysis pars
 
-double teq[12], equ[32],leq[9], act_threshold= 5.00;
+double teq[12], equ[32],leq[9];
 
 input_calib_pars(teq,equ,leq);
 
-const double Ek[2]={-51, 112.7}, TriggerP0[6]={728,593,1227,1066, 616, 801}, TriggerP1[6]={-44,+45,-517,-361,-15,-98};// S=(p0*E) + p1
+double t_p0[6], t_p1[6], c_p0[2], c_p1[2];
 
-// here output variables
+input_energyrecon_pars(t_p0, t_p1, c_p0, c_p1);
+
+double const act_threshold= 5.00;
 
 int tsum=0, tmult=0, hitbar[6]={0}; double tene=0; // trigger vars
 int sumall=0,suma=0,sumb=0, mult=0, conn[16]={0}; double enUC=0, ChVsPlane[16];// calo vars
+int IsLYSOHit=0, lmult=0; double lsum=0, enLYSO=0; // lyso
+int IsVetoBottomHit=0, IsVetoLatHit=0;// veto
 
 // connecting data and output ascii - temporary ---------------------------------------------------------------------------
 
@@ -127,7 +155,7 @@ for (int bar=0;bar<6;bar++){
          tsum=tsum+c1+c2;
          tmult++;
          hitbar[bar]=1;     
-         tene = tene+((tsum-TriggerP1[bar])/TriggerP0[bar]); 
+         tene = tene+((tsum-t_p1[bar])/t_p0[bar]); 
          }
          
    }// end loop on t bars
@@ -152,9 +180,15 @@ for (int pln=0;pln<16;pln++){
          }//end if for hit plane
       }// end pln loop
 
-// check data posterior to ptm 5east failure then add pmt 5west to sum
-
-if(hw_condition==1){sumall=sumall+(equ[8]*cev.scint.cont_hg[4][0])+(equ[9]*cev.scint.cont_hg[4][1]);} 
+// check data posterior to ptm 5east failure then correct sumall
+if(hw_condition==1){
+      double comp=(
+      (equ[6]*cev.scint.cont_hg[3][0])+
+      (equ[7]*cev.scint.cont_hg[3][1])+
+      (equ[9]*cev.scint.cont_hg[4][1])+
+      (equ[10]*cev.scint.cont_hg[5][0])+
+      (equ[11]*cev.scint.cont_hg[5][1])  )/5.;
+      sumall=sumall+comp;}
 
 // max connected length        
 int clen=1;
@@ -164,25 +198,49 @@ for (int i=0;i<16;i++){
     }
 
 // energy calc 
-enUC=(sumall-Ek[0])/Ek[1];//MeV
+enUC=(sumall-c_p1[0])/c_p0[0];//MeV
    
-// vetos and LYSO  flags ------------------------------------------------------------------------------------------------------------
-  
-int IsVetoBottomHit=0;
+// LYSO vars ---------------------------------------------------------------------------------------------------------------------------
+
+// vars reset 
+IsLYSOHit=0, lmult=0, lsum=0, enLYSO=0;
+
+for (int lys=0;lys<8;lys++){
+      if(DeviceStatus(cev.lyso.sn_hg[lys][0],cev.lyso.sn_hg[lys][0])==1){
+      lmult++;
+      IsLYSOHit++;
+      lsum=lsum+(leq[lys]*cev.scint.cont_hg[lys][0]); }
+      }// end lyso loop
+
+// LYSO energy calc 
+        enLYSO=(lsum-c_p1[1])/c_p0[1];//MeV
+
+
+// vetos flags ----------------------------------------------------------------------------------------------------------------------
+// reset vars
+IsVetoBottomHit=0, IsVetoLatHit=0;
+
 IsVetoBottomHit=DeviceStatus(cev.veto.cont_hg[4][0],cev.veto.cont_hg[4][1]);
 
-int IsVetoLatHit=0;
+
 for (int veto=0;veto<4;veto++){IsVetoLatHit=IsVetoLatHit+DeviceStatus(cev.veto.cont_hg[veto][0],cev.veto.cont_hg[veto][1]);}
  
-int IsLYSOHit=0;
-for (int lys=0;lys<8;lys++){IsLYSOHit=IsLYSOHit+DeviceStatus(cev.lyso.sn_hg[lys][0],cev.lyso.sn_hg[lys][0]);}
+//int IsLYSOHit=0;
+//for (int lys=0;lys<8;lys++){IsLYSOHit=IsLYSOHit+DeviceStatus(cev.lyso.sn_hg[lys][0],cev.lyso.sn_hg[lys][0]);}
 
-// optional ascii output
+// optional ascii output ----------------------------------------------------------------------------------------------------------------
 if(ascii_dump==1){
 os << iEv << " " 
 << tsum << " " <<  tmult << " "  << tene << " " 
 << sumall  << " "  << mult << " "  << enUC <<  " "
-<< IsVetoBottomHit  << " " << IsVetoLatHit << " " << IsLYSOHit << endl;}
+<< IsLYSOHit << " " << lmult << " " << lsum << " " << enLYSO  << " " 
+<< IsVetoBottomHit  << " " << IsVetoLatHit << " " << endl;}
+
+// all available vars
+//int tsum=0, tmult=0, hitbar[6]={0}; double tene=0; // trigger vars
+//int sumall=0,suma=0,sumb=0, mult=0, conn[16]={0}; double enUC=0, ChVsPlane[16];// calo vars
+//int IsLYSOHit=0, lmult=0; double lsum=0, enLYSO=0; // lyso
+//int IsVetoBottomHit=0, IsVetoLatHit=0;// veto
 
 }// end event loop
 
