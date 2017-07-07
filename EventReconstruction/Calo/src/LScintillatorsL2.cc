@@ -72,13 +72,10 @@ void LScintillatorsL2::input_energyrecon_pars(double *t_p0, double *t_p1, double
  {er >> c_p0[1] >> c_p1[1];} 
 }
 
-
-
-
 int LScintillatorsL2::DeviceStatus(double sn1, double sn2){
 
 int status=0;double act_threshold=5.0;
-if( sn1>act_threshold || sn2>act_threshold){status=1;}
+if( sn1>act_threshold  && sn2>act_threshold){status=1;}
 return status;
 }//--------------------------------------------------------------------------------------
 
@@ -136,14 +133,13 @@ RunFile->SetTheEventPointer(cev);
 // loop on data events
 int nEvents = RunFile->GetEntries();
 for (int iEv = 0; iEv < nEvents; iEv++)  // Event loop
-
     { std::cout << "\b\b\b" << std::setprecision(2) << std::setw(2) << int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
     RunFile->GetEntry(iEv); 
 
 
 // trigger bars ------------------------------------------------------------------------------------------------------------
-
-tsum=0, tmult=0, hitbar[6]={0}, tene=0;
+// reset vars
+tsum=0, tmult=0, tene=0; for(int a=0;a<6;a++){hitbar[a]=0.0;};
 
 for (int bar=0;bar<6;bar++){ 
     int  tpmt1=(bar*2)+0;
@@ -154,7 +150,7 @@ for (int bar=0;bar<6;bar++){
          double c2=teq[tpmt2]*cev.trig.cont_hg[bar][1];
          tsum=tsum+c1+c2;
          tmult++;
-         hitbar[bar]=1;     
+         hitbar[bar]=1;   
          tene = tene+((tsum-t_p1[bar])/t_p0[bar]); 
          }
          
@@ -162,7 +158,7 @@ for (int bar=0;bar<6;bar++){
 
 // upper calorimeter ------------------------------------------------------------------------------------------------------------
 
-sumall=0,suma=0,sumb=0, mult=0, conn[16]={0}, enUC=0, ChVsPlane[16]={0};
+sumall=0,suma=0,sumb=0, mult=0; for(int a=0;a<16;a++){conn[a]=0;}; enUC=0;for(int a=0;a<16;a++){ChVsPlane[a]=0;};
 
 for (int pln=0;pln<16;pln++){
     int  pmt1=(pln*2);
@@ -197,6 +193,10 @@ for (int i=0;i<16;i++){
     clen++;
     }
 
+
+
+
+
 // energy calc 
 enUC=(sumall-c_p1[0])/c_p0[0];//MeV
    
@@ -223,10 +223,12 @@ IsVetoBottomHit=0, IsVetoLatHit=0;
 IsVetoBottomHit=DeviceStatus(cev.veto.cont_hg[4][0],cev.veto.cont_hg[4][1]);
 
 
-for (int veto=0;veto<4;veto++){IsVetoLatHit=IsVetoLatHit+DeviceStatus(cev.veto.cont_hg[veto][0],cev.veto.cont_hg[veto][1]);}
+for (int veto=0;veto<4;veto++){IsVetoLatHit=IsVetoLatHit+DeviceStatus(cev.veto.sn_hg[veto][0],cev.veto.sn_hg[veto][1]);}
  
+
 //int IsLYSOHit=0;
 //for (int lys=0;lys<8;lys++){IsLYSOHit=IsLYSOHit+DeviceStatus(cev.lyso.sn_hg[lys][0],cev.lyso.sn_hg[lys][0]);}
+
 
 // optional ascii output ----------------------------------------------------------------------------------------------------------------
 if(ascii_dump==1){
@@ -234,7 +236,9 @@ os << iEv << " "
 << tsum << " " <<  tmult << " "  << tene << " " 
 << sumall  << " "  << mult << " "  << enUC <<  " "
 << IsLYSOHit << " " << lmult << " " << lsum << " " << enLYSO  << " " 
-<< IsVetoBottomHit  << " " << IsVetoLatHit << " " << endl;}
+<< IsVetoBottomHit  << " " << IsVetoLatHit << " " 
+<< hitbar[0] << " " << hitbar[1] << " " << hitbar[2] << " " << hitbar[3] << " " << hitbar[4] << " " << hitbar[5] << " " 
+<< endl;}
 
 // all available vars
 //int tsum=0, tmult=0, hitbar[6]={0}; double tene=0; // trigger vars
@@ -243,6 +247,8 @@ os << iEv << " "
 //int IsVetoBottomHit=0, IsVetoLatHit=0;// veto
 
 }// end event loop
+
+ 
 
 return 0;
 }//--------------------------------------------------------------------------------------
