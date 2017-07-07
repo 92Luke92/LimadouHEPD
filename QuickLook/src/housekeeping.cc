@@ -43,7 +43,7 @@ void HVPSMonitorToXML(TString rootname, TString xslPath = "")
   if (rootfile.IsTConf()){
      
      rootfile.SetTHVpmtPointer(HVpkt);
-     //cout << endl << "HVPS Monitor to xml:" << rootname << endl;
+     cout << endl << "Processing HVPS Monitor to xml file:" << rootname << endl;
 
   
      int THVpmt_entries = rootfile.GetTHVpmtEntries(); 
@@ -189,7 +189,7 @@ void DUMPConfigToXML(TString rootname, TString xslPath = "")
   if (rootfile.IsTConf()){
      
      rootfile.SetTConfPointer(dummyPKT);
-     // cout << endl << "DUMP Config to xml:" << rootname << endl;
+     cout << endl << "Processing DUMP Config to xml file:" << rootname << endl;
 
   
      int TConf_entries = rootfile.GetTConfEntries(); 
@@ -318,7 +318,7 @@ void DUMPConfigToXML(TString rootname, TString xslPath = "")
 void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
 {
   
-  //cout << endl << "Broadcast to xml:" << rootname << endl;
+  cout << endl << "Processing Broadcast to xml files:" << rootname << endl;
 
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_Time.xml",9 );
@@ -398,7 +398,7 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       outputFile << "\t<AOCC_US_Y>"   <<  0 << "</AOCC_US_Y>\n";
       outputFile << "\t<AOCC_Timestamp_Y>"   <<  0 << "</AOCC_Timestamp_Y>\n";
       outputFile2 << "\t<GPS_broadcast_Y>"   <<  0 << "</GPS_broadcast_Y>\n";
-      outputFile2 << "\t<GPS_timestamp_Y>"   <<  0 << "</GPS_timastamp_Y>\n";
+      outputFile2 << "\t<GPS_timestamp_Y>"   <<  0 << "</GPS_timestamp_Y>\n";
 
       outputFile << "\t<LATITUDE_error>"   <<  0 << "</LATITUDE_error>\n";
       outputFile << "\t<LONGITUDE_error>"   <<  0 << "</LONGITUDE_error>\n";
@@ -564,7 +564,7 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
 void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 {
   
-  //cout << endl << "CPU Time to xml:" << rootname << endl;
+  cout << endl << "Processing CPU Time to xml file:" << rootname << endl;
 
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_CPUTimeTemp.xml", 16);
@@ -695,7 +695,7 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 void HVPSConfigToXML(TString rootname, TString xslPath = "")
 {
   
-  //cout << endl <<  "HVPS to xml:" << rootname << endl;
+  cout << endl <<  "Processing HVPS to xml file:" << rootname << endl;
 
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_HVPSConfig.xml", 15);
@@ -888,7 +888,7 @@ void HVPSConfigToXML(TString rootname, TString xslPath = "")
 void RunInfoToXML(TString rootname, TString xslPath = "")
 {
   
-  //cout << endl << "Run Info to xml:" << rootname << endl;
+  cout << endl << "Processing Run Info to xml file:" << rootname << endl;
   
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_RunInfo.xml", 12);
@@ -1094,7 +1094,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 void ScintConfigToXML(TString rootname, TString xslPath = "")
 {
   
-  //cout << endl <<  "Scint to xml:" << rootname << endl;
+  cout << endl <<  "Processing Scint to xml file:" << rootname << endl;
 
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_ScintConfig.xml", 16);
@@ -1240,7 +1240,7 @@ void ScintConfigToXML(TString rootname, TString xslPath = "")
 void SilConfigToXML(TString rootname, TString xslPath = "")
 {
   
-  //cout << endl << "Sil to xml:" << rootname << endl;
+  cout << endl << "Processing Silicon Config to xml file:" << rootname << endl;
 
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_SilConfig.xml", 14);
@@ -1505,7 +1505,7 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
 void TelemetryToXML(TString rootname, TString xslPath = "")
 {
   
-  //cout << endl << "Telemetry to xml:" << rootname << endl;
+  cout << endl << "Processing Telemetry to xml file:" << rootname << endl;
   
   TString filename = rootname;
   filename.ReplaceAll(".root", 5, "_Telemetry.xml", 14);

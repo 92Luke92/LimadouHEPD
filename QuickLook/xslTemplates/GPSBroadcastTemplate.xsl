@@ -131,10 +131,10 @@
 
 		    <xsl:choose>
 		       <xsl:when test="GPS_timestamp_Y &gt;'0'">
-			 <td  bgcolor="#ffff00" width="100" height="30" align="center"> <xsl:value-of select="TIMESTAMP_GP"/> </td>
+			 <td  bgcolor="#ffff00" width="100" height="30" align="center"> <xsl:value-of select="TIMESTAMP_GPS"/> </td>
 		       </xsl:when>
 		       <xsl:otherwise>
-			 <td width="100" height="30" align="center"><xsl:value-of select="TIMESTAMP_GP"/>        </td>
+			 <td width="100" height="30" align="center"><xsl:value-of select="TIMESTAMP_GPS"/>        </td>
 		       </xsl:otherwise>
 		     </xsl:choose>
 
