@@ -27,12 +27,11 @@ endif(DOXYGEN_FOUND)
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
 if(WIN32)
- find_package( ROOT REQUIRED COMPONENTS libCore libRIO libRint libHist libNet libTree libHist)
+ find_package( ROOT REQUIRED libCore libRIO libRint libHist libNet libTree libHist)
 elseif(UNIX)
- find_package( ROOT REQUIRED COMPONENTS RIO Net Tree Hist)
+ find_package( ROOT REQUIRED RIO Net Tree Hist)
 endif()
 
-include(${ROOT_USE_FILE})
 
 set(EXECUTABLE_OUTPUT_PATH "exe/")
 
@@ -40,7 +39,6 @@ set(EXECUTABLE_OUTPUT_PATH "exe/")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # MC includes ("RootEvent.hh", etc.)
-message(${PROJECT_SOURCE_DIR})
 
 include_directories(${PROJECT_SOURCE_DIR}/../../Simulation/source/Dataformats/include/)
 include_directories(${PROJECT_SOURCE_DIR}/../../EventReconstruction/Common/include/)
