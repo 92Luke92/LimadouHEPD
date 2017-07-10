@@ -41,8 +41,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # MC includes ("RootEvent.hh", etc.)
 message(${PROJECT_SOURCE_DIR})
-include(${PROJECT_SOURCE_DIR}/../../Simulation/source/Dataformats/CMakeLists.txt)
-include(${PROJECT_SOURCE_DIR}/../../EventReconstruction/Common/CMakeLists.txt)
 
 include_directories(${PROJECT_SOURCE_DIR}/../../Simulation/source/Dataformats/include/)
 include_directories(${PROJECT_SOURCE_DIR}/../../EventReconstruction/Common/include/)
