@@ -50,6 +50,8 @@
 	       </table>
 	     </td>
 
+	     <td width="100" height="30" align="center"> Real Run duration (s)  </td>
+
 	     <td>
 	       <table border="1">
 		 <tr  bgcolor="#1acd32">
@@ -61,6 +63,8 @@
 		 </tr>
 	       </table>
 	     </td>
+
+	     
 
 	     <td>
 	       <table border="1">
@@ -99,6 +103,8 @@
 		   </tr>
 		 </table>
 		 </td>
+
+		 <td width="100" height="30" align="center"><xsl:value-of select="REAL_RUN_DURATION"/>        </td>
 		 
 		 <td>
 		 <table border="1">

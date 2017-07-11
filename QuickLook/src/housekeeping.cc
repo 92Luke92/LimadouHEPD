@@ -580,7 +580,7 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
   Short_t CPU_temp_stop;
   Short_t PMT_temp_start;
   Short_t PMT_temp_stop;
-
+  UInt_t REAL_run_duration;
   LEvRec0File rootfile(rootname.Data());
   LEvRec0 ev;
   LEvRec0Md metaData;
@@ -622,6 +622,7 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 	  CPU_temp_stop = metaData.CPU_temp[1]*0.0625;
 	  PMT_temp_start = metaData.PMT_temp[0]*0.25;
 	  PMT_temp_stop = metaData.PMT_temp[1]*0.25;
+	  REAL_run_duration= (metaData.CPU_time[1]-metaData.CPU_time[0])/1000;
 
 	 
 	  if ((CPU_temp_start <-10) && (CPU_temp_start >-20))
@@ -672,9 +673,9 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 	  if (PMT_temp_stop<-20)
 	    outputFile << "\t<PMT_TEMP_STOP_R>"  <<  1 << "</PMT_TEMP_STOP_R>\n";
 
-	  
 	  outputFile << "\t<CPU_START_TIME>"<< metaData.CPU_time[0] << "</CPU_START_TIME>\n";
 	  outputFile << "\t<CPU_STOP_TIME>" << metaData.CPU_time[1] << "</CPU_STOP_TIME>\n";
+	  outputFile << "\t<REAL_RUN_DURATION>" << REAL_run_duration << "</REAL_RUN_DURATION>\n";
 	  outputFile << "\t<CPU_TEMP_START>" <<  CPU_temp_start  << "</CPU_TEMP_START>\n";
 	  outputFile << "\t<CPU_TEMP_STOP>"  <<  CPU_temp_stop  << "</CPU_TEMP_STOP>\n";
 	  outputFile << "\t<PMT_TEMP_START>" <<  PMT_temp_start << "</PMT_TEMP_START>\n";
@@ -955,7 +956,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
     int applied_orbit=orbitZone_vect[t] & 0x00FF;
     int calculated_orbit=orbitZone_vect[t] >> 8;
     //cout <<  "orbit zone calculated: " << hex << calculated_orbit << endl;
-    //cout << "orbit zone applied: " << hex << applied_orbit << endl;
+    // cout << "orbit zone applied: " << hex << applied_orbit << endl;
        
     if (t%2==0){
 
@@ -1038,8 +1039,8 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 
 
 
-    if (applied_orbit == 170)
-      outputFile <<  "\t<ORBIT_ZONE_Applied>"   << "BROADCAST NOT AVAIBLE" << "</ORBIT_ZONE_Applied>\n";
+    if (calculated_orbit == 170)
+      outputFile <<  "\t<ORBIT_ZONE_Calculated>"   << "BROADCAST NOT AVAIBLE" << "</ORBIT_ZONE_Calculated>\n";
       
     if (calculated_orbit == 04)
       outputFile <<  "\t<ORBIT_ZONE_Calculated>"   << "DEFAULT" << "</ORBIT_ZONE_Calculated>\n";
@@ -1122,6 +1123,8 @@ void ScintConfigToXML(TString rootname, TString xslPath = "")
   // Metadata
   int Tmd_entries = rootfile.GetTmdEntries(); 
   //cout << "Number of Tmd entries: " << Tmd_entries << endl;
+
+        
   
   for(int j=0;j<Tmd_entries;j++)
     {
@@ -1133,14 +1136,10 @@ void ScintConfigToXML(TString rootname, TString xslPath = "")
 	outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
 	outputFile << "\t<RUN_NR>"  << metaData.run_id  << "</RUN_NR>\n";
       
-	outputFile << "\t<VETO_CONFIG>"  << (short)metaData.trigger_mask[0]
-		   << "</VETO_CONFIG>\n";
-	outputFile << "\t<CURRENT_TRIGGER_MASK>" << (short)metaData.trigger_mask[1]
-		   << "</CURRENT_TRIGGER_MASK>\n";
-	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_1>" << (short)metaData.easiroc_config[0]
-		   << "</EASIROC_1>\n";
-	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_2>" << (short)metaData.easiroc_config[60]
-		   << "</EASIROC_2>\n";
+	outputFile << "\t<VETO_CONFIG>"  << (short)metaData.trigger_mask[0] << "</VETO_CONFIG>\n";
+	outputFile << "\t<CURRENT_TRIGGER_MASK>" << (short)metaData.trigger_mask[1] << "</CURRENT_TRIGGER_MASK>\n";
+	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_1>" << (short)metaData.easiroc_config[0] << "</EASIROC_1>\n";
+	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_2>" << (short)metaData.easiroc_config[30] << "</EASIROC_2>\n";
 
        
 	outputFile << dec <<  "/<MASK_PMT_0>" << metaData.PMT_mask[0] << "</MASK_PMT_0>/n";
@@ -1388,22 +1387,22 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
     if (t%2!=0)
       {
 
-	if (ladder_on_top[t]!=ladder_on_top[t+1])
+	if (ladder_on_top[t]!=ladder_on_top[t-1])
 	  outputFile << "\t<LADDER_error_top>"<< 1 << "</LADDER_error_top>\n";
 
-	if (ladder_on_central[t]!=ladder_on_central[t+1])
+	if (ladder_on_central[t]!=ladder_on_central[t-1])
 	  outputFile << "\t<LADDER_error_central>"<< 1 << "</LADDER_error_central>\n";
 
-	if (ladder_on_bottom[t]!=ladder_on_bottom[t+1])
+	if (ladder_on_bottom[t]!=ladder_on_bottom[t-1])
 	  outputFile << "\t<LADDER_error_bottom>"<< 1 << "</LADDER_error_bottom>\n";
 
-	if (ladder_mask_top[t]!=ladder_mask_top[t+1])
+	if (ladder_mask_top[t]!=ladder_mask_top[t-1])
 	  outputFile << "\t<LADDER_MASK_error_top>"<< 1 << "</LADDER_MASK_error_top>\n";
 
-	if (ladder_mask_central[t]!=ladder_mask_central[t+1])
+	if (ladder_mask_central[t]!=ladder_mask_central[t-1])
 	  outputFile << "\t<LADDER_MASK_error_central>"<< 1 << "</LADDER_MASK_error_central>\n";
 
-	if (ladder_mask_bottom[t]!=ladder_mask_bottom[t+1])
+	if (ladder_mask_bottom[t]!=ladder_mask_bottom[t-1])
 	  outputFile << "\t<LADDER_MASK_error_bottom>"<< 1 << "</LADDER_MASK_error_bottom>\n";
 	   
 	if (adj_strip_vect[t]!=adj_strip_vect[t-1])
