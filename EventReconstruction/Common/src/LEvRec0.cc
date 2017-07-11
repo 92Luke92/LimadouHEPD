@@ -26,12 +26,48 @@ void LEvRec0::Reset() {
     pmt_low[i]=0;
     trigger_flag[i]=false;
   }
-
   PMTBoard_trigger_counter = 0;
 
   for(int i=0; i<NRATEMETER; ++i) rate_meter[i]=0;
   alive_time=0;
   dead_time=0;
+  run_duration=0;
+  orbitZone=0;
+
+};
+
+
+LEvRec0md::LEvRec0md(){
+  Reset();
+}
+
+
+void LEvRec0md::Reset() {
+
+
+  for(int i=0; i<2; ++i) trigger_mask[i]=0;
+  for(int i=0; i<60; ++i) easiroc_conf[i]=0;
+  for(int i=0; i<NPMT; ++i) PMT_mask[i]=0;
+  for(int i=0; i<12; ++i) HV_mask[i]=0;
+  for(int i=0; i<10; ++i) HV_value[i]=0;
+  for(int i=0; i<18; ++i) gen_trig_mask[i]=0;
+
+
+  sil_conf.Reset();
+  OBDH_info.Reset();
+  GPS_info.Reset();
+  AOCC_info.Reset();
+  star_sensor_info.Reset();
+  CPU_timestamp.Reset();
+  status_register.Reset();
+
+  for(int i=0; i<NPMT+1; ++i) PMT_rate_meter[i]=0;
+  for(int i=0; i<2; ++i) {
+    CPU_temp_start_stop_Run[i]=0;
+    PMT_temp_start_stop_Run[i]=0;
+    CPU_time_start_stop_Run[i]=0;
+  }
+
 }
 
 void LEvRec0::DumpStrip(void) const {
