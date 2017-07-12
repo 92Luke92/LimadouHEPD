@@ -31,7 +31,9 @@ public:
   ~LEvRec0Writer();
 
 private:
-  void SetTheEventPointer();
+  void SetAllEventPointers();
+  void SetTEventPointer();
+  void SetTmdEventPointer();
   LEvRec0 evT;
   LEvRec0md evTmd;
 

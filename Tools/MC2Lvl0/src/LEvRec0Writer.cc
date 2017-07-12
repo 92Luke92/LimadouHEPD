@@ -12,7 +12,7 @@ void LEvRec0Writer::Init(std::string filename) {
   fFile=TFile::Open(filename.c_str(), "RECREATE");
   fTree=new TTree("T", "T");
   fTmdTree=new TTree("Tmd","Tmd");
-  SetTheEventPointer();
+  SetAllEventPointers();
   return;
 }
 
@@ -22,7 +22,13 @@ void LEvRec0Writer::Close() {
 }
 
 
-void LEvRec0Writer::SetTheEventPointer() {
+void LEvRec0Writer::SetAllEventPointers() {
+  SetTEventPointer();
+  SetTmdEventPointer();
+}
+
+
+void LEvRec0Writer::SetTEventPointer() {
   fTree->Branch("run_type", &evT.runType);
   fTree->Branch("evT_boot_nr", &evT.boot_nr);
   fTree->Branch("evT_run_id", &evT.run_id);
@@ -44,6 +50,11 @@ void LEvRec0Writer::SetTheEventPointer() {
   fTree->Branch("run_type",&evT.runType);
   fTree->Branch("run_duration",&evT.run_duration);
   fTree->Branch("orbitZone",&evT.orbitZone);
+}
+
+
+void LEvRec0Writer::SetTmdEventPointer() {
+
 
   fTmdTree->Branch("silConfiguration",&evTmd.sil_conf.ladder_on[0]);
   fTmdTree->Branch("trigger_mask[2]",evTmd.trigger_mask);
@@ -78,7 +89,6 @@ void LEvRec0Writer::SetTheEventPointer() {
   fTmdTree->Branch("status_register", &evTmd.status_register.statusDAQ,
 	       "statusDAQ/s:statusPMT/s:statusTM_TC/s:statusHV_PS/s"
 	       ":CPU_board_boot/s:statusCPU/s");
-
 
 }
 
