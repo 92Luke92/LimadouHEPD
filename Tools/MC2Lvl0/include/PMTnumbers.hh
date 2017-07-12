@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "MCcoorPhysicalFrame.hh"
 
 const  std::vector<std::string> PMTID=
