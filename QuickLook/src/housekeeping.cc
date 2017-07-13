@@ -293,7 +293,7 @@ void DUMPConfigToXML(TString rootname, TString xslPath = "")
 	      outputFile << "\t<INDEX>"<< 1 << "</INDEX>\n";
 
 	      outputFile << "\t<ORBITAL_SETTINGS>"    << dummyPKT.dummy_pkt.user_orbital_settings << "</ORBITAL_SETTINGS>\n";
-	      outputFile << showbase << hex << uppercase <<  "\t<CONFIG_ID>"    << dummyPKT.dummy_pkt.WO_config_ID << "</CONFIG_ID>\n";
+    	      outputFile << showbase << hex << uppercase <<  "\t<CONFIG_ID>"    <<  dummyPKT.dummy_pkt.WO_config_ID << "</CONFIG_ID>\n";
 	      outputFile << dec << "\t<CALIB_PERIOD>"    << dummyPKT.dummy_pkt.calib_period << "</CALIB_PERIOD>\n";
 	      outputFile << dec << "\t<SAFE_MODE>" << dummyPKT.dummy_pkt.safe_mode << "</SAFE_MODE>\n";
  
@@ -466,10 +466,10 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       GPS.Set(timestamp_GPS_2009);
       AOCC.Set(timestamp_AOCC_2009);
       absolute.Set(timestamp_ABS_2009);
+    
+    
       
-     
-      
-      if (metaData.broadcast.OBDH.sec == 3149642683){
+      if (metaData.broadcast.OBDH.sec == 0xBBBBBBBB){
 	outputFile << "\t<OBDH_S>" << "N.A." << "</OBDH_S>\n";
 	outputFile << "\t<ABS_TIME>" <<  "N.A." << "</ABS_TIME>\n";
 	outputFile << "\t<ABS_TIME_ms>" << "N.A."       << "</ABS_TIME_ms>\n";
@@ -477,7 +477,7 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
 	outputFile << "\t<ABS_TIME_Y>"   <<  1 << "</ABS_TIME_Y>\n";
       }
             
-      if (metaData.broadcast.OBDH.ms == 48059){
+      if (metaData.broadcast.OBDH.ms == 0xBBBB){
 	outputFile << "\t<OBDH_MS>" << "N.A." << "</OBDH_MS>\n";
 	outputFile << "\t<ABS_TIME>" <<  "N.A." << "</ABS_TIME>\n";
 	outputFile << "\t<ABS_TIME_ms>" << "N.A."       << "</ABS_TIME_ms>\n";
@@ -485,7 +485,7 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
 	outputFile << "\t<ABS_TIME_Y>"   <<  1 << "</ABS_TIME_Y>\n";
       }
 
-      if (metaData.timestamp.OBDH == 3435973836){
+      if (metaData.timestamp.OBDH == 0xCCCCCCCC){
 	outputFile << "\t<TIMESTAMP_OBDH>" << "N.A." << "</TIMESTAMP_OBDH>\n";
 	outputFile << "\t<TIMESTAMP_OBDH_Y>"  <<  1 << "</TIMESTAMP_OBDH_Y>\n";
 	outputFile << "\t<ABS_TIME>" <<  "N.A." << "</ABS_TIME>\n";
@@ -494,24 +494,24 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
 	outputFile << "\t<BROADCAST_OBDH_MS_Y>"   <<  1 << "</BROADCAST_OBDH_MS_Y>\n";
       }
       
-      if (metaData.broadcast.AOCC.sec == 3149642683){
+      if (metaData.broadcast.AOCC.sec == 0xBBBBBBBB){
 	outputFile << "\t<AOCC_S>" << "N.A." << "</AOCC_S>\n";
       	outputFile << "\t<AOCC_S_Y>"   <<  1 << "</AOCC_S_Y>\n";
         }
       
-      if (metaData.broadcast.AOCC.us == 48059){
+      if (metaData.broadcast.AOCC.us == 0xBBBBBBBB ){
 	outputFile << "\t<AOCC_US>" << "N.A." << "</AOCC_US>\n";
 	outputFile << "\t<AOCC_US_Y>"   <<  1 << "</AOCC_US_Y>\n";
       }
-      if (metaData.timestamp.AOCC == 3435973836){
+      if (metaData.timestamp.AOCC == 0xCCCCCCCC){
 	outputFile << "\t<TIMESTAMP_AOCC>" << "N.A." << "</TIMESTAMP_AOCC>\n";
 	outputFile << "\t<AOCC_Timestamp_Y>"   <<  1 << "</AOCC_Timestamp_Y>\n";
       }
-      if (metaData.broadcast.GPS.sec == 3149642683){
+      if (metaData.broadcast.GPS.sec == 0xBBBBBBBB){
 	outputFile2 << "\t<GPS_S>" << "N.A." << "</GPS_S>\n";
 	outputFile2 << "\t<GPS_broadcast_Y>"   <<  1 << "</GPS_broadcast_Y>\n";
       }
-      if (metaData.timestamp.GPS == 3435973836){
+      if (metaData.timestamp.GPS == 0xCCCCCCCC){
 	outputFile2 << "\t<TIMESTAMP_GPS>" << "N.A." << "</TIMESTAMP_GPS>\n";
 	outputFile2 << "\t<GPS_timestamp_Y>"   <<  1 << "</GPS_timestamp_Y>\n";
       }
@@ -580,7 +580,7 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
   Short_t CPU_temp_stop;
   Short_t PMT_temp_start;
   Short_t PMT_temp_stop;
-
+  UInt_t REAL_run_duration;
   LEvRec0File rootfile(rootname.Data());
   LEvRec0 ev;
   LEvRec0Md metaData;
@@ -622,6 +622,7 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 	  CPU_temp_stop = metaData.CPU_temp[1]*0.0625;
 	  PMT_temp_start = metaData.PMT_temp[0]*0.25;
 	  PMT_temp_stop = metaData.PMT_temp[1]*0.25;
+	  REAL_run_duration= (metaData.CPU_time[1]-metaData.CPU_time[0])/1000;
 
 	 
 	  if ((CPU_temp_start <-10) && (CPU_temp_start >-20))
@@ -672,9 +673,9 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 	  if (PMT_temp_stop<-20)
 	    outputFile << "\t<PMT_TEMP_STOP_R>"  <<  1 << "</PMT_TEMP_STOP_R>\n";
 
-	  
 	  outputFile << "\t<CPU_START_TIME>"<< metaData.CPU_time[0] << "</CPU_START_TIME>\n";
 	  outputFile << "\t<CPU_STOP_TIME>" << metaData.CPU_time[1] << "</CPU_STOP_TIME>\n";
+	  outputFile << "\t<REAL_RUN_DURATION>" << REAL_run_duration << "</REAL_RUN_DURATION>\n";
 	  outputFile << "\t<CPU_TEMP_START>" <<  CPU_temp_start  << "</CPU_TEMP_START>\n";
 	  outputFile << "\t<CPU_TEMP_STOP>"  <<  CPU_temp_stop  << "</CPU_TEMP_STOP>\n";
 	  outputFile << "\t<PMT_TEMP_START>" <<  PMT_temp_start << "</PMT_TEMP_START>\n";
@@ -955,7 +956,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
     int applied_orbit=orbitZone_vect[t] & 0x00FF;
     int calculated_orbit=orbitZone_vect[t] >> 8;
     //cout <<  "orbit zone calculated: " << hex << calculated_orbit << endl;
-    //cout << "orbit zone applied: " << hex << applied_orbit << endl;
+    // cout << "orbit zone applied: " << hex << applied_orbit << endl;
        
     if (t%2==0){
 
@@ -1038,8 +1039,8 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 
 
 
-    if (applied_orbit == 170)
-      outputFile <<  "\t<ORBIT_ZONE_Applied>"   << "BROADCAST NOT AVAIBLE" << "</ORBIT_ZONE_Applied>\n";
+    if (calculated_orbit == 170)
+      outputFile <<  "\t<ORBIT_ZONE_Calculated>"   << "BROADCAST NOT AVAIBLE" << "</ORBIT_ZONE_Calculated>\n";
       
     if (calculated_orbit == 04)
       outputFile <<  "\t<ORBIT_ZONE_Calculated>"   << "DEFAULT" << "</ORBIT_ZONE_Calculated>\n";
@@ -1122,6 +1123,8 @@ void ScintConfigToXML(TString rootname, TString xslPath = "")
   // Metadata
   int Tmd_entries = rootfile.GetTmdEntries(); 
   //cout << "Number of Tmd entries: " << Tmd_entries << endl;
+
+        
   
   for(int j=0;j<Tmd_entries;j++)
     {
@@ -1133,14 +1136,10 @@ void ScintConfigToXML(TString rootname, TString xslPath = "")
 	outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
 	outputFile << "\t<RUN_NR>"  << metaData.run_id  << "</RUN_NR>\n";
       
-	outputFile << "\t<VETO_CONFIG>"  << (short)metaData.trigger_mask[0]
-		   << "</VETO_CONFIG>\n";
-	outputFile << "\t<CURRENT_TRIGGER_MASK>" << (short)metaData.trigger_mask[1]
-		   << "</CURRENT_TRIGGER_MASK>\n";
-	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_1>" << (short)metaData.easiroc_config[0]
-		   << "</EASIROC_1>\n";
-	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_2>" << (short)metaData.easiroc_config[60]
-		   << "</EASIROC_2>\n";
+	outputFile << "\t<VETO_CONFIG>"  << (short)metaData.trigger_mask[0] << "</VETO_CONFIG>\n";
+	outputFile << "\t<CURRENT_TRIGGER_MASK>" << (short)metaData.trigger_mask[1] << "</CURRENT_TRIGGER_MASK>\n";
+	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_1>" << (short)metaData.easiroc_config[0] << "</EASIROC_1>\n";
+	outputFile <<  showbase << hex << uppercase <<"\t<EASIROC_2>" << (short)metaData.easiroc_config[30] << "</EASIROC_2>\n";
 
        
 	outputFile << dec <<  "/<MASK_PMT_0>" << metaData.PMT_mask[0] << "</MASK_PMT_0>/n";
@@ -1388,22 +1387,22 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
     if (t%2!=0)
       {
 
-	if (ladder_on_top[t]!=ladder_on_top[t+1])
+	if (ladder_on_top[t]!=ladder_on_top[t-1])
 	  outputFile << "\t<LADDER_error_top>"<< 1 << "</LADDER_error_top>\n";
 
-	if (ladder_on_central[t]!=ladder_on_central[t+1])
+	if (ladder_on_central[t]!=ladder_on_central[t-1])
 	  outputFile << "\t<LADDER_error_central>"<< 1 << "</LADDER_error_central>\n";
 
-	if (ladder_on_bottom[t]!=ladder_on_bottom[t+1])
+	if (ladder_on_bottom[t]!=ladder_on_bottom[t-1])
 	  outputFile << "\t<LADDER_error_bottom>"<< 1 << "</LADDER_error_bottom>\n";
 
-	if (ladder_mask_top[t]!=ladder_mask_top[t+1])
+	if (ladder_mask_top[t]!=ladder_mask_top[t-1])
 	  outputFile << "\t<LADDER_MASK_error_top>"<< 1 << "</LADDER_MASK_error_top>\n";
 
-	if (ladder_mask_central[t]!=ladder_mask_central[t+1])
+	if (ladder_mask_central[t]!=ladder_mask_central[t-1])
 	  outputFile << "\t<LADDER_MASK_error_central>"<< 1 << "</LADDER_MASK_error_central>\n";
 
-	if (ladder_mask_bottom[t]!=ladder_mask_bottom[t+1])
+	if (ladder_mask_bottom[t]!=ladder_mask_bottom[t-1])
 	  outputFile << "\t<LADDER_MASK_error_bottom>"<< 1 << "</LADDER_MASK_error_bottom>\n";
 	   
 	if (adj_strip_vect[t]!=adj_strip_vect[t-1])
@@ -1624,32 +1623,33 @@ void TelemetryToXML(TString rootname, TString xslPath = "")
       outputFile << dec <<  "\t<BOOT_NR>" <<   vect_boot_nr[t] << "</BOOT_NR>\n";
       outputFile << dec << "\t<RUN_ID>"  <<   vect_run_id[t] << "</RUN_ID>\n";  
 
-      if (vect_start_status_DAQ[t]!=20641)
+      if (vect_start_status_DAQ[t]!= 0x50A1)
 	outputFile << dec << "\t<DAQ_START_error>" << 1 << "</DAQ_START_error>\n";
 
       
-      if (vect_start_status_PMT[t]!=3333 && vect_start_status_PMT[t]!=3328) 
+      if (vect_start_status_PMT[t]!= 0x0D00 && vect_start_status_PMT[t]!=0x0D05) 
 	outputFile << dec <<  "\t<PMT_START_error>" << 1 << "</PMT_START_error>\n";
 
            
-      if (vect_start_status_TM_TC[t]!=4093 && vect_start_status_TM_TC[t]!=1884)
+      if (vect_start_status_TM_TC[t]!=0x075c && vect_start_status_TM_TC[t]!=0x0ffd)
 	outputFile << dec << "\t<TM_TC_START_error>" << 1 << "</TM_TC_START_error>\n";
 
-      if (vect_start_status_HVPS[t] !=0 && vect_start_status_HVPS[t] !=4)
+      if (vect_start_status_HVPS[t] != 0x0000 && vect_start_status_HVPS[t] !=0x0004)
 	outputFile << dec << "\t<HVPS_START_error>"  <<  1 << "</HVPS_START_error>\n";
 
-      if (vect_start_status_CPU_boot[t]!=1796 && vect_start_status_CPU_boot[t]!=1797)
+      if (vect_start_status_CPU_boot[t]!=0x0704 && vect_start_status_CPU_boot[t]!=0x0705)
 	outputFile << dec << "\t<CPUboot_START_error>"   <<  1 << "</CPUboot_START_error>\n";
 
-      if (vect_start_status_CPU_FSM[t]!=768)
+      if (vect_start_status_CPU_FSM[t]!=0x0300 && vect_start_status_CPU_FSM[t]!= 0x0200 && vect_start_status_CPU_FSM[t]!= 0x0100 && vect_start_status_CPU_FSM[t]!= 0)
 	outputFile << dec <<"\t<CPU_FSM_START_error>"   <<  1 << "</CPU_FSM_START_error>\n";
 
-      outputFile << showbase << hex << uppercase << "\t<DAQ_START>" << vect_start_status_DAQ[t] << "</DAQ_START>\n";
-      outputFile << showbase << hex << "\t<PMT_START>" << vect_start_status_PMT[t]  << "</PMT_START>\n";
-      outputFile << showbase << hex << "\t<TM_TC_START>" << vect_start_status_TM_TC[t] << "</TM_TC_START>\n";
-      outputFile << hex << "\t<HVPS_START>" <<   vect_start_status_HVPS[t] << "</HVPS_START>\n";
-      outputFile << hex << "\t<CPUboot_START>" <<   vect_start_status_CPU_boot[t] << "</CPUboot_START>\n";
-      outputFile << hex << "\t<CPU_FSM_START>" <<   vect_start_status_CPU_FSM[t] << "</CPU_FSM_START>\n";
+      
+      outputFile << setprecision(4)<<showbase << hex << uppercase << "\t<DAQ_START>" << vect_start_status_DAQ[t] << "</DAQ_START>\n";
+      outputFile << setprecision(4) << showbase << hex << "\t<PMT_START>" << vect_start_status_PMT[t]  << "</PMT_START>\n";
+      outputFile  << setprecision(4)<<showbase << hex << "\t<TM_TC_START>" << vect_start_status_TM_TC[t] << "</TM_TC_START>\n";
+      outputFile << setprecision(4)<<showbase <<  hex << "\t<HVPS_START>" <<   vect_start_status_HVPS[t] << "</HVPS_START>\n";
+      outputFile << setprecision(4)<<showbase << hex << "\t<CPUboot_START>" <<   vect_start_status_CPU_boot[t] << "</CPUboot_START>\n";
+      outputFile << setprecision(4)<<showbase << hex << "\t<CPU_FSM_START>" <<   vect_start_status_CPU_FSM[t] << "</CPU_FSM_START>\n";
 
       stringstream ss;
       ss << hex << vect_stop_status_PMT[t];
@@ -1666,32 +1666,32 @@ void TelemetryToXML(TString rootname, TString xslPath = "")
       ss.str("");
    
     
-      if (vect_stop_status_DAQ[t]!=32931 && vect_stop_status_DAQ[t]!=28834 && vect_stop_status_DAQ[t]!=24738)
+      if (vect_stop_status_DAQ[t]!= 0x80A3 && vect_stop_status_DAQ[t]!= 0x70A2 && vect_stop_status_DAQ[t]!=0x60A2 && vect_stop_status_DAQ[t]!=0x50A1)
 	outputFile << dec << "\t<DAQ_STOP_error>" << 1  << "</DAQ_STOP_error>\n";
 	  
-      if (goodstatus!="1f" && goodstatus!="2f")
+      if (goodstatus!="1f" && goodstatus!="2f" && goodstatus!="05")
 	outputFile <<dec <<  "\t<PMT_STOP_error>" <<  1 << "</PMT_STOP_error>\n";
 
-      if (vect_stop_status_TM_TC[t]!=4093 && vect_stop_status_TM_TC[t]!=1884)
+      if (vect_stop_status_TM_TC[t]!=0x075c && vect_stop_status_TM_TC[t]!=0x0ffd)
 	outputFile << dec <<  "\t<TM_TC_STOP_error>"  <<  1 << "</TM_TC_STOP_error>\n";
 
       if (vect_stop_status_HVPS[t]!=0 && vect_stop_status_HVPS[t]!=4)
 	outputFile << dec << "\t<HVPS_STOP_error>" <<  1 << "</HVPS_STOP_error>\n";
 
-      if (vect_stop_status_CPU_boot[t]!=1796 && vect_stop_status_CPU_boot[t]!=1797)
+      if (vect_stop_status_CPU_boot[t]!=0x0705 && vect_stop_status_CPU_boot[t]!=0x0704)
 	outputFile << dec << "\t<CPUboot_STOP_error>" << 1 << "</CPUboot_STOP_error>\n";
 
-      if (vect_stop_status_CPU_FSM[t]!=1 && vect_stop_status_CPU_FSM[t]!=769 && vect_stop_status_CPU_FSM[t]!=770)
+      if (vect_stop_status_CPU_FSM[t]!=1 && vect_stop_status_CPU_FSM[t]!=0x0301 && vect_stop_status_CPU_FSM[t]!=0x0302 && vect_stop_status_CPU_FSM[t]!=2 && vect_stop_status_CPU_FSM[t]!= 0)
 	outputFile << dec << "\t<CPU_FSM_STOP_error>" << 1 << "</CPU_FSM_STOP_error>\n";
     
       if (t < k_stop)
 	{
-	  outputFile << hex << "\t<DAQ_STOP>"  <<  vect_stop_status_DAQ[t] << "</DAQ_STOP>\n";
-	  outputFile << hex << "\t<PMT_STOP>" << vect_stop_status_PMT[t] << "</PMT_STOP>\n";
-	  outputFile << hex << "\t<TM_TC_STOP>" << vect_stop_status_TM_TC[t] << "</TM_TC_STOP>\n";
-	  outputFile << hex << "\t<HVPS_STOP>" << vect_stop_status_HVPS[t] << "</HVPS_STOP>\n";
-	  outputFile << hex << "\t<CPUboot_STOP>"  << vect_stop_status_CPU_boot[t] << "</CPUboot_STOP>\n";
-	  outputFile << hex << "\t<CPU_FSM_STOP>"  << vect_stop_status_CPU_FSM[t] << "</CPU_FSM_STOP>\n";
+	  outputFile << setprecision(4) << hex << "\t<DAQ_STOP>"  <<  vect_stop_status_DAQ[t] << "</DAQ_STOP>\n";
+	  outputFile << setprecision(4) << hex << "\t<PMT_STOP>" << vect_stop_status_PMT[t] << "</PMT_STOP>\n";
+	  outputFile << setprecision(4) <<  hex << "\t<TM_TC_STOP>" << vect_stop_status_TM_TC[t] << "</TM_TC_STOP>\n";
+	  outputFile << setprecision(4) << hex << "\t<HVPS_STOP>" << vect_stop_status_HVPS[t] << "</HVPS_STOP>\n";
+	  outputFile << setprecision(4) << hex << "\t<CPUboot_STOP>"  << vect_stop_status_CPU_boot[t] << "</CPUboot_STOP>\n";
+	  outputFile << setprecision(4) << hex << "\t<CPU_FSM_STOP>"  << vect_stop_status_CPU_FSM[t] << "</CPU_FSM_STOP>\n";
 	}
       
       outputFile << "</TELEMETRY>\n";   

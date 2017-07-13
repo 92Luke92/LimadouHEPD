@@ -63,10 +63,10 @@ int LEvRec0File::SetTmdPointer(LEvRec0Md &metaData) {
    
    Tmd->SetBranchAddress("silConfiguration", &metaData.silConfig.ladder_on);
 
-   Tmd->SetBranchAddress("trigger_mask[2]", &metaData.trigger_mask[2]);
+   Tmd->SetBranchAddress("trigger_mask[2]", &metaData.trigger_mask[0]);
    Tmd->SetBranchAddress("easiroc_conf[60]", &metaData.easiroc_config[0]);
    Tmd->SetBranchAddress("PMT_mask[64]", &metaData.PMT_mask[0]);
-   Tmd->SetBranchAddress("HV_mask[12]", &metaData.HV_mask[12]);
+   Tmd->SetBranchAddress("HV_mask[12]", &metaData.HV_mask[0]);
    Tmd->SetBranchAddress("HV_value[10]", &metaData.HV_value[0]);
    Tmd->SetBranchAddress("gen_trig_mask[18]", &metaData.gen_trig_mask[0]);
 

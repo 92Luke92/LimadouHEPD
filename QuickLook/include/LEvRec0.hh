@@ -185,7 +185,7 @@ public:
    
    silicon_config_t   silConfig;
 
-   unsigned char      trigger_mask[4];
+   unsigned char      trigger_mask[2];
    unsigned short     easiroc_config[EASIROC_CONF];
    bool               PMT_mask[64]; 
    bool               HV_mask[12]; 
