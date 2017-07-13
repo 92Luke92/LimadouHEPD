@@ -119,7 +119,7 @@ input_energyrecon_pars(t_p0, t_p1, c_p0, c_p1);
 double const act_threshold= 5.00;
 
 int tsum=0, tmult=0, hitbar[6]={0}; double tene=0; // trigger vars
-int sumall=0,suma=0,sumb=0, mult=0, conn[16]={0}; double enUC=0, ChVsPlane[16];// calo vars
+int sumall=0,suma=0,sumb=0, mult=0, conn[16]={0}; double enUC=0, ChVsPlane[16]; int trlen=0;// calo vars
 int IsLYSOHit=0, lmult=0; double lsum=0, enLYSO=0; // lyso
 int IsVetoBottomHit=0, IsVetoLatHit=0;// veto
 
@@ -158,7 +158,7 @@ for (int bar=0;bar<6;bar++){
 
 // upper calorimeter ------------------------------------------------------------------------------------------------------------
 
-sumall=0,suma=0,sumb=0, mult=0; for(int a=0;a<16;a++){conn[a]=0;}; enUC=0;for(int a=0;a<16;a++){ChVsPlane[a]=0;};
+sumall=0,suma=0,sumb=0, mult=0; for(int a=0;a<16;a++){conn[a]=0;}; enUC=0;for(int a=0;a<16;a++){ChVsPlane[a]=0;};trlen=0;
 
 for (int pln=0;pln<16;pln++){
     int  pmt1=(pln*2);
@@ -187,10 +187,10 @@ if(hw_condition==1){
       sumall=sumall+comp;}
 
 // max connected length        
-int clen=1;
+trlen=1;
 for (int i=0;i<16;i++){
     if(conn[i]==0  && i!=4) break; // second part to cope with broken pmt
-    clen++;
+    trlen++;
     }
 
 
@@ -234,10 +234,14 @@ for (int veto=0;veto<4;veto++){IsVetoLatHit=IsVetoLatHit+DeviceStatus(cev.veto.s
 if(ascii_dump==1){
 os << iEv << " " 
 << tsum << " " <<  tmult << " "  << tene << " " 
-<< sumall  << " "  << mult << " "  << enUC <<  " "
+<< sumall  << " "  << mult << " " << trlen << " " << enUC <<  " "
 << IsLYSOHit << " " << lmult << " " << lsum << " " << enLYSO  << " " 
 << IsVetoBottomHit  << " " << IsVetoLatHit << " " 
 << hitbar[0] << " " << hitbar[1] << " " << hitbar[2] << " " << hitbar[3] << " " << hitbar[4] << " " << hitbar[5] << " " 
+<< 987654321 << " " 
+<< ChVsPlane[0] << " " <<  ChVsPlane[1] << " " <<  ChVsPlane[2] << " " << ChVsPlane[3] << " " <<  ChVsPlane[4] << " " <<  ChVsPlane[5] << " "
+<< ChVsPlane[6] << " " <<  ChVsPlane[7] << " " <<  ChVsPlane[8] << " " << ChVsPlane[9] << " " <<  ChVsPlane[10] << " " <<  ChVsPlane[11] << " "
+<< ChVsPlane[12] << " " <<  ChVsPlane[13] << " " <<  ChVsPlane[14] << " " << ChVsPlane[15]
 << endl;}
 
 // all available vars
