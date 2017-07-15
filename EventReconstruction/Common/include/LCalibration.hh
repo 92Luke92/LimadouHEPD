@@ -13,8 +13,11 @@ public:
 	       LTrackerCalibration *tracker_IN);
   void WriteTXT(const char *fileOut) const;
   void WriteTXT(std::ofstream *fileOut) const;
+  void WriteROOT(const char *fileOut) const;
   static LCalibration* Read(const char *fileIn);
   static LCalibration* Read(std::ifstream *fileIn);
+  inline void SetInputFile(const char * name) {filename = name; return;};
+  inline const char * GetInputFile() const {return filename;};
   inline void SetRunId(const int in) {RunId=in; return;};
   inline int GetRunId() const {return RunId;};
   bool CheckStatus(void) const;  
@@ -30,6 +33,7 @@ public:
 
 private:
   int RunId;
+  const char * filename;
   LTrackerCalibration *tracker;
   LCaloCalibration *calo_HG;
   LCaloCalibration *calo_LG;
