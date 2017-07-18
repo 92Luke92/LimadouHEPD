@@ -7,9 +7,9 @@
 
 
 #include "trackeradc.hh"
-#include "MCcoorPhysicalFrame.hh"
 #include <iostream>
 #include <cmath> // floor
+#include "TVector2.h"
 
 
 
@@ -49,17 +49,21 @@ float TrackerADC::Mev2ADCFactor (trSides side)
 
 
 std::vector<short> TrackerADC::getStripsForSide (trSides side) {
-   std::vector<short> sideStrips (SIDE_CHAN);
-   float Mev2ADCfactor=Mev2ADCFactor(side);
-   float totEdep=0;
-   std::vector<Edep_Pos> SidePMTinfos = allEpos[side];
-   for (auto chaninfo: SidePMTinfos) totEdep+=chaninfo.totEdep;
-   //std::cout << " >> " << side<< " "<< totEdep << std::endl;
-   float averagedEdep=totEdep ; // / float(SIDE_CHAN);
-   float averageADC= averagedEdep*Mev2ADCfactor;
    float dummypedvalue=100;
-   short chanADC=TrimADC(averageADC, dummypedvalue);
-   sideStrips.assign (SIDE_CHAN, chanADC);
+   std::vector<short> sideStrips (SIDE_CHAN, dummypedvalue);
+   float Mev2ADCfactor=Mev2ADCFactor(side);
+   std::vector<Edep_Pos> SidePMTinfos = allEpos[side];
+
+   for (auto chaninfo: SidePMTinfos) {
+
+      if (chaninfo.totEdep>0) {
+         short nStrip=GetLocalStrip(side, chaninfo.position);
+         float EMeV=chaninfo.totEdep;
+         float EADC=EMeV*Mev2ADCfactor;
+         short chanADC=TrimADC(EADC, dummypedvalue);
+         sideStrips[nStrip]=chanADC;
+      }
+   }
 
    return sideStrips;
 
@@ -76,18 +80,19 @@ short TrackerADC::TrimADC (float raw, float ped)
 
 short TrackerADC::GetLocalStrip(trSides side, TVector3 MCpos) {
    short stripNbr=0;
-   MCtoPhysicalDetectorFrame mcVector(MCpos);
-   TVector3 physPos=mcVector.GetPhysicalVector();
-   TVector3 relSidePos=physPos;
-   const float SIDEXDIM=77.58;
-   const float SIDEYDIM=109.63;
+   // Actually this one is easier  in MCFrame (centered in 0, 0)
+   TVector2 flatPos=MCpos.XYvector();
+   TVector2 relSidePos=flatPos;
+   const float SIDEXDIM=82.5; // from BT positions schema
+   const float SIDEYDIM=210;
    const float SENSITIVESIDEXDIM=71.58;
    const float SENSITIVESIDEYDIM=106.63;
-   const short NSTRIPSPSIDE=384;
-   const short NSTRIPSNSIDE=576;
+   const short NSTRIPS_PSIDE=384;
+   const short NSTRIPS_NSIDE=576;
 
-   if (side == p0 || side == n0|| side == p1 || side == n1) relSidePos.SetX(relSidePos.X() - SIDEXDIM);
-   if (side == p4 || side == n4|| side == p5 || side == n5) relSidePos.SetX(relSidePos.X() + SIDEXDIM);
+   if (side == p0 || side == n0|| side == p1 || side == n1) relSidePos.SetX(relSidePos.X() + SIDEXDIM);
+   if (side == p4 || side == n4|| side == p5 || side == n5) relSidePos.SetX(relSidePos.X() - SIDEXDIM);
+
 
    // NSTRIPNSIDE and PSIDE even; so (0, 0) in the middle of two strips
    // We use the floor function, and add the the offset.
@@ -96,14 +101,19 @@ short TrackerADC::GetLocalStrip(trSides side, TVector3 MCpos) {
    {
       float pitch=PITCH*1000; // in mm
       float len2origin=relSidePos.X();
-      stripNbr=static_cast<short> ( NSTRIPSPSIDE/2 + floor(len2origin/pitch) );
+      stripNbr=static_cast<short> ( NSTRIPS_PSIDE/2 + floor(len2origin/pitch) );
    } else {
-      float pitch=PITCH*1000*(NSTRIPSNSIDE/NSTRIPSPSIDE); // in mm
+      float pitch=PITCH*1000*(NSTRIPS_NSIDE/NSTRIPS_PSIDE); // in mm
       float len2origin=relSidePos.Y();
-      stripNbr=static_cast<short> ( NSTRIPSNSIDE/2 + floor(len2origin/pitch) );
+      stripNbr=static_cast<short> ( NSTRIPS_NSIDE/2 + floor(len2origin/pitch) );
    }
-   if (stripNbr<0 || stripNbr>NSTRIPSPSIDE)
-      std::cerr << "Tracker position -> strip number mismatch " << stripNbr << std::endl;
+   if (stripNbr<0 || stripNbr>=NSTRIPS_PSIDE) {
+      std::cerr << "Tracker position -> strip number mismatch " << stripNbr << " for side " << side <<  std::endl;
+      flatPos.Print();
+      relSidePos.Print();
+       if (stripNbr<0) stripNbr=0;
+       if (stripNbr>=NSTRIPS_PSIDE) stripNbr=NSTRIPS_PSIDE-1;
+   }
 
    return stripNbr;
 }

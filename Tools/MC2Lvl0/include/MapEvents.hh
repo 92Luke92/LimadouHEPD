@@ -150,23 +150,23 @@ void MapEvents::Mappify(){
 	}
 
 	if(myTrackerHit.size()>0){
-		for(size_t th=0;th<myTrackerHit.size();th++){
+		for(size_t th=0;th<myTrackerHit.size();th++){ // Orders follows strip -> chan one (0p, 0s, ... 5s)
 			int layerTrack=myTrackerHit[th].GetDetectorId();
-			if(layerTrack==2211) Tracker[0] .push_back(myTrackerHit[th]);
-			if(layerTrack==2212) Tracker[1] .push_back(myTrackerHit[th]);
-			if(layerTrack==2221) Tracker[2] .push_back(myTrackerHit[th]);
-			if(layerTrack==2222) Tracker[3] .push_back(myTrackerHit[th]);
-			if(layerTrack==2231) Tracker[4] .push_back(myTrackerHit[th]);
-			if(layerTrack==2232) Tracker[5] .push_back(myTrackerHit[th]);
-			if(layerTrack==2111) Tracker[6] .push_back(myTrackerHit[th]);
-			if(layerTrack==2112) Tracker[7] .push_back(myTrackerHit[th]);
-			if(layerTrack==2121) Tracker[8] .push_back(myTrackerHit[th]);
-			if(layerTrack==2122) Tracker[9] .push_back(myTrackerHit[th]);
-			if(layerTrack==2131) Tracker[10].push_back(myTrackerHit[th]);
-			if(layerTrack==2132) Tracker[11].push_back(myTrackerHit[th]);
+			if(layerTrack==2212) Tracker[0] .push_back(myTrackerHit[th]);
+			if(layerTrack==2211) Tracker[1] .push_back(myTrackerHit[th]);
+			if(layerTrack==2112) Tracker[2] .push_back(myTrackerHit[th]);
+			if(layerTrack==2111) Tracker[3] .push_back(myTrackerHit[th]);
+			if(layerTrack==2222) Tracker[4] .push_back(myTrackerHit[th]);
+			if(layerTrack==2221) Tracker[5] .push_back(myTrackerHit[th]);
+			if(layerTrack==2122) Tracker[6] .push_back(myTrackerHit[th]);
+			if(layerTrack==2121) Tracker[7] .push_back(myTrackerHit[th]);
+			if(layerTrack==2232) Tracker[8] .push_back(myTrackerHit[th]);
+			if(layerTrack==2231) Tracker[9] .push_back(myTrackerHit[th]);
+			if(layerTrack==2132) Tracker[10].push_back(myTrackerHit[th]);
+			if(layerTrack==2131) Tracker[11].push_back(myTrackerHit[th]);
 
 		}
-	}	
+	}
 	return;
 }
 
