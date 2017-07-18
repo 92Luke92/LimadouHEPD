@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project("MC2LVL0")
 
 # The project version number.
@@ -46,9 +46,10 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../Simulation/build/lib/)
 file(GLOB_RECURSE MCsources ${PROJECT_SOURCE_DIR}/../../Simulation/source/Dataformats/src/*.cc)
 file(GLOB_RECURSE LVL0sources ${PROJECT_SOURCE_DIR}/../../EventReconstruction/Common/src/LEvRec0.cc)
-file(GLOB_RECURSE CCsources ${PROJECT_SOURCE_DIR}/src/LEvRec0Writer.cc ${PROJECT_SOURCE_DIR}/src/trackeradc.cc ${PROJECT_SOURCE_DIR}/src/ecaladc.cc)
+file(GLOB_RECURSE CCsources ${PROJECT_SOURCE_DIR}/src/LEvRec0Writer.cc ${PROJECT_SOURCE_DIR}/src/trackeradc.cc ${PROJECT_SOURCE_DIR}/src/ecaladc.cc ${PROJECT_SOURCE_DIR}/src/MCcoorPhysicalFrame.cc)
+message(${CCsources})
 file(GLOB_RECURSE sources ${PROJECT_SOURCE_DIR}/*/src/*.cc)
-add_executable(testDetID src/testDetID.cc ${sources})
+add_executable(testDetID src/testDetID.cc ${sources} ${PROJECT_SOURCE_DIR}/src/MCcoorPhysicalFrame.cc)
 add_executable(MC2Lvl0 src/MC2Lvl0.cc ${sources}  ${LVL0sources} ${CCsources})
 install(FILES DataFormatDict_rdict.pcm DESTINATION ${PROJECT_SOURCE_DIR}/../../Simulation/build/)
 target_link_libraries(testDetID ${ROOT_LIBRARIES})

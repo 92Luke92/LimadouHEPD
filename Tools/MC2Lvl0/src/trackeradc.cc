@@ -7,7 +7,9 @@
 
 
 #include "trackeradc.hh"
+#include "MCcoorPhysicalFrame.hh"
 #include <iostream>
+#include <cmath> // floor
 
 
 
@@ -69,4 +71,39 @@ short TrackerADC::TrimADC (float raw, float ped)
     if (untrimmed > NADC) untrimmed = NADC - 1;
     short trimmed=static_cast<short> (untrimmed);
     return trimmed;
+}
+
+
+short TrackerADC::GetLocalStrip(trSides side, TVector3 MCpos) {
+   short stripNbr=0;
+   MCtoPhysicalDetectorFrame mcVector(MCpos);
+   TVector3 physPos=mcVector.GetPhysicalVector();
+   TVector3 relSidePos=physPos;
+   const float SIDEXDIM=77.58;
+   const float SIDEYDIM=109.63;
+   const float SENSITIVESIDEXDIM=71.58;
+   const float SENSITIVESIDEYDIM=106.63;
+   const short NSTRIPSPSIDE=384;
+   const short NSTRIPSNSIDE=576;
+
+   if (side == p0 || side == n0|| side == p1 || side == n1) relSidePos.SetX(relSidePos.X() - SIDEXDIM);
+   if (side == p4 || side == n4|| side == p5 || side == n5) relSidePos.SetX(relSidePos.X() + SIDEXDIM);
+
+   // NSTRIPNSIDE and PSIDE even; so (0, 0) in the middle of two strips
+   // We use the floor function, and add the the offset.
+
+   if (side%2 == 0) // P side, strip in x coordinate, short dimension
+   {
+      float pitch=PITCH*1000; // in mm
+      float len2origin=relSidePos.X();
+      stripNbr=static_cast<short> ( NSTRIPSPSIDE/2 + floor(len2origin/pitch) );
+   } else {
+      float pitch=PITCH*1000*(NSTRIPSNSIDE/NSTRIPSPSIDE); // in mm
+      float len2origin=relSidePos.Y();
+      stripNbr=static_cast<short> ( NSTRIPSNSIDE/2 + floor(len2origin/pitch) );
+   }
+   if (stripNbr<0 || stripNbr>NSTRIPSPSIDE)
+      std::cerr << "Tracker position -> strip number mismatch " << stripNbr << std::endl;
+
+   return stripNbr;
 }

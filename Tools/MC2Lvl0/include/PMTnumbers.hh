@@ -194,7 +194,8 @@ posmap getPosMap () {
    for (int i=0; i<npmt; i++) {
       float x=(i%2 == 0)?82.5:-82.5; //mm
       float y=(i < npmt/2)?82.5:-82.5; //mm
-      TVector3 vecz=MCtoPhysicalDetectorFrame(TVector3(0, 0, PMTzMC[i]));
+      MCtoPhysicalDetectorFrame mcVector(TVector3(0, 0, PMTzMC[i]));
+      TVector3 vecz=mcVector.GetPhysicalVector();
       float z=vecz.z();
       map[CaloPMTnames[i]]=TVector3(x, y, z);
    }
