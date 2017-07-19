@@ -86,7 +86,6 @@ short TrackerADC::GetLocalStrip(trSides side, TVector3 MCpos) {
    const float SIDEYDIM=209.66; // From Ester's doc
    const float SENSITIVE_SIDE_XDIM=71.58;
    const float SENSITIVE_SIDE_YDIM=106.63;
-   const short NSTRIPS_SIDE=384;
 
    TVector2 flatPos=MCpos.XYvector();
    if (side%2 == 0) // P side, chan increases if x decreases
@@ -95,20 +94,20 @@ short TrackerADC::GetLocalStrip(trSides side, TVector3 MCpos) {
       float len2origin=flatPos.X();
       if (side == p0 || side == p1) len2origin += SIDEXDIM; // top
       if (side == p4 || side == p5) len2origin -= SIDEXDIM; //
-      stripNbr=static_cast<short> ( NSTRIPS_SIDE/2 - floor(len2origin/PITCH_PSIDE_MM) );
+      stripNbr=static_cast<short> ( SIDE_CHAN/2 - floor(len2origin/PITCH_PSIDE_MM) );
    }
    else // S side, chan increases if y increases
    {
-      const float PITCH_NSIDE_MM=SIDEYDIM/NSTRIPS_SIDE;
+      const float PITCH_NSIDE_MM=SIDEYDIM/SIDE_CHAN;
       float len2origin=flatPos.Y();
-      stripNbr=static_cast<short> ( NSTRIPS_SIDE/2 + floor(len2origin/PITCH_NSIDE_MM) );
+      stripNbr=static_cast<short> ( SIDE_CHAN/2 + floor(len2origin/PITCH_NSIDE_MM) );
    }
 
-   if (stripNbr<0 || stripNbr>=NSTRIPS_SIDE) {
+   if (stripNbr<0 || stripNbr>=SIDE_CHAN) {
       std::cerr << "Tracker position -> strip number mismatch " << stripNbr << " for side " << side <<  std::endl;
       flatPos.Print();
        if (stripNbr<0) stripNbr=0;
-       if (stripNbr>=NSTRIPS_SIDE) stripNbr=NSTRIPS_SIDE-1;
+       if (stripNbr>=SIDE_CHAN) stripNbr=SIDE_CHAN-1;
    }
 
    return stripNbr;
