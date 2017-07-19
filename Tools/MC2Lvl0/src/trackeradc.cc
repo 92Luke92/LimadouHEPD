@@ -81,38 +81,34 @@ short TrackerADC::TrimADC (float raw, float ped)
 short TrackerADC::GetLocalStrip(trSides side, TVector3 MCpos) {
    short stripNbr=0;
    // Actually this one is easier  in MCFrame (centered in 0, 0)
-   TVector2 flatPos=MCpos.XYvector();
-   TVector2 relSidePos=flatPos;
+   // But beware of x and y planes!
    const float SIDEXDIM=82.5; // from BT positions schema
-   const float SIDEYDIM=210;
-   const float SENSITIVESIDEXDIM=71.58;
-   const float SENSITIVESIDEYDIM=106.63;
-   const short NSTRIPS_PSIDE=384;
-   const short NSTRIPS_NSIDE=576;
+   const float SIDEYDIM=209.66; // From Ester's doc
+   const float SENSITIVE_SIDE_XDIM=71.58;
+   const float SENSITIVE_SIDE_YDIM=106.63;
+   const short NSTRIPS_SIDE=384;
 
-   if (side == p0 || side == n0|| side == p1 || side == n1) relSidePos.SetX(relSidePos.X() + SIDEXDIM);
-   if (side == p4 || side == n4|| side == p5 || side == n5) relSidePos.SetX(relSidePos.X() - SIDEXDIM);
-
-
-   // NSTRIPNSIDE and PSIDE even; so (0, 0) in the middle of two strips
-   // We use the floor function, and add the the offset.
-
-   if (side%2 == 0) // P side, strip in x coordinate, short dimension
+   TVector2 flatPos=MCpos.XYvector();
+   if (side%2 == 0) // P side, chan increases if x decreases
    {
-      float pitch=PITCH*1000; // in mm
-      float len2origin=relSidePos.X();
-      stripNbr=static_cast<short> ( NSTRIPS_PSIDE/2 + floor(len2origin/pitch) );
-   } else {
-      float pitch=PITCH*1000*(NSTRIPS_NSIDE/NSTRIPS_PSIDE); // in mm
-      float len2origin=relSidePos.Y();
-      stripNbr=static_cast<short> ( NSTRIPS_NSIDE/2 + floor(len2origin/pitch) );
+      const float PITCH_PSIDE_MM=PITCH*1000;
+      float len2origin=flatPos.X();
+      if (side == p0 || side == p1) len2origin += SIDEXDIM; // top
+      if (side == p4 || side == p5) len2origin -= SIDEXDIM; //
+      stripNbr=static_cast<short> ( NSTRIPS_SIDE/2 - floor(len2origin/PITCH_PSIDE_MM) );
    }
-   if (stripNbr<0 || stripNbr>=NSTRIPS_PSIDE) {
+   else // S side, chan increases if y increases
+   {
+      const float PITCH_NSIDE_MM=SIDEYDIM/NSTRIPS_SIDE;
+      float len2origin=flatPos.Y();
+      stripNbr=static_cast<short> ( NSTRIPS_SIDE/2 + floor(len2origin/PITCH_NSIDE_MM) );
+   }
+
+   if (stripNbr<0 || stripNbr>=NSTRIPS_SIDE) {
       std::cerr << "Tracker position -> strip number mismatch " << stripNbr << " for side " << side <<  std::endl;
       flatPos.Print();
-      relSidePos.Print();
        if (stripNbr<0) stripNbr=0;
-       if (stripNbr>=NSTRIPS_PSIDE) stripNbr=NSTRIPS_PSIDE-1;
+       if (stripNbr>=NSTRIPS_SIDE) stripNbr=NSTRIPS_SIDE-1;
    }
 
    return stripNbr;
