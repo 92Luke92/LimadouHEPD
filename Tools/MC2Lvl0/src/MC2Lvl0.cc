@@ -40,7 +40,7 @@ std::string  getMCfilename (int argc, char** argv);
 std::string  getLvl0filename (const std::string mcfilename);
 void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc);
 std::vector<float> CaloHitsToEdep (std::vector<RootCaloHit>);
-void getPMTs (std::vector<RootCaloHit>, ushort * pmt_high, ushort * pmt_low);
+void getPMTs (std::vector<RootCaloHit>, ushort * pmt_high, ushort * pmt_low, EcalADC ecaladc);
 void getStrips (std::vector<RootTrackerHit>, short* strips);
 
 
@@ -69,6 +69,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     RootEvent* MCevt = new RootEvent;
     TBranch* b_Event = new TBranch;
     Tmc->SetBranchAddress ("Event", &MCevt, &b_Event);
+    EcalADC ecaladc;
     for (int ie = 0; ie < ne; ie++) {
         int nb = Tmc->GetEntry (ie);
         int eventid =  MCevt->EventID();
@@ -77,7 +78,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
         std::vector<RootTrackerHit>  trackerHits =  MCevt->GetTrackerHit();
         LEvRec0* ev = lvl0writer->pev();
         ev->Reset();
-        getPMTs (caloHits, ev->pmt_high, ev->pmt_low);
+        getPMTs (caloHits, ev->pmt_high, ev->pmt_low, ecaladc);
         getStrips (trackerHits, ev->strip);
         lvl0writer->Fill();
         std::cout << ie << "\r" << std::flush;
@@ -115,10 +116,11 @@ std::string  getLvl0filename (const std::string mcfilename)
 
 
 
-void getPMTs (std::vector<RootCaloHit> CaloHits, ushort* pmt_high, ushort* pmt_low)
+void getPMTs (std::vector<RootCaloHit> CaloHits, ushort* pmt_high, ushort* pmt_low, EcalADC ecaladc )
 {
     std::vector<Edep_Pos> pmt_info = Calo2Edep_PosConverter (CaloHits);
-    EcalADC ecaladc(pmt_info);
+
+    ecaladc.SetPositions(pmt_info);
     ecaladc.NormalizePMThg(pmt_high);
     ecaladc.NormalizePMTlg(pmt_low);
     return;
