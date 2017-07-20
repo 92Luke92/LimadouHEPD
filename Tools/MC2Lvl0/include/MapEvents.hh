@@ -77,6 +77,7 @@ void MapEvents::LoadEvent(RootEvent   *Event){
 }
 
 void MapEvents::MapPMTs(){
+
 	for(int PMTnr=0;PMTnr<6;PMTnr++)
 		if(TestHitLayer("Trigger",PMTnr)){ PMTMap[PMTnr+0] =Trigger[PMTnr][0];
                 PMTMap[PMTnr+32]=Trigger[PMTnr][0];
@@ -90,10 +91,9 @@ void MapEvents::MapPMTs(){
                 PMTMap[PMTnr+54]=Veto[PMTnr][0];
         }
 	for(int PMTnr=0;PMTnr<5;PMTnr++)
-		if(TestHitLayer("LYSO",PMTnr)) PMTMap[PMTnr+26] =Lyso[PMTnr][0];
+		if(TestHitLayer("LYSO",PMTnr)) PMTMap[PMTnr+27] =Lyso[PMTnr][0];
        	for(int PMTnr=5;PMTnr<9;PMTnr++)
 		if(TestHitLayer("LYSO",PMTnr)) PMTMap[(PMTnr-5)+59] =Lyso[PMTnr][0];
-
 
 	return;
 }
@@ -116,7 +116,7 @@ void MapEvents::Mappify(){
 			if(layer==1215) Calo[1] .push_back(myCaloHit[ch]);
 			if(layer==1214) Calo[2] .push_back(myCaloHit[ch]);
 			if(layer==1213) Calo[3] .push_back(myCaloHit[ch]);
-				if(layer==1212) Calo[4] .push_back(myCaloHit[ch]);
+			if(layer==1212) Calo[4] .push_back(myCaloHit[ch]);
 			if(layer==1211) Calo[5] .push_back(myCaloHit[ch]);
 			if(layer==1210) Calo[6] .push_back(myCaloHit[ch]);
 			if(layer==1209) Calo[7] .push_back(myCaloHit[ch]);
