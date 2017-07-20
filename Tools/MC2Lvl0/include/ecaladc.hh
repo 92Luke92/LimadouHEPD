@@ -22,11 +22,7 @@
 class EcalADC {
   public:
     EcalADC();
-    void SetPositions (std::vector<Edep_Pos> edepPositions )
-    {
-        edepPos = edepPositions;
-    }
-    std::vector<short> GetStrips();
+    void SetPositions (std::vector<Edep_Pos> pmt_info );
     void NormalizePMThg ( ushort* pmt_high);
     void NormalizePMTlg ( ushort* pmt_low);
 
@@ -76,13 +72,13 @@ class EcalADC {
     void initMCpos();
 
     PMTarray hgPMT, lgPMT;
-    std::vector<Edep_Pos> edepPos;
-    std::vector<float> CorrectPMT (std::vector<Edep_Pos>);
+    std::array<float, NPMT>   correctedPMTs;
     std::vector<int> GetPMTHGPeds();
     std::vector<int> GetPMTLGPeds();
     float PMTAttCorr (float dist);
-    float EcalMev2ADCfactorHG (PMTenum PMT);
-    float EcalMev2ADCfactorLG (PMTenum PMT);
+    float EcalMev2ADCfactor (PMTenum PMT, PMTarray pmtDB);
+
+    void NormalizePMT ( ushort* pmt_out, PMTarray pmtDB);
 
 
 };

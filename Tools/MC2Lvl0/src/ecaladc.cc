@@ -77,9 +77,7 @@ void EcalADC::initMCpos() {
 }
 
 
-std::vector<float> EcalADC::CorrectPMT (std::vector<Edep_Pos> pmt_info)
-{
-    std::vector<float>   correctedPMTs (NPMT);
+void EcalADC::SetPositions(std::vector<Edep_Pos> pmt_info) {
     for (int ip = 0; ip < NPMT; ip++) {
         correctedPMTs[ip] = pmt_info[ip].totEdep;
         TVector3 PMTpos = hgPMT[ip].physPosition;
@@ -88,35 +86,30 @@ std::vector<float> EcalADC::CorrectPMT (std::vector<Edep_Pos> pmt_info)
         float attcor = PMTAttCorr (distance);
         correctedPMTs[ip] *= attcor;
     }
-    return correctedPMTs;
 }
 
 void EcalADC::NormalizePMThg ( ushort* pmt_high)
 {
-    std::vector<int> ped = GetPMTHGPeds();
-    std::vector<float> rawPMT=CorrectPMT(edepPos);
-    for (int ip = 0; ip < NPMT; ip++) {
-        float MeVToADC = EcalMev2ADCfactorHG (PMTiterator[ip]);
-        int untrimmedPMT = static_cast<int> (rawPMT[ip] * MeVToADC) + ped[ip];
-        if (untrimmedPMT > NADC) untrimmedPMT = NADC - 1;
-        pmt_high[ip] = static_cast<short> (untrimmedPMT);
-    }
+    NormalizePMT(pmt_high, hgPMT);
     return;
 }
 
 void EcalADC::NormalizePMTlg ( ushort* pmt_low)
 {
-    std::vector<int> ped = GetPMTLGPeds();
-    std::vector<float> rawPMT=CorrectPMT(edepPos);
-    for (int ip = 0; ip < NPMT; ip++) {
-        float MeVToADC = EcalMev2ADCfactorLG (PMTiterator[ip]);
-        int untrimmedPMT = static_cast<int> (rawPMT[ip] * MeVToADC) + ped[ip];
-        if (untrimmedPMT > NADC) untrimmedPMT = NADC - 1;
-        pmt_low[ip] = static_cast<short> (untrimmedPMT);
-    }
+    NormalizePMT(pmt_low, lgPMT);
     return;
 }
 
+
+void EcalADC::NormalizePMT ( ushort* pmt_out, PMTarray pmtDB) {
+    for (uint ip = 0; ip < NPMT; ip++) {
+        float MeVToADC = EcalMev2ADCfactor (PMTiterator[ip], pmtDB);
+        int untrimmedPMT = static_cast<int> (correctedPMTs[ip] * MeVToADC) + pmtDB[ip].pedMean;
+        if (untrimmedPMT > NADC) untrimmedPMT = NADC - 1;
+        pmt_out[ip] = static_cast<short> (untrimmedPMT);
+    }
+    return;
+}
 
 
 
@@ -140,29 +133,16 @@ std::vector<int> EcalADC::GetPMTLGPeds()
 
 
 
-float EcalADC::EcalMev2ADCfactorHG (PMTenum PMT)
+float EcalADC::EcalMev2ADCfactor (PMTenum PMT, PMTarray pmtDB)
 {
-    float MaxMeVlayer = 15;
-    if (hgPMT[PMT].isScint)
-    MaxMeVlayer = hgPMT[PMT].scintMeVPeak;
-    float absMaxADCLayer = hgPMT[PMT].maxPeak;
-    float pedLayer = hgPMT[PMT].pedMean;
-    float relMaxADClayer = absMaxADCLayer - pedLayer;
-    float MeV2ADC = relMaxADClayer / MaxMeVlayer;
+    float MaxMeV = pmtDB[PMT].isScint? pmtDB[PMT].scintMeVPeak:15;
+    float absMaxADC = pmtDB[PMT].maxPeak;
+    float ped = pmtDB[PMT].pedMean;
+    float relMaxADC = absMaxADC - ped;
+    float MeV2ADC = relMaxADC / MaxMeV;
     return MeV2ADC;
 }
 
-float EcalADC::EcalMev2ADCfactorLG (PMTenum PMT)
-{
-    float MaxMeVlayer = 15;
-    if (lgPMT[PMT].isScint)
-    MaxMeVlayer = lgPMT[PMT].scintMeVPeak;
-    float absMaxADCLayer = lgPMT[PMT].maxPeak;
-    float pedLayer = lgPMT[PMT].pedMean;
-    float relMaxADClayer = absMaxADCLayer - pedLayer;
-    float MeV2ADC = relMaxADClayer / MaxMeVlayer;
-    return MeV2ADC;
-}
 
 
 float EcalADC::PMTAttCorr (float dist)
