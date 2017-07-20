@@ -125,8 +125,8 @@ void HEPDSWPrimaryGeneratorAction::SetDefaultKinematic()
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,-1.));
   fParticleGun->SetParticleEnergy(1.*GeV);
-  G4double position = 0.5*(fDetector->GetWorldSizeZ());
-  fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm,position));
+  G4double positionZ = 0.5*(fDetector->GetWorldSizeZ());
+  fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm,positionZ));
 }
 
 void HEPDSWPrimaryGeneratorAction::SetEnergy(G4double ene)
@@ -183,7 +183,7 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if(random){
     G4double phi = 2*CLHEP::pi*G4RandFlat::shoot();
     G4double theta = std::sqrt(G4RandFlat::shoot());
-    float atheta = theta;
+    //float atheta = theta;
     theta = std::acos(theta);
     G4double Xmax = 0.5*(fDetector->GetWorldSizeX());
     G4double Ymax = 0.5*(fDetector->GetWorldSizeY());

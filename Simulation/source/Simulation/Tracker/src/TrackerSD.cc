@@ -89,7 +89,7 @@ G4bool TrackerSD::NewHit(G4Step* aStep){
 }
 
 int TrackerSD::SetDetectorId(G4Step* aStep){
-  int detId = 0;
+  detId = 0;
   if(verboseLevel>1) 
     std::cout<<" I'm inside the SetDetectorId method"<<std::endl; 
   const G4VTouchable* VT(aStep->GetPreStepPoint()->GetTouchable());
