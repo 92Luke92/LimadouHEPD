@@ -81,7 +81,6 @@ class EcalADC {
     std::vector<int> GetPMTHGPeds();
     std::vector<int> GetPMTLGPeds();
     float PMTAttCorr (float dist);
-    int GetScintLayer (PMTenum PMT);
     float EcalMev2ADCfactorHG (PMTenum PMT);
     float EcalMev2ADCfactorLG (PMTenum PMT);
 

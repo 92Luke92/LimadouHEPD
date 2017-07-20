@@ -73,7 +73,6 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     for (int ie = 0; ie < ne; ie++) {
         int nb = Tmc->GetEntry (ie);
         int eventid =  MCevt->EventID();
-        std::vector<RootTrack> rootTracks =  MCevt->GetTracks();
         std::vector<RootCaloHit> caloHits =  MCevt->GetCaloHit();
         std::vector<RootTrackerHit>  trackerHits =  MCevt->GetTrackerHit();
         LEvRec0* ev = lvl0writer->pev();

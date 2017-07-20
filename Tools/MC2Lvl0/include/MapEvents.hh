@@ -83,7 +83,7 @@ void MapEvents::MapPMTs(){
         }
 	for(int PMTnr=0;PMTnr<16;PMTnr++)
 		if(TestHitLayer("Calo",PMTnr)){ PMTMap[PMTnr+6] =Calo[PMTnr][0];
-                PMTMap[PMTnr+39]=Calo[PMTnr][0];
+                PMTMap[PMTnr+38]=Calo[PMTnr][0];
         }
 	for(int PMTnr=0;PMTnr<5;PMTnr++)
 		if(TestHitLayer("Veto",PMTnr)){ PMTMap[PMTnr+22] =Veto[PMTnr][0];

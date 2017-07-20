@@ -8,6 +8,7 @@
 
 #include "ecaladc.hh"
 #include "TVector3.h"
+#include "TVector2.h"
 #include <iostream>
 
 
@@ -29,17 +30,37 @@ float VectorXYDist (TVector3 v1, TVector3 v2)
 
 
 EcalADC::EcalADC() {
-
-
     initHGaggregate();
     initLGaggregate();
     initScint();
     initMCpos();
-
-
-
 }
 
+
+void EcalADC::initScint()
+{
+    const std::array<float, NSCINTPLANES> MeVPeakLayer = {
+        5.19256, 5.31434, 5.43623, 5.56329, 5.71436, 5.89574, 6.07625, 6.29347,
+        6.53174, 6.80163, 7.13162, 7.51907, 8.00189, 8.59306, 9.37135, 10.4922
+    };
+    const std::map<PMTenum, int> PMT2Layer;
+    std::vector <PMTenum > scintPMT = {P1se, P2sw, P3se, P4sw, P5se, P6sw, P7se, P8sw,
+                                    P9se, P10sw, P11se, P12sw, P13se, P14sw, P15se, P16sw,
+                                    P1nw, P2ne, P3nw, P4ne, P5nw, P6ne, P7nw, P8ne,
+                                    P9nw, P10ne, P11nw, P12ne, P13nw, P14ne, P15nw, P16ne
+                                   };
+    for (int iPMT=0; iPMT<scintPMT.size(); iPMT++) {
+        uint layer= iPMT % scintPMT.size()/2;
+        float peak=MeVPeakLayer[layer];
+        PMTenum idx=scintPMT[iPMT];
+        hgPMT[idx].layerScint=layer;
+        hgPMT[idx].scintMeVPeak=peak;
+        lgPMT[idx].layerScint=layer;
+        lgPMT[idx].scintMeVPeak=peak;
+
+    }
+    return;
+}
 
 
 void EcalADC::initMCpos() {
@@ -117,15 +138,7 @@ std::vector<int> EcalADC::GetPMTLGPeds()
     return PMTLGPeds;
 }
 
-int EcalADC::GetScintLayer (PMTenum PMT)
-{
-    int layer = -1;
-    if (hgPMT[PMT].isScint) {
-        int PMTindex = 3;
-        layer = PMTindex % (NPMT / 2);
-    }
-    return layer;
-}
+
 
 float EcalADC::EcalMev2ADCfactorHG (PMTenum PMT)
 {
@@ -160,30 +173,7 @@ float EcalADC::PMTAttCorr (float dist)
 
 
 
-void EcalADC::initScint()
-{
-    const std::array<float, NSCINTPLANES> MeVPeakLayer = {
-        5.19256, 5.31434, 5.43623, 5.56329, 5.71436, 5.89574, 6.07625, 6.29347,
-        6.53174, 6.80163, 7.13162, 7.51907, 8.00189, 8.59306, 9.37135, 10.4922
-    };
-    const std::map<PMTenum, int> PMT2Layer;
-    std::vector <PMTenum > scintPMT = {P1se, P2sw, P3se, P4sw, P5se, P6sw, P7se, P8sw,
-                                    P9se, P10sw, P11se, P12sw, P13se, P14sw, P15se, P16sw,
-                                    P1nw, P2ne, P3nw, P4ne, P5nw, P6ne, P7nw, P8ne,
-                                    P9nw, P10ne, P11nw, P12ne, P13nw, P14ne, P15nw, P16ne
-                                   };
-    for (int iPMT=0; iPMT<scintPMT.size(); iPMT++) {
-        uint layer= iPMT % scintPMT.size()/2;
-        float peak=MeVPeakLayer[layer];
-        PMTenum idx=scintPMT[iPMT];
-        hgPMT[idx].layerScint=layer;
-        hgPMT[idx].scintMeVPeak=peak;
-        lgPMT[idx].layerScint=layer;
-        lgPMT[idx].scintMeVPeak=peak;
 
-    }
-    return;
-}
 
 
 void EcalADC::initHGaggregate () {
