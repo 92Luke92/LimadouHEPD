@@ -113,24 +113,6 @@ void EcalADC::NormalizePMT ( ushort* pmt_out, PMTarray pmtDB) {
 
 
 
-std::vector<int> EcalADC::GetPMTHGPeds()
-{
-    std::vector<int>  PMTHGPeds (NPMT);
-    for (int ip = 0; ip < NPMT; ip++) {
-        PMTHGPeds[ip] = static_cast<int> (hgPMT[ip].pedMean);
-    }
-    return PMTHGPeds;
-}
-
-std::vector<int> EcalADC::GetPMTLGPeds()
-{
-    std::vector<int>  PMTLGPeds (NPMT);
-    for (int ip = 0; ip < NPMT; ip++) {
-        PMTLGPeds[ip] = static_cast<int> (lgPMT[ip].pedMean);
-    }
-    return PMTLGPeds;
-}
-
 
 
 float EcalADC::EcalMev2ADCfactor (PMTenum PMT, PMTarray pmtDB)

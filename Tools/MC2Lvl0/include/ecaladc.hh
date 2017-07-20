@@ -73,8 +73,6 @@ class EcalADC {
 
     PMTarray hgPMT, lgPMT;
     std::array<float, NPMT>   correctedPMTs;
-    std::vector<int> GetPMTHGPeds();
-    std::vector<int> GetPMTLGPeds();
     float PMTAttCorr (float dist);
     float EcalMev2ADCfactor (PMTenum PMT, PMTarray pmtDB);
 
