@@ -13,6 +13,7 @@
 #include <string>
 #include <cmath>
 #include <sstream>
+#include <vector>
 
 // MCEventAnalyze
 #include "RootEvent.hh"
@@ -101,9 +102,9 @@ std::string  getMCfilename (int argc, char** argv)
 std::string  getLvl0filename (const std::string mcfilename)
 {
 
-    vector<string> strings;
-    istringstream f(mcfilename.c_str());
-    string s;
+    std::vector<std::string> strings;
+    std::istringstream f(mcfilename.c_str());
+    std::string s;
     while (std::getline(f, s, '/')) {
 	    strings.push_back(s);
     }
