@@ -47,14 +47,15 @@ Edep_Pos HitsToEdepPos::CaloHit2EdepPos (RootCaloHit hit)
 
 
 
-std::vector<std::vector<Edep_Pos>> HitsToEdepPos::Tracker2Edep_PosConverter (std::vector<RootTrackerHit> TrackerHits) {
-   std::vector<std::vector<Edep_Pos>> trEpos (12);
-   for (RootTrackerHit hit : TrackerHits) {
+std::vector<std::vector<Edep_Pos>> HitsToEdepPos::Tracker2Edep_PosConverter (std::vector<RootTrackerHit> TrackerHits)
+{
+    std::vector<std::vector<Edep_Pos>> trEpos (12);
+    for (RootTrackerHit hit : TrackerHits) {
         int subdetIdx = hit.GetDetectorId();
         Edep_Pos hitEpos = TrHit2EdepPos (hit);
-        trEpos[Tracker2PMTidx[subdetIdx]].push_back(hitEpos);
+        trEpos[Tracker2PMTidx[subdetIdx]].push_back (hitEpos);
     }
-   return trEpos;
+    return trEpos;
 }
 
 
