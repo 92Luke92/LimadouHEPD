@@ -43,13 +43,13 @@ private:
 
 public:
 	MapEvents(){
-		for(int i=0;i<6 ;i++)  Trigger.push_back(std::vector<RootCaloHit>());
-		for(int i=0;i<16;i++)  Calo   .push_back(std::vector<RootCaloHit>());
-		for(int i=0;i<5 ;i++)  Veto   .push_back(std::vector<RootCaloHit>());
-		for(int i=0;i<9 ;i++)  Lyso   .push_back(std::vector<RootCaloHit>());
+		for(int i=0;i<NTRIGSCINT ;i++)  Trigger.push_back(std::vector<RootCaloHit>());
+		for(int i=0;i<NSCINTPLANES;i++)  Calo   .push_back(std::vector<RootCaloHit>());
+		for(int i=0;i<NVETOSCINT ;i++)  Veto   .push_back(std::vector<RootCaloHit>());
+		for(int i=0;i<NLYSOCRYSTALS ;i++)  Lyso   .push_back(std::vector<RootCaloHit>());
 		for(int i=0;i<12;i++)  Tracker.push_back(std::vector<RootTrackerHit>());
 
-		for(int i=0;i<64;i++) { RootCaloHit dummy; PMTMap.push_back(dummy);}
+		for(int i=0;i<NPMT;i++) { RootCaloHit dummy; PMTMap.push_back(dummy);}
 	};
 
 	void LoadEvent(RootEvent   *Event);
@@ -78,15 +78,15 @@ void MapEvents::LoadEvent(RootEvent   *Event){
 
 void MapEvents::MapPMTs(){
 
-	for(int PMTnr=0;PMTnr<6;PMTnr++)
+	for(int PMTnr=0;PMTnr<NTRIGSCINT;PMTnr++)
 		if(TestHitLayer("Trigger",PMTnr)){ PMTMap[PMTnr+0] =Trigger[PMTnr][0];
                 PMTMap[PMTnr+32]=Trigger[PMTnr][0];
         }
-	for(int PMTnr=0;PMTnr<16;PMTnr++)
+	for(int PMTnr=0;PMTnr<NSCINTPLANES;PMTnr++)
 		if(TestHitLayer("Calo",PMTnr)){ PMTMap[PMTnr+6] =Calo[PMTnr][0];
                 PMTMap[PMTnr+38]=Calo[PMTnr][0];
         }
-	for(int PMTnr=0;PMTnr<5;PMTnr++)
+	for(int PMTnr=0;PMTnr<NVETOSCINT;PMTnr++)
 		if(TestHitLayer("Veto",PMTnr)){ PMTMap[PMTnr+22] =Veto[PMTnr][0];
                 PMTMap[PMTnr+54]=Veto[PMTnr][0];
         }
