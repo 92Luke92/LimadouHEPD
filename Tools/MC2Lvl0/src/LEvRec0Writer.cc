@@ -55,7 +55,11 @@ void LEvRec0Writer::SetTEventPointer() {
 
 void LEvRec0Writer::SetTmdEventPointer() {
 
-
+  fTmdTree->Branch("boot_nr",&evT.boot_nr);
+  fTmdTree->Branch("run_id",&evT.run_id);
+  fTmdTree->Branch("run_type",&evT.runType);
+  fTmdTree->Branch("run_duration",&evT.run_duration);
+  fTmdTree->Branch("orbitZone",&evT.orbitZone);
   fTmdTree->Branch("silConfiguration",&evTmd.sil_conf.ladder_on[0]);
   fTmdTree->Branch("trigger_mask[2]",evTmd.trigger_mask);
   fTmdTree->Branch("easiroc_conf[60]",evTmd.easiroc_conf);
