@@ -14,20 +14,16 @@
 
 
 // C++ std
-#include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 
 // MCEventAnalyze
-#include "RootEvent.hh"
-#include "RootTrack.hh"
-#include "RootVertex.hh"
 #include "RootCaloHit.hh"
 #include "RootTrackerHit.hh"
 
 // ROOT libs
 #include "TVector3.h"
-
 
 //Local
 #include "Edep_Pos.h"

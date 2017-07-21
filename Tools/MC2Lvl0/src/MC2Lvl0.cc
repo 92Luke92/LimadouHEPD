@@ -4,8 +4,6 @@
 #include "Edep_Pos.h"
 #include "LEvRec0Writer.hh"
 #include "trackeradc.hh"
-#include "MapEvents.hh"
-#include "Edep2Edep_PosConverter.hh"
 #include "LEvRec0.hh"
 #include "hits2edeppos.hh"
 
@@ -18,8 +16,6 @@
 
 // MCEventAnalyze
 #include "RootEvent.hh"
-#include "RootTrack.hh"
-#include "RootVertex.hh"
 #include "RootCaloHit.hh"
 #include "RootTrackerHit.hh"
 
@@ -27,7 +23,6 @@
 // ROOT libs
 #include "TTree.h"
 #include "TVector3.h"
-#include "TTree.h"
 #include "TFile.h"
 #include "TBranch.h"
 
@@ -72,6 +67,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     TBranch* b_Event = new TBranch;
     Tmc->SetBranchAddress ("Event", &MCevt, &b_Event);
     EcalADC ecaladc;
+
     for (int ie = 0; ie < ne; ie++) {
         int nb = Tmc->GetEntry (ie);
         int eventid =  MCevt->EventID();
@@ -119,7 +115,8 @@ std::string  getLvl0filename (const std::string mcfilename)
 
 void getPMTs (std::vector<RootCaloHit> CaloHits, ushort* pmt_high, ushort* pmt_low, EcalADC ecaladc )
 {
-    std::vector<Edep_Pos> pmt_info = Calo2Edep_PosConverter (CaloHits);
+    HitsToEdepPos h2ep;
+    std::vector<Edep_Pos> pmt_info = h2ep.Calo2Edep_PosConverter (CaloHits);
 
     ecaladc.SetPositions(pmt_info);
     ecaladc.NormalizePMThg(pmt_high);
@@ -131,7 +128,8 @@ void getPMTs (std::vector<RootCaloHit> CaloHits, ushort* pmt_high, ushort* pmt_l
 
 void getStrips (std::vector<RootTrackerHit> TrackerHits, short* strips)
 {
-    std::vector<std::vector<Edep_Pos>> TrackerEdepPos = Tracker2Edep_PosConverter (TrackerHits);
+    HitsToEdepPos h2ep;
+    std::vector<std::vector<Edep_Pos>> TrackerEdepPos = h2ep.Tracker2Edep_PosConverter (TrackerHits);
     TrackerADC trkadc (TrackerEdepPos);
     std::vector<short> trkstrips = trkadc.GetStrips();
     for (uint ic = 0; ic < NCHAN; ic++) {
