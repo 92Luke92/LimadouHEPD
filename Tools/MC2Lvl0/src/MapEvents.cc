@@ -8,10 +8,7 @@
 float GetCaloHitTotalEdep (RootCaloHit Hit)
 {
     float edep = 0;
-    std::vector<int> plist = Hit.GetParticleList();
-    int nplist = (int) plist.size();
-    for (int p = 0; p < nplist; p++)
-        edep += Hit.GetEdep (plist[p]);
+    for (auto eltp : Hit.GetParticleList())   edep += Hit.GetEdep(eltp);
     return edep;
 }
 
@@ -19,10 +16,7 @@ float GetCaloHitTotalEdep (RootCaloHit Hit)
 float GetCaloHitEdepPrimary (RootCaloHit Hit)
 {
     float edep = 0;
-    std::vector<int> plist = Hit.GetParticleList();
-    int nplist = (int) plist.size();
-    for (int p = 0; p < nplist; p++)
-        if (plist[p] == 1) edep += Hit.GetEdep (plist[p]);
+    for (auto eltp : Hit.GetParticleList()) if (eltp == 1)  edep += Hit.GetEdep(eltp);
     return edep;
 }
 
@@ -165,26 +159,29 @@ std::vector<std::vector<RootCaloHit>> MapEvents::GetCaloId(const std::string &de
 
 }
 
+bool isLayerInDetector(std::vector<std::vector<RootCaloHit>> detector , int layer) {
+   if (layer >= detector.size() ) {
+        std::cout << "Wrong layer ID" << std::endl;
+        return false;
+    }
+    if (detector[layer].size() == 0) return false;
+    return true;
+}
+
 
 float MapEvents::GetCaloLayerEdep (const std::string &detectorId, int layer)
 {
     std::vector<std::vector<RootCaloHit>> detector=GetCaloId(detectorId);
-    if (layer >= detector.size() ) {
-        std::cout << "Wrong layer ID" << std::endl;
-        return 0;
-    }
-    if (detector[layer].size() > 0) return GetCaloHitTotalEdep (detector[layer][0]);
+    if (isLayerInDetector(detector, layer))
+    return GetCaloHitTotalEdep (detector[layer][0]);
     else return 0;
 }
 
 float MapEvents::GetCaloLayerEdepPrim (const std::string &detectorId, int layer)
 {
     std::vector<std::vector<RootCaloHit>> detector=GetCaloId(detectorId);
-    if (layer >= detector.size() ) {
-        std::cout << "Wrong layer ID" << std::endl;
-        return 0;
-    }
-    if (detector[layer].size() > 0) return GetCaloHitEdepPrimary (detector[layer][0]);
+    if (isLayerInDetector(detector, layer))
+    return GetCaloHitEdepPrimary (detector[layer][0]);
     else return 0;
 }
 
@@ -193,11 +190,8 @@ TVector3 MapEvents::GetCaloHitImpactPoint (const std::string &detectorId, int la
 {
     TVector3 ImpactPoint (0, 0, 0);
     std::vector<std::vector<RootCaloHit>> detector=GetCaloId(detectorId);
-    if (layer >= detector.size() ) {
-        std::cout << "Wrong layer ID" << std::endl;
-        return ImpactPoint;
-    }
-    if (detector[layer].size() > 0) ImpactPoint = GetImpactPoint (detector[layer][0]);
+    if (isLayerInDetector(detector, layer))
+    ImpactPoint = GetImpactPoint (detector[layer][0]);
     return ImpactPoint;
 }
 
@@ -206,11 +200,7 @@ bool MapEvents::TestHitLayer (const std::string &detectorId, int layer)
 {
     if ( (detectorId.compare ("Tracker") ) != 0) {
         std::vector<std::vector<RootCaloHit>> detector=GetCaloId(detectorId);
-        if (layer >= detector.size() ) {
-            std::cout << "Wrong layer ID" << std::endl;
-            return false;
-        }
-        return (detector[layer].size() > 0);
+        return isLayerInDetector(detector, layer);
     } else {
         std::vector<std::vector<RootTrackerHit>> detector = Tracker;
         if (layer >= detector.size() ) {
