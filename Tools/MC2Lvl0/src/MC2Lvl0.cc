@@ -7,6 +7,7 @@
 #include "MapEvents.hh"
 #include "Edep2Edep_PosConverter.hh"
 #include "LEvRec0.hh"
+#include "hits2edeppos.hh"
 
 // C++ std
 #include <iostream>
