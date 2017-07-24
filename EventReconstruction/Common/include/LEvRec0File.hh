@@ -1,5 +1,5 @@
 #ifndef __LEVREC0FILE__
-#define __LEVREC0FILE__ 1
+#define __LEVREC0FILE__ "LEvRec0File    ############ "
 
 #include "LEvRec0.hh"
 
@@ -10,10 +10,18 @@
 class LEvRec0File {
 public:
   LEvRec0File();
+  LEvRec0File(const char *outFile, LEvRec0 &event, LEvRec0Md &metadata);
   LEvRec0File(const char *inpFile);
   int SetTheEventPointer(LEvRec0 &event);
+  int SetMdPointer(LEvRec0Md &metadata);
+  void FillTTree(LEvRec0 &event);
+  void FillTmdTree(LEvRec0Md &metaData);
+  bool GetEntry(int iEntry, LEvRec0 &event); // for future... NO ROOT!
+  void Fill();
+  void Write();
   // bool GetEntry(int iEntry, LEvRec0 &event); // for future... NO ROOT!
   int GetEntry(int iEntry);
+  int GetMDEntry(int iEntry);
   int GetEntries();
   void Open(const char* inpFile);
   void Reset(void);
@@ -31,6 +39,7 @@ public:
 private:
   TFile *fFile;
   TTree *fTree;
+  TTree *Tmd; 
   int RunId;
   int BootNr;
   unsigned short runType;

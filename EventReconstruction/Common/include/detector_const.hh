@@ -2,13 +2,23 @@
 #define LIMADOU_CONST
 
 const int VA_CHAN=64;
+<<<<<<< HEAD
 const int ADC_CHAN=3*VA_CHAN;      //192
 const int LADDER_CHAN=4*ADC_CHAN;  //768
 const int SIDE_CHAN=LADDER_CHAN/2; //384
 const int NCHAN = 6*LADDER_CHAN;   //4608
+=======
+const int ADC_CHAN=3*VA_CHAN;  // 192
+const int LADDER_CHAN=4*ADC_CHAN; // 768
+const int SIDE_CHAN=LADDER_CHAN/2; 
+const int NCHAN = 6*LADDER_CHAN; // 4608
+>>>>>>> 8bc88b6d0602d082bb937dc2ed8714f35e50a5ff
 const int SIDE_VA=6;
 const int NADC = 4096;
 const int NPMT = 64;
+const int NPS = 12; // nr of power supply for High Voltages
+const int NPSPMT = 10; // nr of power supply for PMT High Voltages
+const int NCALOPLANE = 18; // nr of planes (+ trigger + lyso plane)
 const int NRATEMETER = 9; // ?????????????
 const int NTRIGSCINT=6;
 const int NSCINTPLANES=16;
@@ -22,6 +32,9 @@ const int N_COLUMN=3;
 const int LADDER_BIN=NCHAN/N_LADDER;
 const double PITCH=182.e-6; // in meters
 const double LADDERDIST=0.01; // distance in meter between the two ladders
+
+const int EASIROC_CONF=60; // registers for easiroc configuration
+const int SINGLE_PMT_RM=65; // single pmt rate meter
 
 
 // Calo dimensions

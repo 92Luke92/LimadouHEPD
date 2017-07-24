@@ -44,7 +44,7 @@
 	     
 	     
 	     <td width="150" height="30" align="center">Run Type</td>
-	     <td width="150" height="30" align="center">Run Duration (s)</td>
+	     <td width="150" height="30" align="center">Configured Run Duration (s)</td>
 
 	     <td>
 	     <table border="1">
