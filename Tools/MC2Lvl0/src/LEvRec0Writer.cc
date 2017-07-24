@@ -45,11 +45,7 @@ void LEvRec0Writer::SetTEventPointer() {
   fTree->Branch("alive_time", &evT.alive_time);
   fTree->Branch("dead_time", &evT.dead_time);
   fTree->Branch("strip[4608]",evT.strip);
-  fTree->Branch("boot_nr",&evT.boot_nr);
-  fTree->Branch("run_id",&evT.run_id);
-  fTree->Branch("run_type",&evT.runType);
-  fTree->Branch("run_duration",&evT.run_duration);
-  fTree->Branch("orbitZone",&evT.orbitZone);
+
 }
 
 
