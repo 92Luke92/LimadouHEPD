@@ -48,7 +48,7 @@ int main (int argc, char** argv) {
     const std::string mcfilename = getMCfilename (argc, argv);
     const std::string lvl0filename = getLvl0filename (mcfilename);
     TFile* filemc = TFile::Open (mcfilename.c_str(), "READ");
-    TTree* Tmc = (TTree*) filemc->Get ("HEPD/EventTree");
+    TTree* Tmc =  static_cast<TTree*> (filemc->Get ("HEPD/EventTree"));
     LEvRec0Writer lvl0writer (lvl0filename);
     LoopOnEvents (&lvl0writer, Tmc);
     lvl0writer.Write();
@@ -69,8 +69,8 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     EcalADC ecaladc;
 
     for (int ie = 0; ie < ne; ie++) {
-        int nb = Tmc->GetEntry (ie);
-        int eventid =  MCevt->EventID();
+        Tmc->GetEntry (ie);
+        MCevt->EventID();
         std::vector<RootCaloHit> caloHits =  MCevt->GetCaloHit();
         std::vector<RootTrackerHit>  trackerHits =  MCevt->GetTrackerHit();
         LEvRec0* ev = lvl0writer->pev();

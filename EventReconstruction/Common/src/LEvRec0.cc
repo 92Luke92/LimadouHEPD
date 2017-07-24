@@ -34,7 +34,7 @@ void LEvRec0::Reset() {
   run_duration=0;
   orbitZone=0;
 
-};
+}
 
 
 LEvRec0md::LEvRec0md(){
@@ -112,11 +112,11 @@ LEvRec0Md::LEvRec0Md(){
    for(int i=0; i<3; ++i)
       silConfig.ladder_on[i] = false;
    for(int i=0; i<3; ++i)
-      silConfig.ladder_mask[i] = false; 
+      silConfig.ladder_mask[i] = false;
    silConfig.plane_HV[0] = 0;
    silConfig.plane_HV[1] = 0;
    silConfig.adj_strip = 0;
-   silConfig.zero_supp_thrd = 0; 
+   silConfig.zero_supp_thrd = 0;
    silConfig.thrd_CN_HIGH = 0;
    silConfig.thrd_CN_LOW = 0;
    silConfig.calib_event_CN = 0;
@@ -125,15 +125,15 @@ LEvRec0Md::LEvRec0Md(){
    silConfig.calib_event_gauss = 0;
    silConfig.gauss_check = 0;
    for(int i=0; i<2; ++i)
-      trigger_mask[i] = 0; 
+      trigger_mask[i] = 0;
    for(int i=0; i<120; ++i)
       easiroc_config[i] = 0;
    for(int i=0; i<2; ++i)
-      PMT_mask[i] = 0;    
+      PMT_mask[i] = 0;
    for(int i=0; i<12; ++i)
       HV_mask[i] = false;
    for(int i=0; i<10; ++i)
-      HV_value[i] = 0; 
+      HV_value[i] = 0;
    for(int i=0; i<4; ++i)
       gen_trig_mask[i] = 0;
 
@@ -146,6 +146,6 @@ LEvRec0Md::LEvRec0Md(){
    broadcast.GPS.lon = 0;
    broadcast.GPS.lat = 0;
    for(int i=0; i<3; ++i)
-      broadcast.GPS.NU[i] = 0; 
-      
+      broadcast.GPS.NU[i] = 0;
+
 }

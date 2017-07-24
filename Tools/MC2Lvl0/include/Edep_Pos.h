@@ -3,7 +3,7 @@
 
 #include "TVector3.h"
 
-struct Edep_Pos{;
+struct Edep_Pos{
         float totEdep;
         TVector3 position;
 

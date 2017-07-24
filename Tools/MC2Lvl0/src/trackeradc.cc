@@ -18,7 +18,7 @@ std::vector<short> TrackerADC::GetStrips()
 {
     std::vector<short> allStrips (NCHAN);
     for (trSides side : trSidesIterator) {
-        uint offset = side * SIDE_CHAN;
+        uint offset = static_cast<uint> (side) * SIDE_CHAN;
         std::vector<short> sideStrips = getStripsForSide (side);
         for (uint is = 0; is < SIDE_CHAN; is++)
             allStrips[offset + is] = sideStrips[is];
