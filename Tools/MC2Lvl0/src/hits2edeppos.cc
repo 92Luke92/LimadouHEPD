@@ -36,9 +36,9 @@ Edep_Pos HitsToEdepPos::CaloHit2EdepPos (RootCaloHit hit)
 {
     Edep_Pos hitEpos;
     for (auto eltp : hit.GetParticleList() )   hitEpos.totEdep += hit.GetEdep (eltp);
-    float vx = (hit.GetExitPoint().z() + hit.GetEntryPoint().z() ) / 2;
-    float vy = (hit.GetExitPoint().x() + hit.GetEntryPoint().x() ) / 2;
-    float vz = (hit.GetExitPoint().y() + hit.GetEntryPoint().y() ) / 2;
+    float vx = (hit.GetExitPoint().x() + hit.GetEntryPoint().x() ) / 2;
+    float vy = (hit.GetExitPoint().y() + hit.GetEntryPoint().y() ) / 2;
+    float vz = (hit.GetExitPoint().z() + hit.GetEntryPoint().z() ) / 2;
     hitEpos.position = TVector3  (vx, vy, vz);
     return hitEpos;
 }
@@ -64,9 +64,9 @@ Edep_Pos HitsToEdepPos::TrHit2EdepPos (RootTrackerHit hit)
 {
     Edep_Pos hitEpos;
     hitEpos.totEdep = hit.GetELoss();
-    float vx = (hit.GetExitPoint().z() + hit.GetEntryPoint().z() ) / 2;
-    float vy = (hit.GetExitPoint().x() + hit.GetEntryPoint().x() ) / 2;
-    float vz = (hit.GetExitPoint().y() + hit.GetEntryPoint().y() ) / 2;
+    float vx = (hit.GetExitPoint().x() + hit.GetEntryPoint().x() ) / 2;
+    float vy = (hit.GetExitPoint().y() + hit.GetEntryPoint().y() ) / 2;
+    float vz = (hit.GetExitPoint().z() + hit.GetEntryPoint().z() ) / 2;
     hitEpos.position = TVector3  (vx, vy, vz);
     return hitEpos;
 }
