@@ -49,7 +49,7 @@ void EcalADC::initScint()
                                     P1nw, P2ne, P3nw, P4ne, P5nw, P6ne, P7nw, P8ne,
                                     P9nw, P10ne, P11nw, P12ne, P13nw, P14ne, P15nw, P16ne
                                    };
-    for (int iPMT=0; iPMT<scintPMT.size(); iPMT++) {
+    for (uint iPMT=0; iPMT<scintPMT.size(); iPMT++) {
         uint layer= iPMT % scintPMT.size()/2;
         float peak=MeVPeakLayer[layer];
         PMTenum idx=scintPMT[iPMT];

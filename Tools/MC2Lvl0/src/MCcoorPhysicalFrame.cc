@@ -14,7 +14,7 @@ TVector3 MCtoPhysicalDetectorFrame::GetPhysicalVector()
 	// position of the origin used in the simulation with respect to the physical detector reference frame
 	Double_t x0_sim = 175.0;	// mm
 	Double_t y0_sim = -152.0;	// mm
-	Double_t zTrkLayer1_sim = 359.10;	// mm
+	//Double_t zTrkLayer1_sim = 359.10;	// mm
 	Double_t z0_sim = 376.62;	// mm  // this value corresponds to the distance from the outer thermal blanket layer (alluminum), which makes up the HEPD box, to the origin used in the simulation
 	/*
 	the previous value does not contain the chinese update!
