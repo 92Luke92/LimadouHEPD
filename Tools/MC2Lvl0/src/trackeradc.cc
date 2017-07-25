@@ -14,9 +14,9 @@
 
 
 
-std::vector<short> TrackerADC::GetStrips()
+std::array<short,NCHAN> TrackerADC::GetStrips()
 {
-    std::vector<short> allStrips (NCHAN);
+  std::array<short,NCHAN> allStrips;
     for (trSides side : trSidesIterator) {
         uint offset = static_cast<uint> (side) * SIDE_CHAN;
         std::array<short, SIDE_CHAN> sideStrips = getStripsForSide (side);
@@ -46,7 +46,6 @@ float TrackerADC::Mev2ADCFactor (trSides side)
     }
     return factor;
 }
-
 
 
 

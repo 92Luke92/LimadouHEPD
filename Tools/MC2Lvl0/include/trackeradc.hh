@@ -19,7 +19,7 @@ class TrackerADC
 {
    public:
       TrackerADC( std::vector<std::vector<Edep_Pos>> vvinfo) : allEpos(vvinfo)   {};
-      std::vector<short> GetStrips();
+  std::array<short,NCHAN> GetStrips();
 
 
    private:
