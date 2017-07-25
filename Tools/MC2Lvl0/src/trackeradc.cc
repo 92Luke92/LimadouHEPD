@@ -19,7 +19,7 @@ std::vector<short> TrackerADC::GetStrips()
     std::vector<short> allStrips (NCHAN);
     for (trSides side : trSidesIterator) {
         uint offset = static_cast<uint> (side) * SIDE_CHAN;
-        std::vector<short> sideStrips = getStripsForSide (side);
+        std::array<short, SIDE_CHAN> sideStrips = getStripsForSide (side);
         for (uint is = 0; is < SIDE_CHAN; is++)
             allStrips[offset + is] = sideStrips[is];
     }
@@ -49,20 +49,26 @@ float TrackerADC::Mev2ADCFactor (trSides side)
 
 
 
-std::vector<short> TrackerADC::getStripsForSide (trSides side)
+
+
+std::array<short, SIDE_CHAN> TrackerADC::getStripsForSide (trSides side)
 {
-    float dummypedvalue = 100;
-    std::vector<short> sideStrips (SIDE_CHAN, dummypedvalue);
+
+    uint offset = static_cast<uint> (side) * SIDE_CHAN;
+    std::array<short, SIDE_CHAN> sideStrips;
+    for (int ic=0; ic<SIDE_CHAN; ic++) sideStrips[ic] = trPed[offset+ic];
     float Mev2ADCfactor = Mev2ADCFactor (side);
     std::vector<Edep_Pos> SidePMTinfos = allEpos[side];
+    int i=0;
     for (auto chaninfo : SidePMTinfos) {
         if (chaninfo.totEdep > 0) {
             short nStrip = GetLocalStrip (side, chaninfo.position);
             float EMeV = chaninfo.totEdep;
             float EADC = EMeV * Mev2ADCfactor;
-            short chanADC = TrimADC (EADC, dummypedvalue);
+            short chanADC = TrimADC (EADC, trPed[offset+i]);
             sideStrips[nStrip] = chanADC;
         }
+        i++;
     }
     return sideStrips;
 }
@@ -84,8 +90,6 @@ short TrackerADC::GetLocalStrip (trSides side, TVector3 MCpos)
     const float SIDEXDIM = 82.5; // from BT positions schema
     const float TRYDIM = 209.66; // From Ester's doc
     const float SIDEYDIM = TRYDIM / 3;
-    const float SENSITIVE_SIDE_XDIM = 71.58;
-    const float SENSITIVE_SIDE_YDIM = 106.63;
     TVector2 flatPos = MCpos.XYvector();
     if (side % 2 == 0) { // P side, chan increases if x decreases
         const float PITCH_PSIDE_MM = PITCH * 1000;
@@ -96,8 +100,9 @@ short TrackerADC::GetLocalStrip (trSides side, TVector3 MCpos)
     } else { // S side, chan increases if y increases
         const float PITCH_NSIDE_MM = SIDEYDIM / SIDE_CHAN;
         float len2origin = flatPos.Y();
-        short strips2origin = static_cast<short> (len2origin / PITCH_NSIDE_MM);
-        stripNbr = ( (strips2origin + SIDE_CHAN / 2 ) % SIDE_CHAN ) - SIDE_CHAN / 2;
+        float len2border= len2origin+TRYDIM / 2;
+        short strips2border = static_cast<short> (floor(len2border / PITCH_NSIDE_MM));
+        stripNbr = strips2border % SIDE_CHAN;
     }
     if (stripNbr < 0 || stripNbr >= SIDE_CHAN) {
         std::cerr << "Tracker position -> strip number mismatch " << stripNbr << " for side " << side <<  std::endl;

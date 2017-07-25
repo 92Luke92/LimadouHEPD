@@ -51,7 +51,7 @@ std::vector<std::vector<Edep_Pos>> HitsToEdepPos::Tracker2Edep_PosConverter (std
 {
     std::vector<std::vector<Edep_Pos>> trEpos (12);
     for (RootTrackerHit hit : TrackerHits) {
-        int subdetIdx = hit.GetDetectorId();
+        unsigned int subdetIdx = hit.GetDetectorId();
         Edep_Pos hitEpos = TrHit2EdepPos (hit);
         trEpos[Tracker2PMTidx[subdetIdx]].push_back (hitEpos);
     }
