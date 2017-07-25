@@ -14,12 +14,12 @@
 
 
 
-std::vector<short> TrackerADC::GetStrips()
+std::array<short,NCHAN> TrackerADC::GetStrips()
 {
-    std::vector<short> allStrips (NCHAN);
+  std::array<short,NCHAN> allStrips;
     for (trSides side : trSidesIterator) {
         uint offset = static_cast<uint> (side) * SIDE_CHAN;
-        std::vector<short> sideStrips = getStripsForSide (side);
+        std::array<short,SIDE_CHAN> sideStrips = getStripsForSide (side);
         for (uint is = 0; is < SIDE_CHAN; is++)
             allStrips[offset + is] = sideStrips[is];
     }
@@ -49,10 +49,11 @@ float TrackerADC::Mev2ADCFactor (trSides side)
 
 
 
-std::vector<short> TrackerADC::getStripsForSide (trSides side)
+std::array<short,SIDE_CHAN> TrackerADC::getStripsForSide (trSides side)
 {
     float dummypedvalue = 100;
-    std::vector<short> sideStrips (SIDE_CHAN, dummypedvalue);
+    std::array<short,SIDE_CHAN> sideStrips;
+    sideStrips.fill(dummypedvalue);
     float Mev2ADCfactor = Mev2ADCFactor (side);
     std::vector<Edep_Pos> SidePMTinfos = allEpos[side];
     for (auto chaninfo : SidePMTinfos) {

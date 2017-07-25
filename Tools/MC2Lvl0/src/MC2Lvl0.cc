@@ -131,7 +131,7 @@ void getStrips (std::vector<RootTrackerHit> TrackerHits, short* strips)
     HitsToEdepPos h2ep;
     std::vector<std::vector<Edep_Pos>> TrackerEdepPos = h2ep.Tracker2Edep_PosConverter (TrackerHits);
     TrackerADC trkadc (TrackerEdepPos);
-    std::vector<short> trkstrips = trkadc.GetStrips();
+    std::array<short,NCHAN> trkstrips = trkadc.GetStrips();
     for (uint ic = 0; ic < NCHAN; ic++) {
         strips[ic] = trkstrips[ic];
     }

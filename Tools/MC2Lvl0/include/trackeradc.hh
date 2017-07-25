@@ -19,7 +19,7 @@ class TrackerADC
 {
    public:
       TrackerADC( std::vector<std::vector<Edep_Pos>> vvinfo) : allEpos(vvinfo)   {};
-      std::vector<short> GetStrips();
+  std::array<short,NCHAN> GetStrips();
 
 
    private:
@@ -29,7 +29,7 @@ class TrackerADC
      short int GetLocalStrip(trSides, TVector3);
      std::vector<std::vector<Edep_Pos>> allEpos;
      float Mev2ADCFactor(trSides side);
-     std::vector<short> getStripsForSide(trSides side);
+     std::array<short,SIDE_CHAN> getStripsForSide(trSides side);
      short TrimADC (float raw, float ped);
 
 };
