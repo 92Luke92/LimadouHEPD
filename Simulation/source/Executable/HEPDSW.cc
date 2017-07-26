@@ -81,7 +81,7 @@ int main(int argc,char** argv) {
   runManager->SetUserAction(trkAct);
   runManager->SetUserAction(stpAct);
 
-  //HEPDSWProducerManager* theProducerManager = HEPDSWProducerManager::GetInstance();
+  HEPDSWProducerManager* theProducerManager = HEPDSWProducerManager::GetInstance();
 
   // get the pointer to the User Interface manager 
   G4UImanager* UI = G4UImanager::GetUIpointer();  
