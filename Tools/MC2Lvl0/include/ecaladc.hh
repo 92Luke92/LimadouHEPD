@@ -25,10 +25,13 @@ class EcalADC {
     void SetPositions (std::vector<Edep_Pos> pmt_info );
     void NormalizePMThg ( ushort* pmt_high);
     void NormalizePMTlg ( ushort* pmt_low);
+    void setMCEnergy (int mcE) {mcEnergy = mcE;}
 
 
 
   private:
+
+    int mcEnergy;
 
 
     enum PMTenum {T1e, T2e, T3e, T4e, T5e, T6e,
@@ -50,7 +53,7 @@ class EcalADC {
                                                          VNd, VEd, VSd, VWd, VBsw, L3se, L2e, L6s, L4n, NC
                                                         };
 
-    // Aggregate brace init; please don't change this order
+    // Aggregate brace inits; please don't change this order
     struct PMTnumbers {
         PMTenum index;
         std::string name;
@@ -62,6 +65,12 @@ class EcalADC {
         float scintMeVPeak;
         TVector3 physPosition;
     };
+    struct LinearFitParam {
+        PMTenum index;
+        int energy;
+        float a;
+        float b;
+    };
 
     using PMTarray = std::array<PMTnumbers, NPMT>;
 
@@ -70,14 +79,21 @@ class EcalADC {
     void initLGaggregate();
     void initScint();
     void initMCpos();
+    void initMCshape();
 
     PMTarray hgPMT, lgPMT;
     std::array<float, NPMT>   correctedPMTs;
+
+
+    std::vector< LinearFitParam> linearFitParams;
     float PMTAttCorr (float dist);
     float EcalMev2ADCfactor (PMTenum PMT, PMTarray pmtDB);
 
     void NormalizePMT ( ushort* pmt_out, PMTarray pmtDB);
 
+
+    std::pair<float, float> getFitCoeff(PMTenum pmt) ;
+    float applyMCshaping(float ADCval, PMTenum pmt);
 
 };
 

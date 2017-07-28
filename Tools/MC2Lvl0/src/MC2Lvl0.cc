@@ -39,6 +39,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc);
 std::vector<float> CaloHitsToEdep (std::vector<RootCaloHit>);
 void getPMTs (std::vector<RootCaloHit>, ushort * pmt_high, ushort * pmt_low, EcalADC ecaladc);
 void getStrips (std::vector<RootTrackerHit>, short* strips);
+int getMCTrackHitsEnergy(std::vector<RootTrackerHit> trHits);
 
 
 
@@ -70,11 +71,15 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 
     for (int ie = 0; ie < ne; ie++) {
         Tmc->GetEntry (ie);
-        MCevt->EventID();
+        //MCevt->EventID();
         std::vector<RootCaloHit> caloHits =  MCevt->GetCaloHit();
         std::vector<RootTrackerHit>  trackerHits =  MCevt->GetTrackerHit();
         LEvRec0* ev = lvl0writer->pev();
         ev->Reset();
+        int MCenergy=getMCTrackHitsEnergy(trackerHits);
+        ecaladc.setMCEnergy(MCenergy);
+
+
         getPMTs (caloHits, ev->pmt_high, ev->pmt_low, ecaladc);
         getStrips (trackerHits, ev->strip);
         lvl0writer->Fill();
@@ -138,3 +143,17 @@ void getStrips (std::vector<RootTrackerHit> TrackerHits, short* strips)
     return;
 }
 
+int getMCTrackHitsEnergy(std::vector<RootTrackerHit> trHits) {
+    int closestEnergy=0;
+    int kinEmeas= static_cast <int> (trHits[0].GetKinEnergy());
+    int dist=500;
+    for (int iEnergy : {37, 51, 100, 125, 154, 174, 228}) {
+        int thisdist= abs(kinEmeas - iEnergy);
+        if (thisdist<dist)
+         {
+             dist=thisdist;
+             closestEnergy=iEnergy;
+         }
+    }
+    return closestEnergy;
+}
