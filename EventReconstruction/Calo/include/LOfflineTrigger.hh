@@ -30,7 +30,9 @@ private:
 	bool central_muon(const LEvRec1 ev) const; // flag: central_muon
 	bool right_muon(const LEvRec1 ev) const; // flag: right_muon
 	bool left_muon(const LEvRec1 ev) const; // flag: left_muon
-	bool right_muon_lyso5(const LEvRec1 ev) const;// flag:right_muon_lyso5
+	bool right_muon_lyso0(const LEvRec1 ev) const;// flag:right_muon_lyso0
+	bool left_muon_lyso2(const LEvRec1 ev) const;// flag:right_muon_lyso2
+	bool central_muon_lyso4(const LEvRec1 ev) const;// flag:central_muon_lyso4
 	bool VL(const LEvRec1 ev) const; // flag: VL
 };
 

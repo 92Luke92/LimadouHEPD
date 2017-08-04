@@ -13,6 +13,8 @@ public:
   double GetX(const int iu, const int ipmt=0) const;
   double GetY(const int iu, const int ipmt=0) const;
   double GetZ(const int iu, const int ipmt=0) const;
+  int GetTheMostSignificantCrystal(const bool isHG, const double threshold = THRESHOLD) const {return GetTheMostSignificantUnit(isHG, threshold);};
+  int GetNOfSignificantCrystal(const bool isHG, const double threshold = THRESHOLD) const {return GetNOfSignificantUnits(isHG, threshold);};
 };
 
 
