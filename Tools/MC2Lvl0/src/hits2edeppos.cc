@@ -32,21 +32,6 @@ std::vector<Edep_Pos> HitsToEdepPos::Calo2Edep_PosConverter (std::vector<RootCal
 }
 
 
-Edep_Pos HitsToEdepPos::CaloHit2EdepPos (RootCaloHit hit)
-{
-    Edep_Pos hitEpos;
-    for (auto eltp : hit.GetParticleList() )   hitEpos.totEdep += hit.GetEdep (eltp);
-    float vx = (hit.GetExitPoint().x() + hit.GetEntryPoint().x() ) / 2;
-    float vy = (hit.GetExitPoint().y() + hit.GetEntryPoint().y() ) / 2;
-    float vz = (hit.GetExitPoint().z() + hit.GetEntryPoint().z() ) / 2;
-    hitEpos.position = TVector3  (vx, vy, vz);
-    return hitEpos;
-}
-
-
-
-
-
 std::vector<std::vector<Edep_Pos>> HitsToEdepPos::Tracker2Edep_PosConverter (std::vector<RootTrackerHit> TrackerHits)
 {
     std::vector<std::vector<Edep_Pos>> trEpos (12);
@@ -59,17 +44,31 @@ std::vector<std::vector<Edep_Pos>> HitsToEdepPos::Tracker2Edep_PosConverter (std
 }
 
 
+Edep_Pos HitsToEdepPos::CaloHit2EdepPos (RootCaloHit hit)
+{
+    Edep_Pos hitEpos;
+    for (auto eltp : hit.GetParticleList() )   hitEpos.totEdep += hit.GetEdep (eltp);
+    hitEpos.position = Hit2Pos(hit);
+    return hitEpos;
+}
 
 Edep_Pos HitsToEdepPos::TrHit2EdepPos (RootTrackerHit hit)
 {
     Edep_Pos hitEpos;
     hitEpos.totEdep = hit.GetELoss();
+    hitEpos.position = Hit2Pos(hit);
+    return hitEpos;
+}
+
+template <typename RootHit>
+TVector3 HitsToEdepPos::Hit2Pos(RootHit hit)
+{
     float vx = (hit.GetExitPoint().x() + hit.GetEntryPoint().x() ) / 2;
     float vy = (hit.GetExitPoint().y() + hit.GetEntryPoint().y() ) / 2;
     float vz = (hit.GetExitPoint().z() + hit.GetEntryPoint().z() ) / 2;
-    hitEpos.position = TVector3  (vx, vy, vz);
-    return hitEpos;
+    return TVector3  (vx, vy, vz);
 }
+
 
 
 

@@ -57,6 +57,7 @@ class HitsToEdepPos {
     std::map<uint, trSides> Tracker2PMTidx;
     void FillCalo2PMTidx();
     void FillTracker2PMTidx();
+    template <typename RootHit> TVector3 Hit2Pos(RootHit hit);
     Edep_Pos CaloHit2EdepPos (RootCaloHit hit) ;
     Edep_Pos TrHit2EdepPos (RootTrackerHit hit) ;
 
