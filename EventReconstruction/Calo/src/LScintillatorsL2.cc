@@ -4,13 +4,15 @@
 // class purpose: collection of algorithm for level2 observables
 // obtained with the calorimeter and vetos measuremets
 
-
-
 #include "TH1.h"
 #include "LEvRec1File.hh"
 #include "LScintillatorsL2.hh"
 #include <iostream>
 #include <fstream>
+#include "LEvTemp.hh"
+#include "TFile.h"
+#include "TTree.h"
+
 using namespace std;
 
 
@@ -118,20 +120,52 @@ input_energyrecon_pars(t_p0, t_p1, c_p0, c_p1);
 
 double const act_threshold= 5.00;
 
-int tsum=0, tmult=0, hitbar[6]={0}; double tene=0; // trigger vars
-int sumall=0,suma=0,sumb=0, mult=0, conn[16]={0}; double enUC=0, ChVsPlane[16]; int trlen=0;// calo vars
-int IsLYSOHit=0, lmult=0; double lsum=0, enLYSO=0; // lyso
+
+int tmult=0;
+int  mult=0.;
+double lmult=0; 
+int  hitbar[6]={0};
+
+
+double tsum=0.;
+double sumall=0;
+double lsum=0.;
+double ChVsPlane[16]={0};
+
+double tene=0.; // trigger vars
+double enUC=0.;
+double enLYSO=0.;
+
+
+int conn[16]={0}; 
+  
+int trlen=0;// calo vars
+int IsLYSOHit=0; // lyso.;
 int IsVetoBottomHit=0, IsVetoLatHit=0;// veto
 
-// connecting data and output ascii - temporary ---------------------------------------------------------------------------
+
+
+// connecting data and output  - temporary ---------------------------------------------------------------------------
 
 ofstream os; os.open("out.calo.sign");
 
 LEvRec1 cev;
 RunFile->SetTheEventPointer(cev);
 
+
+
+TFile *fFile = new TFile("outFile.root", "new");
+TTree *fTree = new TTree("Temp","Temporary L2");
+LEvTemp lev2;
+fTree->Branch("temp_data", &lev2,"trig_mult/I:bars_status[6]/I:calo_mult/I:lyso_mult/I:trig_signal_sum/F:calo_signal_sum/F:lyso_signal_sum/F:plane_signal[16]/F:trig_ener_dep/F:calo_ener_dep/F:lyso_ener_dep/F");
+// ---------------------------------------------------------------------------
+
+
+
 // loop on data events
 int nEvents = RunFile->GetEntries();
+
+
 for (int iEv = 0; iEv < nEvents; iEv++)  // Event loop
     { std::cout << "\b\b\b" << std::setprecision(2) << std::setw(2) << int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
     RunFile->GetEntry(iEv); 
@@ -139,7 +173,7 @@ for (int iEv = 0; iEv < nEvents; iEv++)  // Event loop
 
 // trigger bars ------------------------------------------------------------------------------------------------------------
 // reset vars
-tsum=0, tmult=0, tene=0; for(int a=0;a<6;a++){hitbar[a]=0.0;};
+tsum=0., tmult=0, tene=0.; for(int a=0;a<6;a++){hitbar[a]=0.0;};
 
 for (int bar=0;bar<6;bar++){ 
     int  tpmt1=(bar*2)+0;
@@ -158,7 +192,7 @@ for (int bar=0;bar<6;bar++){
 
 // upper calorimeter ------------------------------------------------------------------------------------------------------------
 
-sumall=0,suma=0,sumb=0, mult=0; for(int a=0;a<16;a++){conn[a]=0;}; enUC=0;for(int a=0;a<16;a++){ChVsPlane[a]=0;};trlen=0;
+sumall=0.,mult=0.; for(int a=0;a<16;a++){conn[a]=0;}; enUC=0;for(int a=0;a<16;a++){ChVsPlane[a]=0;};trlen=0;
 
 for (int pln=0;pln<16;pln++){
     int  pmt1=(pln*2);
@@ -167,8 +201,7 @@ for (int pln=0;pln<16;pln++){
          {
          double c1=equ[pmt1]*cev.scint.cont_hg[pln][0];
          double c2=equ[pmt2]*cev.scint.cont_hg[pln][1];
-         suma=suma+c1; 
-         sumb=sumb+c2;
+         
          sumall=sumall+c1+c2;
          ChVsPlane[pln]=c1+c2;
          mult++;
@@ -201,19 +234,23 @@ for (int i=0;i<16;i++){
 enUC=(sumall-c_p1[0])/c_p0[0];//MeV
    
 // LYSO vars ---------------------------------------------------------------------------------------------------------------------------
+ 
+// serv array
+double l1[9],l2[9],lres[3];  
 
-// vars reset 
-IsLYSOHit=0, lmult=0, lsum=0, enLYSO=0;
+// data swap into service array 
+for(int cr=0; cr<9;cr++){
+l1[cr]=leq[cr]*cev.scint.cont_hg[cr][0];
+l2[cr]=cev.lyso.sn_hg[cr][0];
+}
 
-for (int lys=0;lys<8;lys++){
-      if(DeviceStatus(cev.lyso.sn_hg[lys][0],cev.lyso.sn_hg[lys][0])==1){
-      lmult++;
-      IsLYSOHit++;
-      lsum=lsum+(leq[lys]*cev.scint.cont_hg[lys][0]); }
-      }// end lyso loop
+// calculation
+CalcLYSO(l1,l2,lres);
 
-// LYSO energy calc 
-        enLYSO=(lsum-c_p1[1])/c_p0[1];//MeV
+// to be changed with lev2 elements
+IsLYSOHit=lres[2], lmult=lres[1], lsum=lres[0], enLYSO=0.;
+
+
 
 
 // vetos flags ----------------------------------------------------------------------------------------------------------------------
@@ -228,6 +265,43 @@ for (int veto=0;veto<4;veto++){IsVetoLatHit=IsVetoLatHit+DeviceStatus(cev.veto.s
 
 //int IsLYSOHit=0;
 //for (int lys=0;lys<8;lys++){IsLYSOHit=IsLYSOHit+DeviceStatus(cev.lyso.sn_hg[lys][0],cev.lyso.sn_hg[lys][0]);}
+
+// root output ---------------------------------------------
+
+  
+  lev2.trig_mult=tmult;  
+
+  for(int i=0;i<6;i++){
+  lev2.bars_status[i]=hitbar[i];
+  }
+
+  lev2.calo_mult=mult;
+
+  lev2.lyso_mult=lmult;
+
+  lev2.trig_signal_sum= tsum; 
+
+  lev2.calo_signal_sum=sumall;
+  
+  lev2.lyso_signal_sum=lsum;
+  
+  for(int i=0;i<16;i++){
+  lev2.plane_signal[i]=ChVsPlane[i];
+  }
+
+  lev2.trig_ener_dep=tene;
+  
+  lev2.calo_ener_dep=enUC;
+  
+  lev2.lyso_ener_dep=enLYSO;
+
+  
+
+  fTree->Fill();
+
+
+
+
 
 
 // optional ascii output ----------------------------------------------------------------------------------------------------------------
@@ -250,18 +324,35 @@ os << iEv << " "
 //int IsLYSOHit=0, lmult=0; double lsum=0, enLYSO=0; // lyso
 //int IsVetoBottomHit=0, IsVetoLatHit=0;// veto
 
+
+  
 }// end event loop
 
- 
+  fTree->Write();
+  fFile->Close();
+  return 0;
 
-return 0;
+
 }//--------------------------------------------------------------------------------------
 
+void LScintillatorsL2::CalcLYSO(double signal[9], double sn[9], double out[3]){
 
-//int LScintillatorsL2::Filter(int name, double *argums){
-//int filterval=-1.;
-//return filterval;
-//}//--------------------------------------------------------------------------------------
+ out[0]=0, out[1]=0, out[2]=0;
+
+for (int lys=0;lys<9;lys++){
+      if(DeviceStatus(sn[lys],sn[lys])==1){
+      out[1]++;
+      out[2]++;
+      out[0]=out[0]+signal[lys]; }
+      }// end lyso loop
+
+// LYSO energy calc 
+        //enLYSO=(lsum-c_p1[1])/c_p0[1];//MeV
+
+ 
+return ;
+
+}//--------------------------------------------------------------------------------------
 
 
 
