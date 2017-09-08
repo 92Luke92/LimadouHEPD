@@ -52,9 +52,8 @@ struct silicon_config_t
    unsigned short     calib_event_gauss;
    unsigned short     gauss_check;
 } ;
-#pragma pack(pop)
 
-#pragma pack(push, 1)
+
 struct OBDH_struct_t 
 {
    unsigned int     sec;
@@ -199,7 +198,6 @@ public:
    Status_Register_t  status_reg;
    
 };
-
 #pragma pack(pop)
 
 

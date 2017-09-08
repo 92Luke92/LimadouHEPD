@@ -65,10 +65,10 @@ void LCalibration::WriteROOT(const char *fileOut) const {
   LEvRec0File inputFile(GetInputFile());
   inputFile.SetMdPointer(outevMD);
   
-  std::cout << __LCALIBRATION__ << "Writing calibration file " << fileOut
+  std::cout << __LCALIBRATION__ << "Writing calibration root file " << fileOut
 	    << " ..." << std::endl;
 
-  std::cout << __LCALIBRATION__ << "Writing calibration file " << fileOut
+  std::cout << __LCALIBRATION__ << "Writing calibration root file " << fileOut
 	    << " ..." << std::endl;
   
   LEvRec0File outRootfile(fileOut, outev, outevMD);
@@ -96,6 +96,23 @@ void LCalibration::WriteROOT(const char *fileOut) const {
   outRootfile.Write();  
   
   return;
+}
+
+LCalibration * LCalibration::ReadROOT(const char *fileIn) {
+
+   std::cout << __LCALIBRATION__ << "Reading calo_HG from root file... " << std::endl;
+   LCaloCalibration *calo_HG_read = LCaloCalibration::ReadRoot(fileIn, HIGH);
+   std::cout << __LCALIBRATION__ << "calo_HG read. " << std::endl << std::flush;
+   std::cout << __LCALIBRATION__ << "Reading calo_LG from root file... " << std::endl;
+   LCaloCalibration *calo_LG_read = LCaloCalibration::ReadRoot(fileIn, LOW);
+   std::cout << __LCALIBRATION__ << "calo_LG read. " << std::endl;
+   std::cout << __LCALIBRATION__ << "Reading tracker from root file... " << std::endl;
+   LTrackerCalibration* tracker_read = LTrackerCalibration::ReadRoot(fileIn);
+   std::cout << __LCALIBRATION__ << "tracker read. " << std::endl;
+  
+   LCalibration *result = new LCalibration(calo_HG_read, calo_LG_read, tracker_read);
+
+  return result;
 }
 
 LCalibration* LCalibration::Read(const char *fileIn) {

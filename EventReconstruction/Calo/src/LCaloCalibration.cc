@@ -1,4 +1,6 @@
 #include "LCaloCalibration.hh"
+#include "LEvRec0File.hh"
+
 #include <iostream>
 #include <algorithm>
 #include <math.h>
@@ -93,6 +95,61 @@ LCaloCalibration* LCaloCalibration::Read(const char *fileIn) {
   LCaloCalibration *result = Read(&input);
   input.close();
   return result;
+}
+
+LCaloCalibration* LCaloCalibration::ReadRoot(const char *fileIn, enum pmt_calib_type flag) {
+
+   int RunIdST;
+   double pedestalST[NPMT];
+   double sigmaST[NPMT];
+   
+   LEvRec0 outev;
+   LEvRec0File inputFile(fileIn);
+   inputFile.SetTheEventPointer(outev);
+
+   inputFile.GetEntry(0); // ped
+
+   RunIdST = outev.run_id;
+   for(int iChan=0; iChan<NPMT; ++iChan){
+      if(flag == HIGH)
+      {
+	 pedestalST[iChan] = outev.pmt_high[iChan];
+	 //std::cout << " pedestalST[" << iChan << "] = " << pedestalST[iChan] << std::endl;
+      }
+      else if (flag == LOW)
+      {
+	 pedestalST[iChan] = outev.pmt_low[iChan];
+	 //std::cout << " pedestalST[" << iChan << "] = " << pedestalST[iChan] << std::endl;
+      }
+   }
+
+   inputFile.GetEntry(1); // sig
+   
+   for(int iChan=0; iChan<NPMT; ++iChan){
+      if(flag == HIGH)
+      {
+	 sigmaST[iChan] = outev.pmt_high[iChan];
+	 //std::cout << " sigmaST[" << iChan << "] = "  << sigmaST[iChan] << std::endl;
+		 
+      }
+      else if (flag == LOW)
+      {
+	 sigmaST[iChan] = outev.pmt_low[iChan];
+	 //std::cout << " sigmaST[" << iChan << "] = " << sigmaST[iChan] << std::endl;
+		 
+      }
+   }
+
+   std::cout << __LCALOCALIBRATION__ << "Root Calibration file read."
+	     << std::endl << std::flush;;
+
+  LCaloCalibration *result = new LCaloCalibration(RunIdST,
+						  pedestalST, sigmaST);//, outliersST, skewnessST, kurtosisST);
+  std::cout << __LCALOCALIBRATION__ << "Calo calibration created ("
+	    << &result << ")" << std::endl << std::flush;
+
+  return result;
+
 }
 
 

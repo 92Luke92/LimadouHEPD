@@ -1,4 +1,6 @@
 #include "LTrackerCalibration.hh"
+#include "LEvRec0File.hh"
+
 #include <iostream>
 #include <algorithm>
 #include <math.h>
@@ -76,6 +78,24 @@ LTrackerCalibration* LTrackerCalibration::Read(const char *fileIn) {
   return result;
 }
  
+
+LTrackerCalibration* LTrackerCalibration::ReadRoot(const char *fileIn) {
+   
+   int RunIdST;
+   
+   LTrackerCalibration *rsult = new LTrackerCalibration(RunIdST);
+   
+   LEvRec0 outev;
+   LEvRec0File inputFile(fileIn);
+   inputFile.SetTheEventPointer(outev);
+   inputFile.GetEntry(0); 
+   RunIdST = outev.run_id;
+   
+   LTrackerCalibration *result =  new LTrackerCalibration(RunIdST);
+   result->Add(LTrackerCalibrationSlot::ReadRoot(fileIn));
+   
+   return result;
+}
 
 
 LTrackerCalibration& LTrackerCalibration::operator=(const LTrackerCalibration& other) {

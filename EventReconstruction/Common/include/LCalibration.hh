@@ -16,6 +16,8 @@ public:
   void WriteROOT(const char *fileOut) const;
   static LCalibration* Read(const char *fileIn);
   static LCalibration* Read(std::ifstream *fileIn);
+   static LCalibration* ReadROOT(const char *fileIn);
+
   inline void SetInputFile(const char * name) {filename = name; return;};
   inline const char * GetInputFile() const {return filename;};
   inline void SetRunId(const int in) {RunId=in; return;};
