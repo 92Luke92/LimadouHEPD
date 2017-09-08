@@ -6,15 +6,13 @@
 class LScintillatorsL2 {
 
 private:
+  
   LScintillatorsL2();
   ~LScintillatorsL2();
 
  
 
   LEvRec1File* RunFile;
- 
-
-  
  
 
  public:
@@ -28,12 +26,12 @@ private:
   int Calc(int hw_condition, int ascii_dump);//hw_condition = 0 all pmts; =1 no pmt 5east
   int Test(int hw_cond) {return Calc(hw_cond, 1);}
   int Filter(int type, double *argums);//
- 
+  void CalcLYSO(double signal[9], double sn[9], double out[3]); 
+
   LScintillatorsL2(LScintillatorsL2 const&) = delete;
   void operator=(LScintillatorsL2 const&) = delete;
 
   
-
 };
 
 
