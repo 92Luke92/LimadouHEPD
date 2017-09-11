@@ -21,7 +21,8 @@ void LReco01Manager::LoadSteering(const char* steerFileIN) {
   steer.Load(steerFile);
   // Load calibration
   calFileName = steer.GetParameter<std::string>("CALBFILE");
-  cal = LCalibration::ReadROOT(calFileName.c_str());
+  //cal = LCalibration::ReadROOT(calFileName.c_str());
+  cal = LCalibration::Read(calFileName.c_str());
   // Input file 
   L0fname = steer.GetParameter<std::string>("INPFILE");
   // Output folder
