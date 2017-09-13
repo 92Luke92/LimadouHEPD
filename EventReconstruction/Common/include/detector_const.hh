@@ -64,4 +64,7 @@ const double SCINT_XLVETO_GAP=10.; // ???
 const double SCINT_YLVETO_GAP=10.; // ???
 const double LYSO_LYSO_GAP=10.; // ???
 
+
+enum pmt_calib_type {HIGH, LOW};
+
 #endif

@@ -12,6 +12,7 @@ public:
   LTrackerCalibrationSlot(const LTrackerCalibrationSlot &other);
   void Write(std::ofstream *output);
   static LTrackerCalibrationSlot Read(std::ifstream *input);
+   static LTrackerCalibrationSlot ReadRoot(const char * input);
   inline int GetStartEvent() const {return StartEvent;};
   inline int GetStopEvent() const {return StopEvent;};
   inline const double* GetSigmaRaw() const {return sigmaraw;};

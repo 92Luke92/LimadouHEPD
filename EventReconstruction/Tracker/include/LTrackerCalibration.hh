@@ -15,6 +15,7 @@ public:
   void Write(std::ofstream *fileOut) const;
   static LTrackerCalibration* Read(const char *fileIn);
   static LTrackerCalibration* Read(std::ifstream *fileIn);
+  static LTrackerCalibration* ReadRoot(const char *fileIn);
   inline LTrackerCalibrationSlot GetTrackerCalibrationSlot(const int nSlot) const {return calarray.at(nSlot);};
   inline int GetNSlots() const {return nSlots;};
   inline int GetRunId() const {return RunId;};

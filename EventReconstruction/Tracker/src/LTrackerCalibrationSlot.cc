@@ -1,4 +1,6 @@
 #include "LTrackerCalibrationSlot.hh"
+#include "LEvRec0File.hh"
+
 #include <algorithm>
 #include <math.h>
 #include <iostream>
@@ -45,6 +47,37 @@ LTrackerCalibrationSlot LTrackerCalibrationSlot::Read(std::ifstream *input) {
     *input >> sigmarawST[iChan] >> pedestalST[iChan] >>  sigmaST[iChan] >> ngindexST[iChan] >> cnmST[iChan];
   
    LTrackerCalibrationSlot result(StartEventST, StopEventST, sigmarawST, pedestalST, sigmaST, ngindexST, cnmST);
+  
+   return result;
+}
+
+LTrackerCalibrationSlot LTrackerCalibrationSlot::ReadRoot(const char *input) {
+
+  int StartEventST=0, StopEventST=0;
+  double sigmarawST[NCHAN], pedestalST[NCHAN], sigmaST[NCHAN], ngindexST[NCHAN];
+  bool cnmST[NCHAN];
+
+  memset(&sigmarawST[0], 0, NCHAN*(sizeof(double)));
+  memset(&ngindexST[0], 0, NCHAN*(sizeof(double)));
+  
+  LEvRec0 outev;
+  LEvRec0File inputFile(input);
+  inputFile.SetTheEventPointer(outev);
+
+  inputFile.GetEntry(0);  // ped
+  for(int iChan=0; iChan<NCHAN; ++iChan)
+  {
+     pedestalST[iChan] = outev.strip[iChan];
+     //std::cout << "pedestalST[" << iChan << "] = " << pedestalST[iChan] << std::endl;
+  }
+  inputFile.GetEntry(1); // sig
+  for(int iChan=0; iChan<NCHAN; ++iChan)
+  {
+     sigmaST[iChan] = (outev.strip[iChan] & 0x0FFF);
+     //std::cout << "sigmaST[" << iChan << "] = " << sigmaST[iChan] << std::endl;
+  }
+
+  LTrackerCalibrationSlot result(StartEventST, StopEventST, sigmarawST, pedestalST, sigmaST, ngindexST, cnmST);
   
    return result;
 }
