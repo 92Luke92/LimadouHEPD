@@ -48,10 +48,10 @@ void LLysoMSCrystal::LoadLysoSignal(const LLysoSignal *lysoSignal, const bool is
   }
   int nsigcrys=lysoSignal->GetNOfSignificantCrystal(isHG_INP,threshold);
   if(nsigcrys==0 || nsigcrys>NLYSOCRYSTALS) {
-    std::cout << __LLYSOMSCRYSTAL__ << "Warning! Found " << nsigcrys << " lyso crystals ("
-        << (isHG_INP ? "high" : "low") << " gain) having SN higher than " << threshold << std::endl;
+    //std::cout << __LLYSOMSCRYSTAL__ << "Warning! Found " << nsigcrys << " lyso crystals ("
+    //    << (isHG_INP ? "high" : "low") << " gain) having SN higher than " << threshold << std::endl;
     if(nsigcrys==0) {
-      std::cout << __LLYSOMSCRYSTAL__ << "Impossible to continue." << std::endl;
+    //  std::cout << __LLYSOMSCRYSTAL__ << "Impossible to continue." << std::endl;
       return;
     } else {
       std::cout << __LLYSOMSCRYSTAL__ << "Only the most significant kept. Possible signal loss" << std::endl;
