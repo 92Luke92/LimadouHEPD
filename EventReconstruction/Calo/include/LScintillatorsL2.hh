@@ -10,10 +10,12 @@ private:
   LScintillatorsL2();
   ~LScintillatorsL2();
 
- 
+  void CalcLYSO(double signal[9], double sn[9], double out[4], double k[2]); 
+  void CalcUpperC(double pmt_signs[32], double pmt_sns[32], double out[3], double outarray[16],double k[2]);
+  double Sign2En(double signal, double thr=600.);
 
   LEvRec1File* RunFile;
- 
+  
 
  public:
   static LScintillatorsL2& GetInstance();
@@ -26,7 +28,8 @@ private:
   int Calc(int hw_condition, int ascii_dump);//hw_condition = 0 all pmts; =1 no pmt 5east
   int Test(int hw_cond) {return Calc(hw_cond, 1);}
   int Filter(int type, double *argums);//
-  void CalcLYSO(double signal[9], double sn[9], double out[3]); 
+  
+
 
   LScintillatorsL2(LScintillatorsL2 const&) = delete;
   void operator=(LScintillatorsL2 const&) = delete;

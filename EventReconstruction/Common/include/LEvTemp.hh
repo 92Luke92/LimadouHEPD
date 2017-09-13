@@ -13,7 +13,10 @@ public:
   int   trig_mult=-1;
   int   bars_status[6];
   int   calo_mult=-1;
-  int  lyso_mult=-1;
+  int   lyso_mult=-1;
+  int   IsVetoLatHit=0; 
+  int   IsLYSOHit=0; 
+  int   IsVetoBottomHit=0;
   float trig_signal_sum=0.;
   float calo_signal_sum=0.;
   float lyso_signal_sum=0.;   
