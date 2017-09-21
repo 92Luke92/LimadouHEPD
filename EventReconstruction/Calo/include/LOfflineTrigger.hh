@@ -34,6 +34,8 @@ private:
 	bool left_muon_lyso2(const LEvRec1 ev) const;// flag:right_muon_lyso2
 	bool central_muon_lyso4(const LEvRec1 ev) const;// flag:central_muon_lyso4
 	bool VL(const LEvRec1 ev) const; // flag: VL
+	bool XOR_T_AND_VL(const LEvRec1 ev) const; // flag::XOR_T_AND_VL
+	bool XOR_T_AND_VL_LYSO(const LEvRec1 ev) const; // flag::XOR_T_AND_VL_LYSO
 };
 
 

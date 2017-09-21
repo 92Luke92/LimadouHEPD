@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
         std::cout << "******************************************" << std::endl;
 
 	if (argc != 2) {
-		std::cerr << "Error! Usage: ./VVtest <DataRunL1> "			
+		std::cerr << "Error! Usage: ./Calo2OnAscii <DataRunL1> "			
 			<< std::endl;
 		return EXIT_FAILURE;
 	}

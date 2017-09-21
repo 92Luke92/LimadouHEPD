@@ -30,7 +30,8 @@ add_executable(EqualizeCalo EqualizeCalo.cc ${sources})
 add_executable(dictest dictest.cc ${sources})
 add_executable(stattest stattest.cc ${sources})
 add_executable(CaloL2OnAscii CaloL2OnAscii.cc ${sources})
-
+add_executable(PlotL0 PlotL0.cc ${sources})
+add_executable(Events Events.cc ${sources})
 
 target_link_libraries(CalibrateTracker ${ROOT_LIBRARIES})
 target_link_libraries(CalibrateCalo ${ROOT_LIBRARIES})
@@ -41,7 +42,8 @@ target_link_libraries(EqualizeCalo ${ROOT_LIBRARIES})
 target_link_libraries(dictest ${ROOT_LIBRARIES})
 target_link_libraries(stattest ${ROOT_LIBRARIES})
 target_link_libraries(CaloL2OnAscii ${ROOT_LIBRARIES})
-
+target_link_libraries(PlotL0 ${ROOT_LIBRARIES})
+target_link_libraries(Events ${ROOT_LIBRARIES})
 
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 foreach(dir ${dirs})
