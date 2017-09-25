@@ -17,6 +17,7 @@
 #include "Edep_Pos.h"
 #include "detector_const.hh"
 #include "MCcoorPhysicalFrame.hh"
+#include "laurentmethod.hh"
 
 
 class EcalADC {

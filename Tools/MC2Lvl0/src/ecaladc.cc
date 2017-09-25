@@ -161,7 +161,6 @@ float EcalADC::applyMCshaping(float ADCval, PMTenum pmt) {
 
 
 void EcalADC::initHGaggregate () {
-    TVector3 test= {0, 0, 0};
    hgPMT = {{
         {T1e  , "T1e"  ,  412.881081 ,  5.093883 ,   472.881081 , 0    , 0, 0, {0, 0, 0}},
         {T2e  , "T2e"  ,  414.176163 ,  4.326234 ,  1020.807331 , 0    , 0, 0, {0, 0, 0}},
