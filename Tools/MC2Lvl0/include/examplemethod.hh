@@ -15,7 +15,7 @@ class LaurentMethod: public calomev2adcmethod
 {
    public:
       LaurentMethod(std::string datacardname);
-      float adcFromMev(float mev, int sensor, int beamEnergy);
+      float adcFromMev(float mev, int sensor);
 
    private:
       void init();

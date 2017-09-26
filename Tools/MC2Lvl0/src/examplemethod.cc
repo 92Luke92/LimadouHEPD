@@ -24,7 +24,7 @@ void LaurentMethod::init() {
 
 
 
-float LaurentMethod::adcFromMev(float mev, int sensor, int beamEnergy) {
+float LaurentMethod::adcFromMev(float mev, int sensor) {
    sensor++; beamEnergy++;
    return mev;
 }

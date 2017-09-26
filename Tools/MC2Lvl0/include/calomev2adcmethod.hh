@@ -15,7 +15,7 @@ class calomev2adcmethod
 {
    public:
       calomev2adcmethod(std::string datacardname);
-      virtual float adcFromMev(float mev, int sensor, int beamEnergy) = 0;
+      virtual float adcFromMev(float mev, int sensor) = 0;
       void dumpDatacard();
 
    protected:

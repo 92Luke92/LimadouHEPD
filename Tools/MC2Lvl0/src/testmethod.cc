@@ -5,10 +5,11 @@
 
 int main() {
 
-   LaurentMethod datacard("test.txt");
+   LaurentMethod datacard("laurentHGpeakshift.csv");
   datacard.dumpDatacard();
 
-
+   LaurentMethod datacard2("test.txt");
+  datacard2.dumpDatacard();
 
   return 0;
 }

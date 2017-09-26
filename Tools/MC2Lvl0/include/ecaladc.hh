@@ -26,7 +26,7 @@ class EcalADC {
     void SetPositions (std::vector<Edep_Pos> pmt_info );
     void NormalizePMThg ( ushort* pmt_high);
     void NormalizePMTlg ( ushort* pmt_low);
-    void setMCEnergy (int mcE) {mcEnergy = mcE;}
+    void setMCEnergy (int mcE) {mcEnergy = mcE; lHg.setBeamEnergy(mcE);}
 
 
 
@@ -95,6 +95,8 @@ class EcalADC {
 
     std::pair<float, float> getFitCoeff(PMTenum pmt) ;
     float applyMCshaping(float ADCval, PMTenum pmt);
+
+    LaurentMethod lHg;
 
 };
 

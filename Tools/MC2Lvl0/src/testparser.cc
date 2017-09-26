@@ -6,7 +6,7 @@
 int main() {
 
    csv2fvec datacard;
-   std::vector<std::vector<float>> entries=datacard.fromDatacard("test.txt");
+   std::vector<std::vector<float>> entries=datacard.fromDatacard("laurentHGpeakshift.csv");
 
   for (auto line : entries) {
      for(float elt:line) std::cout << elt << " ";

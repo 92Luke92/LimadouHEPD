@@ -26,8 +26,7 @@ std::vector<std::vector<float>> csv2fvec::fromFile(std::string filename)
   std::vector<std::vector<float>> entries;
   std::ifstream fp(filename);
   std::string line;
-
-    while(std::getline(fp, line)) {
+    while(std::getline(fp, line, '\n')) {
        float cell;
        std::istringstream row(line);
        std::vector<float> vline;

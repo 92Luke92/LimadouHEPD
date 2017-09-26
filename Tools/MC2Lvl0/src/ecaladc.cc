@@ -30,7 +30,9 @@ float VectorXYDist (TVector3 v1, TVector3 v2)
 
 
 
-EcalADC::EcalADC() {
+EcalADC::EcalADC() : lHg(LaurentMethod("laurentHGpeakshift.csv")) {
+
+    lHg.dumpDatacard();
     initHGaggregate();
     initLGaggregate();
     initScint();
@@ -45,7 +47,6 @@ void EcalADC::initScint()
         5.19256, 5.31434, 5.43623, 5.56329, 5.71436, 5.89574, 6.07625, 6.29347,
         6.53174, 6.80163, 7.13162, 7.51907, 8.00189, 8.59306, 9.37135, 10.4922
     };
-    const std::map<PMTenum, int> PMT2Layer;
     const std::array <PMTenum, 32 > scintPMT = {P1se, P2sw, P3se, P4sw, P5se, P6sw, P7se, P8sw,
                                     P9se, P10sw, P11se, P12sw, P13se, P14sw, P15se, P16sw,
                                     P1nw, P2ne, P3nw, P4ne, P5nw, P6ne, P7nw, P8ne,
@@ -105,10 +106,11 @@ void EcalADC::NormalizePMTlg ( ushort* pmt_low)
 
 void EcalADC::NormalizePMT ( ushort* pmt_out, PMTarray pmtDB) {
     for (uint ip = 0; ip < NPMT; ip++) {
-        float MeVToADC = EcalMev2ADCfactor (PMTiterator[ip], pmtDB);
-        float centeredADC=correctedPMTs[ip] * MeVToADC;
-        float shapedADC=applyMCshaping(centeredADC, PMTiterator[ip]);
-        if (shapedADC<=0) shapedADC=centeredADC; // Remove line if we want 0 (layer not hit)
+        //float MeVToADC = EcalMev2ADCfactor (PMTiterator[ip], pmtDB);
+        float adc=lHg.adcFromMev( correctedPMTs[ip], ip );
+        //float centeredADC=correctedPMTs[ip] * MeVToADC;
+        float shapedADC=adc;//applyMCshaping(centeredADC, PMTiterator[ip]);
+        //if (shapedADC<=0) shapedADC=centeredADC; // Remove line if we want 0 (layer not hit)
         int untrimmedPMT = static_cast<int> (shapedADC) + pmtDB[ip].pedMean;
         if (untrimmedPMT > NADC) untrimmedPMT = NADC - 1;
         pmt_out[ip] = static_cast<short> (untrimmedPMT);
