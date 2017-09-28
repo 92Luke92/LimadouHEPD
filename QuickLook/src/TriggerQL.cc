@@ -1,4 +1,4 @@
-/**
+/home/luca/Documenti/Limadou/Optical_Photons/Scint_layer/presentation/presentation.pdf/**
  * =============================================================================
  *
  * Created by Francesco Palma & Luca Carfora @ INFN Roma2:
@@ -153,7 +153,7 @@ void TriggerScan(TString rootname)
       if (kk==5)
 	 name_rate_meter = "Trigger MASK 5 [T & P1 & P2 & P3]";
       if (kk==6)
-	 name_rate_meter = "Trigger MASK 6 [T & (P1 & P2) & (P15 || P16)]";
+	 name_rate_meter = "Trigger MASK 6 [T & (P1 || P2) & (P15 || P16)]";
       if (kk==7)
 	 name_rate_meter = "Trigger MASK 7 [T & (P1 || P2) & L]";
       if (kk==8)
