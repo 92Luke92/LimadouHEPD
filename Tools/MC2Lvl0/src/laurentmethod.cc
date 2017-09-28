@@ -28,10 +28,13 @@ void LaurentMethod::init() {
 float LaurentMethod::adcFromMev(float mev, int sensor) {
    PMTnumbers goodPMT=PMTs[sensor];
    float adcShift = mev * goodPMT.mev2adc;
-   //std::cout << ">>>" << mev << " " << sensor << " " << goodPMT.mev2adc << std::endl;
+   std::cout << "#######  " <<  sensor << " " << adcShift  << " " << mev
+                <<  " " <<  goodPMT.mev2adc  << std::endl;
    float adcShape = goodPMT.a * adcShift + goodPMT.b;
+   /*std::cout << ">>>" << mev << " " << sensor << " " << goodPMT.mev2adc
+   << " " << goodPMT.a << " " << goodPMT.b << " " << adcShape
+  << std::endl;*/
    if (adcShape<=0) adcShape=adcShift; // could be switched to 0
-   //std::cout << adcShift << " " << adcShape << std::endl;
    return adcShape;
 }
 
@@ -75,14 +78,15 @@ void LaurentMethod::addMevPeak()
 
 
 void LaurentMethod::computeMev2ADCratio() {
-   //std::cout << " ########### " << std::endl;
+   std::cout << " ########### " << std::endl;
   for (auto pmt : PMTs) {
       float maxMev = pmt.isScint? pmt.mevPeak:15;
       float maxADC = pmt.maxPeak - pmt.pedMean;
       PMTs[static_cast<int>(pmt.index)].mev2adc = maxADC / maxMev;
-    //  std::cout << pmt.maxPeak << " " <<  maxMev<< " " << pmt.mev2adc <<  std::endl;
   }
-  //std::cout << " ########### "<<  std::endl;
+   for (auto pmt : PMTs)
+        std::cout << pmt.index << " " << pmt.maxPeak << " " <<  pmt.isScint<< " " << pmt.mev2adc <<  std::endl;
+  std::cout << " ########### "<<  std::endl;
 }
 
 

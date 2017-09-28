@@ -53,7 +53,7 @@ void EcalADC::initScint()
                                     P9nw, P10ne, P11nw, P12ne, P13nw, P14ne, P15nw, P16ne
                                    };
     for (uint iPMT=0; iPMT<scintPMT.size(); iPMT++) {
-        uint layer= iPMT % scintPMT.size()/2;
+        uint layer= iPMT % (scintPMT.size()/2);
         float peak=MeVPeakLayer[layer];
         PMTenum idx=scintPMT[iPMT];
         hgPMT[idx].layerScint=layer;
@@ -106,11 +106,14 @@ void EcalADC::NormalizePMTlg ( ushort* pmt_low)
 
 void EcalADC::NormalizePMT ( ushort* pmt_out, PMTarray pmtDB) {
     for (uint ip = 0; ip < NPMT; ip++) {
-        //float MeVToADC = EcalMev2ADCfactor (PMTiterator[ip], pmtDB);
+        float MeVToADC = EcalMev2ADCfactor (PMTiterator[ip], pmtDB);
         float adc=lHg.adcFromMev( correctedPMTs[ip], ip );
-        //float centeredADC=correctedPMTs[ip] * MeVToADC;
-        float shapedADC=adc;//applyMCshaping(centeredADC, PMTiterator[ip]);
-        //if (shapedADC<=0) shapedADC=centeredADC; // Remove line if we want 0 (layer not hit)
+        float centeredADC=correctedPMTs[ip] * MeVToADC;
+        float shapedADC=applyMCshaping(centeredADC, PMTiterator[ip]);
+        std::cout << "######   " <<  ip << " " << centeredADC  << " " << correctedPMTs[ip]
+                <<  " " <<  MeVToADC  << std::endl;
+        if (shapedADC<=0) shapedADC=centeredADC; // Remove line if we want 0 (layer not hit)
+        shapedADC=adc;
         int untrimmedPMT = static_cast<int> (shapedADC) + pmtDB[ip].pedMean;
         if (untrimmedPMT > NADC) untrimmedPMT = NADC - 1;
         pmt_out[ip] = static_cast<short> (untrimmedPMT);
@@ -154,6 +157,8 @@ std::pair<float, float> EcalADC::getFitCoeff(PMTenum pmt) {
 
 float EcalADC::applyMCshaping(float ADCval, PMTenum pmt) {
    std::pair<float, float> fitPar=getFitCoeff(pmt);
+   /*std::cout << "init ab " << fitPar.first << " " << fitPar.second << " "
+   <<  ADCval << " " << fitPar.first * ADCval+ fitPar.second << std::endl;*/
    return fitPar.first * ADCval+ fitPar.second;
 }
 

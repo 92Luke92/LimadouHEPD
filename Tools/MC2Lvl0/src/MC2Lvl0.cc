@@ -69,6 +69,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     Tmc->SetBranchAddress ("Event", &MCevt, &b_Event);
     EcalADC ecaladc;
 
+    ne=5;
     for (int ie = 0; ie < ne; ie++) {
         Tmc->GetEntry (ie);
         //MCevt->EventID();
