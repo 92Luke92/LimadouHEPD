@@ -32,7 +32,7 @@ float VectorXYDist (TVector3 v1, TVector3 v2)
 
 EcalADC::EcalADC() : lHg(LaurentMethod("laurentHGpeakshift.csv")) {
 
-    lHg.dumpDatacard();
+    //lHg.dumpDatacard();
     initHGaggregate();
     initLGaggregate();
     initScint();
@@ -110,8 +110,6 @@ void EcalADC::NormalizePMT ( ushort* pmt_out, PMTarray pmtDB) {
         float adc=lHg.adcFromMev( correctedPMTs[ip], ip );
         float centeredADC=correctedPMTs[ip] * MeVToADC;
         float shapedADC=applyMCshaping(centeredADC, PMTiterator[ip]);
-        std::cout << "######   " <<  ip << " " << centeredADC  << " " << correctedPMTs[ip]
-                <<  " " <<  MeVToADC  << std::endl;
         if (shapedADC<=0) shapedADC=centeredADC; // Remove line if we want 0 (layer not hit)
         shapedADC=adc;
         int untrimmedPMT = static_cast<int> (shapedADC) + pmtDB[ip].pedMean;
