@@ -11,10 +11,10 @@
 
 #include <calomev2adcmethod.hh>
 
-class LaurentMethod: public calomev2adcmethod
+class ExampleMethod: public calomev2adcmethod
 {
    public:
-      LaurentMethod(std::string datacardname);
+      ExampleMethod(std::string datacardname);
       float adcFromMev(float mev, int sensor);
 
    private:

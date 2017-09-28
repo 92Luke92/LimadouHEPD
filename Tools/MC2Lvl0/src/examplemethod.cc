@@ -10,7 +10,7 @@
 #include "examplemethod.hh"
 
 
-LaurentMethod::LaurentMethod(std::string datacardname)
+ExampleMethod::ExampleMethod(std::string datacardname)
    : calomev2adcmethod(datacardname)
 {
  init();
@@ -18,13 +18,13 @@ LaurentMethod::LaurentMethod(std::string datacardname)
 
 
 
-void LaurentMethod::init() {
+void ExampleMethod::init() {
 
 }
 
 
 
-float LaurentMethod::adcFromMev(float mev, int sensor) {
+float ExampleMethod::adcFromMev(float mev, int sensor) {
    sensor++; beamEnergy++;
    return mev;
 }
