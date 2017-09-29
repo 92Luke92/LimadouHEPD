@@ -71,6 +71,7 @@ void EcalADC::SetPositions(std::vector<Edep_Pos> pmt_info) {
     }
 }
 
+
 void EcalADC::NormalizePMThg ( ushort* pmt_high)
 {
     NormalizePMT(pmt_high, methodHg);
@@ -94,7 +95,6 @@ void EcalADC::NormalizePMT ( ushort* pmt_out, calomev2adcmethod* method) {
 
 
 
-
 float EcalADC::PMTAttCorr (float dist)
 {
     float lambda = 2764.; //mm
@@ -110,14 +110,6 @@ std::pair<float, float> EcalADC::getFitCoeff(PMTenum pmt) {
    if (iter != linearFitParams.end() )
         fitPair={iter[0].a, iter[0].b};
    return fitPair;
-}
-
-
-float EcalADC::applyMCshaping(float ADCval, PMTenum pmt) {
-   std::pair<float, float> fitPar=getFitCoeff(pmt);
-   /*std::cout << "init ab " << fitPar.first << " " << fitPar.second << " "
-   <<  ADCval << " " << fitPar.first * ADCval+ fitPar.second << std::endl;*/
-   return fitPar.first * ADCval+ fitPar.second;
 }
 
 

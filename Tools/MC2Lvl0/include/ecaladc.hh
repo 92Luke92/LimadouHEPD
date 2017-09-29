@@ -34,7 +34,6 @@ class EcalADC {
 
     int mcEnergy;
 
-
     enum PMTenum {T1e, T2e, T3e, T4e, T5e, T6e,
                   P1se, P2sw, P3se, P4sw, P5se, P6sw, P7se, P8sw, P9se, P10sw, P11se, P12sw, P13se, P14sw, P15se, P16sw,
                   VNu, VEu, VSu, VWu, VBne, L9sw, L7nw, L1ne, L8w, L5c,
@@ -83,7 +82,7 @@ class EcalADC {
     void NormalizePMT ( ushort* pmt_out, calomev2adcmethod* method);
 
     std::pair<float, float> getFitCoeff(PMTenum pmt) ;
-    float applyMCshaping(float ADCval, PMTenum pmt);
+
 
     calomev2adcmethod* methodHg;
     calomev2adcmethod* methodLg;
