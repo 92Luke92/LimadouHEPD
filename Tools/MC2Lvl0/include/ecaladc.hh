@@ -26,7 +26,7 @@ class EcalADC {
     void SetPositions (std::vector<Edep_Pos> pmt_info );
     void NormalizePMThg ( ushort* pmt_high);
     void NormalizePMTlg ( ushort* pmt_low);
-    void setMCEnergy (int mcE) {mcEnergy = mcE; lHg.setBeamEnergy(mcE);}
+    void setMCEnergy (int mcE);
 
 
 
@@ -54,18 +54,16 @@ class EcalADC {
                                                          VNd, VEd, VSd, VWd, VBsw, L3se, L2e, L6s, L4n, NC
                                                         };
 
+    const std::array <PMTenum, 32 > scintPMT = {P1se, P2sw, P3se, P4sw, P5se, P6sw, P7se, P8sw,
+                                    P9se, P10sw, P11se, P12sw, P13se, P14sw, P15se, P16sw,
+                                    P1nw, P2ne, P3nw, P4ne, P5nw, P6ne, P7nw, P8ne,
+                                    P9nw, P10ne, P11nw, P12ne, P13nw, P14ne, P15nw, P16ne
+                                   };
+
+
+
     // Aggregate brace inits; please don't change this order
-    struct PMTnumbers {
-        PMTenum index;
-        std::string name;
-        float pedMean;
-        float pedSigma;
-        float maxPeak;
-        bool isScint;
-        int layerScint;
-        float scintMeVPeak;
-        TVector3 physPosition;
-    };
+
     struct LinearFitParam {
         PMTenum index;
         int energy;
@@ -73,30 +71,24 @@ class EcalADC {
         float b;
     };
 
-    using PMTarray = std::array<PMTnumbers, NPMT>;
 
-    std::array<TVector3, NPMT> GetPMTphysPos();
-    void initHGaggregate();
-    void initLGaggregate();
-    void initScint();
+
     void initMCpos();
-    void initMCshape();
 
-    PMTarray hgPMT, lgPMT;
     std::array<float, NPMT>   correctedPMTs;
-
 
     std::vector< LinearFitParam> linearFitParams;
     float PMTAttCorr (float dist);
-    float EcalMev2ADCfactor (PMTenum PMT, PMTarray pmtDB);
 
-    void NormalizePMT ( ushort* pmt_out, PMTarray pmtDB);
-
+    void NormalizePMT ( ushort* pmt_out, calomev2adcmethod* method);
 
     std::pair<float, float> getFitCoeff(PMTenum pmt) ;
     float applyMCshaping(float ADCval, PMTenum pmt);
 
-    LaurentMethod lHg;
+    calomev2adcmethod* methodHg;
+    calomev2adcmethod* methodLg;
+
+    std::map<PMTenum, TVector2> PMTpos;
 
 };
 

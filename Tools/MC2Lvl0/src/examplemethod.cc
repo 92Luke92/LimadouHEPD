@@ -24,7 +24,7 @@ void ExampleMethod::init() {
 
 
 
-float ExampleMethod::adcFromMev(float mev, int sensor) {
-   sensor++; beamEnergy++;
-   return mev;
+short ExampleMethod::adcFromMev(float mev, int sensor) {
+   sensor++;
+   return static_cast<short> (mev);
 }

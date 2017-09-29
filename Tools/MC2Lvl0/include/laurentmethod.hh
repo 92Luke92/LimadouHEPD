@@ -10,12 +10,11 @@
 #define LAURENTMETHOD_HH
 
 #include <calomev2adcmethod.hh>
-#include "detector_const.hh"
 
 class LaurentMethod: public calomev2adcmethod {
   public:
     LaurentMethod (std::string datacardname);
-    float adcFromMev (float mev, int sensor);
+    short adcFromMev (float mev, int sensor);
     void setBeamEnergy(int energy);
 
   private:

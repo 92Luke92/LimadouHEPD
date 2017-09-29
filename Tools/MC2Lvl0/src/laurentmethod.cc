@@ -25,16 +25,15 @@ void LaurentMethod::init() {
 
 }
 
-float LaurentMethod::adcFromMev(float mev, int sensor) {
-   PMTnumbers goodPMT=PMTs[sensor];
-   float adcShift = mev * goodPMT.mev2adc;
-   float adcShape = goodPMT.a * adcShift + goodPMT.b;
-   /*std::cout << ">>>" << mev << " " << sensor << " " << goodPMT.mev2adc
-   << " " << goodPMT.a << " " << goodPMT.b << " " << adcShape
-  << std::endl;*/
+short LaurentMethod::adcFromMev(float mev, int sensor) {
+   PMTnumbers thisPMT=PMTs[sensor];
+   float adcShift = mev * thisPMT.mev2adc;
+   float adcShape = thisPMT.a * adcShift + thisPMT.b;
    if (adcShape<=0) adcShape=adcShift; // could be switched to 0
-   return adcShape;
+   int untrimmedPMT = static_cast<int> (adcShape + thisPMT.pedMean);
+   return trimADC(untrimmedPMT);
 }
+
 
 void LaurentMethod::convertDatacard() {
   int iPMT=0;
@@ -87,6 +86,7 @@ void LaurentMethod::computeMev2ADCratio() {
 
 
 void LaurentMethod::setBeamEnergy(int energy) {
+  beamEnergy=energy;
   csv2fvec abfile;
   std::vector<std::vector<float>> abvalues=abfile.fromDatacard("laurent_pmt_e_a_b.csv");
   for (auto line : abvalues) {

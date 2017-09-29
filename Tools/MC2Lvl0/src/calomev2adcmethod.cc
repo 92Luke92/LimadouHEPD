@@ -27,3 +27,8 @@ void calomev2adcmethod::dumpDatacard() {
 }
 
 
+short calomev2adcmethod::trimADC(int untrimmedADC) {
+     if (untrimmedADC <0 )    untrimmedADC = 0;
+     if (untrimmedADC > NADC) untrimmedADC = NADC - 1;
+     return static_cast<short> (untrimmedADC);
+}

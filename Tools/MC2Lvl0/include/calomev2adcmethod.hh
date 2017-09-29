@@ -10,18 +10,23 @@
 #define CALOM2AMETHOD_HH
 
 #include "csv2fvec.hh"
+#include "detector_const.hh"
 
 class calomev2adcmethod
 {
    public:
       calomev2adcmethod(std::string datacardname);
-      virtual float adcFromMev(float mev, int sensor) = 0;
+      virtual short adcFromMev(float mev, int sensor) = 0;
       void dumpDatacard();
+      void setBeamEnergy(int energy) {beamEnergy=energy;}
 
    protected:
       std::vector<std::vector<float>> datacard;
+      int beamEnergy;
+      short trimADC(int untrimmedADC);
    private:
       virtual void init() = 0;
+
 };
 
 #endif /* CALOMEV2ADCMETHOD_HH */
