@@ -7,16 +7,13 @@
 
 
 #include "ecaladc.hh"
-#include "TVector3.h"
-#include "TVector2.h"
 #include <iostream>
-#include <algorithm> // find_if
 
 
 
 
 
-float VectorXYDist (TVector2 v1, TVector2 v2)
+float EcalADC::VectorXYDist (TVector2 v1, TVector2 v2)
 {
     TVector2 diff = v1 - v2;
     return static_cast<float> (diff.Mod() ); // return TMath::Sqrt(fX*fX+fY*fY);
@@ -28,11 +25,8 @@ EcalADC::EcalADC()
 {
     methodHg=new LaurentMethod("laurentHGpeakshift.csv");
     methodLg = new LaurentMethod("laurentLGpeakshift.csv");
-    //lHg.dumpDatacard();
     initMCpos();
 }
-
-
 
 
 
@@ -47,7 +41,6 @@ void EcalADC::setMCEnergy (int mcE) {
 void EcalADC::initMCpos() {
     const std::array<float, NSCINTPLANES> PMTzMC={312.2,297.42,282.64,267.86,253.08,238.3,223.52,208.74,193.96,179.18,
         164.814,150.51,136.241,121.944,107.659,93.3685};
-
     for (uint iPMT=0; iPMT<scintPMT.size(); iPMT++) {
       float x=(iPMT%2 == 0)?82.5:-82.5; //mm
       float y=(iPMT < NPMT/2)?82.5:-82.5; //mm
@@ -99,17 +92,6 @@ float EcalADC::PMTAttCorr (float dist)
 {
     float lambda = 2764.; //mm
     return exp (- dist / lambda);
-}
-
-
-std::pair<float, float> EcalADC::getFitCoeff(PMTenum pmt) {
-        std::pair <float, float> fitPair={0, 0};
-// See        https://stackoverflow.com/questions/14225932/search-for-a-struct-item-in-a-vector-by-member-data
-   auto predicate=[&](LinearFitParam& f) {return (f.energy == mcEnergy) && (f.index==pmt);};
-   auto iter = std::find_if(std::begin(linearFitParams), std::end(linearFitParams), predicate);
-   if (iter != linearFitParams.end() )
-        fitPair={iter[0].a, iter[0].b};
-   return fitPair;
 }
 
 
