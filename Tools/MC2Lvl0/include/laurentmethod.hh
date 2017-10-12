@@ -58,7 +58,7 @@ class LaurentMethod: public calomev2adcmethod {
     void convertDatacard();
     void addMevPeak();
     void computeMev2ADCratio();
-
+	
     /* add your private declarations */
 };
 

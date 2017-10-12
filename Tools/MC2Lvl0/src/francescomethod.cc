@@ -27,14 +27,14 @@ void FrancescoMethod::init() {
 void FrancescoMethod::convertDatacard() {
   int iPMT=0;
   for (auto line : datacard) {
-      PMTnumbers pmt;
-      pmt.index=PMTiterator[iPMT];
-      pmt.pedMean =line[0];
-      pmt.pedSigma=line[1];
-      pmt.maxPeak =line[2];
-      pmt.isScint =  (line[3] != 0) ;
+      MyPMTnumbers pmt;
+      pmt.PMT.index=PMTiterator[iPMT];
+      pmt.PMT.pedMean =line[0];
+      pmt.PMT.pedSigma=line[1];
+      pmt.PMT.maxPeak =line[2];
+      pmt.PMT.isScint =  (line[3] != 0) ;
 
-      PMTs[iPMT]=pmt;
+      MyPMTs[iPMT]=pmt;
       iPMT++;
   }
   return;
@@ -55,7 +55,7 @@ void FrancescoMethod::addMevPeak()
         uint layer= iPMT % ( scintPMT.size()/2 );
         float peak=MeVPeakLayer[layer];
         int idx=  static_cast<int> (scintPMT[iPMT]);
-        PMTs[idx].mevPeak=peak;
+        MyPMTs[idx].PMT.mevPeak=peak;
     }
     return;
 }
@@ -63,18 +63,18 @@ void FrancescoMethod::addMevPeak()
 
 void FrancescoMethod::computeMev2ADCratio() {
 
-  for (auto pmt : PMTs) {
-      float maxMev = pmt.isScint? pmt.mevPeak:15;
-      float maxADC = pmt.maxPeak - pmt.pedMean;
-      PMTs[static_cast<int>(pmt.index)].mev2adc = maxADC / maxMev;
+  for (auto pmt : MyPMTs) {
+      float maxMev = pmt.PMT.isScint? pmt.PMT.mevPeak:15;
+      float maxADC = pmt.PMT.maxPeak - pmt.PMT.pedMean;
+      MyPMTs[static_cast<int>(pmt.PMT.index)].PMT.mev2adc = maxADC / maxMev;
   }
 
 }
 
 short FrancescoMethod::adcFromMev(float mev, int sensor) {
-   PMTnumbers thisPMT=PMTs[sensor];
-   float adcShift = mev * thisPMT.mev2adc;
-   int untrimmedPMT = static_cast<int> (adcShape + thisPMT.pedMean);
+   MyPMTnumbers thisPMT=MyPMTs[sensor];
+   float adcShift = mev * thisPMT.PMT.mev2adc;
+   int untrimmedPMT = static_cast<int> (thisPMT.PMT.pedMean);
    return trimADC(untrimmedPMT);
 }
 
