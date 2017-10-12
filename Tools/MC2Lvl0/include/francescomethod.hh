@@ -11,15 +11,35 @@
 
 #include <calomev2adcmethod.hh>
 
-class ExampleMethod: public calomev2adcmethod
+class FrancescoMethod: public calomev2adcmethod
 {
    public:
-      ExampleMethod(std::string datacardname);
+      FrancescoMethod(std::string datacardname);
       short adcFromMev(float mev, int sensor);
 
+
    private:
-      void init();
-      /* add your private declarations */
+
+   struct PMTnumbers {
+        PMTenum index;
+        float pedMean;
+        float pedSigma;
+        float maxPeak;
+        float mevPeak;
+        bool  isScint;
+        float mev2adc;
+        float a=0;
+        float b=0;
+    };
+
+   std::array<PMTnumbers, NPMT>  PMTs;
+
+   void init();
+   void convertDatacard();
+   void addMevPeak();
+   void computeMev2ADCratio();
+	
+
 };
 
 #endif 
