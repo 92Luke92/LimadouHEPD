@@ -6,8 +6,8 @@
  */
 
 
-#ifndef LAURENTMETHOD_HH
-#define LAURENTMETHOD_HH
+#ifndef EXAMPLEMETHOD_HH
+#define EXAMPLEMETHOD_HH
 
 #include <calomev2adcmethod.hh>
 
@@ -22,4 +22,4 @@ class ExampleMethod: public calomev2adcmethod
       /* add your private declarations */
 };
 
-#endif /* LAURENTMETHOD_HH */
+#endif /* EXAMPLEMETHOD_HH */
