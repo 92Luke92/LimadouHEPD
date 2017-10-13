@@ -22,7 +22,6 @@ void LaurentMethod::init() {
   convertDatacard();
   addMevPeak();
   computeMev2ADCratio();
-
 }
 
 short LaurentMethod::adcFromMev(float mev, int sensor) {
@@ -96,6 +95,6 @@ void LaurentMethod::setBeamEnergy(int energy) {
     PMTs[idx].b=line[3];
   }
 
-  //for (auto pmt : PMTs)  std::cout << pmt.index << " "<< pmt.a << " "<< pmt.b  << std::endl;
+  for (auto pmt : PMTs)  std::cout << pmt.index << " "<< pmt.a << " "<< pmt.b  << std::endl;
 
 }

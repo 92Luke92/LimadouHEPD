@@ -16,6 +16,7 @@ class FrancescoMethod: public calomev2adcmethod
    public:
       FrancescoMethod(std::string datacardname);
       short adcFromMev(float mev, int sensor);
+      void setBeamEnergy(int energy);
 
 
    private:

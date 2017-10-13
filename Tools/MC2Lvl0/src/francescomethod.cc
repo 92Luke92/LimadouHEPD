@@ -78,4 +78,18 @@ short FrancescoMethod::adcFromMev(float mev, int sensor) {
    return trimADC(untrimmedPMT);
 }
 
+void FrancescoMethod::setBeamEnergy(int energy) {
+  csv2fvec abfile;
+  std::vector<std::vector<float>> abvalues=abfile.fromDatacard("francesco_parameter.csv");
+  for (auto line : abvalues) {
+    int idx = static_cast<int> ( line[0]);
+    MyPMTs[idx].a1=line[2];
+    MyPMTs[idx].b1=line[3];
+    MyPMTs[idx].a2=line[4];
+    MyPMTs[idx].b2=line[5];
 
+  }
+
+  //for (auto pmt : PMTs)  std::cout << pmt.index << " "<< pmt.a << " "<< pmt.b  << std::endl;
+
+}
