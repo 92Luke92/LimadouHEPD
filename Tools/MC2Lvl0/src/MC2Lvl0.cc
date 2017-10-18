@@ -73,7 +73,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
         Tmc->GetEntry (ie);
         std::vector<RootCaloHit> caloHits =  MCevt->GetCaloHit();
         std::vector<RootTrackerHit>  trackerHits =  MCevt->GetTrackerHit();
-        if (ie==0) ecaladc.setMCEnergy(getMCTrackHitsEnergy(trackerHits));
+        if(ie==0) ecaladc.setMCEnergy(getMCTrackHitsEnergy(trackerHits));
 
         LEvRec0* ev = lvl0writer->pev();
         ev->Reset();

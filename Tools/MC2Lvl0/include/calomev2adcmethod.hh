@@ -18,13 +18,14 @@ class calomev2adcmethod
       calomev2adcmethod(std::string datacardname);
       virtual short adcFromMev(float mev, int sensor) = 0;
       void dumpDatacard();
-      void setBeamEnergy(int energy) {beamEnergy=energy;}
+      virtual void setBeamEnergy(int energy) {beamEnergy=energy;}
 
    protected:
       std::vector<std::vector<float>> datacard;
       int beamEnergy;
       short trimADC(int untrimmedADC);
-   private:
+    
+    private:	
       virtual void init() = 0;
 
 };

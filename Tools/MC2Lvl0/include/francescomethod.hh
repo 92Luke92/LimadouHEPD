@@ -1,72 +1,45 @@
 /*
- * examplemethod.hh
+ * francescomethod.hh
  *
  *
  *
  */
 
-
 #ifndef FRANCESCOMETHOD_HH
 #define FRANCESCOMETHOD_HH
 
-#include <calomev2adcmethod.hh>
+#include <MeV2ADCmethod.hh>
+#include "TRandom3.h"
 
-class FrancescoMethod: public calomev2adcmethod
+class FrancescoMethod: public MeV2ADCMethod
 {
    public:
-      FrancescoMethod(std::string datacardname);
+      FrancescoMethod(std::string datacardname,std::string pardatacardname);
       short adcFromMev(float mev, int sensor);
-      void setBeamEnergy(int energy);
+      void setBeamEnergy(int energy) {beamEnergy=energy;};
+
+   protected:	
+   struct PMTnumbersFrancesco : public PMTnumbers {
+	// linear function par. for 1) sigma smearing 1 , 2) sigma smearing 2 , 3) Mean Fixing
+	float a1,a2,a3=0;  
+        float b1,b2,b3=0;
+	PMTnumbersFrancesco(){};
+  	PMTnumbersFrancesco(const PMTnumbers& other):PMTnumbers(other){};
+  
+    };
 
 
    private:
 
-   enum PMTenum {T1e, T2e, T3e, T4e, T5e, T6e,
-                  P1se, P2sw, P3se, P4sw, P5se, P6sw, P7se, P8sw, P9se, P10sw, P11se, P12sw, P13se, P14sw, P15se, P16sw,
-                  VNu, VEu, VSu, VWu, VBne, L9sw, L7nw, L1ne, L8w, L5c,
-                  T1w, T2w, T3w, T4w, T5w, T6w,
-                  P1nw, P2ne, P3nw, P4ne, P5nw, P6ne, P7nw, P8ne, P9nw, P10ne, P11nw, P12ne, P13nw, P14ne, P15nw, P16ne,
-                  VNd, VEd, VSd, VWd, VBsw, L3se, L2e, L6s, L4n, NC
-                 };
-
-   const std::array<const PMTenum, NPMT> PMTiterator = {T1e, T2e, T3e, T4e, T5e, T6e,
-                                                         P1se, P2sw, P3se, P4sw, P5se, P6sw, P7se, P8sw, P9se, P10sw, P11se, P12sw, P13se, P14sw, P15se, P16sw,
-                                                         VNu, VEu, VSu, VWu, VBne, L9sw, L7nw, L1ne, L8w, L5c,
-                                                         T1w, T2w, T3w, T4w, T5w, T6w,
-                                                         P1nw, P2ne, P3nw, P4ne, P5nw, P6ne, P7nw, P8ne, P9nw, P10ne, P11nw, P12ne, P13nw, P14ne, P15nw, P16ne,
-                                                         VNd, VEd, VSd, VWd, VBsw, L3se, L2e, L6s, L4n, NC
-                                                        };
-
-
-
-
-   struct PMTnumbers {
-        PMTenum index;
-        float pedMean;
-        float pedSigma;
-        float maxPeak;
-        float mevPeak;
-        bool  isScint;
-        float mev2adc;
-        float a=0;
-        float b=0;
-    };
-
+   TRandom3 * Rand;
+   std::vector<std::vector<float>> pardatacard;
 	
-   struct MyPMTnumbers {
-        PMTnumbers PMT;
-	float a1,a2=0;
-        float b1,b2=0;
-    };
+   std::array<PMTnumbersFrancesco, NPMT>  MyPMTs;
 
-   std::array<MyPMTnumbers, NPMT>  MyPMTs;
-
-   void init();
-   void convertDatacard();
-   void addMevPeak();
-   void computeMev2ADCratio();
-	
-
+   void  initRandom(std::string pardatacardname);
+   void  UpdateMyPMTs();  
+   void  convertParameterDatacard();
+   float SmearADC(int ADC,int sensor);
 };
 
 #endif 
