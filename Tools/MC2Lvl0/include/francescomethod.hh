@@ -23,9 +23,9 @@ class FrancescoMethod: public MeV2ADCMethod
 	// linear function par. for 1) sigma smearing 1 , 2) sigma smearing 2 , 3) Mean Fixing
 	float a1,a2,a3=0;  
         float b1,b2,b3=0;
+	float c3=0;
 	PMTnumbersFrancesco(){};
   	PMTnumbersFrancesco(const PMTnumbers& other):PMTnumbers(other){};
-  
     };
 
 
@@ -39,7 +39,7 @@ class FrancescoMethod: public MeV2ADCMethod
    void  initRandom(std::string pardatacardname);
    void  UpdateMyPMTs();  
    void  convertParameterDatacard();
-   float SmearADC(int ADC,int sensor);
+   short SmearADC(short ADC,int sensor);
 };
 
 #endif 
