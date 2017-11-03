@@ -16,7 +16,9 @@ public:
   void WriteROOT(const char *fileOut) const;
   static LCalibration* Read(const char *fileIn);
   static LCalibration* Read(std::ifstream *fileIn);
-   static LCalibration* ReadROOT(const char *fileIn);
+  static LCalibration* ReadROOT(const char *fileIn);
+
+  static LCalibration* CreateFakeCalibration(const LCalibration* seed,double tracker_offset=0,double calo_offset=0); //To create a fake we start from a real calibration file!
 
   inline void SetInputFile(const char * name) {filename = name; return;};
   inline const char * GetInputFile() const {return filename;};

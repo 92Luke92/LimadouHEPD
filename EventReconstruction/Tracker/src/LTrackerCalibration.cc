@@ -1,9 +1,12 @@
 #include "LTrackerCalibration.hh"
 #include "LEvRec0File.hh"
+#include "detector_const.hh"
 
 #include <iostream>
 #include <algorithm>
 #include <math.h>
+#include <random>
+#include <chrono>
 
 void LTrackerCalibration::Add(const LTrackerCalibrationSlot lcal) {
   calarray.push_back(lcal);
@@ -157,3 +160,38 @@ LTrackerCalibration& LTrackerCalibration::operator/=(const double& rhs)
   return *this; // return the result by reference
 }
  
+LTrackerCalibration* LTrackerCalibration::CreateFakeCalibration(const LTrackerCalibration* seed, const double offset){
+  //std::cout<<seed<<std::endl;
+  //Read values from real calibration
+  const double *pedestal=seed->GetPedestal(0);
+  const double *sigma=seed->GetSigma(0);
+  std::cout<<"Real values collected"<<std::endl;
+  double sigmaNew[NCHAN];
+  double pedNew[NCHAN];
+  double buffer[NCHAN];
+  bool buffer2[NCHAN];
+  std::cout<<"Random number genrator initialization"<<std::endl;
+  //Random number generator
+  typedef std::chrono::high_resolution_clock myclock;
+  myclock::time_point beginning = myclock::now();
+  std::default_random_engine generator;
+  myclock::duration d = myclock::now() - beginning;
+  unsigned seed2 = d.count();
+  generator.seed(seed2);
+
+  for(int iChan=0;iChan<NCHAN;++iChan){
+    std::normal_distribution<> ped_distr (pedestal[iChan]+offset,0.5);
+    std::normal_distribution<double> sigma_distr(sigma[iChan],0.5);
+    sigmaNew[iChan]=sigma_distr(generator);
+    pedNew[iChan]=ped_distr(generator);
+    buffer[iChan]=-9999.;
+    buffer2[iChan]=true;
+  }
+  LTrackerCalibrationSlot slot(0,0,buffer,pedNew,sigmaNew,buffer,buffer2);
+
+  LTrackerCalibration* result=new LTrackerCalibration();
+  result->Add(slot);
+  result->RunId=seed->GetRunId();
+  return result;
+  
+}

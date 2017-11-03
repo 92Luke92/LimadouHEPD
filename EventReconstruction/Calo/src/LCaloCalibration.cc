@@ -1,9 +1,12 @@
 #include "LCaloCalibration.hh"
 #include "LEvRec0File.hh"
+#include "detector_const.hh"
 
 #include <iostream>
 #include <algorithm>
 #include <math.h>
+#include <random>
+#include <chrono>
 
 LCaloCalibration::LCaloCalibration() {
   Reset();
@@ -229,3 +232,28 @@ LCaloCalibration& LCaloCalibration::operator/=(const double& rhs) {
   return *this; // return the result by reference
 }
 
+LCaloCalibration* LCaloCalibration::CreateFakeCalibration(const LCaloCalibration* seed,const double offset){
+  const double* pedestal=seed->GetPedestal();
+  const double* sigma=seed->GetSigma();
+
+  double sigmaNew[NPMT];
+  double pedNew[NPMT];
+
+  typedef std::chrono::high_resolution_clock myclock;
+  myclock::time_point beginning = myclock::now();
+  std::default_random_engine generator;
+  myclock::duration d = myclock::now() - beginning;
+  unsigned seed2 = d.count();
+  generator.seed(seed2);
+
+  for(int iChan=0;iChan<NPMT;++iChan){
+    std::normal_distribution<double> ped_distr(pedestal[iChan]+offset,0.5);
+    std::normal_distribution<double> sigma_distr(sigma[iChan],0.5);
+    sigmaNew[iChan]=sigma_distr(generator);
+    pedNew[iChan]=ped_distr(generator);
+  }
+  
+  LCaloCalibration* result=new LCaloCalibration(seed->GetRunId(),pedNew,sigmaNew);
+  return result;
+
+}
