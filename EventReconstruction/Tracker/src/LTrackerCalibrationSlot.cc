@@ -153,7 +153,7 @@ LTrackerCalibrationSlot& LTrackerCalibrationSlot::operator+=(const LTrackerCalib
   // event info
   StartEvent = std::min(StartEvent,rhs.GetStartEvent());
   StopEvent = std::max(StopEvent,rhs.GetStopEvent());
-
+  
   return *this; // return the result by reference
 }
  

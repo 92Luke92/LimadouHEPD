@@ -102,8 +102,8 @@ LTrackerCalibration* LTrackerCalibration::ReadRoot(const char *fileIn) {
 
 
 LTrackerCalibration& LTrackerCalibration::operator=(const LTrackerCalibration& other) {
-  calarray.resize(0);
-  
+  //calarray.resize(0);
+  Reset();
   // slots
   for(int is=0; is<other.GetNSlots(); ++is) {
     calarray.push_back(other.GetTrackerCalibrationSlot(is));
@@ -116,14 +116,15 @@ LTrackerCalibration& LTrackerCalibration::operator=(const LTrackerCalibration& o
 
 LTrackerCalibration& LTrackerCalibration::operator+=(const LTrackerCalibration& rhs) // compound assignment (does not need to be a member,
 {                           // but often is, to modify the private members)
-  calarray.resize(0);
+  
   
   // slots
   // Firstly, sum up all slots of this
-  LTrackerCalibrationSlot tmpSlot;
+  LTrackerCalibrationSlot tmpSlot;//=calarray.at(0);
   int cntSlot=0;
   for(int is=0; is<nSlots; ++is) {
-    tmpSlot+=(GetTrackerCalibrationSlot(is));
+     std::cout<<"nSlot "<<nSlots<<" Vector size "<<calarray.size()<<std::endl;
+     tmpSlot+=(GetTrackerCalibrationSlot(is));
     ++cntSlot;
   }
   tmpSlot/=(static_cast<double>(cntSlot));
@@ -137,7 +138,8 @@ LTrackerCalibration& LTrackerCalibration::operator+=(const LTrackerCalibration& 
   tmpSlot2/=(static_cast<double>(cntSlot2));
 
   LTrackerCalibrationSlot toAdd =  tmpSlot+tmpSlot2;
-  Add(toAdd);
+  Reset();  
+Add(toAdd);
   nSlots=1;
 
   // In/out run info
