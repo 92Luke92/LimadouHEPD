@@ -138,13 +138,14 @@ LTrackerCalibration& LTrackerCalibration::operator+=(const LTrackerCalibration& 
   tmpSlot2/=(static_cast<double>(cntSlot2));
 
   LTrackerCalibrationSlot toAdd =  tmpSlot+tmpSlot2;
+  toAdd/=2.;
   Reset();  
 Add(toAdd);
   nSlots=1;
 
   // In/out run info
   RunId = rhs.GetRunId();
-  
+  Write("aftersum.txt");  
   return *this; // return the result by reference
 }
  
