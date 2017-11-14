@@ -102,7 +102,7 @@ LTrackerCalibration* LTrackerCalibration::ReadRoot(const char *fileIn) {
 
 
 LTrackerCalibration& LTrackerCalibration::operator=(const LTrackerCalibration& other) {
-  //calarray.resize(0);
+
   Reset();
   // slots
   for(int is=0; is<other.GetNSlots(); ++is) {
