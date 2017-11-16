@@ -20,9 +20,11 @@ public:
   // Write MODE
   int SetRunId(const int rid);
   void Fill(const LEvRec2 event);
-  void FillRandom(const int nEvents);
   
   ~LEvRec2File();
+
+  friend class LEvRec0File; // to set RunId and BootNr...
+  friend class LEvRec1File; // to set RunId and BootNr...
 
   private:
     LEvRec2Stream evstr; // read-write information stream
@@ -33,6 +35,7 @@ public:
     TBranch *Francesco;
     TBranch *Ester;
     TBranch *Roberto;
+    TBranch *William;
 
     bool WritableFLAG;
     void CreateTrees();

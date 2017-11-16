@@ -13,6 +13,10 @@ public:
 
   void CopyFromLEvRec2Stream(const LEvRec2Stream evstr);
 
+  double Energy;
+  double Angle;
+  double EnergyLoss;
+  int ParticleID;
 
 private:
   void Reset();
@@ -20,6 +24,11 @@ private:
 };
 
 struct LEvRec2Stream {
+
+  double Energy;
+  double Angle;
+  double EnergyLoss;
+  int ParticleID;
 
   LEvRec2Stream();
   LEvRec2Stream(const LEvRec2 event);

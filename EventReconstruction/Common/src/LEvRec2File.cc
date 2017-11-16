@@ -37,6 +37,7 @@ void LEvRec2File::CreateTrees() {
   Francesco = fTree->Branch("Francesco_Energy", 0, "FrancescoEnergy/F");
   Ester = fTree->Branch("Ester_dE_dx",0, "EsterdE/dx/F");
   Roberto = fTree->Branch("Roberto_Id", 0, "Roberto_Id/I");
+  William = fTree->Branch("William_Angle", 0, "William_Angle/I");
 
   SetAddresses();
 
@@ -44,7 +45,11 @@ void LEvRec2File::CreateTrees() {
 }
 
 void LEvRec2File::InitializeBranches(void) {
-
+  Francesco = fTree->Branch("Francesco_Energy", 0, "FrancescoEnergy/F");
+  Ester = fTree->Branch("Ester_dE_dx",0, "EsterdE/dx/F");
+  Roberto = fTree->Branch("Roberto_Id", 0, "Roberto_Id/I");
+  William = fTree->Branch("William_Angle", 0, "William_Angle/I");
+  
   SetAddresses();  
   return;
 }
@@ -56,6 +61,12 @@ void LEvRec2File::SetAddresses() {
     std::cerr << "LEvRec2File::SetAddresses error! fTree=0! " << std::endl;
     return;
   }
+
+  Francesco->SetAddress(&(evstr.Energy));
+  Ester->SetAddress(&(evstr.EnergyLoss));
+  Roberto->SetAddress(&(evstr.ParticleID));
+  William->SetAddress(&(evstr.Angle));
+
 
   return;  
 }
