@@ -11,7 +11,7 @@
 
 const int WINDOW_LEN = 100; //number of calibrations used as reference
 const int PMT_MAX_FAIL_CHAN = 1;
-const double PMT_SIGMA_THRESHOLD = 3.5;
+const double PMT_SIGMA_THRESHOLD = 2.5;
 const double PMT_PED_THRESHOLD = 2.5;
 const int TRK_MAX_FAIL_CHAN = 20;
 const double TRK_PED_THRESHOLD = 3.5;
