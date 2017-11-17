@@ -17,8 +17,8 @@ csv2fvec::csv2fvec()
 std::vector<std::vector<float>> csv2fvec::fromDatacard(std::string datacardname)
 {
     std::string datacarddir=std::getenv("DATACARDS");
-    std::cout<<"<<<<<<<<<<<<<<<<<" << datacarddir<<std::endl;
-    return fromFile(datacarddir+datacardname);
+
+    return fromFile(datacarddir+"/"+datacardname);
 }
 
 std::vector<std::vector<float>> csv2fvec::fromFile(std::string filename)
