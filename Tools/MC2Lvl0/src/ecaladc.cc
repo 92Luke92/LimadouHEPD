@@ -23,8 +23,10 @@ float EcalADC::VectorXYDist (TVector2 v1, TVector2 v2)
 
 EcalADC::EcalADC()
 {
-    methodHg=new LaurentMethod("laurentHGpeakshift.csv");
-    methodLg = new LaurentMethod("laurentLGpeakshift.csv");
+      //methodHg=new LaurentMethod("laurentHGpeakshift.csv");
+      //methodLg = new LaurentMethod("laurentLGpeakshift.csv");
+    methodHg = new FrancescoMethod("laurentHGpeakshift.csv","francesco_parameterHG.csv");
+    methodLg = new FrancescoMethod("laurentLGpeakshift.csv","francesco_parameterLG.csv");
     initMCpos();
 }
 
@@ -80,7 +82,7 @@ void EcalADC::NormalizePMTlg ( ushort* pmt_low)
 
 void EcalADC::NormalizePMT ( ushort* pmt_out, calomev2adcmethod* method) {
     for (uint ip = 0; ip < NPMT; ip++) {
-        pmt_out[ip] = method->adcFromMev( correctedPMTs[ip], ip );
+	pmt_out[ip] = method->adcFromMev( correctedPMTs[ip], ip );
     }
     return;
 }

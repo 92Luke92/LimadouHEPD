@@ -18,6 +18,8 @@
 #include "detector_const.hh"
 #include "MCcoorPhysicalFrame.hh"
 #include "laurentmethod.hh"
+#include "francescomethod.hh"
+
 
 #include "TVector3.h"
 #include "TVector2.h"
