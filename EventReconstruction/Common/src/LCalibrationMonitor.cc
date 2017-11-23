@@ -9,16 +9,15 @@
 #include <cmath>
 #include <iostream>
 #include <chrono>
-
-#include "TCanvas.h"
-#include <string>
-#include <fstream>
 #include <vector>
 
 #include "TH1.h"
 #include "TGraphErrors.h"
+#include "TCanvas.h"
+#include "TH2.h"
+#include "TStyle.h"
 
-LCalibration* CalculateWindow(const char * infile,double *err_sigma_LG,double *err_sigma_HG,double *err_sigma_TRK){
+LCalibration* CalculateWindow(const char * infile,double *err_sigma_LG,double *err_sigma_HG,double *err_sigma_TRK,bool graphics){
   std::ifstream input(infile,std::ifstream::in);
   std::vector<std::string> readfile;
   while(!input.eof()){
@@ -30,15 +29,19 @@ LCalibration* CalculateWindow(const char * infile,double *err_sigma_LG,double *e
 
   int wsize=readfile.size()>WINDOW_LEN ? readfile.size()-WINDOW_LEN : 0;
   LCalibration* calbuffer[WINDOW_LEN];
-  
+   
   int islot=0;
   for(int iw=readfile.size()-2;iw>=wsize;--iw){
     calbuffer[islot]=LCalibration::Read(readfile.at(iw).c_str());
+    calbuffer[islot]->SetInputFile(readfile.at(iw).c_str());
     (*output) += (*calbuffer[islot]);
     ++islot;
     
   }
-  
+  if(graphics){  
+    WindowGraphics(calbuffer,islot);
+    WindowTimeEvolution(calbuffer,islot);
+  }
   //sigma of sigmas calculation
   //Mean calculation
   double PMTsigma_meanLG[NPMT];
@@ -257,19 +260,182 @@ void IsGoodGraphics(const LCalibration *reference,const double* err_sigma_LG,con
   TCanvas* can=new TCanvas();
 
   can->Print("test.pdf[","pdf");
-  drawing_1D(ref_ped_PMT_HG,new_ped_PMT_HG,250,500,"Pedestal HG;PMT;ADC",false)->Print("test.pdf","pdf");
-  drawing_1D(ref_sigma_PMT_HG,new_sigma_PMT_HG,0,20,"Sigma HG;PMT;ADC",false)->Print("test.pdf","pdf");
-  drawing_1D(ref_ped_PMT_LG,new_ped_PMT_LG,150,500,"Pedestal LG;PMT;ADC",false)->Print("test.pdf","pdf");
-  drawing_1D(ref_sigma_PMT_LG,new_sigma_PMT_LG,0,20,"Sigma LG;PMT;ADC",false)->Print("test.pdf","pdf");
-  drawing6_chan_1D(ref_ped_TRK[0],new_ped_TRK[0],1200,1500,";chan;ADC",false)->Print("test.pdf","pdf");
-  drawing6_chan_1D(ref_ped_TRK[1],new_ped_TRK[1],1200,1500,";chan;ADC",false)->Print("test.pdf","pdf");
-  drawing6_chan_1D(ref_sigma_TRK[0],new_sigma_TRK[0],0,20,";chan;ADC",false)->Print("test.pdf","pdf");
-  drawing6_chan_1D(ref_sigma_TRK[1],new_sigma_TRK[1],0,20,";chan;ADC",false)->Print("test.pdf","pdf");
+  drawing1(ref_ped_PMT_HG,new_ped_PMT_HG,250,500,"Pedestal HG;PMT;ADC",false)->Print("test.pdf","pdf");
+  drawing1(ref_sigma_PMT_HG,new_sigma_PMT_HG,0,20,"Sigma HG;PMT;ADC",false)->Print("test.pdf","pdf");
+  drawing1(ref_ped_PMT_LG,new_ped_PMT_LG,150,500,"Pedestal LG;PMT;ADC",false)->Print("test.pdf","pdf");
+  drawing1(ref_sigma_PMT_LG,new_sigma_PMT_LG,0,20,"Sigma LG;PMT;ADC",false)->Print("test.pdf","pdf");
+  drawing6(ref_ped_TRK[0],new_ped_TRK[0],1200,1500,";chan;ADC",false)->Print("test.pdf","pdf");
+  drawing6(ref_ped_TRK[1],new_ped_TRK[1],1200,1500,";chan;ADC",false)->Print("test.pdf","pdf");
+  drawing6(ref_sigma_TRK[0],new_sigma_TRK[0],0,20,";chan;ADC",false)->Print("test.pdf","pdf");
+  drawing6(ref_sigma_TRK[1],new_sigma_TRK[1],0,20,";chan;ADC",false)->Print("test.pdf","pdf");
 
   can->Print("test.pdf]","pdf");
   return;
 }
 
+void WindowTimeEvolution(LCalibration* calibs[WINDOW_LEN],int islot){
+  gStyle->SetPalette(1);
+  TH2D* PMT_LG_mean_histo=new TH2D("PMT_LG_pedestal_history","PMT LG pedestal;;PMT;ADC",WINDOW_LEN+2,0,WINDOW_LEN,NPMT+2,0,NPMT);
+  TH2D* PMT_HG_mean_histo=new TH2D("PMT_HG_pedestal_history","PMT HG pedestal;;PMT;ADC",WINDOW_LEN+2,0,WINDOW_LEN,NPMT+2,0,NPMT);
+  TH2D* PMT_LG_sigma_histo=new TH2D("PMT_LG_sigma_history","PMT LG sigma;:PMT;ADC",WINDOW_LEN+2,0,WINDOW_LEN,NPMT+2,0,NPMT);
+  TH2D* PMT_HG_sigma_histo=new TH2D("PMT_HG_sigma_history","PMT HG sigma;:PMT;ADC",WINDOW_LEN+2,0,WINDOW_LEN,NPMT+2,0,NPMT);
+
+  TH2D* TRK_mean_histo[2][N_LADDER];
+  TH2D* TRK_sigma_histo[2][N_LADDER];
+
+  double labelsize=0.02;
+
+  for(int iSide=0;iSide<2;++iSide){
+    for(int iLd=0;iLd<N_LADDER;++iLd){
+      TRK_mean_histo[iSide][iLd]=new TH2D(Form("TRK_pedestal_history_side_%c_ladder_%d",iSide==0 ? 'p' : 'n',iLd),Form("TRK pedestal side %c ladder %d;:chan;ADC",iSide==0 ? 'p' : 'n',iLd),WINDOW_LEN+2,0,WINDOW_LEN,SIDE_CHAN+2,0,SIDE_CHAN);
+      TRK_mean_histo[iSide][iLd]->GetXaxis()->SetLabelSize(labelsize);
+      TRK_mean_histo[iSide][iLd]->SetStats(0);
+      TRK_sigma_histo[iSide][iLd]=new TH2D(Form("TRK_sigma_historyside_%c_ladder_%d",iSide==0 ? 'p' : 'n',iLd),Form("TRK sigma side %c ladder %d;:chan;ADC",iSide==0 ? 'p' : 'n',iLd),WINDOW_LEN+2,0,WINDOW_LEN,SIDE_CHAN+2,0,SIDE_CHAN);
+      TRK_sigma_histo[iSide][iLd]->GetXaxis()->SetLabelSize(labelsize);
+      TRK_sigma_histo[iSide][iLd]->SetStats(0);
+    }
+  }
+
+  const double *TRKmean[WINDOW_LEN];
+  const double *TRKsigma[WINDOW_LEN];
+
+  const double *PMTmeanHG[WINDOW_LEN];
+  const double *PMTsigmaHG[WINDOW_LEN];
+
+  const double *PMTmeanLG[WINDOW_LEN];
+  const double *PMTsigmaLG[WINDOW_LEN];
+
+  //Histogram filling 
+
+  PMT_LG_mean_histo->GetXaxis()->SetLabelSize(labelsize);
+  PMT_HG_mean_histo->GetXaxis()->SetLabelSize(labelsize);
+  PMT_LG_sigma_histo->GetXaxis()->SetLabelSize(labelsize);                                
+  PMT_HG_sigma_histo->GetXaxis()->SetLabelSize(labelsize);
+
+  PMT_LG_mean_histo->SetStats(0);
+  PMT_HG_mean_histo->SetStats(0);
+  PMT_LG_sigma_histo->SetStats(0);
+  PMT_HG_sigma_histo->SetStats(0);
+
+  for(int iW=0;iW<islot;++iW){
+
+    TRKmean[iW]=calibs[iW]->GetTrackerCalibration()->GetPedestal(0);
+    TRKsigma[iW]=calibs[iW]->GetTrackerCalibration()->GetSigma(0);
+
+    PMTmeanHG[iW]=calibs[iW]->GetCaloHGCalibration()->GetPedestal();
+    PMTsigmaHG[iW]=calibs[iW]->GetCaloHGCalibration()->GetSigma();
+
+    PMTmeanLG[iW]=calibs[iW]->GetCaloLGCalibration()->GetPedestal();
+    PMTsigmaLG[iW]=calibs[iW]->GetCaloLGCalibration()->GetSigma();
+
+    //std::cout<<calibs[iW]->GetInputFile()<<std::endl;
+    for(int iPmt=0;iPmt<NPMT;++iPmt){
+      PMT_LG_mean_histo->Fill(iW+1,iPmt,PMTmeanLG[iW][iPmt]);
+      PMT_LG_mean_histo->GetXaxis()->SetBinLabel(iW+1,calibs[iW]->GetInputFile());
+
+      PMT_HG_mean_histo->Fill(iW+1,iPmt,PMTmeanHG[iW][iPmt]);
+      PMT_HG_mean_histo->GetXaxis()->SetBinLabel(iW+1,calibs[iW]->GetInputFile());
+
+      PMT_LG_sigma_histo->Fill(iW+1,iPmt,PMTsigmaLG[iW][iPmt]);
+      PMT_LG_sigma_histo->GetXaxis()->SetBinLabel(iW+1,calibs[iW]->GetInputFile());
+
+      PMT_HG_sigma_histo->Fill(iW+1,iPmt,PMTsigmaHG[iW][iPmt]);
+      PMT_HG_sigma_histo->GetXaxis()->SetBinLabel(iW+1,calibs[iW]->GetInputFile());
+
+    }
+
+    for(int iChan=0;iChan<NCHAN;++iChan){
+
+      TRK_mean_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->Fill(iW+1,ChanToSideChan(iChan),TRKmean[iW][iChan]);
+      TRK_mean_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->GetXaxis()->SetBinLabel(iW+1,calibs[iW]->GetInputFile());
+      
+      TRK_sigma_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->Fill(iW+1,ChanToSideChan(iChan),TRKsigma[iW][iChan]);
+      TRK_sigma_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->GetXaxis()->SetBinLabel(iW+1,calibs[iW]->GetInputFile());
+      
+    }
+
+  }
+
+  TCanvas* can=new TCanvas();
+  can->Print("timeEvWindow.pdf[","pdf");
+  drawing1(PMT_HG_mean_histo,250,500)->Print("timeEvWindow.pdf","pdf");
+  drawing1(PMT_HG_sigma_histo,0,20)->Print("timeEvWindow.pdf","pdf");
+  drawing1(PMT_LG_mean_histo,250,500)->Print("timeEvWindow.pdf","pdf");
+  drawing1(PMT_LG_sigma_histo,0,20)->Print("timeEvWindow.pdf","pdf");
+  drawing6(TRK_mean_histo[0],1300,1500)->Print("timeEvWindow.pdf","pdf");
+  drawing6(TRK_mean_histo[1],1300,1500)->Print("timeEvWindow.pdf","pdf");
+  drawing6(TRK_sigma_histo[0],0,20)->Print("timeEvWindow.pdf","pdf");
+  drawing6(TRK_sigma_histo[1],0,20)->Print("timeEvWindow.pdf","pdf");
+  can->Print("timeEvWindow.pdf]","pdf");
+
+}
+void WindowGraphics(LCalibration* calibs[WINDOW_LEN],int islot){
+  gStyle->SetPalette(1);
+  //Histograms initialization
+  TH2D* PMT_LG_mean_histo=new TH2D("PMT_LG_pedestal_histo","PMT LG pedestal;PMT;ADC",NPMT,0,NPMT,100,250,500);
+  TH2D* PMT_HG_mean_histo=new TH2D("PMT_HG_pedestal_histo","PMT HG pedestal;PMT;ADC",NPMT,0,NPMT,100,250,500);
+  TH2D* PMT_LG_sigma_histo=new TH2D("PMT_LG_sigma_histo","PMT LG sigma;PMT;ADC",NPMT,0,NPMT,22,0,20);
+  TH2D* PMT_HG_sigma_histo=new TH2D("PMT_HG_sigma_histo","PMT HG sigma;PMT;ADC",NPMT,0,NPMT,22,0,20);
+
+  TH2D* TRK_mean_histo[2][N_LADDER];
+  TH2D* TRK_sigma_histo[2][N_LADDER];
+
+  for(int iSide=0;iSide<2;++iSide){
+    for(int iLd=0;iLd<N_LADDER;++iLd){
+      TRK_mean_histo[iSide][iLd]=new TH2D(Form("TRK_pedestal_side_%c_ladder_%d",iSide==0 ? 'p' : 'n',iLd),Form("TRK pedestal side %c ladder %d;chan;ADC",iSide==0 ? 'p' : 'n',iLd),SIDE_CHAN,0,SIDE_CHAN,102,1200,1500);
+      TRK_sigma_histo[iSide][iLd]=new TH2D(Form("TRK_sigma_side_%c_ladder_%d",iSide==0 ? 'p' : 'n',iLd),Form("TRK sigma side %c ladder %d;chan;ADC",iSide==0 ? 'p' : 'n',iLd),SIDE_CHAN,0,SIDE_CHAN,22,0,20);
+    }
+  }
+  const double *TRKmean[WINDOW_LEN];
+  const double *TRKsigma[WINDOW_LEN];
+
+  const double *PMTmeanHG[WINDOW_LEN];
+  const double *PMTsigmaHG[WINDOW_LEN];
+
+  const double *PMTmeanLG[WINDOW_LEN];
+  const double *PMTsigmaLG[WINDOW_LEN];
+
+  //Histogram filling
+  for(int iW=0;iW<islot;++iW){
+    
+    TRKmean[iW]=calibs[iW]->GetTrackerCalibration()->GetPedestal(0);
+    TRKsigma[iW]=calibs[iW]->GetTrackerCalibration()->GetSigma(0);
+
+    PMTmeanHG[iW]=calibs[iW]->GetCaloHGCalibration()->GetPedestal();
+    PMTsigmaHG[iW]=calibs[iW]->GetCaloHGCalibration()->GetSigma();
+
+    PMTmeanLG[iW]=calibs[iW]->GetCaloLGCalibration()->GetPedestal();
+    PMTsigmaLG[iW]=calibs[iW]->GetCaloLGCalibration()->GetSigma();
+    
+
+    for(int iPmt=0;iPmt<NPMT;++iPmt){
+      PMT_LG_mean_histo->Fill(iPmt,PMTmeanLG[iW][iPmt]);
+      PMT_HG_mean_histo->Fill(iPmt,PMTmeanHG[iW][iPmt]);
+      PMT_LG_sigma_histo->Fill(iPmt,PMTsigmaLG[iW][iPmt]);
+      PMT_HG_sigma_histo->Fill(iPmt,PMTsigmaHG[iW][iPmt]);
+    }
+    
+    for(int iChan=0;iChan<NCHAN;++iChan){
+      
+      TRK_mean_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->Fill(ChanToSideChan(iChan)+1,TRKmean[iW][iChan]);
+      TRK_sigma_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->Fill(ChanToSideChan(iChan)+1,TRKsigma[iW][iChan]);
+      
+    }
+
+  }
+  TCanvas* can=new TCanvas();
+  can->Print("testWindow.pdf[","pdf");
+  drawing1(PMT_HG_mean_histo,0,100)->Print("testWindow.pdf","pdf");
+  drawing1(PMT_HG_sigma_histo,0,100)->Print("testWindow.pdf","pdf");
+  drawing1(PMT_LG_mean_histo,0,100)->Print("testWindow.pdf","pdf");
+  drawing1(PMT_LG_sigma_histo,0,100)->Print("testWindow.pdf","pdf");
+  drawing6(TRK_mean_histo[0],0,100)->Print("testWindow.pdf","pdf");
+  drawing6(TRK_mean_histo[1],0,100)->Print("testWindow.pdf","pdf");
+  drawing6(TRK_sigma_histo[0],0,100)->Print("testWindow.pdf","pdf");
+  drawing6(TRK_sigma_histo[1],0,100)->Print("testWindow.pdf","pdf");
+  can->Print("testWindow.pdf]","pdf");
+  return;
+}
 
 void SlowDrift(const LCalibration* seed,const int nFiles,const double offset,char* label){
   std::cout<<"Creating fake calibrations"<<std::endl;
@@ -316,8 +482,15 @@ void Jump(const LCalibration* seed,const int nFiles,const double jump,char* labe
 }
 
 
+TCanvas *drawing1(TH2D *input,double zmin,double zmax,bool logz){
+  TCanvas* result=new TCanvas();
+  if(logz) gPad->SetLogz();
+  input->GetZaxis()->SetRangeUser(zmin,zmax);
+  input->Draw("zcol");
+  return result;
+}
 
-TCanvas *drawing_1D(TGraphErrors *input,TGraphErrors *input2,double ymin,double ymax,const char* title,bool log){
+TCanvas *drawing1(TGraphErrors *input,TGraphErrors *input2,double ymin,double ymax,const char* title,bool log){
   TCanvas* result=new TCanvas();
   input->SetMarkerColor(8);
   input->SetLineColor(8);
@@ -333,8 +506,34 @@ TCanvas *drawing_1D(TGraphErrors *input,TGraphErrors *input2,double ymin,double 
   return result;
 }
 
+TCanvas* drawing6(TH2D* ladder[N_LADDER],double zmin,double zmax,bool logz){
+  TCanvas* result=new TCanvas();
+  result->Divide(3,2);
 
-TCanvas *drawing6_chan_1D(TGraphErrors *ladder[N_LADDER],TGraphErrors *ladder2[N_LADDER],double ymin,double ymax,const char* title,bool log){
+  int pad;
+  for(int i=0;i<N_LADDER;++i){
+    if (i==0) pad=1;
+    else if(i==1) pad=4;
+    else if(i==2) pad=2;
+    else if(i==3) pad=5;
+    else if(i==4) pad=3;
+    else if(i==5) pad=6;
+
+    result->cd(pad);
+    gPad->cd(pad);
+    gPad->SetLeftMargin(0.15);
+
+    if(logz) gPad->SetLogz();
+
+    ladder[i]->GetZaxis()->SetRangeUser(zmin,zmax);
+    ladder[i]->Draw("zcol");
+  }
+
+  return result;
+
+}
+
+TCanvas *drawing6(TGraphErrors *ladder[N_LADDER],TGraphErrors *ladder2[N_LADDER],double ymin,double ymax,const char* title,bool log){
   TCanvas *display=new TCanvas();
   display->Divide(3,2);
 

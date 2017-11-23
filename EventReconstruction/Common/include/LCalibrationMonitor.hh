@@ -7,7 +7,7 @@
 
 #include "TCanvas.h"
 #include "TGraphErrors.h"
-
+#include "TH2.h"
 
 const int WINDOW_LEN = 100; //number of calibrations used as reference
 const int PMT_MAX_FAIL_CHAN = 1;
@@ -24,15 +24,18 @@ void Jump(const LCalibration* seed,const int nFiles,const double jump,char* labe
 
 //Monitoring Tools
 
-LCalibration* CalculateWindow(const char* infile,double *err_sigma_LG,double *err_sigma_HG,double *err_sigma_TRK);    
+LCalibration* CalculateWindow(const char* infile,double *err_sigma_LG,double *err_sigma_HG,double *err_sigma_TRK,bool graphics=false);    
 bool IsGood(const LCalibration *reference,const double* err_sigma_LG,const double* err_sigma_HG,const double* err_sigma_trk,const LCalibration *latest);
 void IsGoodGraphics(const LCalibration *reference,const double* err_sigma_LG,const double* err_sigma_HG,const double* err_sigma_trk,const LCalibration *latest);
-void WindowGraphics(LCalibration* calibs);
+void WindowGraphics(LCalibration* calibs[WINDOW_LEN],int islot=WINDOW_LEN);
+void WindowTimeEvolution(LCalibration* calibs[WINDOW_LEN],int islot);
 //Comparison Functions:
 bool ComparePMT(const LCalibration *first, const double* err_sigma_LG,const double* err_sigma_HG,const LCalibration *second);
 bool CompareTracker(const LCalibration *first,const double* err_sigma_trk, const  LCalibration *second);
 //Plotting Tools
 
-TCanvas *drawing6_chan_1D(TGraphErrors *ladder[N_LADDER],TGraphErrors *ladder2[N_LADDER],double ymin,double ymax,const char* title,bool log=false);
-TCanvas *drawing_1D(TGraphErrors *input,TGraphErrors *input2,double ymin,double ymax,const char* title,bool log=false);
+TCanvas *drawing6(TGraphErrors *ladder[N_LADDER],TGraphErrors *ladder2[N_LADDER],double ymin,double ymax,const char* title,bool log=false);
+TCanvas* drawing6(TH2D* ladder[N_LADDER],double zmin,double zmax,bool logz=false);
+TCanvas *drawing1(TGraphErrors *input,TGraphErrors *input2,double ymin,double ymax,const char* title,bool log=false);
+TCanvas *drawing1(TH2D *input,double zmin,double zmax,bool logz=false);
 #endif

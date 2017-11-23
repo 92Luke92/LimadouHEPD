@@ -7,7 +7,7 @@ int main(int argc,char **argv){
   double err_pmt_LG[NPMT];
   double  err_pmt_HG[NPMT];
   double  err_trk[NCHAN];
-  LCalibration* average=CalculateWindow(argv[1],err_pmt_LG, err_pmt_HG, err_trk);
+  LCalibration* average=CalculateWindow(argv[1],err_pmt_LG, err_pmt_HG, err_trk,true);
   
   LCalibration* latest=LCalibration::Read(argv[2]);
   if(IsGood(average,err_pmt_LG, err_pmt_HG, err_trk,latest)) std::cout<<"The calibration is compatible"<<std::endl;
