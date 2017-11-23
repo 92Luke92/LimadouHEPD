@@ -1,4 +1,4 @@
-/**
+/home/luca/Documenti/Limadou/Optical_Photons/Scint_layer/presentation/presentation.pdf/**
  * =============================================================================
  *
  * Created by Francesco Palma & Luca Carfora @ INFN Roma2:
@@ -10,7 +10,7 @@
  *                 from HEPD L0 ROOT file 
  *
  *
- * DATE:          April 6, 2017
+ * DATE:          July 4, 2017
  *     
  * =============================================================================
  **/
@@ -153,7 +153,7 @@ void TriggerScan(TString rootname)
       if (kk==5)
 	 name_rate_meter = "Trigger MASK 5 [T & P1 & P2 & P3]";
       if (kk==6)
-	 name_rate_meter = "Trigger MASK 6 [T & (P1 & P2) & (P15 || P16)]";
+	 name_rate_meter = "Trigger MASK 6 [T & (P1 || P2) & (P15 || P16)]";
       if (kk==7)
 	 name_rate_meter = "Trigger MASK 7 [T & (P1 || P2) & L]";
       if (kk==8)
@@ -175,7 +175,7 @@ void TriggerScan(TString rootname)
       pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (CH%i); Run time (ms); PMT rate meter (Hz)", subdetector[kk-1], kk-1));
    }
    
-   Int_t cpu_startRunTime_vect[100];
+   Int_t cpu_startRunTime_vect[1000];
    
    for(int j=1; j<Tmd_entries; j+=2) //Tmd loop
    {

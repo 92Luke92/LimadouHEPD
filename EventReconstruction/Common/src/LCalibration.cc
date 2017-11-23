@@ -1,4 +1,9 @@
 #include "LCalibration.hh"
+#include "LEvRec0File.hh"
+#include "LTrackerCalibration.hh"
+#include "LCaloCalibration.hh"
+
+
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -49,15 +54,69 @@ void LCalibration::WriteTXT(std::ofstream *fileOut) const {
   tracker->Write(fileOut);
   return;
 }
-/*
+
 void LCalibration::WriteROOT(const char *fileOut) const {
-  std::cout << __LCALIBRATION__ << "Writing calibration file " << fileOut << "..." << std::endl;
-  std::ofstream output(fileOut, std::ofstream::out); 
-  WriteTXT(&output);
-  output.close();
+  
+  const double *_pmt_HG = calo_HG->GetPedestal();
+  const double *_pmt_LG = calo_LG->GetPedestal();
+  const double *_sil = tracker->GetPedestal(0); // nSlot = 0????
+  // const double *_silNGindexMask = tracker->GetMaskOnNGI();
+  // const double *_silsigMask = tracker->GetMaskOnSigma(); 
+  
+  LEvRec0 outev;
+  LEvRec0Md outevMD;
+  LEvRec0File inputFile(GetInputFile());
+  inputFile.SetMdPointer(outevMD);
+  
+  std::cout << __LCALIBRATION__ << "Writing calibration root file " << fileOut
+	    << " ..." << std::endl;
+
+  std::cout << __LCALIBRATION__ << "Writing calibration root file " << fileOut
+	    << " ..." << std::endl;
+  
+  LEvRec0File outRootfile(fileOut, outev, outevMD);
+  //outev.run_id = (RunId | 0x8000); // todo: decide if needed 
+
+  for (int j = 0 ; j< 2; j++) // ped, sigma
+  {
+     for (int i = 0 ; i< NPMT; i++)
+     {
+	outev.pmt_high[i] = (unsigned short)_pmt_HG[i];
+	outev.pmt_low[i] = (unsigned short)_pmt_LG[i];
+     }
+     for (int i = 0 ; i< NCHAN; i++)
+        outev.strip[i] = (unsigned short)_sil[i];
+
+     inputFile.GetMDEntry(j);
+
+     outRootfile.Fill();
+
+     _pmt_HG = calo_HG->GetSigma();
+     _pmt_LG = calo_LG->GetSigma();
+     _sil    = tracker->GetSigma(0);
+     
+  }  
+  outRootfile.Write();  
+  
   return;
 }
-*/
+
+LCalibration * LCalibration::ReadROOT(const char *fileIn) {
+
+   std::cout << __LCALIBRATION__ << "Reading calo_HG from root file... " << std::endl;
+   LCaloCalibration *calo_HG_read = LCaloCalibration::ReadRoot(fileIn, HIGH);
+   std::cout << __LCALIBRATION__ << "calo_HG read. " << std::endl << std::flush;
+   std::cout << __LCALIBRATION__ << "Reading calo_LG from root file... " << std::endl;
+   LCaloCalibration *calo_LG_read = LCaloCalibration::ReadRoot(fileIn, LOW);
+   std::cout << __LCALIBRATION__ << "calo_LG read. " << std::endl;
+   std::cout << __LCALIBRATION__ << "Reading tracker from root file... " << std::endl;
+   LTrackerCalibration* tracker_read = LTrackerCalibration::ReadRoot(fileIn);
+   std::cout << __LCALIBRATION__ << "tracker read. " << std::endl;
+  
+   LCalibration *result = new LCalibration(calo_HG_read, calo_LG_read, tracker_read);
+
+  return result;
+}
 
 LCalibration* LCalibration::Read(const char *fileIn) {
   std::cout << __LCALIBRATION__ << "Reading calibration file " << fileIn << "..." << std::endl;
@@ -141,4 +200,18 @@ LCalibration& LCalibration::operator/=(const double& rhs) {
 
 
 
- 
+LCalibration* LCalibration::CreateFakeCalibration(const LCalibration *seed, double tracker_offset,double calo_offset) {
+  
+  std::cout<<"Calibration read. Starting fake production"<<std::endl;
+
+  LTrackerCalibration* tracker=LTrackerCalibration::CreateFakeCalibration(seed->GetTrackerCalibration(),tracker_offset);
+  std::cout<<"Fake Tracker Calibration Created!"<<std::endl;
+  LCaloCalibration* calo_HG=LCaloCalibration::CreateFakeCalibration(seed->GetCaloHGCalibration(),calo_offset);
+  std::cout<<"Fake HG Calo Calibration Created!"<<std::endl;
+  LCaloCalibration* calo_LG=LCaloCalibration::CreateFakeCalibration(seed->GetCaloLGCalibration(),calo_offset);
+  std::cout<<"Fake LG Calo Calibration Created!"<<std::endl;
+  LCalibration* result=new LCalibration(calo_HG,calo_LG,tracker);
+  return result;
+
+}
+

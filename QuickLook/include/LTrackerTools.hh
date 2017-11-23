@@ -21,6 +21,8 @@ std::vector<LTrackerCluster> GetClusters(const double* cont, const double *sigma
 void ComputeCN(const short *counts, const double *pedestal, const LTrackerMask *CN_mask, double *CN);
 
 
+
+
 template<class T> T* Symmetrise(const int inpsize, const T* inp) {
   if(inpsize<0) return 0;
   int CENTER=inpsize/2;

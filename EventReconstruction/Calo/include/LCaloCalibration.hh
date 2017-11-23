@@ -17,6 +17,9 @@ public:
   void Write(std::ofstream *fileOut) const;
   static LCaloCalibration* Read(const char *fileIn);
   static LCaloCalibration* Read(std::ifstream *fileIn);
+  static LCaloCalibration* ReadRoot(const char *fileIn, enum pmt_calib_type flag);
+  static LCaloCalibration* CreateFakeCalibration(const LCaloCalibration* seed,const double offset=0);
+    
   inline int GetRunId() const {return RunId;};
   inline const double* GetPedestal() const {return pedestal;};
   inline const double* GetSigma() const {return sigma;};
@@ -35,8 +38,8 @@ private:
   // Calib infos
   int RunId;
 
-  double pedestal[NPMT];
-  double sigma[NPMT];
+   double pedestal[NPMT]; // if the order of the channels is according to the level1 format, the ReadRoot method is wrong!!! (Alessandro)
+  double sigma[NPMT];  // if the order of the channels is according to the level1 format, the ReadRoot method is wrong!!! (Alessandro)
   /*  int outliers[NPMT];
   double skewness[NPMT];
   double kurtosis[NPMT];

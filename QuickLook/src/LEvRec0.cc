@@ -85,7 +85,7 @@ LEvRec0Md::LEvRec0Md(){
    silConfig.calib_event_RMS = 0;
    silConfig.calib_event_gauss = 0;
    silConfig.gauss_check = 0;
-   for(int i=0; i<4; ++i)
+   for(int i=0; i<2; ++i)
       trigger_mask[i] = 0; 
    for(int i=0; i<120; ++i)
       easiroc_config[i] = 0;

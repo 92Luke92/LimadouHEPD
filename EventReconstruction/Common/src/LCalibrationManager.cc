@@ -81,13 +81,13 @@ void LCalibrationManager::RunOnRun(const std::string fname) {
   LoadRun(fname.c_str());
   std::cout << __LCALIBRATIONMANAGER__ << "Processing file " << fname << "..." << std::endl;
   LCalibration *outcal = Calibrate(maxFileEvents, skipFileEvents);
-  
+  outcal->SetInputFile(fname.c_str()); 
   std::string outName = outDirectory + "/"
     + GetWriteOutName(fname);
 
   if(outFormat == "TXT") outcal->WriteTXT(outName.c_str());
-  //  else if(outFormat == "ROOT") outcal->WriteROOT(outName.c_str());
-
+  else if(outFormat == "ROOT") outcal->WriteROOT(outName.c_str());
+  
   return;
 }
 

@@ -12,11 +12,11 @@ public:
   static LTrackerCalibrationSlot Read(std::ifstream *input);
   inline int GetStartEvent(){return StartEvent;};
   inline int GetStopEvent(){return StopEvent;};
-  inline double* GetPedestal(){return pedestal;};
-  inline double* GetSigma(){return sigma;};
-  inline double* GetSigmaRaw(){return sigmaraw;};
-  inline double* GetNGIndex(){return ngindex;};
-  inline bool* GetCNMask(){return CN_mask;};
+  inline const double* GetSigmaRaw() const {return sigmaraw;};
+  inline const double* GetPedestal() const {return pedestal;};
+  inline const double* GetSigma() const {return sigma;};
+  inline const double* GetNGIndex() const {return ngindex;};
+  inline const bool* GetCNMask() const {return CN_mask;};
   LTrackerMask GetMaskOnSigma(const double sigmaMin, const double sigmaMax);
   LTrackerMask GetMaskOnNGI(const double NGIMin, const double NGIMax);
   

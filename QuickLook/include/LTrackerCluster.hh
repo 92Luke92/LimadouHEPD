@@ -12,8 +12,12 @@ const int CLSNTHRESHOLD1CHAN=3;
 class LTrackerCluster {
 public:
   LTrackerCluster();
+   
+  LTrackerCluster& operator=(const LTrackerCluster& other);
   LTrackerCluster(const int inpSeed, const double *inpCont, const double *inpSigma);
   void Dump();
+  bool operator < (const LTrackerCluster& cl) const;
+  bool operator > (const LTrackerCluster& cl) const;
 
   int seed;
   double count[CLUSTERCHANNELS];
@@ -40,6 +44,7 @@ private:
   double eta;
   double etaCounts;
   double etaSigma;
+  double etaSN;
 };
 
 

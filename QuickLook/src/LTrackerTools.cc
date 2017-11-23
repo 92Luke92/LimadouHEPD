@@ -2,6 +2,7 @@
 #include "detector_const.hh"
 #include "LTrackerCluster.hh"
 #include "LTrackerMask.hh"
+#include "LTrackerQuicklook.hh"
 #include <algorithm>
 #include <math.h>
 #include <iostream>
@@ -141,5 +142,3 @@ void ComputeCN(const short *counts, const double *pedestal, const LTrackerMask *
 
   return;
 }
-
-

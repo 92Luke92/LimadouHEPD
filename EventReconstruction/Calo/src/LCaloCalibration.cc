@@ -1,7 +1,12 @@
 #include "LCaloCalibration.hh"
+#include "LEvRec0File.hh"
+#include "detector_const.hh"
+
 #include <iostream>
 #include <algorithm>
 #include <math.h>
+#include <random>
+#include <chrono>
 
 LCaloCalibration::LCaloCalibration() {
   Reset();
@@ -95,6 +100,61 @@ LCaloCalibration* LCaloCalibration::Read(const char *fileIn) {
   return result;
 }
 
+LCaloCalibration* LCaloCalibration::ReadRoot(const char *fileIn, enum pmt_calib_type flag) {
+
+   int RunIdST;
+   double pedestalST[NPMT];
+   double sigmaST[NPMT];
+   
+   LEvRec0 outev;
+   LEvRec0File inputFile(fileIn);
+   inputFile.SetTheEventPointer(outev);
+
+   inputFile.GetEntry(0); // ped
+
+   RunIdST = outev.run_id;
+   for(int iChan=0; iChan<NPMT; ++iChan){
+      if(flag == HIGH)
+      {
+	 pedestalST[iChan] = outev.pmt_high[iChan];
+	 //std::cout << " pedestalST[" << iChan << "] = " << pedestalST[iChan] << std::endl;
+      }
+      else if (flag == LOW)
+      {
+	 pedestalST[iChan] = outev.pmt_low[iChan];
+	 //std::cout << " pedestalST[" << iChan << "] = " << pedestalST[iChan] << std::endl;
+      }
+   }
+
+   inputFile.GetEntry(1); // sig
+   
+   for(int iChan=0; iChan<NPMT; ++iChan){
+      if(flag == HIGH)
+      {
+	 sigmaST[iChan] = outev.pmt_high[iChan];
+	 //std::cout << " sigmaST[" << iChan << "] = "  << sigmaST[iChan] << std::endl;
+		 
+      }
+      else if (flag == LOW)
+      {
+	 sigmaST[iChan] = outev.pmt_low[iChan];
+	 //std::cout << " sigmaST[" << iChan << "] = " << sigmaST[iChan] << std::endl;
+		 
+      }
+   }
+
+   std::cout << __LCALOCALIBRATION__ << "Root Calibration file read."
+	     << std::endl << std::flush;;
+
+  LCaloCalibration *result = new LCaloCalibration(RunIdST,
+						  pedestalST, sigmaST);//, outliersST, skewnessST, kurtosisST);
+  std::cout << __LCALOCALIBRATION__ << "Calo calibration created ("
+	    << &result << ")" << std::endl << std::flush;
+
+  return result;
+
+}
+
 
 LCaloCalibration& LCaloCalibration::operator=(const LCaloCalibration& other) {
   for(int ipmt=0; ipmt<NPMT; ++ipmt) {
@@ -172,3 +232,28 @@ LCaloCalibration& LCaloCalibration::operator/=(const double& rhs) {
   return *this; // return the result by reference
 }
 
+LCaloCalibration* LCaloCalibration::CreateFakeCalibration(const LCaloCalibration* seed,const double offset){
+  const double* pedestal=seed->GetPedestal();
+  const double* sigma=seed->GetSigma();
+
+  double sigmaNew[NPMT];
+  double pedNew[NPMT];
+
+  typedef std::chrono::high_resolution_clock myclock;
+  myclock::time_point beginning = myclock::now();
+  std::default_random_engine generator;
+  myclock::duration d = myclock::now() - beginning;
+  unsigned seed2 = d.count();
+  generator.seed(seed2);
+
+  for(int iChan=0;iChan<NPMT;++iChan){
+    std::normal_distribution<double> ped_distr(pedestal[iChan]+offset,0.5);
+    std::normal_distribution<double> sigma_distr(sigma[iChan],0.5);
+    sigmaNew[iChan]=sigma_distr(generator);
+    pedNew[iChan]=ped_distr(generator);
+  }
+  
+  LCaloCalibration* result=new LCaloCalibration(seed->GetRunId(),pedNew,sigmaNew);
+  return result;
+
+}
