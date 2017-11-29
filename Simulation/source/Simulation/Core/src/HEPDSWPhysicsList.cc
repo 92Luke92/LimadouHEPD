@@ -57,7 +57,7 @@
 #include "G4OpRayleigh.hh"
 #include "G4OpMieHG.hh"
 #include "G4LossTableManager.hh"
-#include "G4EmSaturation.hh" 
+#include "G4EmSaturation.hh"
 
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
@@ -118,12 +118,12 @@
 
 HEPDSWPhysicsList::HEPDSWPhysicsList() : G4VModularPhysicsList()
 {
-  fMessenger = new HEPDSWPhysicsListMessenger(this); 
-   
+  fMessenger = new HEPDSWPhysicsListMessenger(this);
+
   // EM physics
   fEmName = G4String("local");
   fEmHEPDSWPhysicsList = new PhysListEmStandard(fEmName);
-      
+
   // Step limitation seen as a process
   stepMaxProcess = new StepMax();
 
@@ -134,7 +134,7 @@ HEPDSWPhysicsList::HEPDSWPhysicsList() : G4VModularPhysicsList()
   fCutForElectron  = defaultCutValue;
   fCutForPositron  = defaultCutValue;
   fUseOpticalProcesses = true;
-  
+
   helIsRegistered  = false;
   hinIsRegistered  = false;
   bicIsRegistered  = false;
@@ -154,7 +154,7 @@ HEPDSWPhysicsList::HEPDSWPhysicsList() : G4VModularPhysicsList()
 HEPDSWPhysicsList::~HEPDSWPhysicsList()
 {
   delete fEmHEPDSWPhysicsList;
-  delete fMessenger;  
+  delete fMessenger;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -167,10 +167,10 @@ void HEPDSWPhysicsList::ConstructParticle()
   // pseudo-particles
   G4Geantino::GeantinoDefinition();
   G4ChargedGeantino::ChargedGeantinoDefinition();
-  
+
   // gamma
   G4Gamma::GammaDefinition();
-  
+
   // leptons
   G4Electron::ElectronDefinition();
   G4Positron::PositronDefinition();
@@ -180,7 +180,7 @@ void HEPDSWPhysicsList::ConstructParticle()
   G4NeutrinoE::NeutrinoEDefinition();
   G4AntiNeutrinoE::AntiNeutrinoEDefinition();
   G4NeutrinoMu::NeutrinoMuDefinition();
-  G4AntiNeutrinoMu::AntiNeutrinoMuDefinition();  
+  G4AntiNeutrinoMu::AntiNeutrinoMuDefinition();
 
   // mesons
   G4MesonConstructor mConstructor;
@@ -201,7 +201,7 @@ void HEPDSWPhysicsList::ConstructProcess()
 {
   AddTransportation();
   fEmHEPDSWPhysicsList->ConstructProcess();
-  AddDecay();  
+  AddDecay();
   for(size_t i=0; i<hadronPhys.size(); i++) {
     hadronPhys[i]->ConstructProcess();
   }
@@ -220,14 +220,14 @@ void HEPDSWPhysicsList::AddOpticalProcesses()
   G4int MaxNumPhotons = 300;
   theCerenkovProcess->SetMaxNumPhotonsPerStep(MaxNumPhotons);
   theCerenkovProcess->SetMaxBetaChangePerStep(10.0);
-  
+
   G4Scintillation* theScintProcess = new G4Scintillation("Scintillation");
   theScintProcess->SetTrackSecondariesFirst(true);
   theScintProcess->SetScintillationYieldFactor(1.);
 
   G4EmSaturation* emSaturation =  G4LossTableManager::Instance()->EmSaturation();
   theScintProcess->AddSaturation(emSaturation);
-  
+
   G4OpBoundaryProcess* theOpBoundaryProcess = new G4OpBoundaryProcess("Boundary");
   G4OpAbsorption* theAbsProcess = new G4OpAbsorption("Absorption");
   G4OpRayleigh* theRayleighScattProcess = new G4OpRayleigh("RayleighScattering");
@@ -235,23 +235,23 @@ void HEPDSWPhysicsList::AddOpticalProcesses()
 
   theParticleIterator->reset();
   while( (*theParticleIterator)() )
-  {  
+  {
      G4ParticleDefinition* particle = theParticleIterator->value();
      G4ProcessManager* pmanager = particle->GetProcessManager();
      G4String particleName = particle->GetParticleName();
 
-     if (theCerenkovProcess->IsApplicable(*particle)) 
+     if (theCerenkovProcess->IsApplicable(*particle))
      {
         pmanager->AddProcess(theCerenkovProcess);
 	pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
      }
-     if (theScintProcess->IsApplicable(*particle)) 
+     if (theScintProcess->IsApplicable(*particle))
      {
 	pmanager->AddProcess(theScintProcess);
 	pmanager->SetProcessOrderingToLast(theScintProcess, idxAtRest);
 	pmanager->SetProcessOrderingToLast(theScintProcess, idxPostStep);
      }
-     if (particleName == "opticalphoton") 
+     if (particleName == "opticalphoton")
      {
 	G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
 	pmanager->AddDiscreteProcess(theAbsProcess);
@@ -275,7 +275,7 @@ void HEPDSWPhysicsList::AddDecay()
     G4ParticleDefinition* particle = theParticleIterator->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
 
-    if (fDecayProcess->IsApplicable(*particle) && !particle->IsShortLived()) { 
+    if (fDecayProcess->IsApplicable(*particle) && !particle->IsShortLived()) {
 
       pmanager ->AddProcess(fDecayProcess);
 
@@ -337,19 +337,19 @@ void HEPDSWPhysicsList::AddPhysicsList(const G4String& name)
     fEmName = name;
     delete fEmHEPDSWPhysicsList;
     fEmHEPDSWPhysicsList = new G4EmStandardPhysics_option2();
-    
+
   } else if (name == "emstandard_opt3") {
 
     fEmName = name;
     delete fEmHEPDSWPhysicsList;
     fEmHEPDSWPhysicsList = new G4EmStandardPhysics_option3();
-    
+
   } else if (name == "emstandard_opt4") {
 
     fEmName = name;
     delete fEmHEPDSWPhysicsList;
     fEmHEPDSWPhysicsList = new G4EmStandardPhysics_option4();
-        
+
   } else if (name == "standardSS") {
 
     fEmName = name;
@@ -383,7 +383,7 @@ void HEPDSWPhysicsList::AddPhysicsList(const G4String& name)
     fEmName = name;
     delete fEmHEPDSWPhysicsList;
     fEmHEPDSWPhysicsList = new G4EmLivermorePhysics();
-                        
+
   } else if (name == "elastic" && !helIsRegistered) {
     G4cout << "THE FOLLOWING HADRONIC ELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronElasticPhysics()" << G4endl;
     hadronPhys.push_back( new G4HadronElasticPhysics());
@@ -476,7 +476,7 @@ void HEPDSWPhysicsList::AddPhysicsList(const G4String& name)
     hadronPhys.push_back(new G4HadronPhysicsShielding());
     shieldIsRegistered = true;
     G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronPhysicsShielding()" << G4endl;
-                        
+
   } else {
 
     G4cout << "HEPDSWPhysicsList::AddHEPDSWPhysicsList: <" << name << ">"
