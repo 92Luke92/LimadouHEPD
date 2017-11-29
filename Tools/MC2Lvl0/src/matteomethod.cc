@@ -10,16 +10,16 @@
 #include <cmath>
 
 
-/* 
-    datacard "PmtSlopeIntercErr_MeanMatteo.csv" : 
+/*
+    datacard "PmtSlopeIntercErr_MeanMatteo.csv" :
     - it contains the pmt, slope, intercept, err_slope, err_intercept as columns
-    - the values are referred to the plot 'DeltaE_data/DeltaE_MC vs DeltaE_MC' for each calo scintillator plane, 
+    - the values are referred to the plot 'DeltaE_data/DeltaE_MC vs DeltaE_MC' for each calo scintillator plane,
       where DeltaE_data(MC) is the mean of the gaussian that fits the peak of the energy loss distributions of the data(MC)
     - assumption: linear relation of the type y = slope * x + intercept, where x = DeltaE_MC and y = DeltaE_data/DeltaE_MC
 */
 
-/* 
-    datacard "PmtSlopeIntercErr_SigmaMatteo.csv" : 
+/*
+    datacard "PmtSlopeIntercErr_SigmaMatteo.csv" :
     - it contains the pmt, slope, intercept, err_slope, err_intercept as columns
     - the values are referred to the plot 'sigma_data/sigma_MC vs DeltaE_MC' for each calo scintillator plane,
       where sigma_data(MC) is the standard deviation of the gaussian that fits the peak of the energy loss distributions of the data(MC)
@@ -29,13 +29,13 @@
 
 MatteoMethod::MatteoMethod(std::string datacardname) : MeV2ADCMethod(datacardname)
 {
-	UpdateMyPMTs(); 
+	UpdateMyPMTs();
 }
 
 void MatteoMethod::UpdateMyPMTs(){
 	int i = 0;
 	for (auto pmt : PMTs) {
-		PMTnumbersMatteo tmp(PMTs[i]);	
+		PMTnumbersMatteo tmp(PMTs[i]);
 		MyPMTs[i] = tmp;
 		i++;
 	}
@@ -54,13 +54,13 @@ for (auto line : datacard) {
 short MatteoMethod::adcFromMev(float mev, int sensor) {
 	PMTnumbersMatteo thisPMT = MyPMTs[sensor];
     float adc_tmp = mev * thisPMT.Slope + thisPMT.Interc;
-    short adc = static_cast<short> adc_tmp;
-    return adc;	 	  	
+    short adc = static_cast<short> (adc_tmp);
+    return adc;
 }
 
 short MatteoMethod::Err_adcFromMev(float mev, int sensor) {
-	PMTnumbersMatteo thisPMT = MatteoPMTs_ELoss[sensor];
+	PMTnumbersMatteo thisPMT = MyPMTs[sensor];
     float Err_adc_tmp = std::sqrt(mev * mev * thisPMT.Slope * thisPMT.Slope + thisPMT.Interc * thisPMT.Interc);
-    short Err_adc = static_cast<short> Err_adc_tmp;
-    return Err_adc;	 	  	
+    short Err_adc = static_cast<short> (Err_adc_tmp);
+    return Err_adc;
 }

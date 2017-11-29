@@ -8,7 +8,7 @@
 #ifndef MATTEOMETHOD_HH
 #define MATTEOMETHOD_HH
 
-#include <MeV2ADCmethod.hh>
+#include <mev2adcmethod.hh>
 
 class MatteoMethod : public MeV2ADCMethod
 {
@@ -17,7 +17,7 @@ class MatteoMethod : public MeV2ADCMethod
     short adcFromMev(float mev, int sensor);
     short Err_adcFromMev(float mev, int sensor);
 
-  protected:	
+  protected:
     struct PMTnumbersMatteo : public PMTnumbers {
       float Slope, ErrSlope;
       float Interc, ErrInterc;
@@ -27,11 +27,11 @@ class MatteoMethod : public MeV2ADCMethod
 
 
    private:
-    void  UpdateMyPMTs(); 
+    void  UpdateMyPMTs();
     void  convertParameterDatacard();
 
     std::array<PMTnumbersMatteo, NPMT>  MyPMTs;
 
 };
 
-#endif 
+#endif

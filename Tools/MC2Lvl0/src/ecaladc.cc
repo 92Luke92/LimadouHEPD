@@ -25,8 +25,8 @@ EcalADC::EcalADC()
 {
       //methodHg=new LaurentMethod("laurentHGpeakshift.csv");
       //methodLg = new LaurentMethod("laurentLGpeakshift.csv");
-    methodHg = new FrancescoMethod("laurentHGpeakshift.csv","francesco_parameterHG.csv");
-    methodLg = new FrancescoMethod("laurentLGpeakshift.csv","francesco_parameterLG.csv");
+    methodHg = new MatteoMethod("PmtSlopeIntercErr_MeanMatteo.csv");
+    methodLg = new MatteoMethod("PmtSlopeIntercErr_MeanMatteo.csv");
     initMCpos();
 }
 
