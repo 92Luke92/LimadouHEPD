@@ -42,6 +42,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 include_directories(${PROJECT_SOURCE_DIR}/../../Simulation/source/Dataformats/include/)
 include_directories(${PROJECT_SOURCE_DIR}/../../EventReconstruction/Common/include/)
+include_directories(${ROOT_INCLUDE_DIRS})
+
 include_directories(${PROJECT_SOURCE_DIR}/include)
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../Simulation/build/lib/)
 
