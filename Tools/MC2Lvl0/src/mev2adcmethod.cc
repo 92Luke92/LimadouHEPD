@@ -7,7 +7,7 @@
  */
 
 
-#include "MeV2ADCmethod.hh"
+#include "mev2adcmethod.hh"
 
 
 MeV2ADCMethod::MeV2ADCMethod(std::string datacardname)

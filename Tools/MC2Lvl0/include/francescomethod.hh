@@ -8,7 +8,7 @@
 #ifndef FRANCESCOMETHOD_HH
 #define FRANCESCOMETHOD_HH
 
-#include <MeV2ADCmethod.hh>
+#include <mev2adcmethod.hh>
 #include "TRandom3.h"
 
 class FrancescoMethod: public MeV2ADCMethod
@@ -18,10 +18,10 @@ class FrancescoMethod: public MeV2ADCMethod
       short adcFromMev(float mev, int sensor);
       void setBeamEnergy(int energy) {beamEnergy=energy;};
 
-   protected:	
+   protected:
    struct PMTnumbersFrancesco : public PMTnumbers {
 	// linear function par. for 1) sigma smearing 1 , 2) sigma smearing 2 , 3) Mean Fixing
-	float a1,a2,a3=0;  
+	float a1,a2,a3=0;
         float b1,b2,b3=0;
 	float c3=0;
 	PMTnumbersFrancesco(){};
@@ -33,13 +33,13 @@ class FrancescoMethod: public MeV2ADCMethod
 
    TRandom3 * Rand;
    std::vector<std::vector<float>> pardatacard;
-	
+
    std::array<PMTnumbersFrancesco, NPMT>  MyPMTs;
 
    void  initRandom(std::string pardatacardname);
-   void  UpdateMyPMTs();  
+   void  UpdateMyPMTs();
    void  convertParameterDatacard();
    short SmearADC(short ADC,int sensor);
 };
 
-#endif 
+#endif

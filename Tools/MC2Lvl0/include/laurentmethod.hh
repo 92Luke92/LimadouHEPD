@@ -9,7 +9,7 @@
 #ifndef LAURENTMETHOD_HH
 #define LAURENTMETHOD_HH
 
-#include <MeV2ADCmethod.hh>
+#include <mev2adcmethod.hh>
 
 class LaurentMethod: public MeV2ADCMethod {
   public:
@@ -28,9 +28,9 @@ class LaurentMethod: public MeV2ADCMethod {
 
 
   private:
-     void UpdateMyPMTs();  
+     void UpdateMyPMTs();
      std::array<PMTnumbersLaurent, NPMT>  MyPMTs;
 
 };
 
-#endif 
+#endif
