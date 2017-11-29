@@ -13,7 +13,6 @@ calomev2adcmethod::calomev2adcmethod(std::string datacardname)
 {
    csv2fvec datagetter;
    datacard=datagetter.fromDatacard(datacardname);
-   std::cout<<datacardname<<std::endl;
 }
 
 
