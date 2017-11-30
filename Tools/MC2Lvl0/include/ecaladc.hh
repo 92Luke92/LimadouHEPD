@@ -28,11 +28,13 @@
 
 class EcalADC {
   public:
-    EcalADC();
+    enum method {Laurent, Francesco, Matteo};
+    EcalADC(method ecalmethod);
     void SetPositions (std::vector<Edep_Pos> pmt_info );
     void NormalizePMThg ( ushort* pmt_high);
     void NormalizePMTlg ( ushort* pmt_low);
     void setMCEnergy (int mcE);
+
 
 
 

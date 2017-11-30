@@ -29,6 +29,7 @@
 
 MatteoMethod::MatteoMethod(std::string datacardname) : MeV2ADCMethod(datacardname)
 {
+    convertParameterDatacard();
 	UpdateMyPMTs();
 }
 

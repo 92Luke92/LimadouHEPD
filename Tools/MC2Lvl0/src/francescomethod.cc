@@ -13,14 +13,14 @@
 FrancescoMethod::FrancescoMethod(std::string datacardname,std::string pardatacardname)
    : MeV2ADCMethod(datacardname)
 {
-	UpdateMyPMTs(); 
+	UpdateMyPMTs();
 	initRandom(pardatacardname);
 }
 
 void FrancescoMethod::UpdateMyPMTs(){
 	int i=0;
 	for (auto pmt : PMTs) {
-		PMTnumbersFrancesco tmp(PMTs[i]);	
+		PMTnumbersFrancesco tmp(PMTs[i]);
 		MyPMTs[i]=tmp;
 		i++;
 	}
@@ -66,8 +66,8 @@ short FrancescoMethod::adcFromMev(float mev, int sensor) {
    PMTnumbersFrancesco thisPMT=MyPMTs[sensor];
    float adcShift = mev * thisPMT.mev2adc;
    int untrimmedPMT = static_cast<int> (adcShift + thisPMT.pedMean);
-   short trimmed = trimADC(untrimmedPMT); 	 
-   return SmearADC(trimmed,sensor);	 	
+   short smeared=SmearADC(untrimmedPMT,sensor);
+   return trimADC(smeared);
 }
 
 
