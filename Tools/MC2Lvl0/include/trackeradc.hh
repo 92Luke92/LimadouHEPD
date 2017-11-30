@@ -30,7 +30,7 @@ class TrackerADC
      std::vector<std::vector<Edep_Pos>> allEpos;
      float Mev2ADCFactor(trSides side);
      std::array<short, SIDE_CHAN> getStripsForSide(trSides side);
-     short TrimADC (float raw, float ped);
+     short ClipADC (float raw, float ped);
 
      std::array<short, NCHAN> trPed={
  1350, 1320, 1340, 1330, 1350, 1350, 1330, 1330, 1340, 1370, 1340, 1340, 1350,

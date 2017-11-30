@@ -64,7 +64,7 @@ std::array<short, SIDE_CHAN> TrackerADC::getStripsForSide (trSides side)
             short nStrip = GetLocalStrip (side, chaninfo.position);
             float EMeV = chaninfo.totEdep;
             float EADC = EMeV * Mev2ADCfactor;
-            short chanADC = TrimADC (EADC, trPed[offset+i]);
+            short chanADC = ClipADC (EADC, trPed[offset+i]);
             sideStrips[nStrip] = chanADC;
         }
         i++;
@@ -72,12 +72,12 @@ std::array<short, SIDE_CHAN> TrackerADC::getStripsForSide (trSides side)
     return sideStrips;
 }
 
-short TrackerADC::TrimADC (float raw, float ped)
+short TrackerADC::ClipADC (float raw, float ped)
 {
-    int untrimmed = static_cast<int> (raw + ped);
-    if (untrimmed > NADC) untrimmed = NADC - 1;
-    short trimmed = static_cast<short> (untrimmed);
-    return trimmed;
+    int unclipped = static_cast<int> (raw + ped);
+    if (unclipped > NADC) unclipped = NADC - 1;
+    short clipped = static_cast<short> (unclipped);
+    return clipped;
 }
 
 

@@ -23,9 +23,9 @@ class calomev2adcmethod
    protected:
       std::vector<std::vector<float>> datacard;
       int beamEnergy;
-      short trimADC(int untrimmedADC);
-    
-    private:	
+      short clipADC(int unclippedADC);
+
+    private:
       virtual void init() = 0;
 
 };
