@@ -58,8 +58,8 @@ LTrackerCalibrationSlot LTrackerCalibrationSlot::ReadRoot(const char *input) {
   bool cnmST[NCHAN];
 
   memset(&sigmarawST[0], 0, NCHAN*(sizeof(double)));
-  memset(&ngindexST[0], 0, NCHAN*(sizeof(double)));
-  
+  memset(&cnmST[0], 1, NCHAN*(sizeof(bool)));
+
   LEvRec0 outev;
   LEvRec0File inputFile(input);
   inputFile.SetTheEventPointer(outev);
@@ -74,8 +74,16 @@ LTrackerCalibrationSlot LTrackerCalibrationSlot::ReadRoot(const char *input) {
   for(int iChan=0; iChan<NCHAN; ++iChan)
   {
      sigmaST[iChan] = (outev.strip[iChan] & 0x0FFF);
+     ngindexST[iChan] = (outev.strip[iChan] & 0x4000);
+     
+     if (ngindexST[iChan] == 0 )
+	ngindexST[iChan] = -1; // good channel
+     else  ngindexST[iChan] = 100; // bad channel
+     
      //std::cout << "sigmaST[" << iChan << "] = " << sigmaST[iChan] << std::endl;
   }
+
+  
 
   LTrackerCalibrationSlot result(StartEventST, StopEventST, sigmarawST, pedestalST, sigmaST, ngindexST, cnmST);
   
