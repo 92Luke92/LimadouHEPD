@@ -50,6 +50,14 @@ void LTrackerSignal::HoldTimeCorrectionSig(){
   HTCFLAG = true;
   return;
 }
+
+void LTrackerSignal::Dump() {
+  for (int icls = 0; icls<cls.size(); ++icls){
+    cls.at(icls).Dump();
+  }
+  return;
+}
+
 /*
 void LTrackerSignal::HoldTimeCorrection(const double HOLDCORRCONST){
   if(HTCFLAG == true) return; // no double correction
