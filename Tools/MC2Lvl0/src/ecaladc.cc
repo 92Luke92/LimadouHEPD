@@ -21,12 +21,21 @@ float EcalADC::VectorXYDist (TVector2 v1, TVector2 v2)
 
 
 
-EcalADC::EcalADC()
+EcalADC::EcalADC(method ecalmethod)
 {
-      //methodHg=new LaurentMethod("laurentHGpeakshift.csv");
-      //methodLg = new LaurentMethod("laurentLGpeakshift.csv");
-    methodHg = new FrancescoMethod("laurentHGpeakshift.csv","francesco_parameterHG.csv");
-    methodLg = new FrancescoMethod("laurentLGpeakshift.csv","francesco_parameterLG.csv");
+    switch(ecalmethod) {
+        case Laurent:
+            methodHg = new LaurentMethod("laurentHGpeakshift.csv");
+            methodLg = new LaurentMethod("laurentLGpeakshift.csv");
+            break;
+        case Francesco:
+            methodHg = new FrancescoMethod("laurentHGpeakshift.csv","francesco_parameterHG.csv");
+            methodHg = new FrancescoMethod("laurentLGpeakshift.csv","francesco_parameterLG.csv");
+            break;
+        case Matteo:
+            methodHg = new MatteoMethod("PmtSlopeIntercErr_MeanMatteo.csv");
+            methodHg = new MatteoMethod("PmtSlopeIntercErr_MeanMatteo.csv");
+    }
     initMCpos();
 }
 
