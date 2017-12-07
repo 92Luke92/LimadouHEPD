@@ -1,5 +1,8 @@
 #include "LCalibration.hh"
 #include "LEvRec0File.hh"
+#include "LTrackerCalibration.hh"
+#include "LCaloCalibration.hh"
+
 
 #include <iostream>
 #include <sstream>
@@ -197,4 +200,18 @@ LCalibration& LCalibration::operator/=(const double& rhs) {
 
 
 
- 
+LCalibration* LCalibration::CreateFakeCalibration(const LCalibration *seed, double tracker_offset,double calo_offset) {
+  
+  std::cout<<"Calibration read. Starting fake production"<<std::endl;
+
+  LTrackerCalibration* tracker=LTrackerCalibration::CreateFakeCalibration(seed->GetTrackerCalibration(),tracker_offset);
+  std::cout<<"Fake Tracker Calibration Created!"<<std::endl;
+  LCaloCalibration* calo_HG=LCaloCalibration::CreateFakeCalibration(seed->GetCaloHGCalibration(),calo_offset);
+  std::cout<<"Fake HG Calo Calibration Created!"<<std::endl;
+  LCaloCalibration* calo_LG=LCaloCalibration::CreateFakeCalibration(seed->GetCaloLGCalibration(),calo_offset);
+  std::cout<<"Fake LG Calo Calibration Created!"<<std::endl;
+  LCalibration* result=new LCalibration(calo_HG,calo_LG,tracker);
+  return result;
+
+}
+

@@ -4,15 +4,16 @@
 #include "LTrackerMask.hh"
 #include "detector_const.hh"
 #include <fstream>
+#include <iostream>
 
 class LTrackerCalibrationSlot {
-public:
+  public:
   LTrackerCalibrationSlot(){Reset();};
   LTrackerCalibrationSlot(int StartE, int StopE, double *rawsig, double *ped, double *sig, double *ngi, bool *cnm);;
   LTrackerCalibrationSlot(const LTrackerCalibrationSlot &other);
   void Write(std::ofstream *output);
   static LTrackerCalibrationSlot Read(std::ifstream *input);
-   static LTrackerCalibrationSlot ReadRoot(const char * input);
+  static LTrackerCalibrationSlot ReadRoot(const char * input);
   inline int GetStartEvent() const {return StartEvent;};
   inline int GetStopEvent() const {return StopEvent;};
   inline const double* GetSigmaRaw() const {return sigmaraw;};

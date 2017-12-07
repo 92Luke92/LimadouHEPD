@@ -18,7 +18,8 @@ public:
   static LCaloCalibration* Read(const char *fileIn);
   static LCaloCalibration* Read(std::ifstream *fileIn);
   static LCaloCalibration* ReadRoot(const char *fileIn, enum pmt_calib_type flag);
-
+  static LCaloCalibration* CreateFakeCalibration(const LCaloCalibration* seed,const double offset=0);
+    
   inline int GetRunId() const {return RunId;};
   inline const double* GetPedestal() const {return pedestal;};
   inline const double* GetSigma() const {return sigma;};
