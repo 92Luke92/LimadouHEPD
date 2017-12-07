@@ -7,9 +7,11 @@ set(VERSION_MINOR   1   CACHE STRING "Project minor version number.")
 #set(VERSION_PATCH   0   CACHE STRING "LCaloCalibration definietely aligned.")
 mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
 
+set(CMAKE_MODULE_PATH "/home/francesco/Work/PostDoc/LIMADOU/HEPDSW_v3_local/cmake/Modules;${CMAKE_MODULE_PATH}")
+set(ROOT_INCLUDE_DIRS "/home/francesco/root-6.06.04/include")
 
 
-add_definitions( -std=c++11)
+add_definitions( -std=c++14)
 
 
 # add a target to generate API documentation with Doxygen
@@ -40,14 +42,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # MC includes ("RootEvent.hh", etc.)
 
-include_directories(${PROJECT_SOURCE_DIR}/../../Simulation/source/Dataformats/include/)
+include_directories(/home/francesco/Work/PostDoc/LIMADOU/HEPDSW_v3_local//source/Dataformats/include/)
 include_directories(${PROJECT_SOURCE_DIR}/../../EventReconstruction/Common/include/)
 include_directories(${ROOT_INCLUDE_DIRS})
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
-LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../Simulation/build/lib/)
+LINK_DIRECTORIES(/home/francesco/Work/PostDoc/LIMADOU/HEPDSW_v3_local/build/lib/)
 
-file(GLOB_RECURSE MCsources ${PROJECT_SOURCE_DIR}/../../Simulation/source/Dataformats/src/*.cc)
+file(GLOB_RECURSE MCsources /home/francesco/Work/PostDoc/LIMADOU/HEPDSW_v3_local//source/Dataformats/src/*.cc)
 file(GLOB_RECURSE LVL0sources ${PROJECT_SOURCE_DIR}/../../EventReconstruction/Common/src/LEvRec0.cc ${PROJECT_SOURCE_DIR}/../../EventReconstruction/Common/src/LEvRec0File.cc)
 file(GLOB_RECURSE CCsources ${PROJECT_SOURCE_DIR}/src/LEvRec0Writer.cc ${PROJECT_SOURCE_DIR}/src/trackeradc.cc ${PROJECT_SOURCE_DIR}/src/ecaladc.cc ${PROJECT_SOURCE_DIR}/src/MCcoorPhysicalFrame.cc ${PROJECT_SOURCE_DIR}/src/hits2edeppos.cc)
 file(GLOB_RECURSE ecaladcsources  ${PROJECT_SOURCE_DIR}/src/calomev2adcmethod.cc ${PROJECT_SOURCE_DIR}/src/csv2fvec.cc ${PROJECT_SOURCE_DIR}/src/mev2adcmethod.cc ${PROJECT_SOURCE_DIR}/src/laurentmethod.cc ${PROJECT_SOURCE_DIR}/src/francescomethod.cc)
@@ -59,7 +61,7 @@ add_executable(trkTTree2csv src/trkTTree2csv.cc ${LVL0sources} )
 add_executable(MC2Lvl0 src/MC2Lvl0.cc ${sources}  ${LVL0sources} ${CCsources} ${ecaladcsources})
 add_executable(testmethod src/testmethod.cc ${ecaladcsources})
 
-install(FILES DataFormatDict_rdict.pcm DESTINATION ${PROJECT_SOURCE_DIR}/../../Simulation/build/)
+install(FILES DataFormatDict_rdict.pcm DESTINATION /home/francesco/Work/PostDoc/LIMADOU/HEPDSW_v3_local/build/)
 target_link_libraries(testDetID ${ROOT_LIBRARIES})
 target_link_libraries(MC2Lvl0 ${ROOT_LIBRARIES} hepdsw)
 target_link_libraries(trkTTree2csv ${ROOT_LIBRARIES})

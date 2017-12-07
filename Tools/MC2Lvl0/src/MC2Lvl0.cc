@@ -68,7 +68,6 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     TBranch* b_Event = new TBranch;
     Tmc->SetBranchAddress ("Event", &MCevt, &b_Event);
     EcalADC ecaladc;
-
     for (int ie = 0; ie < ne; ie++) {
         Tmc->GetEntry (ie);
         std::vector<RootCaloHit> caloHits =  MCevt->GetCaloHit();
