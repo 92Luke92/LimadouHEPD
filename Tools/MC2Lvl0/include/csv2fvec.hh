@@ -26,6 +26,8 @@ class csv2fvec
       csv2fvec();
       std::vector<std::vector<float>> fromDatacard(std::string datacardname);
       std::vector<std::vector<float>> fromFile(std::string filename);
+      std::vector<std::vector<float>> fromSQL(std::string filename, std::string command);
+
 
    private:
 
