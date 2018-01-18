@@ -62,7 +62,7 @@ void LCalibration::WriteROOT(const char *fileOut) const {
   const double *_sil = tracker->GetPedestal(0); // nSlot = 0????
   // const double *_silNGindexMask = tracker->GetMaskOnNGI();
   // const double *_silsigMask = tracker->GetMaskOnSigma(); 
-  
+
   LEvRec0 outev;
   LEvRec0Md outevMD;
   LEvRec0File inputFile(GetInputFile());
@@ -76,25 +76,27 @@ void LCalibration::WriteROOT(const char *fileOut) const {
   
   LEvRec0File outRootfile(fileOut, outev, outevMD);
   //outev.run_id = (RunId | 0x8000); // todo: decide if needed 
-
+  
   for (int j = 0 ; j< 2; j++) // ped, sigma
   {
-     for (int i = 0 ; i< NPMT; i++)
-     {
-	outev.pmt_high[i] = (unsigned short)_pmt_HG[i];
-	outev.pmt_low[i] = (unsigned short)_pmt_LG[i];
-     }
-     for (int i = 0 ; i< NCHAN; i++)
-        outev.strip[i] = (unsigned short)_sil[i];
-
-     inputFile.GetMDEntry(j);
-
-     outRootfile.Fill();
-
-     _pmt_HG = calo_HG->GetSigma();
-     _pmt_LG = calo_LG->GetSigma();
-     _sil    = tracker->GetSigma(0);
-     
+    outev.runType = 0x1B;
+    outev.event_index = j;
+    for (int i = 0 ; i< NPMT; i++)
+    {
+      outev.pmt_high[i] = (unsigned short)_pmt_HG[i];
+      outev.pmt_low[i] = (unsigned short)_pmt_LG[i];
+    }
+    for (int i = 0 ; i< NCHAN; i++)
+      outev.strip[i] = (unsigned short)_sil[i];
+    
+    inputFile.GetMDEntry(j);
+    
+    outRootfile.Fill();
+    
+    _pmt_HG = calo_HG->GetSigma();
+    _pmt_LG = calo_LG->GetSigma();
+    _sil    = tracker->GetSigma(0);
+    
   }  
   outRootfile.Write();  
   
