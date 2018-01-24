@@ -87,7 +87,7 @@ void LCalibration::WriteROOT(const char *fileOut) const {
       outev.pmt_low[i] = (unsigned short)_pmt_LG[i];
     }
     for (int i = 0 ; i< NCHAN; i++)
-      outev.strip[i] = (unsigned short)_sil[i];
+      outev.strip[i] = (short)_sil[i];
     
     inputFile.GetMDEntry(j);
     
