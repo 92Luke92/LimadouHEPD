@@ -37,6 +37,7 @@ void LaurentMethod::setBeamEnergy(int energy) {
    beamEnergy=energy;
   csv2fvec abfile;
   std::vector<std::vector<float>> abvalues=abfile.fromDatacard("laurent_pmt_e_a_b.csv");
+  if (abvalues.empty()) std::cerr << "LaurentMethod: SetBeamEnergy failed (AB file not found)" << std::endl;
   for (auto line : abvalues) {
     if (line[1] != energy) continue;
     int idx = static_cast<int> ( line[0]);

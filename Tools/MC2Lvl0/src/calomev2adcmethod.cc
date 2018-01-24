@@ -13,6 +13,7 @@ calomev2adcmethod::calomev2adcmethod(std::string datacardname)
 {
    csv2fvec datagetter;
    datacard=datagetter.fromDatacard(datacardname);
+   if (datacard.empty()) std::cerr << "CaloM2A: init failed (datacard file not found)" << std::endl;
 }
 
 

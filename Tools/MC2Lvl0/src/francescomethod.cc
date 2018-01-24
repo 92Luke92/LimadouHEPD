@@ -29,6 +29,7 @@ void FrancescoMethod::UpdateMyPMTs(){
 void FrancescoMethod::initRandom(std::string pardatacardname) {
   csv2fvec parfile;
   pardatacard=parfile.fromDatacard(pardatacardname);
+  if (pardatacard.empty()) std::cerr << "FMethod: initRandom failed (pardatacardname file not found)" << std::endl;
   Rand= new TRandom3(time(0));
   convertParameterDatacard();
 

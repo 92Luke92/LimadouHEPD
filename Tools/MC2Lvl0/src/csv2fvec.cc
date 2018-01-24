@@ -18,7 +18,16 @@ csv2fvec::csv2fvec()
 
 std::vector<std::vector<float>> csv2fvec::fromDatacard (std::string datacardname)
 {
-    std::string datacarddir = std::getenv ("DATACARDS");
+
+const char* getenvdatacard=std::getenv ("DATACARDS");
+    std::string datacarddir;
+    if (getenvdatacard) {
+        datacarddir=getenvdatacard;
+    } else {
+        std::cerr << "CSV2FVEC: Warning - environment variable DATACARDS empty" << std::endl <<
+                     "          Switching to default = ../data" << std::endl;
+        datacarddir = "../data";
+    }
     return fromFile (datacarddir + "/" + datacardname);
 }
 
@@ -27,7 +36,7 @@ std::vector<std::vector<float>> csv2fvec::fromFile (std::string filename)
     std::vector<std::vector<float>> entries;
     std::ifstream fp (filename);
     if (!fp.good() ) {
-        std::cout << "CSV2VEC: failed loading " << filename << std::endl;
+        std::cout << "CSV2FVEC: failed loading " << filename << std::endl;
         return entries;
     }
     std::string line;
