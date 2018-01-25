@@ -38,6 +38,7 @@ LCalibration* CalculateWindow(const char * infile,double *err_sigma_LG,double *e
     ++islot;
     
   }
+
   if(graphics){  
     WindowGraphics(calbuffer,islot);
     WindowTimeEvolution(calbuffer,islot);
@@ -275,10 +276,10 @@ void IsGoodGraphics(const LCalibration *reference,const double* err_sigma_LG,con
 
 void WindowTimeEvolution(LCalibration* calibs[WINDOW_LEN],int islot){
   gStyle->SetPalette(1);
-  TH2D* PMT_LG_mean_histo=new TH2D("PMT_LG_pedestal_history","PMT LG pedestal;;PMT;ADC",WINDOW_LEN+2,0,WINDOW_LEN,NPMT+2,0,NPMT);
-  TH2D* PMT_HG_mean_histo=new TH2D("PMT_HG_pedestal_history","PMT HG pedestal;;PMT;ADC",WINDOW_LEN+2,0,WINDOW_LEN,NPMT+2,0,NPMT);
-  TH2D* PMT_LG_sigma_histo=new TH2D("PMT_LG_sigma_history","PMT LG sigma;:PMT;ADC",WINDOW_LEN+2,0,WINDOW_LEN,NPMT+2,0,NPMT);
-  TH2D* PMT_HG_sigma_histo=new TH2D("PMT_HG_sigma_history","PMT HG sigma;:PMT;ADC",WINDOW_LEN+2,0,WINDOW_LEN,NPMT+2,0,NPMT);
+  TH2D* PMT_LG_mean_histo=new TH2D("PMT_LG_pedestal_history","PMT LG pedestal;;PMT;ADC",islot,0,islot,NPMT+2,0,NPMT);
+  TH2D* PMT_HG_mean_histo=new TH2D("PMT_HG_pedestal_history","PMT HG pedestal;;PMT;ADC",islot,0,islot,NPMT+2,0,NPMT);
+  TH2D* PMT_LG_sigma_histo=new TH2D("PMT_LG_sigma_history","PMT LG sigma;:PMT;ADC",islot,0,islot,NPMT+2,0,NPMT);
+  TH2D* PMT_HG_sigma_histo=new TH2D("PMT_HG_sigma_history","PMT HG sigma;:PMT;ADC",islot,0,islot,NPMT+2,0,NPMT);
 
   TH2D* TRK_mean_histo[2][N_LADDER];
   TH2D* TRK_sigma_histo[2][N_LADDER];
@@ -287,10 +288,10 @@ void WindowTimeEvolution(LCalibration* calibs[WINDOW_LEN],int islot){
 
   for(int iSide=0;iSide<2;++iSide){
     for(int iLd=0;iLd<N_LADDER;++iLd){
-      TRK_mean_histo[iSide][iLd]=new TH2D(Form("TRK_pedestal_history_side_%c_ladder_%d",iSide==0 ? 'p' : 'n',iLd),Form("TRK pedestal side %c ladder %d;:chan;ADC",iSide==0 ? 'p' : 'n',iLd),WINDOW_LEN+2,0,WINDOW_LEN,SIDE_CHAN+2,0,SIDE_CHAN);
+      TRK_mean_histo[iSide][iLd]=new TH2D(Form("TRK_pedestal_history_side_%c_ladder_%d",iSide==0 ? 'p' : 'n',iLd),Form("TRK pedestal side %c ladder %d;;chan;ADC",iSide==0 ? 'p' : 'n',iLd),islot,0,islot,SIDE_CHAN+2,0,SIDE_CHAN);
       TRK_mean_histo[iSide][iLd]->GetXaxis()->SetLabelSize(labelsize);
       TRK_mean_histo[iSide][iLd]->SetStats(0);
-      TRK_sigma_histo[iSide][iLd]=new TH2D(Form("TRK_sigma_historyside_%c_ladder_%d",iSide==0 ? 'p' : 'n',iLd),Form("TRK sigma side %c ladder %d;:chan;ADC",iSide==0 ? 'p' : 'n',iLd),WINDOW_LEN+2,0,WINDOW_LEN,SIDE_CHAN+2,0,SIDE_CHAN);
+      TRK_sigma_histo[iSide][iLd]=new TH2D(Form("TRK_sigma_historyside_%c_ladder_%d",iSide==0 ? 'p' : 'n',iLd),Form("TRK sigma side %c ladder %d;;chan;ADC",iSide==0 ? 'p' : 'n',iLd),islot,0,islot,SIDE_CHAN+2,0,SIDE_CHAN);
       TRK_sigma_histo[iSide][iLd]->GetXaxis()->SetLabelSize(labelsize);
       TRK_sigma_histo[iSide][iLd]->SetStats(0);
     }
@@ -327,34 +328,38 @@ void WindowTimeEvolution(LCalibration* calibs[WINDOW_LEN],int islot){
 
     PMTmeanLG[iW]=calibs[iW]->GetCaloLGCalibration()->GetPedestal();
     PMTsigmaLG[iW]=calibs[iW]->GetCaloLGCalibration()->GetSigma();
-
+    std::string name(calibs[iW]->GetInputFile());
+    std::size_t found = name.find_last_of("/");
+    std::string finalname=name.substr(found+1,name.size()-4);
     //std::cout<<calibs[iW]->GetInputFile()<<std::endl;
     for(int iPmt=0;iPmt<NPMT;++iPmt){
+
       PMT_LG_mean_histo->Fill(iW+1,iPmt,PMTmeanLG[iW][iPmt]);
-      PMT_LG_mean_histo->GetXaxis()->SetBinLabel(iW+1,calibs[iW]->GetInputFile());
+      PMT_LG_mean_histo->GetXaxis()->SetBinLabel(iW+1,finalname.c_str());
 
       PMT_HG_mean_histo->Fill(iW+1,iPmt,PMTmeanHG[iW][iPmt]);
-      PMT_HG_mean_histo->GetXaxis()->SetBinLabel(iW+1,calibs[iW]->GetInputFile());
+      PMT_HG_mean_histo->GetXaxis()->SetBinLabel(iW+1,finalname.c_str());
 
       PMT_LG_sigma_histo->Fill(iW+1,iPmt,PMTsigmaLG[iW][iPmt]);
-      PMT_LG_sigma_histo->GetXaxis()->SetBinLabel(iW+1,calibs[iW]->GetInputFile());
+      PMT_LG_sigma_histo->GetXaxis()->SetBinLabel(iW+1,finalname.c_str());
 
       PMT_HG_sigma_histo->Fill(iW+1,iPmt,PMTsigmaHG[iW][iPmt]);
-      PMT_HG_sigma_histo->GetXaxis()->SetBinLabel(iW+1,calibs[iW]->GetInputFile());
+      PMT_HG_sigma_histo->GetXaxis()->SetBinLabel(iW+1,finalname.c_str());
 
     }
 
     for(int iChan=0;iChan<NCHAN;++iChan){
 
-      TRK_mean_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->Fill(iW+1,ChanToSideChan(iChan),TRKmean[iW][iChan]);
-      TRK_mean_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->GetXaxis()->SetBinLabel(iW+1,calibs[iW]->GetInputFile());
+      TRK_mean_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->Fill(iW,ChanToSideChan(iChan),TRKmean[iW][iChan]);
+      TRK_mean_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->GetXaxis()->SetBinLabel(iW+1,finalname.c_str());
       
-      TRK_sigma_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->Fill(iW+1,ChanToSideChan(iChan),TRKsigma[iW][iChan]);
-      TRK_sigma_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->GetXaxis()->SetBinLabel(iW+1,calibs[iW]->GetInputFile());
+      TRK_sigma_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->Fill(iW,ChanToSideChan(iChan),TRKsigma[iW][iChan]);
+      TRK_sigma_histo[ChanToSide(iChan)][ChanToLadder(iChan)]->GetXaxis()->SetBinLabel(iW+1,finalname.c_str());
       
     }
 
   }
+
 
   TCanvas* can=new TCanvas();
   can->Print("timeEvWindow.pdf[","pdf");
@@ -362,8 +367,8 @@ void WindowTimeEvolution(LCalibration* calibs[WINDOW_LEN],int islot){
   drawing1(PMT_HG_sigma_histo,0,20)->Print("timeEvWindow.pdf","pdf");
   drawing1(PMT_LG_mean_histo,250,500)->Print("timeEvWindow.pdf","pdf");
   drawing1(PMT_LG_sigma_histo,0,20)->Print("timeEvWindow.pdf","pdf");
-  drawing6(TRK_mean_histo[0],1300,1500)->Print("timeEvWindow.pdf","pdf");
-  drawing6(TRK_mean_histo[1],1300,1500)->Print("timeEvWindow.pdf","pdf");
+  drawing6(TRK_mean_histo[0],1300,1400)->Print("timeEvWindow.pdf","pdf");
+  drawing6(TRK_mean_histo[1],1300,1400)->Print("timeEvWindow.pdf","pdf");
   drawing6(TRK_sigma_histo[0],0,20)->Print("timeEvWindow.pdf","pdf");
   drawing6(TRK_sigma_histo[1],0,20)->Print("timeEvWindow.pdf","pdf");
   can->Print("timeEvWindow.pdf]","pdf");
@@ -522,6 +527,7 @@ TCanvas* drawing6(TH2D* ladder[N_LADDER],double zmin,double zmax,bool logz){
     result->cd(pad);
     gPad->cd(pad);
     gPad->SetLeftMargin(0.15);
+    gPad->SetRightMargin(0.15);
 
     if(logz) gPad->SetLogz();
 

@@ -28,7 +28,7 @@ LCalibration* CalculateWindow(const char* infile,double *err_sigma_LG,double *er
 bool IsGood(const LCalibration *reference,const double* err_sigma_LG,const double* err_sigma_HG,const double* err_sigma_trk,const LCalibration *latest);
 void IsGoodGraphics(const LCalibration *reference,const double* err_sigma_LG,const double* err_sigma_HG,const double* err_sigma_trk,const LCalibration *latest);
 void WindowGraphics(LCalibration* calibs[WINDOW_LEN],int islot=WINDOW_LEN);
-void WindowTimeEvolution(LCalibration* calibs[WINDOW_LEN],int islot);
+void WindowTimeEvolution(LCalibration* calibs[WINDOW_LEN],int islot=WINDOW_LEN);
 //Comparison Functions:
 bool ComparePMT(const LCalibration *first, const double* err_sigma_LG,const double* err_sigma_HG,const LCalibration *second);
 bool CompareTracker(const LCalibration *first,const double* err_sigma_trk, const  LCalibration *second);
