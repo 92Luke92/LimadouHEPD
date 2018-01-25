@@ -37,11 +37,11 @@ class G4TouchableHistory;
 
 class TrackerSD : public G4VSensitiveDetector
 {
-  
+
 public:
   TrackerSD(G4String name);
   ~TrackerSD();
-  
+
   void Initialize(G4HCofThisEvent* HCE);
   G4bool ProcessHits(G4Step* aStep,G4TouchableHistory* ROhist);
   G4bool NewHit(G4Step* aStep);

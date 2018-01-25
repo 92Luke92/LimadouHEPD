@@ -79,7 +79,7 @@ HEPDBoxConstructionConfig4::HEPDBoxConstructionConfig4()
 
 
   ComputeObjectsPositioning();
-  
+
   // materials
   blanketMaterial        = "mylar";
   blanketOuterMaterial   = "Kapton";
@@ -87,7 +87,7 @@ HEPDBoxConstructionConfig4::HEPDBoxConstructionConfig4()
   wallMaterial           = "Aluminium";
   wallHoneyCombMaterial  = "HCAluminium";
 }
-  
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 HEPDBoxConstructionConfig4::~HEPDBoxConstructionConfig4()
 {
@@ -119,35 +119,35 @@ void HEPDBoxConstructionConfig4::ComputeObjectsPositioning(){
 
 
 void HEPDBoxConstructionConfig4::SetBlanketMaterial(G4String aMat){
-  blanketMaterial=aMat; 
+  blanketMaterial=aMat;
 }
 void HEPDBoxConstructionConfig4::SetBlanketOuterMaterial(G4String aMat){
-  blanketOuterMaterial=aMat; 
-}   
+  blanketOuterMaterial=aMat;
+}
 void HEPDBoxConstructionConfig4::SetBlanketInnerMaterial(G4String aMat){
-  blanketInnerMaterial=aMat; 
-}   
+  blanketInnerMaterial=aMat;
+}
 
 void HEPDBoxConstructionConfig4::SetWallMaterial(G4String aMat1,G4String aMat2){
-  wallMaterial=aMat1; 
-  wallHoneyCombMaterial=aMat2; 
-}    
+  wallMaterial=aMat1;
+  wallHoneyCombMaterial=aMat2;
+}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-    
+
 void HEPDBoxConstructionConfig4::Builder(G4VPhysicalVolume* motherVolume )
 {
 
   G4cout << "HEPD Box ConstructionConfig4" << G4endl;
 
   pMaterial->DefineMaterials();
-  G4Material* blanketMat = pMaterial->GetMaterial(blanketMaterial);
+  //G4Material* blanketMat = pMaterial->GetMaterial(blanketMaterial);
   G4Material* blanketOuterMat = pMaterial->GetMaterial(blanketOuterMaterial);
   G4Material* blanketInnerMat = pMaterial->GetMaterial(blanketInnerMaterial);
   G4Material* wallMat = pMaterial->GetMaterial(wallMaterial);
   G4Material* wallHCMat = pMaterial->GetMaterial(wallHoneyCombMaterial);
-  
 
-  G4RotationMatrix* myRot = new G4RotationMatrix; 
+
+  G4RotationMatrix* myRot = new G4RotationMatrix;
 
 //  fSolidBlanket = new G4Box("fSolidThermalBlanket",fBlanket_X/2.,fBlanket_Y/2.,fBlanket_Z/2);
 
@@ -166,7 +166,7 @@ void HEPDBoxConstructionConfig4::Builder(G4VPhysicalVolume* motherVolume )
 					      myRot,transWallHole);
 
 
-  
+
   //fLogicBlanket = new G4LogicalVolume(fSolidBlanket,blanketMat,"ThermalBlanket");
   fLogicBlanketKapton = new G4LogicalVolume(fSolidBlanketKapton,blanketOuterMat,"LogicThermalBlanketKapton");
 

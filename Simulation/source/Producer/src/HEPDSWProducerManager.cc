@@ -33,11 +33,11 @@ HEPDSWProducerManager* HEPDSWProducerManager::instance = 0;
 HEPDSWProducerManager::HEPDSWProducerManager():theEvent(0),theRootFile(0),theEventTree(0),thePathDir(0)
 {
   theMessenger = new HEPDSWProducerMessenger(this);
-  vetoHitCollID=-1;	
-  trackerHitCollID=-1;	
-  degraderHitCollID=-1;	
-  trackCollID=-1;	
-  vertexCollID=-1;	
+  vetoHitCollID=-1;
+  trackerHitCollID=-1;
+  degraderHitCollID=-1;
+  trackCollID=-1;
+  vertexCollID=-1;
   theAutoSaveLimit = 1000;
   eventID=0;
   verboseLevel = 0;
@@ -48,8 +48,8 @@ HEPDSWProducerManager::HEPDSWProducerManager():theEvent(0),theRootFile(0),theEve
   theEvent = new RootEvent();
 }
 ////////////////////////////////////////////////////////////////////////////////
-//  
-HEPDSWProducerManager::~HEPDSWProducerManager() 
+//
+HEPDSWProducerManager::~HEPDSWProducerManager()
 {
   delete theMessenger;
   delete theEventTree;
@@ -59,10 +59,10 @@ HEPDSWProducerManager::~HEPDSWProducerManager()
 ////////////////////////////////////////////////////////////////////////////////
 //
 
-void HEPDSWProducerManager::SetRootFile(G4String aFileName,G4String aDirName) 
+void HEPDSWProducerManager::SetRootFile(G4String aFileName,G4String aDirName)
 {
   theRootFile = new TFile(aFileName,"RECREATE","Storing of HEPD info");
-  
+
   G4String aNameDir = aDirName;
   thePathDir = theRootFile->mkdir(aNameDir);
 
@@ -98,9 +98,9 @@ void HEPDSWProducerManager::BeginOfEventAction(const G4Event*)
       trackCollID = SDman->GetCollectionID("trackCollection");
       //      vertexCollID = SDman->GetCollectionID("vertexCollection");
     }
-  } 
+  }
 }
-  
+
 void HEPDSWProducerManager::StoreRootFile()
 {
   theRootFile->Write(0,TObject::kOverwrite);
@@ -113,25 +113,25 @@ void HEPDSWProducerManager::BeginOfRunAction(const G4Run*)
 ///////////////////////////////////////////////////////////////////////////////
 //
 void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
-{ 
+{
   //  if(verboseLevel>0)
     G4cout << "entering in EndOfEventAction..." << G4endl;
 
   eventID = evt->GetEventID();
 
-  
+
   G4HCofThisEvent * HCE = evt->GetHCofThisEvent();
 
   if(verboseLevel>0) {
   G4cout << " prod fin eventID " << eventID << " HCE " << HCE << G4endl;
-  G4cout << " degraderHitCollID " << degraderHitCollID << G4endl;  
-  G4cout << " trackerHitCollID " << trackerHitCollID << G4endl;  
-  G4cout << " caloHitCollID " << caloHitCollID << G4endl;  
-  G4cout << " vetoHitCollID " << vetoHitCollID << G4endl;  
-  G4cout << " trackCollID " << trackCollID << G4endl;  
-  G4cout << " vertexCollID " << vertexCollID << G4endl;  
+  G4cout << " degraderHitCollID " << degraderHitCollID << G4endl;
+  G4cout << " trackerHitCollID " << trackerHitCollID << G4endl;
+  G4cout << " caloHitCollID " << caloHitCollID << G4endl;
+  G4cout << " vetoHitCollID " << vetoHitCollID << G4endl;
+  G4cout << " trackCollID " << trackCollID << G4endl;
+  G4cout << " vertexCollID " << vertexCollID << G4endl;
   }
-  
+
   CaloHitsCollection * caloHC  = 0;
   CaloHitsCollection * vetoHC  = 0;
   TrackerHitsCollection * trackerHC   = 0;
@@ -196,12 +196,12 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
     }
     if(!(caloHitCollID<0)){
       caloHC = (CaloHitsCollection*)(HCE->GetHC(caloHitCollID));
-      G4cout << " caloHC entries " << caloHC->entries() << G4endl; 
+      G4cout << " caloHC entries " << caloHC->entries() << G4endl;
       std::map<int,TVector3> aStepPosMap;
       for(int i=0;i<caloHC->entries();i++){
-	//        G4cout << "---> caloHC entree " << i << G4endl; 
+	//        G4cout << "---> caloHC entree " << i << G4endl;
         aStepPosMap.clear();
-        TVector3 Entry((*caloHC)[i]->GetEntryPoint().getX(),(*caloHC)[i]->GetEntryPoint().getY(),(*caloHC)[i]->GetEntryPoint().getZ());	
+        TVector3 Entry((*caloHC)[i]->GetEntryPoint().getX(),(*caloHC)[i]->GetEntryPoint().getY(),(*caloHC)[i]->GetEntryPoint().getZ());
 	TVector3 Exit((*caloHC)[i]->GetExitPoint().getX(),(*caloHC)[i]->GetExitPoint().getY(),(*caloHC)[i]->GetExitPoint().getZ());
 	aStepPosMap.empty();
 	// int no_step_pos = 0;
@@ -211,7 +211,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
           if (no_step_pos > 20) break;
 	  } */
 	//        G4cout << " size StepPosMap " << (*caloHC)[i]->GetStepPosMap().size() << "max size StepPosMap " <<  (*caloHC)[i]->GetStepPosMap().max_size() << G4endl;
-        int mapsize = 0;
+        uint mapsize = 0;
         bool arret = false;
 	for(std::map<int,G4ThreeVector>::iterator j=(*caloHC)[i]->GetStepPosMap().begin();j!=(*caloHC)[i]->GetStepPosMap().end();j++){
           mapsize++;
@@ -223,14 +223,14 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
           G4ThreeVector g4tv = j->second;
 	  //	  G4cout << "jtkid " << itkid << " x " << g4tv.getX() <<  " y " << g4tv.getY() << " z " << g4tv.getZ() << " id " << (*caloHC)[i]->GetVolume() << G4endl;
           TVector3 tv(g4tv.getX(),g4tv.getY(),g4tv.getZ());
-	  aStepPosMap[itkid]=tv;  
+	  aStepPosMap[itkid]=tv;
 	  /*          for(std::map<int,TVector3>::iterator jj = aStepPosMap.begin();jj!=aStepPosMap.end();jj++){
 	     G4cout << "itkid " << jj->first << " x " << (jj->second).X() <<  " y " << (jj->second).Y() << " z " << (jj->second).Z() << " id " << (*caloHC)[i]->GetVolume() << G4endl;
 	     } */
 	}
         if (arret) break;
 	theCaloHitContainer.push_back( RootCaloHit((*caloHC)[i]->GetVolume(),Entry,Exit,
-                                                        (*caloHC)[i]->GetGlobalTime(),                                                                                                         (*caloHC)[i]->GetKinEnergy(),                                                        
+                                                        (*caloHC)[i]->GetGlobalTime(),                                                                                                         (*caloHC)[i]->GetKinEnergy(),
                                                         (*caloHC)[i]->GetTotalEdep()/MeV,
 						        (*caloHC)[i]->GetEdepMap(),
 				                        aStepPosMap) );
@@ -241,28 +241,28 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 
     if(!(vetoHitCollID<0)){
       vetoHC = (CaloHitsCollection*)(HCE->GetHC(vetoHitCollID));
-      G4cout << " vetoHC entries " << vetoHC->entries() << G4endl; 
+      G4cout << " vetoHC entries " << vetoHC->entries() << G4endl;
       std::map<int,TVector3> aStepPosMap;
       for(int i=0;i<vetoHC->entries();i++){
         aStepPosMap.clear();
-        TVector3 Entry((*vetoHC)[i]->GetEntryPoint().getX(),(*vetoHC)[i]->GetEntryPoint().getY(),(*vetoHC)[i]->GetEntryPoint().getZ());	
+        TVector3 Entry((*vetoHC)[i]->GetEntryPoint().getX(),(*vetoHC)[i]->GetEntryPoint().getY(),(*vetoHC)[i]->GetEntryPoint().getZ());
         TVector3 Exit((*vetoHC)[i]->GetExitPoint().getX(),(*vetoHC)[i]->GetExitPoint().getY(),(*vetoHC)[i]->GetExitPoint().getZ());
-        int mapsize = 0;
-        bool arret = false;
+        uint mapsize = 0;
+
 	for(std::map<int,G4ThreeVector>::iterator j=(*vetoHC)[i]->GetStepPosMap().begin();j!=(*vetoHC)[i]->GetStepPosMap().end();j++){
           mapsize++;
           if ((*vetoHC)[i]->GetStepPosMap().size()<mapsize) {
-	    //            arret = true;
+
             break;
           }
           int itkid = j->first;
           G4ThreeVector g4tv = j->second;
           TVector3 tv(g4tv.getX(),g4tv.getY(),g4tv.getZ());
-	  aStepPosMap[itkid]=tv;  
+	  aStepPosMap[itkid]=tv;
 	}
 
 	theVetoHitContainer.push_back(RootCaloHit((*vetoHC)[i]->GetVolume(),Entry,Exit,
-                                                        (*vetoHC)[i]->GetGlobalTime(),                                                                                                         (*vetoHC)[i]->GetKinEnergy(),                                                        
+                                                        (*vetoHC)[i]->GetGlobalTime(),                                                                                                         (*vetoHC)[i]->GetKinEnergy(),
                                                         (*vetoHC)[i]->GetTotalEdep()/MeV,
 						        (*vetoHC)[i]->GetEdepMap(),
 				                        aStepPosMap) );
@@ -270,7 +270,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 	  std::cout<<"VetoHit  # "<<i<<" ; Volume = "<<(*vetoHC)[i]->GetVolume()<<" ; Edep = "<<(*vetoHC)[i]->GetTotalEdep()/MeV<<" MeV"<<std::endl;
       }
     }
-    
+
     G4cout << " trackCollID " << trackCollID << G4endl;
     if(!(trackCollID<0)){
       trackHC = (TracksCollection*)(HCE->GetHC(trackCollID));
@@ -289,7 +289,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
                                               (*trackHC)[i]->GetCreatorProcessName()));
       }
     }
-    
+
     G4cout << " vertexCollID " << vertexCollID << G4endl;
     if(!(vertexCollID<0)){
       vertexHC = (VertexsCollection*)(HCE->GetHC(vertexCollID));
@@ -307,7 +307,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 	theVertexContainer.push_back(RootVertex(false,false,"NA",TVector3(0,0,0)));
       }
     }
-       
+
     if(verboseLevel>0)
       std::cout<<"=============================================================================================="<<std::endl;
   }

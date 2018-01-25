@@ -56,7 +56,7 @@ Double_t Muon_Flux(Double_t *x, Double_t *par) {
   Double_t costheta = par[0];
 
   Double_t ppar[5] = { 0.102573, -0.068287, 0.958633, 0.0407253, 0.817285 };
-  
+
   Double_t arg = costheta*costheta + ppar[0]*ppar[0] + ppar[1]*TMath::Power(costheta,ppar[2])+ ppar[3]*TMath::Power(costheta,ppar[4]);
   arg /= (1 + ppar[0]*ppar[0] + ppar[1]*ppar[1] + ppar[3]*ppar[3]);
 
@@ -67,7 +67,7 @@ Double_t Muon_Flux(Double_t *x, Double_t *par) {
 
   Double_t arg2 = ( (1/(1+((1.1*ce_muon*costheta_prod)/115))) + (0.054/(1+((1.1*ce_muon*costheta_prod)/850))) );
 
-  Double_t dIdE = arg1*arg2; 
+  Double_t dIdE = arg1*arg2;
 
   return(dIdE);
 
@@ -92,9 +92,9 @@ HEPDSWPrimaryGeneratorAction::HEPDSWPrimaryGeneratorAction(HEPDSWDetectorConstru
   fun_mu_costhe->SetParameter(2,costhe_par[2]);
 
   xrange_Muon_gen = 0;
-  yrange_Muon_gen = 0; 
+  yrange_Muon_gen = 0;
   emin_Muon = 0.05;
-  emax_Muon = 1000;  
+  emax_Muon = 1000;
 
   //  fun_mu_ke = new TF1("muflux",&HEPDSWPrimaryGeneratorAction::Muon_Flux,0.05,1000,1);
 
@@ -164,7 +164,7 @@ void HEPDSWPrimaryGeneratorAction::SetMuonGeneration(G4double dX,G4double dY, G4
   xrange_Muon_gen = dX;
   yrange_Muon_gen = dY;
   emin_Muon = Emin;
-  emax_Muon = Emax;  
+  emax_Muon = Emax;
   fun_mu_ke = new TF1("muflux",Muon_Flux,((Double_t) emin_Muon/1000),((Double_t) emax_Muon/1000),1);
   fun_mu_ke->SetNpx(1000);
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
@@ -199,15 +199,14 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if(random){
     G4double phi = 2*CLHEP::pi*G4RandFlat::shoot();
     G4double theta = std::sqrt(G4RandFlat::shoot());
-    float atheta = theta;
     theta = std::acos(theta);
     G4double Xmax = 0.5*(fDetector->GetWorldSizeX());
     G4double Ymax = 0.5*(fDetector->GetWorldSizeY());
     G4double Zmax = 0.5*(fDetector->GetWorldSizeZ());
-    //    G4cout << "xmax " << Xmax << " ymax " << Ymax << " theta " << theta << " cos theta " << atheta << " cos theta " << cos(theta) << G4endl; 
+    //    G4cout << "xmax " << Xmax << " ymax " << Ymax << " theta " << theta << " cos theta " << theta << " cos theta " << cos(theta) << G4endl;
     position = G4ThreeVector(-Xmax+2*Xmax*G4RandFlat::shoot(),-Ymax+2*Ymax*G4RandFlat::shoot(),Zmax);
     if(powerlaw)
-      fParticleGun->SetParticleEnergy(SpectrumPowerLaw(eminPL,emaxPL,gammaPL));    
+      fParticleGun->SetParticleEnergy(SpectrumPowerLaw(eminPL,emaxPL,gammaPL));
     if(flat)
       fParticleGun->SetParticleEnergy(FlatSpectrum(eminFlat,emaxFlat));
     if(centerpointing)
@@ -217,12 +216,12 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fParticleGun->SetParticlePosition(position);
     fParticleGun->SetParticleMomentumDirection(direction.unit());
     fParticleGun->GeneratePrimaryVertex(anEvent);
-  } 
+  }
   if(beam){
     G4String particleName;
     G4ParticleDefinition* particle = fParticleGun->GetParticleDefinition();
     const G4String& nome = particle->GetParticleName();
-    G4double masse = particle->GetPDGMass(); 
+    G4double masse = particle->GetPDGMass();
     G4double charge = particle->GetPDGCharge();
     G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
     fParticleGun->SetParticlePosition(position);
@@ -259,7 +258,7 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fParticleGun->SetParticlePosition(position);
     fParticleGun->SetParticleMomentumDirection(direction.unit());
     fParticleGun->GeneratePrimaryVertex(anEvent);
-    G4cout << "ev " << anEvent->GetEventID() << " x " << position.x() << " y " << position.y() << " z " << position.z() << " ke " << ke << " dir x " << direction.x() << " dir y " << direction.y() << " dir z " << direction.z() << G4endl; 
+    G4cout << "ev " << anEvent->GetEventID() << " x " << position.x() << " y " << position.y() << " z " << position.z() << " ke " << ke << " dir x " << direction.x() << " dir y " << direction.y() << " dir z " << direction.z() << G4endl;
   }
 
 }

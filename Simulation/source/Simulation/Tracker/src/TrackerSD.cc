@@ -47,23 +47,23 @@ TrackerSD::~TrackerSD()
 
 void TrackerSD::Initialize(G4HCofThisEvent*)
 {
-  TkHitCollection = new TrackerHitsCollection(SensitiveDetectorName,collectionName[0]); 
+  TkHitCollection = new TrackerHitsCollection(SensitiveDetectorName,collectionName[0]);
   verboseLevel = 0;
   HitMap.clear();
   detId=0;
   trackID=0;
-    
+
 }
 
 G4bool TrackerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
 
-  if(verboseLevel>1) 
-    std::cout<< " Entering a new Step " << aStep->GetTotalEnergyDeposit() << " given by Track "<< aStep->GetTrack()->GetTrackID()<<" with charge "<<aStep->GetTrack()->GetDefinition()->GetPDGCharge() 
+  if(verboseLevel>1)
+    std::cout<< " Entering a new Step " << aStep->GetTotalEnergyDeposit() << " given by Track "<< aStep->GetTrack()->GetTrackID()<<" with charge "<<aStep->GetTrack()->GetDefinition()->GetPDGCharge()
 	     <<" in the volume "<< aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName()<<std::endl;
- 
+
   if(aStep->GetTotalEnergyDeposit()>0. && 0.0 != aStep->GetTrack()->GetDefinition()->GetPDGCharge()){
-    if(verboseLevel>1) 
-      std::cout<<" I'm going to check if I need a new Hit or I have to update the old one"<<std::endl; 
+    if(verboseLevel>1)
+      std::cout<<" I'm going to check if I need a new Hit or I have to update the old one"<<std::endl;
     if(NewHit(aStep)){
       CreateHit(aStep);
     }else{
@@ -74,9 +74,9 @@ G4bool TrackerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
 }
 
 G4bool TrackerSD::NewHit(G4Step* aStep){
-  
-  if(verboseLevel>1) 
-    std::cout<<" I'm inside the NewHit method"<<std::endl; 
+
+  if(verboseLevel>1)
+    std::cout<<" I'm inside the NewHit method"<<std::endl;
   G4Track * theTrack = aStep->GetTrack();
   if(verboseLevel>1){
     std::cout<< " new TrackId = "<<theTrack->GetTrackID()<<" old TrackId = "<<trackID<<std::endl;
@@ -89,17 +89,17 @@ G4bool TrackerSD::NewHit(G4Step* aStep){
 }
 
 int TrackerSD::SetDetectorId(G4Step* aStep){
-  int detId = 0;
-  if(verboseLevel>1) 
-    std::cout<<" I'm inside the SetDetectorId method"<<std::endl; 
+  detId = 0;
+  if(verboseLevel>1)
+    std::cout<<" I'm inside the SetDetectorId method"<<std::endl;
   const G4VTouchable* VT(aStep->GetPreStepPoint()->GetTouchable());
   if(verboseLevel>1)
     std::cout<<"Volume Name Layer? = "<<VT->GetVolume(4)->GetName()<<" and CopyNumber = "<<VT->GetCopyNumber(4)<<std::endl;
   if(VT->GetCopyNumber(4)==0)
     detId=2200;
   else
-    detId=2100;  
-  if(verboseLevel>1) 
+    detId=2100;
+  if(verboseLevel>1)
     std::cout<<"Volume Name Ladder? = "<<VT->GetVolume(2)->GetName()<<" and CopyNumber = "<<VT->GetCopyNumber(2)<<std::endl;
   if(VT->GetCopyNumber(2) == 0)
     detId+=30;
@@ -107,7 +107,7 @@ int TrackerSD::SetDetectorId(G4Step* aStep){
     detId+=20;
   else if (VT->GetCopyNumber(2) == 2)
     detId+=10;
-  if(verboseLevel>1) 
+  if(verboseLevel>1)
     std::cout<<"Volume Name Module? = "<<VT->GetVolume()->GetName()<<std::endl;
   if(VT->GetVolume()->GetName()=="SiliconSensorM")
     detId+=1;
@@ -119,8 +119,8 @@ int TrackerSD::SetDetectorId(G4Step* aStep){
 }
 
 void TrackerSD::CreateHit(G4Step * aStep){
-  G4Track * theTrack    = aStep->GetTrack(); 
-  if(verboseLevel>1) 
+  G4Track * theTrack    = aStep->GetTrack();
+  if(verboseLevel>1)
     std::cout<<"TrackerSD::CreateHit Start to collect the info for the new Hit"<<std::endl;
   int theDetectorId = SetDetectorId(aStep);
   if (theDetectorId == 0){
@@ -128,45 +128,45 @@ void TrackerSD::CreateHit(G4Step * aStep){
   }
   int theTrackID    = theTrack->GetTrackID();
   G4double theEnergyLoss     = aStep->GetTotalEnergyDeposit()/MeV;
-  G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition(); 
+  G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition();
   G4ThreeVector theEntryPoint = aStep->GetPreStepPoint()->GetPosition();
   G4double theKE      = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
   G4double theTof       = aStep->GetPreStepPoint()->GetGlobalTime()/nanosecond;
-  G4int theParticleType = theTrack->GetParticleDefinition()->GetPDGEncoding();    
+  G4int theParticleType = theTrack->GetParticleDefinition()->GetPDGEncoding();
   G4ThreeVector gmd  = aStep->GetPreStepPoint()->GetMomentumDirection();
   // convert it to local frame
   G4ThreeVector lmd = ((G4TouchableHistory *)(aStep->GetPreStepPoint()->GetTouchable()))->GetHistory()->GetTopTransform().TransformAxis(gmd);
   G4double theThetaAtEntry = lmd.theta();
   G4double thePhiAtEntry = lmd.phi();
   G4ThreeVector theMomentumDirection =  aStep->GetPreStepPoint()->GetMomentumDirection();
-  
-  if(verboseLevel>1) 
+
+  if(verboseLevel>1)
     std::cout<<"TrackerSD::CreateHit I'm creating the new Hit on DetId "<<theDetectorId<<std::endl;
-  
+
   detId=theDetectorId;
   trackID=theTrackID;
   TrackerHit* trackerHit = new TrackerHit(theEntryPoint,theExitPoint,theKE,theTof,
 					  theEnergyLoss,theParticleType,theDetectorId,
 					  theTrackID,theThetaAtEntry,
-					  thePhiAtEntry,theMomentumDirection);  
-  
+					  thePhiAtEntry,theMomentumDirection);
+
   G4int cell = TkHitCollection->insert(trackerHit);
   int mapKey = ((trackID&tkIdMask)<<tkIdOffset)|(detId&detIdMask);
   HitMap[mapKey] = cell-1;
-  if(verboseLevel>1) 
+  if(verboseLevel>1)
     std::cout<<"TrackerSD::CreateHit I have just created the new Hit"<<std::endl;
 }
 
 
-void TrackerSD::UpdateHit(G4Step* aStep){ 
-  if(verboseLevel>1) 
+void TrackerSD::UpdateHit(G4Step* aStep){
+  if(verboseLevel>1)
     std::cout<<"TrackerSD::CreateHit I just going to update the Hit"<<std::endl;
   int mapKey = ((aStep->GetTrack()->GetTrackID()&tkIdMask)<<tkIdOffset)|(SetDetectorId(aStep)&detIdMask);
-  if(HitMap.find(mapKey)!=HitMap.end()){    
+  if(HitMap.find(mapKey)!=HitMap.end()){
     G4double theEnergyLoss     = aStep->GetTotalEnergyDeposit()/MeV;
     (*TkHitCollection)[HitMap[mapKey]]->SetExitPoint(aStep->GetPreStepPoint()->GetPosition());
     (*TkHitCollection)[HitMap[mapKey]]->AddEnergyLoss(theEnergyLoss);
-    if(verboseLevel>1) 
+    if(verboseLevel>1)
       std::cout<<"TrackerSD::CreateHit I just have update the Hit"<<std::endl;
   }
 }
@@ -175,20 +175,20 @@ void TrackerSD::EndOfEvent(G4HCofThisEvent* HCE)
 {
   static G4int HCID = -1;
 
-  HCID = GetCollectionID(0);  
+  HCID = GetCollectionID(0);
   HCE->AddHitsCollection( HCID, TkHitCollection );
-  
+
 }
 
 void TrackerSD::clear()
 {
-} 
+}
 
 void TrackerSD::DrawAll()
 {
-} 
+}
 
 void TrackerSD::PrintAll()
 {
-} 
+}
 
