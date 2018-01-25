@@ -27,41 +27,63 @@
  */
 
 
-MatteoMethod::MatteoMethod(std::string datacardname) : MeV2ADCMethod(datacardname)
+MatteoMethod::MatteoMethod (std::string datacardname) : calomev2adcmethod (datacardname)
 {
-	convertParameterDatacard();
-	UpdateMyPMTs();
+    init();
 }
 
-void MatteoMethod::UpdateMyPMTs(){
-	int i = 0;
-	for (auto pmt : PMTs) {
-		PMTnumbersMatteo tmp(PMTs[i]);
-		MyPMTs[i] = tmp;
-		i++;
-	}
+
+
+void MatteoMethod::init()
+{
+    getFitParameters();
+    getPedestals();
 }
 
-void MatteoMethod::convertParameterDatacard(){
-	for (auto line : datacard) {
-		int idx = static_cast<int> (line[0]);
-		MyPMTs[idx].Slope = line[1];
-		MyPMTs[idx].Interc = line[2];
-		MyPMTs[idx].ErrSlope = line[3];
-		MyPMTs[idx].ErrInterc = line[4];
-	}
+void MatteoMethod::getFitParameters()
+{
+    for (auto line : datacard) {
+        const int idx = static_cast<int> (line[0]);
+        PMTenum iPMT = PMTiterator[idx];
+        PMTnumbersMatteo pmt;
+        pmt.Slope = line[1];
+        pmt.Interc = line[2];
+        pmt.ErrSlope = line[3];
+        pmt.ErrInterc = line[4];
+        pmtParameters[iPMT] = pmt;
+    }
+    return;
 }
 
-short MatteoMethod::adcFromMev(float mev, int sensor) {
-	PMTnumbersMatteo thisPMT = MyPMTs[sensor];
-	float adc_tmp = mev * mev * thisPMT.Slope + mev * thisPMT.Interc; 
-	short adc = static_cast<short> (adc_tmp);
-	return adc;
+
+void MatteoMethod::getPedestals()
+{
+    csv2fvec dataPed;
+    std::vector<std::vector<float>> datacardPedestals = dataPed.fromDatacard ("laurentHGpeakshift.csv");
+    if (datacardPedestals.empty() ) std::cerr << "MatteoM: init failed (pedestals datacard file not found)" << std::endl;
+    int iPMT = 0;
+    for (auto line : datacardPedestals) {
+        pmtParameters[iPMT].pedMean = line[0];
+        iPMT++;
+    }
+    return;
 }
 
-short MatteoMethod::Err_adcFromMev(float mev, int sensor) {
-	PMTnumbersMatteo thisPMT = MyPMTs[sensor];
-	float Err_adc_tmp = mev * std::sqrt(mev * mev * thisPMT.ErrSlope * thisPMT.ErrSlope + thisPMT.ErrInterc * thisPMT.ErrInterc);
-	short Err_adc = static_cast<short> (Err_adc_tmp);
-	return Err_adc;
+
+
+short MatteoMethod::adcFromMev (float mev, int sensor)
+{
+    PMTnumbersMatteo thisPMT = pmtParameters[sensor];
+    // See comment at top: slope, intercept defined such that E(data)/E(MC) = slope * E(MC) + intercept
+    float fadc = mev * mev * thisPMT.Slope + mev * thisPMT.Interc;
+    fadc += thisPMT.pedMean;
+    return clipADC (fadc);
+}
+
+short MatteoMethod::Err_adcFromMev (float mev, int sensor)
+{
+    PMTnumbersMatteo thisPMT = pmtParameters[sensor];
+    float fErr_adc = mev * std::sqrt (mev * mev * thisPMT.ErrSlope * thisPMT.ErrSlope + thisPMT.ErrInterc * thisPMT.ErrInterc);
+    short Err_adc = static_cast<short> (fErr_adc);
+    return Err_adc;
 }

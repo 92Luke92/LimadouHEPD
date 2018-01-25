@@ -33,3 +33,8 @@ short calomev2adcmethod::clipADC(int unclippedADC) {
      if (unclippedADC > NADC) unclippedADC = NADC - 1;
      return static_cast<short> (unclippedADC);
 }
+
+short calomev2adcmethod::clipADC(float unclippedADC) {
+     return clipADC (static_cast<int> (unclippedADC));
+}
+

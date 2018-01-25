@@ -10,7 +10,7 @@
 
 #include <mev2adcmethod.hh>
 
-class MatteoMethod : public MeV2ADCMethod
+class MatteoMethod : public calomev2adcmethod
 {
   public:
     MatteoMethod(std::string datacardname);
@@ -18,19 +18,20 @@ class MatteoMethod : public MeV2ADCMethod
     short Err_adcFromMev(float mev, int sensor);
 
   protected:
-    struct PMTnumbersMatteo : public PMTnumbers {
+    void init();
+    void getFitParameters();
+    void getPedestals();
+
+
+    struct PMTnumbersMatteo  {
       float Slope, ErrSlope;
       float Interc, ErrInterc;
-      PMTnumbersMatteo(){};
-      PMTnumbersMatteo(const PMTnumbers& other) : PMTnumbers(other){};
+      float pedMean;
     };
 
 
    private:
-    void  UpdateMyPMTs();
-    void  convertParameterDatacard();
-
-    std::array<PMTnumbersMatteo, NPMT>  MyPMTs;
+    std::array<PMTnumbersMatteo, NPMT>  pmtParameters;
 
 };
 
