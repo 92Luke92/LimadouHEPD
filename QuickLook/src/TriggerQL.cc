@@ -1,4 +1,4 @@
-/home/luca/Documenti/Limadou/Optical_Photons/Scint_layer/presentation/presentation.pdf/**
+/**
  * =============================================================================
  *
  * Created by Francesco Palma & Luca Carfora @ INFN Roma2:
