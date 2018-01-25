@@ -4,7 +4,7 @@
 set(headers "")
 set(sources "")
 
-foreach(subdir Core MCTruth Calorimeter Tracker)
+foreach(subdir Core MCTruth Calorimeter Tracker Degrader)
   message(STATUS "process subdir :" ${subdir})
   add_subdirectory(${subdir})
   get_directory_property(sub_headers DIRECTORY ${subdir} DEFINITION headers)

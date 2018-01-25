@@ -52,7 +52,7 @@ HEPDSWEventAction::~HEPDSWEventAction()
 void HEPDSWEventAction::BeginOfEventAction(const G4Event* evt)
 { 
   evtNo = evt -> GetEventID(); 
-  if (evtNo%printModul == 0) 
+  //  if (evtNo%printModul == 0) 
     G4cout << "\n---> Begin Of Event: " << evtNo << G4endl;
   
   HEPDSWProducerManager::GetInstance()->BeginOfEventAction(evt);  
@@ -60,7 +60,7 @@ void HEPDSWEventAction::BeginOfEventAction(const G4Event* evt)
 
 void HEPDSWEventAction::EndOfEventAction(const G4Event* evt)
 {
-  if (evtNo%printModul == 0) 
+  //  if (evtNo%printModul == 0) 
     G4cout << "\n---> End Of Event: " << evtNo <<G4endl;
   
   HEPDSWProducerManager::GetInstance()->EndOfEventAction(evt);  

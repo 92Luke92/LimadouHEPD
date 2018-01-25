@@ -8,6 +8,7 @@
 #include "RootVertex.hh"
 #include "RootCaloHit.hh"
 #include "RootTrackerHit.hh"
+#include "RootDegraderHit.hh"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,10 +19,11 @@ public:
   RootEvent ();
   RootEvent (int aEventID,
 		 std::vector<RootTrack> aTracks,
-		 std::vector<RootVertex> aVertex,
+	         std::vector<RootVertex> aVertex,
 		 std::vector<RootCaloHit> aCaloHit,
 		 std::vector<RootCaloHit> aVetoHit,
-		 std::vector<RootTrackerHit> aTkHit);
+	         std::vector<RootTrackerHit> aTkHit,
+		 std::vector<RootDegraderHit> aDgHit);
   
   ~RootEvent ();
   RootEvent (const RootEvent&);
@@ -32,6 +34,7 @@ public:
   inline std::vector<RootCaloHit>  GetCaloHit(){return theCaloHitCollection;}
   inline std::vector<RootCaloHit>  GetVetoHit(){return theVetoHitCollection;}
   inline std::vector<RootTrackerHit>  GetTrackerHit(){return theTrackerHitCollection;}
+  inline std::vector<RootDegraderHit>  GetDegraderHit(){return theDegraderHitCollection;}
 
   inline void SetEventID(int aEventID) {eventID=aEventID;}
   inline void SetTracks(std::vector<RootTrack> aTracks) {theTrackCollection=aTracks;}
@@ -39,6 +42,7 @@ public:
   inline void SetCaloHit(std::vector<RootCaloHit> aCaloHit) {theCaloHitCollection=aCaloHit;}
   inline void SetVetoHit(std::vector<RootCaloHit> aVetoHit) {theVetoHitCollection=aVetoHit;}
   inline void SetTrackerHit(std::vector<RootTrackerHit> aTrackerHit) {theTrackerHitCollection=aTrackerHit;}
+  inline void SetDegraderHit(std::vector<RootDegraderHit> aDegraderHit) {theDegraderHitCollection=aDegraderHit;}
 
   ClassDef(RootEvent,2);
   
@@ -50,6 +54,7 @@ private:
   std::vector<RootCaloHit> theCaloHitCollection;
   std::vector<RootCaloHit> theVetoHitCollection;
   std::vector<RootTrackerHit> theTrackerHitCollection;
+  std::vector<RootDegraderHit> theDegraderHitCollection;
 
 };
 

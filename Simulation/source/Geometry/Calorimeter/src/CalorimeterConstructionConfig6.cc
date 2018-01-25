@@ -40,6 +40,7 @@
 #include "G4PVPlacement.hh"
 #include "G4PVReplica.hh"
 #include "G4IntersectionSolid.hh"
+#include "G4UserLimits.hh"
 #include "G4Trap.hh"
 #include "G4Cons.hh"
 
@@ -58,7 +59,7 @@
 #include <iomanip>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-CalorimeterConstructionConfig6::CalorimeterConstructionConfig6()
+CalorimeterConstructionConfig6::CalorimeterConstructionConfig6(G4double tb_offset_Z, G4bool useProtonTB)
   :fSolidS1(0),
    fSolidS1SuppHoleBar(0),  
    fSolidS1SuppBack(0),
@@ -118,6 +119,9 @@ CalorimeterConstructionConfig6::CalorimeterConstructionConfig6()
 
   pMaterial           = new HEPDSWMaterial();
 
+
+  proton_tb_offset_Z = tb_offset_Z;
+  use_ProtonTB = useProtonTB;
 
   // S1 Scintillator
   fS1ScintNumber     = 6;
@@ -545,6 +549,8 @@ void CalorimeterConstructionConfig6::ComputeObjectsPositioning(){
 
  
   ShiftOrigin = fCalo_Z/2. + 36.16*mm + 0.7*mm;
+  G4cout << "ShiftOrigin " << ShiftOrigin << " use_ProtonTB " << use_ProtonTB << G4endl;
+  if (use_ProtonTB) ShiftOrigin -= (proton_tb_offset_Z);
   
   fPhysiS1SuppBack_Y = 0;//fS1SuppBottom_X/2.-18.860*mm-fS1SuppBottomHole_X/2.;
   fPhysiS1SuppBack_X = 0;
@@ -556,7 +562,8 @@ void CalorimeterConstructionConfig6::ComputeObjectsPositioning(){
 
   fPhysiS1_Y = 0;
   fPhysiS1_X = 0;
-  fPhysiS1_Z = fCalo_Z/2. + fS1_Z/2. + fCFSuppAV_Z +fCFSuppPorO_Z +7.22*mm;//   147.8*mm+18.28*mm+fS1_Z/2.;
+  fPhysiS1_Z = fCalo_Z/2. + fS1_Z/2. + fCFSuppAV_Z +fCFSuppPorO_Z +7.22*mm;
+//   147.8*mm+18.28*mm+fS1_Z/2.;
 
   fPhysiS1SuppHoleBar_Y  = 0;
   fPhysiS1SuppHoleBar_X  = 0;
@@ -995,6 +1002,8 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   // S1 scintillator
+  
+  G4cout << " fSolidS1 dz mm " << fS1_Z << G4endl; 
   fSolidS1 = new G4Box("S1",fS1_X/2.,fS1_Y/2.,fS1_Z/2.);
 
   fSolidS1SuppHoleBar = new G4Box("CFSupportHoleBar",fS1SuppHoleBar_X/2.,fS1SuppHoleBar_Y/2.,fS1SuppHoleBar_Z/2.);
@@ -1028,20 +1037,25 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
  
   fSolidS1ScintContainer = new G4Box("ScintContainer",fS1ScintContainer_X/2.,fS1ScintContainer_Y/2.,fS1ScintContainer_Z/2.);
 
+  G4cout << "fSolidS1Scint dz mm " << fS1Scint_Z << G4endl;
   fSolidS1Scint = new G4Box("S1Scint",fS1Scint_X/2.,fS1Scint_Y/2.,fS1Scint_Z/2.);
   ///////////////////////////////////////////////////////
 
 
 
   // Calorimeter
+  G4cout << "fSolidCaloBox dz mm " << fCalo_Z << G4endl;
   fSolidCaloBox = new G4Box("Calorimeter",fCalo_X/2.,fCalo_Y/2.,fCalo_Z/2.);
    
+  G4cout << "fSolidScintBox dz mm " << fScint_Z << G4endl;
   fSolidScintBox = new G4Box("CalorimeterScint",fScint_X/2.,fScint_Y/2.,fScint_Z/2.);
 
   fSolidCrystalBox = new G4Box("CalorimeterCrystal",fCrystal_X/2.,fCrystal_Y/2.,fCrystal_Z/2.);
 
+  G4cout << "fSolidScinLayer dz mm " << fCaloLayer_Z << G4endl;
   fSolidLayer = new G4Box("Layer",fCaloLayer_X/2.,fCaloLayer_Y/2.,fCaloLayer_Z/2.);
   
+  G4cout << "fSolidScinLastLayer dz mm " << fCaloLastLayer_Z << G4endl;
   fSolidLastLayer = new G4Box("LastActiveLayer", fCaloLastLayer_X/2., fCaloLastLayer_Y/2., fCaloLastLayer_Z/2.);
 
   G4RotationMatrix * _rot90 = new G4RotationMatrix;
@@ -1062,9 +1076,10 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   _rot180ZY->rotateY(180 * deg);
   _rot180ZY->rotateZ(180 * deg);
   
-  
+  G4cout << "fSolidActiveTrapLayer dx1 dx2 dy1 dy2 dz mm " << fActiveTrapLayerX1 << " " <<fActiveTrapLayerX2<< " " <<fActiveTrapLayerY1<< " " <<fActiveTrapLayerY2<< " " <<fActiveTrapLayerZ << G4endl;  
   fSolidActiveTrapLayer = new G4Trap ("TrapezoidalLayer", fActiveTrapLayerX1/2., fActiveTrapLayerX2/2., fActiveTrapLayerY1/2., fActiveTrapLayerY2/2., fActiveTrapLayerZ/2.); 
 
+  G4cout << "fSolidActiveRectLayer dx dy dz mm " << fActiveRectLayer_X << " "<< fActiveRectLayer_Y<< " " << fActiveRectLayer_Z << G4endl;  
   fSolidActiveRectLayer = new G4Box("RectangularLayer", fActiveRectLayer_X/2.,fActiveRectLayer_Y/2.,fActiveRectLayer_Z/2.);  
   
   fSolidActiveLayer_1 = new G4UnionSolid("ActiveLayer1",  fSolidActiveRectLayer,  fSolidActiveTrapLayer, _rot90, G4ThreeVector(0, fActiveLayer_Y/2. -fActiveTrapLayerZ/2. ,0));     
@@ -1108,6 +1123,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   fSolidSingleCrystalBlockContainer = new G4Box("SingleCrystalBlockContainer",fCFBlockContainerExt_X/2.,fCFBlockContainerExt_Y/2.,fCFBlockContainerExt_Z/2.);
 
+  G4cout << "fSolidCrystalActiveBlock dx dy dz mm " << fCrystalBlock_X << " " << fCrystalBlock_Y << " " << fCrystalBlock_Z << " " << G4endl; 
   fSolidCrystalActiveBlock = new G4Box("CrystalActiveBlock",fCrystalBlock_X/2.,fCrystalBlock_Y/2.,fCrystalBlock_Z/2.);
   
   fSolidTeflonContainerExt = new G4Box("TeflonContainerExt",TeflonContainerExt_X/2.,TeflonContainerExt_Y/2.,TeflonContainerExt_Z/2.);
@@ -1174,9 +1190,10 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   fSolidPanelDown2          = new G4SubtractionSolid("SquadreHole8", fSolidSquarePanelDown8, fSolidCFCrystalPanelDownHole, 0, G4ThreeVector(posX[2], posY[2], 0));
   
 
-  
+  G4cout << "fSolidCrystalBlockContainer dz mm " <<  fCrystalBlockContainer_Z << G4endl; 
   fSolidCrystalBlockContainer = new G4Box("CrystalBlockContainer",fCrystalBlockContainer_X/2.,fCrystalBlockContainer_Y/2.,fCrystalBlockContainer_Z/2.);
   
+  G4cout << "fSolidCrystalBlockRawContainer dz mm " <<  fCrystalBlockRawContainer_Z << G4endl; 
   fSolidCrystalBlockRawContainer = new G4Box("CrystalBlockRawContainer",fCrystalBlockRawContainer_X/2.,fCrystalBlockRawContainer_Y/2.,fCrystalBlockRawContainer_Z/2.);
   fSolidCFCrystalSideX = new G4Box("CFCrystalSideX",fCFCrystalSideX_X/2.,fCFCrystalSideX_Y/2.,fCFCrystalSideX_Z/2.);
   
@@ -1517,7 +1534,9 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   //fLogicHoneyCombSkinBottom = new G4LogicalVolume(fSolidHoneyCombSkinBottom,cfMat,"HoneyCombSkin"); 
 
-
+  G4double maxStep = 0.25*fActiveTrapLayerZ;
+  fStepLimit = new G4UserLimits(maxStep);
+  fLogicScintActiveLayer->SetUserLimits(fStepLimit);
   fLogicScintActiveLayer->SetSensitiveDetector(caloSD);
   fLogicCrystalActiveBlock->SetSensitiveDetector(caloSD);
   fLogicS1Scint->SetSensitiveDetector(caloSD);
@@ -1529,9 +1548,8 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   fLogicVetoLatY2->SetSensitiveDetector(vetoSD);
   // bisogna separare i due piani
 
-
-
-  
+ 
+  G4cout << " fPhysiS1 z mm " << fPhysiS1_Z+ShiftOrigin << G4endl; 
 
   fPhysiS1 = new G4PVPlacement(0,
 			       G4ThreeVector(fPhysiS1_X,fPhysiS1_Y,fPhysiS1_Z + ShiftOrigin ),
@@ -1657,6 +1675,8 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   // CALO 
   
+  G4cout << " fPhysiCaloBox z mm dans mere " << ShiftOrigin << G4endl; 
+
   fPhysiCaloBox = new G4PVPlacement(0,                        
 				    G4ThreeVector(0,0,ShiftOrigin),   
 				    "Calorimeter",               
@@ -1664,6 +1684,8 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 				    motherVolume,                
 				    false,                       
 				    0,true);       
+
+  G4cout << " fPhysiScintBox z mm dans fPhysiCaloBox " << fPhysiScintBox_Z << G4endl; 
   
   fPhysiScintBox = new G4PVPlacement(0,                        
 				     G4ThreeVector(fPhysiScintBox_X,fPhysiScintBox_Y,fPhysiScintBox_Z),
@@ -1671,7 +1693,9 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 				     fLogicScintBox,                
 				     fPhysiCaloBox,                
 				     false,                       
-				     0,true);       
+				     0,true);
+       
+  G4cout << " fPhysiScintLayer dz mm rep dans fPhysiScintBox " << fCaloLayer_Z << G4endl; 
   
   fPhysiScintLayer = new G4PVReplica("LayerScint", 
 				     fLogicScintLayer,            
@@ -1679,6 +1703,8 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 				     kZAxis,                 
 				     fNbOfReplicatedScintLayers,        
 				     fCaloLayer_Z);
+
+  G4cout << " fPhysiLastScintLayer z mm dans fPhysiCalobox " << fPhysiLastScintLayer_Z << G4endl; 
 
   fPhysiLastScintLayer = new G4PVPlacement(0,                        
 					   G4ThreeVector(fPhysiLastScintLayer_X,fPhysiLastScintLayer_Y,fPhysiLastScintLayer_Z),
@@ -1689,6 +1715,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					   0,true); 
   
 
+  G4cout << " fPhysiScintActiveLayer z mm dans fPhysiScintLayer " << fPhysiActiveLayer_Z << G4endl; 
   
   // piani scintillatore
   fPhysiScintActiveLayer = new G4PVPlacement(0,                   
@@ -1910,6 +1937,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   /*###################################    Ultimo piano di scintillatore plastico    ###################################################*/
   
+  G4cout << " fPhysiScintActiveLayer z mm dans fPhysiLastScintLayer " << fPhysiActiveLayer_Z-fPoronFrontPO_Z/2. << G4endl; 
   fPhysiScintActiveLayer = new G4PVPlacement(0,                   
 					     G4ThreeVector(fPhysiActiveLayer_X,fPhysiActiveLayer_Y,fPhysiActiveLayer_Z-fPoronFrontPO_Z/2.),     
 					     // G4ThreeVector(0 , 0 , 0),     
@@ -2006,6 +2034,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   /* ################################     Cristalli di LYSO     ##################################*/
   
+  G4cout << "fPhysiCrystalBox z mm dans fPhysiCaloBox " << fPhysiCrystalBox_Z << G4endl; 
   fPhysiCrystalBox = new G4PVPlacement(0,                        
 				       G4ThreeVector(fPhysiCrystalBox_X,fPhysiCrystalBox_Y,fPhysiCrystalBox_Z),   
 				       "CalorimeterCrystal",               
@@ -2063,6 +2092,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					       false,
 					       0,true);
 					      
+  G4cout << "fPhysiCrystalBlockPlaneContainer z mm dans fPhysiCrystalBox" << fPhysiCrystalBlockPlaneContainer_Z << G4endl;
   fPhysiCrystalBlockPlaneContainer = new G4PVPlacement(0,
 						       G4ThreeVector(fPhysiCrystalBlockPlaneContainer_X,fPhysiCrystalBlockPlaneContainer_Y,fPhysiCrystalBlockPlaneContainer_Z),
 						       "CristalBlockPlaneContainer",
@@ -2079,13 +2109,15 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					0,true); 
   				        
 
+  G4cout << "fPhysiCrystalBlockRaw rep dans fPhysiCrystalBlockPlaneContainer" << G4endl;
   fPhysiCrystalBlockRaw = new G4PVReplica("CrystalBlockRaw", 
 					  fLogicCrystalBlockRawContainer,            
 					  fPhysiCrystalBlockPlaneContainer,
 					  kYAxis,                 
 					  3,
-					  fCrystalBlockRawContainer_Y);   
-
+					  fCrystalBlockRawContainer_Y); 
+  
+  G4cout << "fPhysiTeflonLYSO rep dans fPhysiCrystalBlockRaw" << G4endl;
   fPhysiTeflonLYSO = new G4PVReplica("CrystalBlock", 
 				     fLogicTeflonLYSO,            
 				     fPhysiCrystalBlockRaw,
@@ -2094,6 +2126,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 				     fCFBlockContainerExt_X);   
 
   
+  G4cout << "fPhysiCrystalActiveBlock z mm dans fPhysiTeflonLYSO 0 " << G4endl; 
   fPhysiCrystalActiveBlock = new G4PVPlacement(0,                   
 					       G4ThreeVector(0 , 0 ,0),
 					       "ActiveBlockCrystal",
@@ -2599,7 +2632,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   //Visualization Attribute
   G4VisAttributes* attCyan = new G4VisAttributes(G4Colour::Cyan());
-  attCyan->SetVisibility(true);
+  attCyan->SetVisibility(false);
   attCyan->SetForceAuxEdgeVisible(true);
   
   
@@ -2611,7 +2644,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
     
   G4VisAttributes* attYellow = new G4VisAttributes(G4Colour::Yellow());
-  attYellow->SetVisibility(true);
+  attYellow->SetVisibility(false);
   attYellow->SetForceAuxEdgeVisible(true); 
   fLogicS1SuppPoronFront->SetVisAttributes(attYellow);
   fLogicPoronLat->SetVisAttributes(attYellow);
@@ -2628,7 +2661,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   G4VisAttributes* attBrown = new G4VisAttributes(G4Colour::Brown());
-  attBrown->SetVisibility(true);
+  attBrown->SetVisibility(false);
   attBrown->SetForceAuxEdgeVisible(true);
   fLogicS1SuppBack->SetVisAttributes(attBrown);
   fLogicS1SuppFront->SetVisAttributes(attBrown);
@@ -2660,13 +2693,13 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   G4VisAttributes* attRed = new G4VisAttributes(G4Colour::Red());
-  attRed->SetVisibility(true);
+  attRed->SetVisibility(false);
   attRed->SetForceAuxEdgeVisible(true);
   
 
 
   G4VisAttributes* attBlue = new G4VisAttributes(G4Colour::Blue());
-  attBlue->SetVisibility(true);
+  attBlue->SetVisibility(false);
   attBlue->SetForceAuxEdgeVisible(true);
   fLogicCrystalActiveBlock->SetVisAttributes(attBlue);
   fLogicVetoLatX->SetVisAttributes(attBlue);

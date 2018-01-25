@@ -2,16 +2,14 @@
 /control/verbose 2
 /run/verbose 1
 #
-/hepd/setWorldSize 55 75 80 cm
 #/hepd/setWorldSize 55 75 150 cm
+/hepd/setWorldSize 55 75 80 cm
 
 /hepd/ActivateSatellite false
-#/hepd/ActivateSatellite true
 /hepd/SatelliteConfiguration Config1
 /hepd/Satellite/BlanketMaterialConfiguration mylar
 /hepd/Satellite/WallMaterialConfiguration Aluminium
 
-#/hepd/ActivateHEPDBox false
 /hepd/ActivateHEPDBox true
 /hepd/HEPDBoxConfiguration Config4
 /hepd/HEPDBox/BlanketMaterialConfiguration mylar
@@ -23,12 +21,6 @@
 /hepd/Tracker/KaptonMaterialConfiguration Kapton
 /hepd/Tracker/CarbonFiberMaterialConfiguration CarbonFiber
 
-#/hepd/ActivateScintillator true
-#/hepd/ScintillatorConfiguration Config4
-#/hepd/Scintillator/ScintillatorMaterialConfiguration Scintillator
-#/hepd/Scintillator/PoronMaterialConfiguration Poron 
-#/hepd/Scintillator/CarbonFiberMaterialConfiguration CarbonFiber
-
 /hepd/ActivateCalo true
 /hepd/CaloConfiguration Config6
 /hepd/Calorimeter/CalorimeterTwoMaterialConfiguration Scintillator LYSO
@@ -36,51 +28,53 @@
 /hepd/Calorimeter/PoronMaterialConfiguration Poron
 /hepd/Calorimeter/CarbonFiberMaterialConfiguration CarbonFiber
 
+# HEPD proton test beam configuration 
+#/hepd/ActivateHEPDProtonTB true
+#/hepd/ActivateHEPDDegrader true
 
-## ELECTROMAGNETIC model
+#
 /hepd/phys/addPhysics  emstandard_opt4
 
 
-## ELASTIC HADRONIC model (primary + secondary)
 /hepd/phys/addPhysics  elastic
 /hepd/phys/addPhysics  IonElastic
-
-
-## MODEL 1: HADRONIC INELASTIC model (qmd) (primary + secondary)
-/hepd/phys/addPhysics  Shielding
-/hepd/phys/addPhysics  qmd_ion
-
-## MODEL 2: HADRONIC INELASTIC model (Incl) (primary + secondary)
+#/hepd/phys/addPhysics  Shielding
+#/hepd/phys/addPhysics  qmd_ion
 #/hepd/phys/addPhysics  INCLXX
 #/hepd/phys/addPhysics  inclxx_ion
-
-## MODEL 3: HADRONIC INELASTIC model (Binary) (primary + secondary)
-#/hepd/phys/addPhysics  QGSP_BIC_HP
-#/hepd/phys/addPhysics  binary_ion
+/hepd/phys/addPhysics  QGSP_BIC_HP
+/hepd/phys/addPhysics  binary_ion
 
 
 /run/initialize
-#/hepd/ScintillatorSD/useBirksLaw false
-#/hepd/CalorimeterSD/useBirksLaw false
-#/hepd/VetoSD/useBirksLaw false
+/hepd/CalorimeterSD/useBirksLaw false
+/hepd/VetoSD/useBirksLaw false
 #
 #
 /hepd/gun/setDefault
-#/hepd/gun/random
-#/hepd/gun/beam 0 0 cm 0 deg
-/hepd/gun/beam -1.75 -1.8 cm 0 deg	#3C0
 #/hepd/gun/muon 30 30 cm 0.05 1000 GeV
+#/hepd/gun/beam 0 0 cm 0 deg
+# Trento TB position C3
+/hepd/gun/beam -1.75 -1.8 cm 0 deg
+#/hepd/gun/random
 #/hepd/gun/toCenter
+/hepd/gun/energy 200 MeV
+#/hepd/gun/ereso 0.8
 /hepd/gun/particle proton
-/hepd/gun/energy 32.68 MeV
-#/hepd/gun/powerlaw 1 100 MeV -3
+#/gun/particle ion 
+#/gun/ion 7 14
+#/hepd/gun/flat 30 300 MeV 
+#/hepd/gun/powerlaw 1 200 MeV -3
 #
 
-#/tracking/verbose 0
-#/random/setSeeds 1777992 744546
+/tracking/verbose 0
+/random/setSeeds 1777992 744546
 
-/hepd/producer/SetRootFile Test.root HEPD
+#/hepd/producer/SetRootFile He4_beta_c3_250MeV.root HEPD
+#/hepd/producer/SetRootFile electron_beta_c3_3MeV.root HEPD
+/hepd/producer/SetRootFile Proton_flat_c3.root HEPD
+#/hepd/producer/SetRootFile test_reso.root HEPD
 
-/run/beamOn 5000
+/run/beamOn 5
 
 /hepd/producer/StoreRootFile

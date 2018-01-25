@@ -11,19 +11,23 @@ RootCaloHit::RootCaloHit():theEntryPoint(0,0,0),theExitPoint(0,0,0),theTotalEdep
   //  theVolume="";
   theDet=-1000;
   theKinEnergy = 0;
+  theGlobalTime = 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //
 //RootCaloHit::RootCaloHit(TString aVolume,double aTotalEdep,std::map<int,double> aEdep) 
-RootCaloHit::RootCaloHit(int aDetID,TVector3 aEntry,TVector3 aExit,float aKE,double aTotalEdep,std::map<int,double> aEdep) 
+RootCaloHit::RootCaloHit(int aDetID,TVector3 aEntry,TVector3 aExit,double aGlobalTime,float aKE,double aTotalEdep,std::map<int,double> aEdep,std::map<int,TVector3> aStepPos)
+//RootCaloHit::RootCaloHit(int aDetID,TVector3 aEntry,TVector3 aExit,float aKE,double aTotalEdep,std::map<int,double> aEdep,std::map<int,double> bEdep) 
 { 
   //  theVolume     = aVolume;
   theDet     = aDetID;
   theEntryPoint = aEntry;
   theExitPoint = aExit;
+  theGlobalTime = aGlobalTime;
   theKinEnergy = aKE;
   theTotalEdep  = aTotalEdep;	  
   theEdep       = aEdep;
+  theStepPos    = aStepPos;
   for(std::map<int,double>::iterator i = theEdep.begin();i!=theEdep.end();i++){
     theParticleList.push_back(i->first);
   }
@@ -40,9 +44,11 @@ RootCaloHit::RootCaloHit(const RootCaloHit& right) : TObject()
   theDet       = right.theDet;
   theEntryPoint = right.theEntryPoint;
   theExitPoint = right.theExitPoint;
+  theGlobalTime = right.theGlobalTime;
   theKinEnergy = right.theKinEnergy;
   theTotalEdep    = right.theTotalEdep;	 
   theEdep         = right.theEdep;
+  theStepPos      = right.theStepPos;
   theParticleList = right.theParticleList;
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,5 +63,17 @@ double RootCaloHit::GetEdep(int aTkID)
     return 0;
   }else{
     return theEdep[aTkID];
+  }
+}
+
+TVector3 RootCaloHit::GetStepPos(int aTkID)
+{
+  if(theStepPos.find(aTkID)==theStepPos.end()){
+    std::cout<<"You are asking the wrong track ID = "<<aTkID<<" try with one of these ";
+      for(unsigned int i=0;i<theParticleList.size();i++)
+	std::cout<<theParticleList[i]<<"; ";
+    std::cout<<" "<<std::endl;
+  }else{
+    return theStepPos[aTkID];
   }
 }

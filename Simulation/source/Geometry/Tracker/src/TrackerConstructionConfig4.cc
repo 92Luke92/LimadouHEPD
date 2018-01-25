@@ -56,7 +56,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TrackerConstructionConfig4::TrackerConstructionConfig4()
+TrackerConstructionConfig4::TrackerConstructionConfig4(G4double tb_offset_Z, bool useProtonTB)
   :fSolidTracker(0),fSolidLayer(0),fSolidCFFrameHole(0),fSolidCFFrame(0),
    fSolidPoronFrameHole(0),fSolidPoronFrame(0),fSolidSiliconPlate(0),fSolidSiliconSensor(0),
    fSolidLadderBox(0),fSolidLadder(0),fSolidKaptonS(0),fSolidKaptonK(0),fSolidHybrid(0),
@@ -76,6 +76,9 @@ TrackerConstructionConfig4::TrackerConstructionConfig4()
   fTracker_X = 267.3*mm;
   fTracker_Y = 305.5*mm;
   fTracker_Z = 20.0*mm;
+
+  proton_tb_offset_Z = tb_offset_Z;
+  use_ProtonTB = useProtonTB;
 
   fLayer_X = 267.3*mm;
   fLayer_Y = 305.5*mm;
@@ -240,6 +243,7 @@ void TrackerConstructionConfig4::ComputeObjectsPositioning(){
   fPhysiTracker_X = 0;
   fPhysiTracker_Y = -23.55;
   fPhysiTracker_Z = 353.2*mm;
+  if (use_ProtonTB) fPhysiTracker_Z -= proton_tb_offset_Z;
   
   fPhysiPoronFrame_X = 0;
   fPhysiPoronFrame_Y = -(fCFFrame_Y/2.-fPoronFrame_Y/2.);
@@ -564,8 +568,8 @@ void TrackerConstructionConfig4::Builder(G4VPhysicalVolume* motherVolume)
   
   //Visualization Attribute
   G4VisAttributes* attBlue = new G4VisAttributes(G4Colour::Blue());
-  attBlue->SetVisibility(true);
-  attBlue->SetForceAuxEdgeVisible(true);
+  attBlue->SetVisibility(false);
+  attBlue->SetForceAuxEdgeVisible(false);
   fLogicSiliconPlateP->SetVisAttributes(attBlue); 
   fLogicSiliconPlateM->SetVisAttributes(attBlue); 
 
@@ -575,18 +579,18 @@ void TrackerConstructionConfig4::Builder(G4VPhysicalVolume* motherVolume)
   fLogicSiliconSensor->SetVisAttributes(attGray);
 
   G4VisAttributes* attYellow = new G4VisAttributes(G4Colour::Yellow());
-  attYellow->SetVisibility(true);
+  attYellow->SetVisibility(false);
   attYellow->SetForceAuxEdgeVisible(true);
   fLogicPoronFrame->SetVisAttributes(attYellow);   
 
   G4VisAttributes* attMagenta = new G4VisAttributes(G4Colour::Magenta());
-  attMagenta->SetVisibility(true);
+  attMagenta->SetVisibility(false);
   attMagenta->SetForceAuxEdgeVisible(true);
   fLogicKaptonS->SetVisAttributes(attMagenta);      
   fLogicKaptonK->SetVisAttributes(attMagenta);      
 
   G4VisAttributes* attBrown = new G4VisAttributes(G4Colour::Brown());
-  attBrown->SetVisibility(true);
+  attBrown->SetVisibility(false);
   attBrown->SetForceAuxEdgeVisible(true);
   fLogicCFFrame->SetVisAttributes(attBrown);
   fLogicRingK->SetVisAttributes(attBrown);        
@@ -603,7 +607,7 @@ void TrackerConstructionConfig4::Builder(G4VPhysicalVolume* motherVolume)
   fLogicHybrid->SetVisAttributes(attRed); 
       
   G4VisAttributes* attBlack = new G4VisAttributes(G4Colour::Black());
-  attBlack->SetVisibility(true);
+  attBlack->SetVisibility(false);
   attBlack->SetForceAuxEdgeVisible(true);
   fLogicHeatSink->SetVisAttributes(attBlack);     
   

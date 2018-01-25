@@ -52,7 +52,7 @@
 
 HEPDSWMaterial::HEPDSWMaterial():
   matAir(0), matAl(0), matTi(0), matGraphite(0),matCarbonFiber(0),matH2O(0),matMgB2(0),matGlass(0),matCu(0),
-  nylon(0), teflon(0), mylar(0), 
+  nylon(0), teflon(0), mylar(0), matH2O_solid(0), 
   beta(0), nextel(0), kevlar(0),
   vacuum(0), betaCloth(0), eterogeneousNextel(0), kevlarVacuum(0),
   polyethylene(0), polyacrylate(0), evoh(0), nomex(0), 
@@ -78,6 +78,7 @@ HEPDSWMaterial::~HEPDSWMaterial()
   delete teflon;
   delete nylon;
   delete matH2O;
+  delete matH2O_solid;
   delete matAir;
   delete matAl;
   delete matTi;
@@ -209,6 +210,14 @@ void HEPDSWMaterial::DefineMaterials()
   matH2O->AddElement(elO,1);
   matH2O->GetIonisation()->SetMeanExcitationEnergy(78.0*eV);
   matH2O->SetChemicalFormula("H_2O");
+  // Water "solid"
+  d = 1.045*g/cm3;
+  matH2O_solid = new G4Material("Water_Solid",d,4);
+  matH2O_solid->AddElement(elH,0.076);
+  matH2O_solid->AddElement(elC,0.904);
+  matH2O_solid->AddElement(elO,0.008);
+  matH2O_solid->AddElement(elTi,0.012);
+  matH2O_solid->GetIonisation()->SetMeanExcitationEnergy(69.8*eV);
   
    //Teflon
   d = 2.2 *g/cm3;

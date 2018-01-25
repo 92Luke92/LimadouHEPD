@@ -59,6 +59,7 @@ void CalorimeterSD::Initialize(G4HCofThisEvent*){
   CaloCollection = new CaloHitsCollection(SensitiveDetectorName,collectionName[0]); 
   
   LayerID.clear();
+  LayerTrkID.clear();
   verboseLevel = 0;
 }
 
@@ -89,10 +90,12 @@ G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   G4int tkID = aStep->GetTrack()->GetTrackID();
   G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition(); 
   G4ThreeVector theEntryPoint = aStep->GetPreStepPoint()->GetPosition();
+  G4double theProperTime = aStep->GetTrack()->GetProperTime();
   G4double theKE      = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
-  // if(verboseLevel>1) G4cout << "Calo step edep(MeV) = " << edep/MeV <<" ; given by Track = "<<tkID<< G4endl;
+  //  G4cout << "Calo step edep(MeV) = " << edep/MeV <<" ; given by Track = "<<tkID<< G4endl;
   if(edep==0.) return false;
   if(useBirks)
+    //    G4cout << "Birks Law applique" << G4endl;
     edep*=BirksAttenuation(aStep);
   //  G4VPhysicalVolume* physVol = aStep->GetPreStepPoint()->GetPhysicalVolume();
   
@@ -110,28 +113,33 @@ G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   detID=GetDetID(aStep);
 
    //  if(verboseLevel>1) G4cout << "Calo step on Volume = " << volumeID << G4endl;
-   if(verboseLevel>1) G4cout << "Calo step on Volume = "<< detID << G4endl;
+   // if(verboseLevel>1) 
+  //   G4cout << "Calo step on Volume = "<< detID << " tkID " << tkID << G4endl;
   
-   if(LayerID.find(detID)==LayerID.end()){
+   if(LayerID.find(detID)==LayerID.end() || LayerTrkID.find(detID)->second!=tkID){
     //    CaloHit* calHit = new CaloHit(volumeID);
-    CaloHit* calHit = new CaloHit(detID,theEntryPoint,theExitPoint,theKE);
+    CaloHit* calHit = new CaloHit(detID,theEntryPoint,theExitPoint,theProperTime,theKE);
     calHit->SetEdep(edep/MeV,tkID);
+    calHit->SetStepPos(theExitPoint,tkID);
     G4int icell = CaloCollection->insert(calHit);
     LayerID[detID] = icell - 1;
+    LayerTrkID[detID] = tkID;
+    if(verboseLevel>1){ 
+       G4cout << " New  Hit on Calo Layer " 
+          << detID <<" with deposited energy = "<<edep/MeV<< G4endl;
+    }
+ 
+   }else{ 
+
+     (*CaloCollection)[LayerID[detID]]->AddEdep(edep/MeV,tkID);
+     (*CaloCollection)[LayerID[detID]]->SetStepPos(theExitPoint,tkID);
 
      if(verboseLevel>1){ 
-       G4cout << " New  Hit on Calo Layer " 
-          << detID <<" with deposited energy = "<<edep/MeV<< G4endl; 
-     }
-     }else{ 
-     (*CaloCollection)[LayerID[detID]]->AddEdep(edep/MeV,tkID);
-
-
-    if(verboseLevel>1){ 
       G4cout << " Energy added to Calo Layer " 
 	     << detID <<" adding this energy deposit = "<<edep/MeV<< G4endl; 
-    }
- }
+     }
+   }
+ 
   return true;
 }
 

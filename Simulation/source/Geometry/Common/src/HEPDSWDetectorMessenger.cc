@@ -47,7 +47,9 @@
 
 HEPDSWDetectorMessenger::HEPDSWDetectorMessenger(HEPDSWDetectorConstruction * Det)
 :Detector(Det)
-{ 
+{
+
+  G4cout << "DetectorMessenger" << G4endl; 
   G4UIparameter* param;
   fHepdDir = new G4UIdirectory("/hepd/");
   fHepdDir->SetGuidance("UI commands specific to this example");
@@ -90,6 +92,20 @@ HEPDSWDetectorMessenger::HEPDSWDetectorMessenger(HEPDSWDetectorConstruction * De
   fHEPDBoxActivateCmd = new G4UIcmdWithABool("/hepd/ActivateHEPDBox",this);
   fHEPDBoxActivateCmd->SetGuidance("Enable or disable the HEPD Box components");
   fHEPDBoxActivateCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  fHEPDProtonTBCmd = new G4UIcmdWithABool("/hepd/ActivateHEPDProtonTB",this);
+  fHEPDProtonTBCmd->SetGuidance("Enable or disable the Proton Test Beam configuration");
+  fHEPDProtonTBCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  fHEPDDegraderActivateCmd = new G4UIcmdWithABool("/hepd/ActivateHEPDDegrader",this);
+  fHEPDDegraderActivateCmd->SetGuidance("Enable or disable the Proton Test Beam configuration");
+  fHEPDDegraderActivateCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+ 
+  fProtonDegraderCmd = new G4UIcmdWithADoubleAndUnit("/hepd/ProtonDegrader",this);
+  fProtonDegraderCmd->SetGuidance("Set the thickness of the degrader");
+  fProtonDegraderCmd->SetParameterName("Thickness",false);
+  fProtonDegraderCmd->SetUnitCategory("Length");
+  fProtonDegraderCmd->AvailableForStates(G4State_Idle);  
 
   fCaloConfigCmd = new G4UIcmdWithAString("/hepd/CaloConfiguration",this);
   fCaloConfigCmd->SetGuidance("Select the calorimeter configuration");
@@ -250,6 +266,8 @@ HEPDSWDetectorMessenger::~HEPDSWDetectorMessenger()
   delete fTrackerConfigCmd;
   delete fSatelliteConfigCmd;
   delete fHEPDBoxConfigCmd;
+  delete fHEPDProtonTBCmd;
+  delete fProtonDegraderCmd;
   delete fHepdDir;
   //  delete fCaloCaloMatConfigCmd;	
   delete fCaloCalo2MatConfigCmd;
@@ -276,6 +294,7 @@ HEPDSWDetectorMessenger::~HEPDSWDetectorMessenger()
 
 void HEPDSWDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
+  G4cout << "SetNewValue command " << command << " " << fProtonDegraderCmd << G4endl;
   if (command == fWorldSizeCmd)
     {
       G4double Xdim,Ydim,Zdim;
@@ -307,6 +326,19 @@ void HEPDSWDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue
     Detector->SetSatelliteConfiguration(newValue);  
   if (command == fHEPDBoxConfigCmd)
     Detector->SetHEPDBoxConfiguration(newValue);  
+
+  if (command == fHEPDProtonTBCmd)
+    Detector->SetProtonTBDetector(fHEPDProtonTBCmd->GetNewBoolValue(newValue));  
+
+  if (command == fHEPDDegraderActivateCmd)
+    Detector->SetDegrader(fHEPDDegraderActivateCmd->GetNewBoolValue(newValue));  
+
+  if(command == fProtonDegraderCmd ) {
+    G4cout << "fProtonDegraderCmd" << "newValue " << newValue << G4endl;
+    Detector->SetProtonDegrader(fProtonDegraderCmd->GetNewDoubleValue(newValue));  
+  }
+  if (command == fHEPDProtonTBCmd)
+    Detector->SetProtonTBDetector(fHEPDProtonTBCmd->GetNewBoolValue(newValue));  
 
 //   if(command == fCaloCaloMatConfigCmd)
 //     Detector->CaloSetCaloMaterial(newValue);

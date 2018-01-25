@@ -68,6 +68,10 @@ private:
   G4UIcmdWithABool* fSatelliteActivateCmd;
   G4UIcmdWithABool* fHEPDBoxActivateCmd;
 
+  G4UIcmdWithABool* fHEPDProtonTBCmd;
+  G4UIcmdWithABool* fHEPDDegraderActivateCmd;
+  G4UIcmdWithADoubleAndUnit* fProtonDegraderCmd;
+
   G4UIcmdWithAString* fCaloConfigCmd;
   //G4UIcmdWithAString* fScintConfigCmd;
   G4UIcmdWithAString* fTrackerConfigCmd;

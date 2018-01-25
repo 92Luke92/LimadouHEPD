@@ -85,6 +85,7 @@ G4bool VetoSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   G4int tkID = aStep->GetTrack()->GetTrackID();
   G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition(); 
   G4ThreeVector theEntryPoint = aStep->GetPreStepPoint()->GetPosition();
+  G4double theProperTime      = aStep->GetTrack()->GetProperTime();
   G4double theKE      = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
   if(verboseLevel>1) G4cout << "Next step edep(MeV) = " << edep/MeV << G4endl;
   if(edep==0.) return false;
@@ -97,20 +98,24 @@ G4bool VetoSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   
   G4int detID;
   detID=GetDetID(aStep);
+  G4cout << "Calo Veto on Volume = "<< detID << " tkID " << tkID << G4endl;
 
   
-  if(VetoID.find(detID)==VetoID.end()){
+  if(VetoID.find(detID)==VetoID.end() || VetoTrkID.find(detID)->second!=tkID) {
     //    CaloHit* vetoHit = new CaloHit(volume);
-    CaloHit* vetoHit = new CaloHit(detID,theEntryPoint,theExitPoint,theKE);
+    CaloHit* vetoHit = new CaloHit(detID,theEntryPoint,theExitPoint,theProperTime,theKE);
     vetoHit->SetEdep(edep/MeV,tkID);
+    vetoHit->SetStepPos(theExitPoint,tkID);
     G4int icell = VetoCollection->insert(vetoHit);
     VetoID[detID] = icell - 1;
+    VetoTrkID[detID] = tkID;
     if(verboseLevel>0){ 
       G4cout << " New Calorimeter Hit on VetoID " 
 		 << detID << G4endl; 
     }
   }else{ 
     (*VetoCollection)[VetoID[detID]]->AddEdep(edep/MeV,tkID);
+    (*VetoCollection)[VetoID[detID]]->SetStepPos(theExitPoint,tkID);
     if(verboseLevel>0){ 
       G4cout << " Energy added to VetoID " 
 	     << detID << G4endl; 

@@ -59,6 +59,7 @@ private:
   CaloHitsCollection* CaloCollection;
   G4int verboseLevel;
   std::map<int,int> LayerID;
+  std::map<int,int> LayerTrkID;
   G4bool useBirks;
 
   G4double birk1scint;

@@ -101,8 +101,10 @@ HEPDSWPrimaryGeneratorAction::HEPDSWPrimaryGeneratorAction(HEPDSWDetectorConstru
   muon= false;
   random=false;
   beam=false;
+  beam_reso = false;
   centerpointing=false;
   powerlaw = false;
+  flat = false;
   //create a messenger for this class
   fGunMessenger = new HEPDSWPrimaryGeneratorMessenger(this);
 }
@@ -125,13 +127,20 @@ void HEPDSWPrimaryGeneratorAction::SetDefaultKinematic()
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,-1.));
   fParticleGun->SetParticleEnergy(1.*GeV);
-  G4double positionZ = 0.5*(fDetector->GetWorldSizeZ());
-  fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm,positionZ));
+  G4double position = 0.5*(fDetector->GetWorldSizeZ());
+  fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm,position));
 }
 
 void HEPDSWPrimaryGeneratorAction::SetEnergy(G4double ene)
 {
+  beam_energy = ene;
   fParticleGun->SetParticleEnergy(ene);
+}
+
+void HEPDSWPrimaryGeneratorAction::SetBeamEReso(G4double ereso){
+  //  G4cout << "set beam reso " << G4endl;
+  beam_reso = true;
+  beam_ereso = (0.01)*ereso;
 }
 
 void HEPDSWPrimaryGeneratorAction::SetParticle(G4String part)
@@ -172,6 +181,13 @@ void HEPDSWPrimaryGeneratorAction::SetPowerLaw(G4double aEmin,G4double aEmax,G4d
   gammaPL = aGamma;
 }
 
+void HEPDSWPrimaryGeneratorAction::SetFlat(G4double aEmin,G4double aEmax){
+  flat = true;
+  eminFlat = aEmin;
+  emaxFlat = aEmax;
+  G4cout << " flat " << " emin " << eminFlat << " emax " << emaxFlat << G4endl;
+}
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -183,7 +199,7 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if(random){
     G4double phi = 2*CLHEP::pi*G4RandFlat::shoot();
     G4double theta = std::sqrt(G4RandFlat::shoot());
-    //float atheta = theta;
+    float atheta = theta;
     theta = std::acos(theta);
     G4double Xmax = 0.5*(fDetector->GetWorldSizeX());
     G4double Ymax = 0.5*(fDetector->GetWorldSizeY());
@@ -191,8 +207,9 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     //    G4cout << "xmax " << Xmax << " ymax " << Ymax << " theta " << theta << " cos theta " << atheta << " cos theta " << cos(theta) << G4endl; 
     position = G4ThreeVector(-Xmax+2*Xmax*G4RandFlat::shoot(),-Ymax+2*Ymax*G4RandFlat::shoot(),Zmax);
     if(powerlaw)
-      fParticleGun->SetParticleEnergy(SpectrumPowerLaw(eminPL,emaxPL,gammaPL));
-    
+      fParticleGun->SetParticleEnergy(SpectrumPowerLaw(eminPL,emaxPL,gammaPL));    
+    if(flat)
+      fParticleGun->SetParticleEnergy(FlatSpectrum(eminFlat,emaxFlat));
     if(centerpointing)
       direction = -1*position;
     else
@@ -200,8 +217,23 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fParticleGun->SetParticlePosition(position);
     fParticleGun->SetParticleMomentumDirection(direction.unit());
     fParticleGun->GeneratePrimaryVertex(anEvent);
-  }else if(beam){
+  } 
+  if(beam){
+    G4String particleName;
+    G4ParticleDefinition* particle = fParticleGun->GetParticleDefinition();
+    const G4String& nome = particle->GetParticleName();
+    G4double masse = particle->GetPDGMass(); 
+    G4double charge = particle->GetPDGCharge();
+    G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
     fParticleGun->SetParticlePosition(position);
+    if(flat)
+      fParticleGun->SetParticleEnergy(FlatSpectrum(eminFlat,emaxFlat));
+    if (beam_reso) {
+      G4double denergy = (beam_energy*beam_ereso)*G4RandGauss::shoot();
+      printf("beam energy %6.2lf MeV de %6.2lf MeV\n",beam_energy,denergy);
+      G4double new_beam_energy = beam_energy + denergy;
+      fParticleGun->SetParticleEnergy(new_beam_energy);
+    }
     fParticleGun->SetParticleMomentumDirection(direction.unit());
     fParticleGun->GeneratePrimaryVertex(anEvent);
   }else{
@@ -247,6 +279,14 @@ G4double HEPDSWPrimaryGeneratorAction::SpectrumPowerLaw(G4double Emin,G4double E
       Emin = 1.E-10;
     energy = pow((CLHEP::RandFlat::shoot(0., 1.) * (pow(Emax, alpha) - pow(Emin, alpha)) + pow(Emin, alpha)),1./alpha);
   }
+  return energy;
+}
+
+G4double HEPDSWPrimaryGeneratorAction::FlatSpectrum(G4double Emin,G4double Emax)
+{
+  G4double energy;
+  energy = CLHEP::RandFlat::shoot(Emin, Emax);
+  G4cout << " energie " << energy << G4endl;
   return energy;
 }
 

@@ -63,7 +63,10 @@ private:
   G4UIcmdWithAString*        fPartCmd;
   G4UIcommand*               fMuonCmd;
   G4UIcommand*               fBeamCmd;
+  G4UIcommand*               fTBeamCmd;
+  G4UIcommand*               fBeamEResoCmd;
   G4UIcommand*               fPowerLawCmd;
+  G4UIcommand*               fFlatCmd;
   
 };
 

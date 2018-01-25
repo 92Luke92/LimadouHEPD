@@ -38,6 +38,8 @@
 #include "PhysListEmStandardGS.hh"
 #include "PhysListEmStandardWVI.hh"
 
+#include "G4StepLimiterPhysics.hh"
+
 #include "G4EmStandardPhysics.hh"
 #include "G4EmStandardPhysics_option1.hh"
 #include "G4EmStandardPhysics_option2.hh"
@@ -234,7 +236,6 @@ void HEPDSWPhysicsList::AddOpticalProcesses()
   G4OpMieHG* theMieHGScattProcess = new G4OpMieHG("MieHGScattering");
 
   auto theParticleIterator = GetParticleIterator(); // see slide 3 of https://indico.fnal.gov/event/13701/contribution/0/material/slides/0.pdf
-
   theParticleIterator->reset();
   while( (*theParticleIterator)() )
   {
@@ -299,9 +300,10 @@ void HEPDSWPhysicsList::AddStepMax()
   while ((*theParticleIterator)()){
       G4ParticleDefinition* particle = theParticleIterator->value();
       G4ProcessManager* pmanager = particle->GetProcessManager();
-
+      G4cout << particle->GetParticleName() << G4endl;
       if (stepMaxProcess->IsApplicable(*particle) && !particle->IsShortLived())
         {
+          G4cout << "stepMaxProcces applicable" << G4endl;
           pmanager ->AddDiscreteProcess(stepMaxProcess);
         }
   }

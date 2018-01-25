@@ -37,7 +37,7 @@ class TrackerHit : public G4VHit
 public:
 
   TrackerHit();
-  TrackerHit(G4ThreeVector,G4ThreeVector,G4double,G4double,G4double,G4int,unsigned int,unsigned int,G4double,G4double);
+  TrackerHit(G4ThreeVector,G4ThreeVector,G4double,G4double,G4double,G4int,unsigned int,unsigned int,G4double,G4double,G4ThreeVector);
   ~TrackerHit();
   TrackerHit(const TrackerHit &right);
   const TrackerHit& operator=(const TrackerHit &right);
@@ -61,6 +61,7 @@ public:
   inline unsigned int GetTrackId(){return theTrackIdInHit;}
   inline G4double GetThetaAtEntry(){return theThetaAtEntry;}
   inline G4double GetPhiAtEntry(){return thePhiAtEntry;}
+  inline G4ThreeVector GetMomentumDirection(){return theMomentumDirection;}
 
 private:
   G4ThreeVector theEntryPoint;
@@ -73,6 +74,7 @@ private:
   unsigned int theTrackIdInHit;
   G4double theThetaAtEntry;
   G4double thePhiAtEntry;
+  G4ThreeVector theMomentumDirection;
 
 };
 

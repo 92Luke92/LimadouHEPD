@@ -37,10 +37,11 @@ CaloHit::CaloHit()
 // CaloHit::CaloHit(G4String volume)
 //   : VolumeID(volume)
 // {;}
-CaloHit::CaloHit(G4int det,G4ThreeVector aEntry,G4ThreeVector aExit,G4double aKE)
+CaloHit::CaloHit(G4int det,G4ThreeVector aEntry,G4ThreeVector aExit,G4double aGlobalTime,G4double aKE)
   : DetID(det)
 { theEntryPoint = aEntry;
   theExitPoint = aExit;
+  theGlobalTime = aGlobalTime;
   theKinEnergy = aKE;
 }
 
@@ -55,6 +56,7 @@ CaloHit::CaloHit(const CaloHit &right)
   DetID = right.DetID;
   theEntryPoint = right.theEntryPoint;
   theExitPoint = right.theExitPoint;
+  theGlobalTime = right.theGlobalTime;
   theKinEnergy = right.theKinEnergy;
   edep = right.edep;
   totalEdep = right.totalEdep;
@@ -66,6 +68,7 @@ const CaloHit& CaloHit::operator=(const CaloHit &right)
   DetID = right.DetID;
   theEntryPoint = right.theEntryPoint;
   theExitPoint = right.theExitPoint;
+  theGlobalTime = right.theGlobalTime;
   theKinEnergy = right.theKinEnergy;
   edep = right.edep;
   totalEdep = right.totalEdep;
@@ -81,8 +84,15 @@ void CaloHit::SetEdep(G4double aEdep,G4int aTkID){
     edep[aTkID]=aEdep;
 }
 
+void CaloHit::SetStepPos(G4ThreeVector StepPos,G4int aTkID){
+  //  G4cout << "SetStepPos aTkID " << aTkID << " x " << StepPos.getX() << " y " << StepPos.getY() << " z " << StepPos.getZ() << G4endl;
+  steppos[aTkID]=StepPos;
+}
+
 void CaloHit::AddEdep(G4double aEdep,G4int aTkID){
   totalEdep+=aEdep;
+  //      G4cout << " Energy added to TkID " 
+  //	     << aTkID <<" total energy deposit = "<<totalEdep << G4endl; 
   if(edep.find(aTkID)!=edep.end())
     edep[aTkID]+=aEdep;
   else

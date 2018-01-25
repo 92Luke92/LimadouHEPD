@@ -6,7 +6,7 @@ ClassImp(RootTrackerHit)
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-RootTrackerHit::RootTrackerHit ():theEntryPoint(0,0,0),theExitPoint(0,0,0)
+RootTrackerHit::RootTrackerHit ():theEntryPoint(0,0,0),theExitPoint(0,0,0),theMomDir(0,0,0)
 {
   theKinEnergy = 0;
   theTimeOfFlight = 0;
@@ -20,7 +20,7 @@ RootTrackerHit::RootTrackerHit ():theEntryPoint(0,0,0),theExitPoint(0,0,0)
 ////////////////////////////////////////////////////////////////////////////////
 //
 RootTrackerHit::RootTrackerHit(TVector3 aEntry,TVector3 aExit,float aKE,float aToF,float aEloss,
-			       int aPDG ,unsigned int aID,unsigned int aTkID,float aTheta,float aPhi)
+			       int aPDG ,unsigned int aID,unsigned int aTkID,float aTheta,float aPhi,TVector3 aMomDir)
   
 { 
   theEntryPoint = aEntry;
@@ -33,6 +33,7 @@ RootTrackerHit::RootTrackerHit(TVector3 aEntry,TVector3 aExit,float aKE,float aT
   theTrackIdInHit = aTkID;
   theThetaAtEntry = aTheta;
   thePhiAtEntry = aPhi;
+  theMomDir = aMomDir;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -52,6 +53,7 @@ RootTrackerHit::RootTrackerHit (const RootTrackerHit& right) : TObject()
   theTrackIdInHit = right.theTrackIdInHit;
   theThetaAtEntry = right.theThetaAtEntry;
   thePhiAtEntry = right.thePhiAtEntry;
+  theMomDir = right.theMomDir;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //

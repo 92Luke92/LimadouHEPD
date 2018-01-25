@@ -48,6 +48,7 @@ class G4VPhysicalVolume;
 class HEPDSWMaterial;
 class G4UniformMagField;
 class DetectorMessenger;
+class G4UserLimits;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -55,7 +56,7 @@ class CalorimeterConstructionConfig6
 {
 public:
   
-   CalorimeterConstructionConfig6();
+  CalorimeterConstructionConfig6(G4double tb_offset_Z, G4bool useProtonTB);
   ~CalorimeterConstructionConfig6();
 
   inline void SetVetoMaterial(G4String aMat){vetoMaterial=aMat;}
@@ -68,6 +69,9 @@ public:
   void Builder(G4VPhysicalVolume* motherVolume);
   
 private:
+
+  G4UserLimits* fStepLimit;
+
   void ComputeObjectsPositioning();
 
   G4String scintMaterial;
@@ -75,6 +79,9 @@ private:
   G4String poronMaterial;
 
   G4int    fS1ScintNumber;
+
+  G4double proton_tb_offset_Z;
+  G4bool use_ProtonTB;
 
   G4double fS1_X;
   G4double fS1_Y;

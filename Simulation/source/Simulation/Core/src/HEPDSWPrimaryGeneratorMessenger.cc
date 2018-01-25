@@ -91,6 +91,25 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
   param->SetGuidance("angle unit");
   fBeamCmd->SetParameter(param);
 
+  fTBeamCmd = new G4UIcommand("/hepd/gun/tbeam",this);
+  fTBeamCmd->AvailableForStates(G4State_Idle);  
+  fTBeamCmd->SetParameter(param);
+  param = new G4UIparameter("position",'s',false);
+  param->SetGuidance("beam position A1 - D6");
+  param = new G4UIparameter("Theta",'d',false);
+  param->SetGuidance("Theta angle");
+  fTBeamCmd->SetParameter(param);
+  param = new G4UIparameter("unit",'s',false);
+  param->SetGuidance("angle unit");
+  fTBeamCmd->SetParameter(param);
+
+  fBeamEResoCmd = new G4UIcommand("/hepd/gun/ereso",this);
+  fBeamEResoCmd->SetGuidance("Set energy resolution ERESO (percent)");
+  fBeamEResoCmd->AvailableForStates(G4State_Idle);  
+  param = new G4UIparameter("EResolution %",'d',false);
+  param->SetGuidance("beam energy resolution");
+  fBeamEResoCmd->SetParameter(param);
+
   fMuonCmd = new G4UIcommand("/hepd/gun/muon",this);
   fMuonCmd->AvailableForStates(G4State_Idle);  
   param = new G4UIparameter("dX",'d',false);
@@ -112,7 +131,6 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
   param->SetGuidance("energy unit");
   fMuonCmd->SetParameter(param);
 
-
   fPowerLawCmd = new G4UIcommand("/hepd/gun/powerlaw",this);
   fPowerLawCmd->SetGuidance("Set the power law with Emin Emax [unit]  Gamma");
   fPowerLawCmd->AvailableForStates(G4State_Idle);  
@@ -129,6 +147,19 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
   param->SetGuidance("gamma");
   fPowerLawCmd->SetParameter(param);
 
+  fFlatCmd = new G4UIcommand("/hepd/gun/flat",this);
+  fFlatCmd->SetGuidance("Flat Spectra between Emin Emax [unit]");
+  fFlatCmd->AvailableForStates(G4State_Idle);  
+  param = new G4UIparameter("Emin",'d',false);
+  param->SetGuidance("E min");
+  fFlatCmd->SetParameter(param);
+  param = new G4UIparameter("Emax",'d',false);
+  param->SetGuidance("E max");
+  fFlatCmd->SetParameter(param);
+  param = new G4UIparameter("unit",'s',false);
+  param->SetGuidance("E unit");
+  fFlatCmd->SetParameter(param);
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -142,6 +173,7 @@ HEPDSWPrimaryGeneratorMessenger::~HEPDSWPrimaryGeneratorMessenger()
   delete fPntngCmd;
   delete fBeamCmd;
   delete fPowerLawCmd;
+  delete fFlatCmd;
   delete fGunDir;  
 }
 
@@ -183,6 +215,124 @@ void HEPDSWPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String 
       theta*= G4UIcommand::ValueOf(unit_a);
       fAction->SetBeam(Xpos,Ypos,theta);
     }
+  if( command == fTBeamCmd )
+    {
+      G4double Xpos = -999;
+      G4double Ypos = -999;
+      G4double theta;
+      G4String pos,unit_a;
+      std::istringstream is(newValue);
+      is >> pos >> theta >> unit_a;
+      theta*= G4UIcommand::ValueOf(unit_a);
+      G4cout << "pos " << pos << G4endl;
+      if (pos == "a1" || pos == "A1" ) {
+        Xpos = +17.5;
+        Ypos = -78.0;
+      }
+      if (pos == "a2" || pos == "A2" ) {
+        Xpos = +17.5;
+        Ypos = -48.0;
+      }
+      if (pos == "a3" || pos == "A3" ) {
+        Xpos = +17.5;
+        Ypos = -18.0;
+      }
+      if (pos == "a4" || pos == "A4" ) {
+        Xpos = +17.5;
+        Ypos = +18.0;
+      }
+      if (pos == "a5" || pos == "A5" ) {
+        Xpos = +17.5;
+        Ypos = +48.0;
+      }
+      if (pos == "a6" || pos == "A6" ) {
+        Xpos = +17.5;
+        Ypos = +78.0;
+      }
+      if (pos == "b1" || pos == "B1" ) {
+        Xpos = +57.5;
+        Ypos = -78.0;
+      }
+      if (pos == "b2" || pos == "B2" ) {
+        Xpos = +57.5;
+        Ypos = -48.0;
+      }
+      if (pos == "b3" || pos == "B3" ) {
+        Xpos = +57.5;
+        Ypos = -18.0;
+      }
+      if (pos == "b4" || pos == "B4" ) {
+        Xpos = +57.5;
+        Ypos = +18.0;
+      }
+      if (pos == "b5" || pos == "B5" ) {
+        Xpos = +57.5;
+        Ypos = +48.0;
+      }
+      if (pos == "b6" || pos == "B6" ) {
+        Xpos = +57.5;
+        Ypos = +78.0;
+      }
+      if (pos == "c1" || pos == "C1" ) {
+        Xpos = -17.5;
+        Ypos = -78.0;
+      }
+      if (pos == "c2" || pos == "C2" ) {
+        Xpos = -17.5;
+        Ypos = -48.0;
+      }
+      if (pos == "c3" || pos == "C3" ) {
+        Xpos = -17.5;
+        Ypos = -18.0;
+      }
+      if (pos == "c4" || pos == "C4" ) {
+        Xpos = -17.5;
+        Ypos = +18.0;
+      }
+      if (pos == "c5" || pos == "C5" ) {
+        Xpos = -17.5;
+        Ypos = +48.0;
+      }
+      if (pos == "c6" || pos == "C6" ) {
+        Xpos = -17.5;
+        Ypos = +78.0;
+      }
+      if (pos == "d1" || pos == "D1" ) {
+        Xpos = -57.5;
+        Ypos = -78.0;
+      }
+      if (pos == "d2" || pos == "D2" ) {
+        Xpos = -57.5;
+        Ypos = -48.0;
+      }
+      if (pos == "d3" || pos == "D3" ) {
+        Xpos = -57.5;
+        Ypos = -18.0;
+      }
+      if (pos == "d4" || pos == "D4" ) {
+        Xpos = -57.5;
+        Ypos = +18.0;
+      }
+      if (pos == "d5" || pos == "D4" ) {
+        Xpos = -57.5;
+        Ypos = +48.0;
+      }
+      if (pos == "d6" || pos == "D4" ) {
+        Xpos = -57.5;
+        Ypos = +78.0;
+      }
+      if (Xpos == -999 || Ypos == -999)
+	G4cout << "erreur non valid test beam position !!!!" << G4endl;
+      else
+        fAction->SetBeam(Xpos,Ypos,theta);
+    }
+  if( command == fBeamEResoCmd )
+    {
+      G4double ERESO;
+      std::istringstream is(newValue);
+      is >> ERESO;
+      fAction->SetBeamEReso(ERESO);
+    }
   if( command == fPowerLawCmd )
     {
       G4double Emin,Emax,gamma;
@@ -192,6 +342,16 @@ void HEPDSWPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String 
       Emin*= G4UIcommand::ValueOf(unit);
       Emax*= G4UIcommand::ValueOf(unit);
       fAction->SetPowerLaw(Emin,Emax,gamma);
+    }
+  if( command == fFlatCmd )
+    {
+      G4double Emin,Emax;
+      G4String unit;
+      std::istringstream is(newValue);
+      is >> Emin >> Emax >> unit;
+      Emin*= G4UIcommand::ValueOf(unit);
+      Emax*= G4UIcommand::ValueOf(unit);
+      fAction->SetFlat(Emin,Emax);
     }
 }
 

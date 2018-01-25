@@ -52,7 +52,7 @@ class TrackerConstruction
 {
 public:
   
-  TrackerConstruction();
+  TrackerConstruction(G4double ISOcenterZ, bool useProtonTB);
   ~TrackerConstruction();
 
   void SetSiliconMaterial(G4String aMat);

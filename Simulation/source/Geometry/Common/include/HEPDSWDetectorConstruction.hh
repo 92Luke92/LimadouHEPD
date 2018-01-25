@@ -41,6 +41,7 @@
 #include "HEPDBoxConstruction.hh"
 #include "CalorimeterConstruction.hh"
 #include "TrackerConstruction.hh"
+#include "DegraderConstruction.hh"
 
 
 class G4Box;
@@ -67,6 +68,10 @@ public:
   inline void SetTrackerDetector(G4bool aDet){useTracker=aDet;}
   inline void SetSatelliteDetector(G4bool aDet){useSatellite=aDet;}
   inline void SetHEPDBoxDetector(G4bool aDet){useHEPDBox=aDet;}
+
+  inline void SetProtonTBDetector(G4bool aDet){useProtonTB=aDet;}
+  inline void SetDegrader(G4bool aDet){useDegrader=aDet;}
+  inline void SetProtonDegrader(G4double dz){degrader_dz=dz; fDegraderBuilder->Builder(fPhysiWorld,fworldHalfZ,degrader_dz); }
 
   inline void SetSatelliteConfiguration(G4String aConfig){theSatelliteConfig=aConfig;}
   inline void SetHEPDBoxConfiguration(G4String aConfig){theHEPDBoxConfig=aConfig;}
@@ -104,21 +109,32 @@ private:
   G4bool             useHEPDBox;
   G4bool             useCalorimeter;
   G4bool             useTracker;
+  G4bool             useDegrader;
+  G4bool             useProtonTB; 
 
   HEPDSWMaterial*      pMaterial;
   
   G4double           fworldHalfZ;
   G4double           fworldHalfY;
   G4double           fworldHalfX;
+
+  G4double           fISOcenterZ; // proton test beam
+  G4double           HEPD_offset_Z; // from ISO center
+  G4double           degrader_dz; // degrader thickness
   
   G4Box*             fSolidWorld;
   G4LogicalVolume*   fLogicWorld;
   G4VPhysicalVolume* fPhysiWorld;
 
+  G4Box*             fSolidNormPlane;
+  G4LogicalVolume*   fLogicNormPlane;
+  G4VPhysicalVolume* fPhysiNormPlane;
+
   SatelliteConstruction*    fSatelliteBuilder;
   HEPDBoxConstruction*      fHEPDBoxBuilder;
   CalorimeterConstruction*  fCaloBuilder;
   TrackerConstruction*      fTrackerBuilder;
+  DegraderConstruction*     fDegraderBuilder;
 
   G4String theSatelliteConfig;
   G4String theHEPDBoxConfig;
@@ -126,6 +142,7 @@ private:
   G4String theTrackerConfig;
 
   HEPDSWDetectorMessenger* fDetectorMessenger;
+
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

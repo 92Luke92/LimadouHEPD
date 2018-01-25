@@ -31,7 +31,7 @@
 
 G4Allocator<TrackerHit> TrackerHitAllocator;
 
-TrackerHit::TrackerHit():theEntryPoint(0),theExitPoint(0){
+TrackerHit::TrackerHit():theEntryPoint(0),theExitPoint(0),theMomentumDirection(0){
   theKinEnergy = 0;
   theTimeOfFlight = 0;
   theEnergyLoss = 0;
@@ -43,7 +43,7 @@ TrackerHit::TrackerHit():theEntryPoint(0),theExitPoint(0){
 }
 
 TrackerHit::TrackerHit(G4ThreeVector aEntry,G4ThreeVector aExit,G4double aKE,G4double aToF,G4double aEloss,
-		       G4int aPDG ,unsigned int aID,unsigned int aTkID,G4double aTheta,G4double aPhi)
+		       G4int aPDG ,unsigned int aID,unsigned int aTkID,G4double aTheta,G4double aPhi, G4ThreeVector aMomDir)
 {
   theEntryPoint = aEntry;
   theExitPoint = aExit;
@@ -55,6 +55,7 @@ TrackerHit::TrackerHit(G4ThreeVector aEntry,G4ThreeVector aExit,G4double aKE,G4d
   theTrackIdInHit = aTkID;
   theThetaAtEntry = aTheta;
   thePhiAtEntry = aPhi;
+  theMomentumDirection = aMomDir;
 }
 
 TrackerHit::~TrackerHit()
@@ -74,6 +75,7 @@ TrackerHit::TrackerHit(const TrackerHit &right)
   theTrackIdInHit = right.theTrackIdInHit;
   theThetaAtEntry = right.theThetaAtEntry;
   thePhiAtEntry = right.thePhiAtEntry;
+  theMomentumDirection = right.theMomentumDirection;
 }
 
 const TrackerHit& TrackerHit::operator=(const TrackerHit &right)
@@ -88,6 +90,7 @@ const TrackerHit& TrackerHit::operator=(const TrackerHit &right)
   theTrackIdInHit = right.theTrackIdInHit;
   theThetaAtEntry = right.theThetaAtEntry;
   thePhiAtEntry = right.thePhiAtEntry;
+  theMomentumDirection = right.theMomentumDirection;
   return *this;
 }
 
@@ -102,7 +105,8 @@ G4int TrackerHit::operator==(const TrackerHit &right) const
 	  theDetectorId == right.theDetectorId &&
 	  theTrackIdInHit == right.theTrackIdInHit &&
 	  theThetaAtEntry == right.theThetaAtEntry &&
-	  thePhiAtEntry == right.thePhiAtEntry);
+	  thePhiAtEntry == right.thePhiAtEntry &&
+	  theMomentumDirection == right.theMomentumDirection);
 }
 
 

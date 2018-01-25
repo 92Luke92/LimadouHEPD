@@ -3,10 +3,10 @@
 /run/verbose 1
 #
 /hepd/setWorldSize 55 75 80 cm
-#/hepd/setWorldSize 55 75 150 cm
+#/hepd/setWorldSize 55 75 330 cm
 
-#/hepd/ActivateSatellite false
-/hepd/ActivateSatellite true
+/hepd/ActivateSatellite false
+
 /hepd/SatelliteConfiguration Config1
 /hepd/Satellite/BlanketMaterialConfiguration mylar
 /hepd/Satellite/WallMaterialConfiguration Aluminium
@@ -22,7 +22,7 @@
 /hepd/Tracker/KaptonMaterialConfiguration Kapton
 /hepd/Tracker/CarbonFiberMaterialConfiguration CarbonFiber
 
-#/hepd/ActivateScintillator true
+#/hepd/ActivateScintillator false
 #/hepd/ScintillatorConfiguration Config4
 #/hepd/Scintillator/ScintillatorMaterialConfiguration Scintillator
 #/hepd/Scintillator/PoronMaterialConfiguration Poron 
@@ -35,40 +35,34 @@
 /hepd/Calorimeter/PoronMaterialConfiguration Poron
 /hepd/Calorimeter/CarbonFiberMaterialConfiguration CarbonFiber
 
+# HEPD proton test beam configuration 
+/hepd/ActivateHEPDProtonTB true
+#/hepd/ActivateHEPDDegrader true
 
-## ELECTROMAGNETIC model
+#
 /hepd/phys/addPhysics  emstandard_opt4
 
-
-## ELASTIC HADRONIC model (primary + secondary)
 /hepd/phys/addPhysics  elastic
 /hepd/phys/addPhysics  IonElastic
-
-
-## MODEL 1: HADRONIC INELASTIC model (qmd) (primary + secondary)
 #/hepd/phys/addPhysics  Shielding
-#/hepd/phys/addPhysics  qmd_ion
-
-## MODEL 2: HADRONIC INELASTIC model (Incl) (primary + secondary)
+#/hped/phys/addPhysics  qmd_ion
 #/hepd/phys/addPhysics  INCLXX
 #/hepd/phys/addPhysics  inclxx_ion
-
-## MODEL 3: HADRONIC INELASTIC model (Binary) (primary + secondary)
 /hepd/phys/addPhysics  QGSP_BIC_HP
 /hepd/phys/addPhysics  binary_ion
 
-
 /run/initialize
-#/hepd/ScintillatorSD/useBirksLaw false
-#/hepd/CalorimeterSD/useBirksLaw false
-#/hepd/VetoSD/useBirksLaw false
+#/hepd/ScintillatorSD/useBirksLaw true
+/hepd/CalorimeterSD/useBirksLaw true
+/hepd/VetoSD/useBirksLaw true
 #
 # Use this open statement to create an OpenGL view:
-/vis/open OGL 600x600-0+0
+/vis/open OGLSQt 600x600-0+0
 
 # Disable auto refresh and quieten vis messages whilst scene and
 # trajectories are established:
 /vis/viewer/set/autoRefresh false
+
 /vis/verbose errors
 #
 # Draw geometry:
@@ -77,8 +71,9 @@
 #/vis/viewer/set/style surface
 #
 # Draw coordinate axes:
-/vis/scene/add/axes 0 0 0 20 cm
+/vis/scene/add/axes 0 0 0 300 cm
 /vis/viewer/set/background white
+/vis/viewer/set/viewpointThetaPhi 0. 0. deg
 #
 # Draw smooth trajectories at end of event, showing trajectory points
 # as markers 2 pixels wide:
@@ -88,8 +83,14 @@
 /vis/modeling/trajectories/drawByParticleID-0/set proton blue
 /vis/modeling/trajectories/drawByParticleID-0/set e+ blue
 /vis/modeling/trajectories/drawByParticleID-0/set e- red
-/vis/modeling/trajectories/drawByParticleID-0/set alpha magenta
+/vis/modeling/trajectories/drawByParticleID-0/set alpha blue
+/vis/modeling/trajectories/drawByParticleID-0/set He4 blue
 /vis/modeling/trajectories/drawByParticleID-0/set C12 magenta
+/vis/modeling/trajectories/drawByParticleID-0/set N14 magenta
+/vis/modeling/trajectories/drawByParticleID-0/set O16 red
+/vis/modeling/trajectories/drawByParticleID-0/set B10 red
+/vis/modeling/trajectories/drawByParticleID-0/set Be9 green
+/vis/modeling/trajectories/drawByParticleID-0/set Li7 green
 /vis/modeling/trajectories/drawByParticleID-0/set He3 magenta
 /vis/modeling/trajectories/drawByParticleID-0/set mu+ green
 /vis/modeling/trajectories/drawByParticleID-0/set mu- green
@@ -98,6 +99,8 @@
 /vis/modeling/trajectories/drawByParticleID-0/set neutron black
 /vis/modeling/trajectories/drawByParticleID-0/set gamma yellow
 /vis/modeling/trajectories/drawByParticleID-0/set neutrino magenta
+/vis/modeling/trajectories/drawByParticleID-0/set neutrino magenta
+/vis/modeling/trajectories/drawByParticleID-0/setRGBA O16 0.0 0.65 0.35 1
 #
 # To superimpose all of the events from a given run:
 /vis/scene/endOfEventAction accumulate
@@ -106,20 +109,28 @@
 /vis/viewer/set/autoRefresh true
 /vis/verbose warnings
 #
-/hepd/gun/setDefault
-#/hepd/gun/random
-#/hepd/gun/beam 0 0 cm 0 deg
-/hepd/gun/beam -1.75 -1.8 cm 0 deg 	#3C0
+#/hepd/gun/setDefault
 #/hepd/gun/muon 30 30 cm 0.05 1000 GeV
+#/hepd/gun/random
+# position c3 trento tb
+#/hepd/gun/beam -1.75 -1.80 cm 0 deg
+# position d3 trento tb
+#/hepd/gun/beam -5.75 -1.80 cm 0 deg
+# position d4 trento tb
+#/hepd/gun/beam -5.75 +1.80 cm 0 deg
+/hepd/gun/tbeam d6 0 deg
 #/hepd/gun/toCenter
+/hepd/gun/energy 70 MeV
+#/hepd/gun/ereso 0.1
+#/gun/particle ion
+#/gun/ion 6 12
 /hepd/gun/particle proton
-#/hepd/gun/particle mu+
-/hepd/gun/energy 68 MeV
+#/hepd/gun/flat 3 300 MeV 
+#/hepd/ProtonDegrader 16 mm
 #
 
 /hepd/producer/SetRootFile Test.root HEPD
 
-/run/beamOn 5000
-#/run/beamOn 100
+/run/beamOn 5
 
 /hepd/producer/StoreRootFile

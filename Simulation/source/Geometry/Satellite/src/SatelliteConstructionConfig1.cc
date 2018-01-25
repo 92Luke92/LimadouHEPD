@@ -98,7 +98,6 @@ void SatelliteConstructionConfig1::ComputeObjectsPositioning(){
 
 }
 
-
 void SatelliteConstructionConfig1::SetBlanketMaterial(G4String aMat){
   blanketMaterial=aMat; 
 }    
@@ -140,7 +139,6 @@ void SatelliteConstructionConfig1::Builder(G4VPhysicalVolume* motherVolume)
 				 fLogicWall,
 				 motherVolume,
 				 false,0,true);
-
 
   //Visualization Attribute
 

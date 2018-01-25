@@ -15,7 +15,7 @@ class RootTrackerHit : public TObject
 public:
   RootTrackerHit ();
   RootTrackerHit (TVector3 aEntry,TVector3 aExit,float aKE,float aToF,float aEloss,
-		  int aPDG ,unsigned int aID,unsigned int atkID,float aTheta,float aPhi);
+		  int aPDG ,unsigned int aID,unsigned int atkID,float aTheta,float aPhi,TVector3 aMomDir);
   
   ~RootTrackerHit ();
   RootTrackerHit (const RootTrackerHit&);
@@ -30,6 +30,7 @@ public:
   inline unsigned int GetTrackId(){return theTrackIdInHit;}
   inline float GetThetaAtEntry(){return theThetaAtEntry;}
   inline float GetPhiAtEntry(){return thePhiAtEntry;}
+  inline TVector3 GetMomDir(){return theMomDir;}
 
   ClassDef(RootTrackerHit,1);
   
@@ -44,6 +45,7 @@ private:
   unsigned int theTrackIdInHit;
   float theThetaAtEntry;
   float thePhiAtEntry;
+  TVector3 theMomDir;
 };
 
 #endif

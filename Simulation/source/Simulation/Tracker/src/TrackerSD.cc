@@ -89,7 +89,7 @@ G4bool TrackerSD::NewHit(G4Step* aStep){
 }
 
 int TrackerSD::SetDetectorId(G4Step* aStep){
-  detId = 0;
+  int detId = 0;
   if(verboseLevel>1) 
     std::cout<<" I'm inside the SetDetectorId method"<<std::endl; 
   const G4VTouchable* VT(aStep->GetPreStepPoint()->GetTouchable());
@@ -132,13 +132,13 @@ void TrackerSD::CreateHit(G4Step * aStep){
   G4ThreeVector theEntryPoint = aStep->GetPreStepPoint()->GetPosition();
   G4double theKE      = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
   G4double theTof       = aStep->GetPreStepPoint()->GetGlobalTime()/nanosecond;
-  G4int theParticleType = theTrack->GetParticleDefinition()->GetPDGEncoding();
-      
+  G4int theParticleType = theTrack->GetParticleDefinition()->GetPDGEncoding();    
   G4ThreeVector gmd  = aStep->GetPreStepPoint()->GetMomentumDirection();
   // convert it to local frame
   G4ThreeVector lmd = ((G4TouchableHistory *)(aStep->GetPreStepPoint()->GetTouchable()))->GetHistory()->GetTopTransform().TransformAxis(gmd);
   G4double theThetaAtEntry = lmd.theta();
   G4double thePhiAtEntry = lmd.phi();
+  G4ThreeVector theMomentumDirection =  aStep->GetPreStepPoint()->GetMomentumDirection();
   
   if(verboseLevel>1) 
     std::cout<<"TrackerSD::CreateHit I'm creating the new Hit on DetId "<<theDetectorId<<std::endl;
@@ -148,7 +148,7 @@ void TrackerSD::CreateHit(G4Step * aStep){
   TrackerHit* trackerHit = new TrackerHit(theEntryPoint,theExitPoint,theKE,theTof,
 					  theEnergyLoss,theParticleType,theDetectorId,
 					  theTrackID,theThetaAtEntry,
-					  thePhiAtEntry);  
+					  thePhiAtEntry,theMomentumDirection);  
   
   G4int cell = TkHitCollection->insert(trackerHit);
   int mapKey = ((trackID&tkIdMask)<<tkIdOffset)|(detId&detIdMask);

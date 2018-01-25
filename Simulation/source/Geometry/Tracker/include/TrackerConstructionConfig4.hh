@@ -50,14 +50,14 @@ class TrackerConstructionConfig4
 {
 public:
   
-   TrackerConstructionConfig4();
+  TrackerConstructionConfig4(G4double tb_offset_Z, G4bool useProtonTB);
   ~TrackerConstructionConfig4();
 
   inline void SetSiliconMaterial(G4String aMat){siliconMaterial=aMat;}
   inline void SetKaptonMaterial(G4String aMat){kaptonMaterial=aMat;}
   inline void SetCarbonFiberMaterial(G4String aMat){cfiberMaterial=aMat;}
   inline void SetPoronMaterial(G4String aMat){poronMaterial=aMat;}
-
+ 
   void Builder(G4VPhysicalVolume* motherVolume);
   
 private:
@@ -273,6 +273,9 @@ private:
   G4double  fPhysiHeatSink_X;
   G4double  fPhysiHeatSink_Y;
   G4double  fPhysiHeatSink_Z;
+
+  G4double  proton_tb_offset_Z;
+  G4bool    use_ProtonTB;
 
   HEPDSWMaterial* pMaterial;
 

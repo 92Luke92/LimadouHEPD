@@ -24,6 +24,7 @@
 // ********************************************************************
 //
 //          Filippo Ambroglini : filippo.ambroglini@pg.infn.it
+//          W.J. Burger        : william.burger@tifpa.infn.it
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -43,6 +44,8 @@
 #include "CalorimeterConstruction.hh"
 #include "HEPDBoxConstruction.hh"
 #include "SatelliteConstruction.hh"
+#include "DegraderConstruction.hh"
+#include "MCTruthSD.hh"
 
 
 #include "G4GeometryManager.hh"
@@ -57,39 +60,48 @@
 #include <iomanip>
 
 #include "G4SDManager.hh"
-#include "MCTruthSD.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HEPDSWDetectorConstruction::HEPDSWDetectorConstruction()
-  :fSolidWorld(0),fLogicWorld(0),fPhysiWorld(0),
-   fSatelliteBuilder(0),fHEPDBoxBuilder(0),fCaloBuilder(0),fTrackerBuilder(0)
+  :fSolidWorld(0),fLogicWorld(0),fPhysiWorld(0),fSolidNormPlane(0),fLogicNormPlane(0),fPhysiNormPlane(0),
+   fSatelliteBuilder(0),fHEPDBoxBuilder(0),fCaloBuilder(0),fTrackerBuilder(0),fDegraderBuilder(0)
 
 {
 
   pMaterial = new HEPDSWMaterial();
-  fDetectorMessenger = new HEPDSWDetectorMessenger(this);
+
+  fISOcenterZ = 125*cm;
+  HEPD_offset_Z = 186*cm - fISOcenterZ;
+  G4double proton_tb_offset_Z = fISOcenterZ + HEPD_offset_Z;
+  useProtonTB=false;
+  G4cout << " useProtonTB " << useProtonTB << G4endl;
   
   fworldHalfX=20.0*cm;
   fworldHalfY=20.0*cm;
-  fworldHalfZ=30.0*cm;
+  fworldHalfZ=40.0*cm;
   
   fSatelliteBuilder = new SatelliteConstruction();
   fHEPDBoxBuilder   = new HEPDBoxConstruction();
-  fCaloBuilder      = new CalorimeterConstruction();
+  fCaloBuilder      = new CalorimeterConstruction(proton_tb_offset_Z,useProtonTB);
   //  fScintBuilder     = new ScintillatorConstruction();
-  fTrackerBuilder   = new TrackerConstruction();
+  fTrackerBuilder   = new TrackerConstruction(proton_tb_offset_Z,useProtonTB);
+  fDegraderBuilder   = new DegraderConstruction();
+
+  fDetectorMessenger = new HEPDSWDetectorMessenger(this);
 
   useSatellite=true;
   useHEPDBox=true;
   useCalorimeter=true;
+  useDegrader=false;
   //  useScintillator=true;
   useTracker=true;
   theSatelliteConfig="Config2";
-  theHEPDBoxConfig="Config2";
+  theHEPDBoxConfig="Config4";
   theCaloConfig="Config6";
   //theScintConfig="Config4";
   theTrackerConfig="Config2";
+  degrader_dz = 25; // mm
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -121,19 +133,45 @@ G4VPhysicalVolume* HEPDSWDetectorConstruction::Construct()
 
   pMaterial -> DefineMaterials();
   G4Material* vacuum = pMaterial->GetMaterial("Galactic");
+  G4Material* air = pMaterial->GetMaterial("G4_AIR"); 
 
+  if (useProtonTB) fworldHalfZ = 376.37 + fISOcenterZ + HEPD_offset_Z + 1*cm;
+
+  G4cout << "monde dx " << fworldHalfX << " dy " << fworldHalfY << " dz " << fworldHalfZ << G4endl;
 
   fSolidWorld = new G4Box("world",fworldHalfX,fworldHalfY,fworldHalfZ);
+
+  if (useProtonTB)
+  fLogicWorld = new G4LogicalVolume(fSolidWorld,air,"world");
+  else
   fLogicWorld = new G4LogicalVolume(fSolidWorld,vacuum,"world");
 
-  fLogicWorld->SetSensitiveDetector(mcSD);
+  //  fLogicWorld->SetSensitiveDetector(mcSD);
 
   fPhysiWorld = new G4PVPlacement(0,G4ThreeVector(),"world",fLogicWorld,0,false,0);
   
-  G4VisAttributes * attInvisible = new G4VisAttributes(G4Colour::Black());
+  G4VisAttributes * attInvisible = new G4VisAttributes(G4Colour::White());
   attInvisible->SetVisibility(true);
   attInvisible->SetForceAuxEdgeVisible(true);
-  fLogicWorld->SetVisAttributes(attInvisible); 
+  fLogicWorld->SetVisAttributes(attInvisible);
+ 
+  G4double fnormplaneHalfZ = 0.25; //mm
+  fSolidNormPlane = new G4Box("SolidNormPlane",fworldHalfX,fworldHalfY,fnormplaneHalfZ);
+
+  if (useProtonTB)
+  fLogicNormPlane = new G4LogicalVolume(fSolidNormPlane,air,"LogNormPlane");
+  else
+  fLogicNormPlane = new G4LogicalVolume(fSolidNormPlane,vacuum,"LogNormPlane");
+
+  fLogicNormPlane->SetSensitiveDetector(mcSD);
+
+  G4double normplane_Z = fworldHalfZ - fnormplaneHalfZ;
+  fPhysiNormPlane = new G4PVPlacement(0,G4ThreeVector(0,0,normplane_Z),"NormPlane",fLogicNormPlane,fPhysiWorld,false,0);
+  
+  G4VisAttributes * attBlack = new G4VisAttributes(G4Colour::Black());
+  attBlack->SetVisibility(true);
+  attBlack->SetForceAuxEdgeVisible(true);
+  fLogicNormPlane->SetVisAttributes(attBlack); 
   
   if(useSatellite)
     fSatelliteBuilder->Builder(theSatelliteConfig,fPhysiWorld);
@@ -145,6 +183,7 @@ G4VPhysicalVolume* HEPDSWDetectorConstruction::Construct()
 //     fScintBuilder->Builder(theScintConfig,fPhysiWorld);
   if(useTracker)
     fTrackerBuilder->Builder(theTrackerConfig,fPhysiWorld);
+  if (useProtonTB && useDegrader) fDegraderBuilder->Builder(fPhysiWorld,fworldHalfZ,degrader_dz);
   return fPhysiWorld;
 }
 

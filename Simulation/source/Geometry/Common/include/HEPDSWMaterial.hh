@@ -59,6 +59,7 @@ private:
   G4Material* matGraphite; 
   G4Material* matCarbonFiber; 
   G4Material* matH2O;
+  G4Material* matH2O_solid;
   G4Material* matMgB2;
   G4Material* matGlass;
   G4Material* matCu;

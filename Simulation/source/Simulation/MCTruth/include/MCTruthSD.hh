@@ -54,6 +54,8 @@ public:
 private:
   TracksCollection* TrackCollection;
   VertexsCollection* VertexCollection;
+  char KaptonBlanket[20]; // entrance window of HEPD
+
   int verboseLevel;
 
 };
