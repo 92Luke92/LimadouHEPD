@@ -12,6 +12,8 @@
 #include "LEvTemp.hh"
 #include "TFile.h"
 #include "TTree.h"
+#include <string>
+//#include "iomanip.h"
 
 using namespace std;
 
@@ -199,7 +201,7 @@ int nEvents = RunFile->GetEntries();
 
 for (int iEv = 0; iEv < nEvents; iEv++)  // Event loop
 
-     { std::cout << "\b\b\b" << std::setprecision(2) << std::setw(2) << int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
+  { //std::cout << "\b\b\b" << std::setprecision(2) << std::setw(2) << int(double(iEv) / double(nEvents - 1) * 100) << "%" << std::flush;
 
      RunFile->GetEntry(iEv); 
 
