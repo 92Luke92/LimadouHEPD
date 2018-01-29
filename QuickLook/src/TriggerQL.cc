@@ -160,7 +160,7 @@ void TriggerScan(TString rootname)
       if (kk==8)
 	 name_rate_meter = "Trigger MASK 8 [Generic Trigger Mask]";
 
-      rate_meter_vs_time[kk]->SetTitle(Form("%s; Event time (s); Rate meter ", name_rate_meter));
+      rate_meter_vs_time[kk]->SetTitle(Form("%s; Event time (s); Rate meter (Hz) ", name_rate_meter));
    }
 
    TGraph *pmt_rate_meter_vs_time[65];
@@ -189,6 +189,7 @@ void TriggerScan(TString rootname)
    }      
 
    Int_t time_flag = 0;
+   Int_t numevent_int = 0;
    Int_t sum[9];
    for(int kk=0;kk<9;kk++)
       sum[kk] = 0;
@@ -210,21 +211,29 @@ void TriggerScan(TString rootname)
 	 if(ev.trigger_flag[ch] > 0)
 	    h_FlagCount_vs_Ch->Fill(ch);
 
-      if (i == 0)
+      if (i == 0){
 	 time_flag = event_time + INTEGTIME;
+	 //cout << "start time = " << time_flag << endl;
+      }
       
-      if (event_time < time_flag)
+      if (event_time < time_flag){
+	 numevent_int++;
 	 for(int kk=0;kk<9;kk++)
 	    sum[kk] += ev.rate_meter[kk];
-      
+      }
       else
       {
+	 //cout << "num events = "<< numevent_int << endl;
 	 for(int kk=0;kk<9;kk++)
 	 {
-	    rate_meter_vs_time[kk]->SetPoint(rate_meter_vs_time[kk]->GetN(), (time_flag+INTEGTIME/2.)/1000., sum[kk]);
+	   
+ 	    rate_meter_vs_time[kk]->SetPoint(rate_meter_vs_time[kk]->GetN(), (time_flag+INTEGTIME/2.)/1000., (double)sum[kk]/numevent_int);
 	    sum[kk] = 0;
-	    time_flag = event_time + INTEGTIME;	    
+	    time_flag = event_time + INTEGTIME;
 	 }
+	 //cout << "start time = " << time_flag << endl;
+	 numevent_int = 0;
+	    
       }	 
       
    } //End of event loop
