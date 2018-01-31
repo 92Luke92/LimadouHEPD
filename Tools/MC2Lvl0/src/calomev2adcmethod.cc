@@ -35,9 +35,6 @@ short calomev2adcmethod::clipADC(int unclippedADC) {
      return static_cast<short> (unclippedADC);
 }
 
-short calomev2adcmethod::clipADC(float unclippedADC) {
-     return clipADC (static_cast<int> (unclippedADC));
-}
 
 void calomev2adcmethod::SetPedFromCalib(LCaloCalibration calocalib) {
      const double* peds= calocalib.GetPedestal();

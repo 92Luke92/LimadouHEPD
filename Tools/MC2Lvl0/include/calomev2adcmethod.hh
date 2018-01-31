@@ -30,7 +30,7 @@ class calomev2adcmethod
       std::vector<std::vector<float>> datacard;
       int beamEnergy;
       short clipADC(int unclippedADC);
-      short clipADC(float unclippedADC);
+      short clipADC(float unclippedADC)  { return clipADC (static_cast<int> (unclippedADC));}
       LCaloCalibration calocalib;
       std::array<float, NPMT> pedestals;
 
