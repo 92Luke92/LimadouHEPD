@@ -7,6 +7,7 @@
 
 
 #include "calomev2adcmethod.hh"
+#include "pmtenum.hh"
 
 
 calomev2adcmethod::calomev2adcmethod(std::string datacardname)
@@ -38,3 +39,17 @@ short calomev2adcmethod::clipADC(float unclippedADC) {
      return clipADC (static_cast<int> (unclippedADC));
 }
 
+void calomev2adcmethod::SetPedFromCalib(LCaloCalibration calocalib) {
+     const double* peds= calocalib.GetPedestal();
+     for (PMTenum ipmt : PMTiterator) pedestals[ipmt] = peds[ipmt];
+     return;
+}
+
+
+void calomev2adcmethod::SetPedFromDatacard(std::string datacardfile="laurentHGpeakshift.csv") {
+    csv2fvec dataPed;
+    std::vector<std::vector<float>> datacardPedestals = dataPed.fromDatacard (datacardfile);
+    if (datacardPedestals.empty() ) std::cerr << "MEV2ADC: init failed (pedestals datacard file not found)" << std::endl;
+    for (PMTenum ipmt : PMTiterator) pedestals[ipmt] = datacardPedestals[ipmt][0];
+    return;
+}

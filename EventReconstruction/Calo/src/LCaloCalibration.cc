@@ -7,6 +7,7 @@
 #include <math.h>
 #include <random>
 #include <chrono>
+#include <vector>
 
 LCaloCalibration::LCaloCalibration() {
   Reset();
@@ -105,7 +106,7 @@ LCaloCalibration* LCaloCalibration::ReadRoot(const char *fileIn, enum pmt_calib_
    int RunIdST;
    double pedestalST[NPMT];
    double sigmaST[NPMT];
-   
+
    LEvRec0 outev;
    LEvRec0File inputFile(fileIn);
    inputFile.SetTheEventPointer(outev);
@@ -127,19 +128,19 @@ LCaloCalibration* LCaloCalibration::ReadRoot(const char *fileIn, enum pmt_calib_
    }
 
    inputFile.GetEntry(1); // sig
-   
+
    for(int iChan=0; iChan<NPMT; ++iChan){
       if(flag == HIGH)
       {
 	 sigmaST[iChan] = outev.pmt_high[iChan];
 	 //std::cout << " sigmaST[" << iChan << "] = "  << sigmaST[iChan] << std::endl;
-		 
+
       }
       else if (flag == LOW)
       {
 	 sigmaST[iChan] = outev.pmt_low[iChan];
 	 //std::cout << " sigmaST[" << iChan << "] = " << sigmaST[iChan] << std::endl;
-		 
+
       }
    }
 
@@ -252,7 +253,7 @@ LCaloCalibration* LCaloCalibration::CreateFakeCalibration(const LCaloCalibration
     sigmaNew[iChan]=sigma_distr(generator);
     pedNew[iChan]=ped_distr(generator);
   }
-  
+
   LCaloCalibration* result=new LCaloCalibration(seed->GetRunId(),pedNew,sigmaNew);
   return result;
 

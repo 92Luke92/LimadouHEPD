@@ -2,7 +2,6 @@
 #define __LCALOCALIBRATION__ "LCaloCalibration  ######### "
 
 #include "detector_const.hh"
-#include <vector>
 #include <fstream>
 
 
@@ -19,7 +18,7 @@ public:
   static LCaloCalibration* Read(std::ifstream *fileIn);
   static LCaloCalibration* ReadRoot(const char *fileIn, enum pmt_calib_type flag);
   static LCaloCalibration* CreateFakeCalibration(const LCaloCalibration* seed,const double offset=0);
-    
+
   inline int GetRunId() const {return RunId;};
   inline const double* GetPedestal() const {return pedestal;};
   inline const double* GetSigma() const {return sigma;};
@@ -31,9 +30,9 @@ public:
   LCaloCalibration& operator=(const LCaloCalibration& other);
   LCaloCalibration& operator+=(const LCaloCalibration& rhs); // compound assignment (does not need to be a member,
   friend LCaloCalibration operator+(LCaloCalibration lhs,        // passing lhs by value helps optimize chained a+b+c
-		     const LCaloCalibration& rhs);// otherwise, both parameters may be const references 
+		     const LCaloCalibration& rhs);// otherwise, both parameters may be const references
   LCaloCalibration& operator/=(const double& rhs);
-  
+
 private:
   // Calib infos
   int RunId;

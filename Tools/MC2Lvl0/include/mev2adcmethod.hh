@@ -10,6 +10,7 @@
 #define MEV2ADCMETHOD_HH
 
 #include <calomev2adcmethod.hh>
+#include "pmtenum.hh"
 
 class MeV2ADCMethod: public calomev2adcmethod {
   public:
