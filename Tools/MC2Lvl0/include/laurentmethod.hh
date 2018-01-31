@@ -14,7 +14,7 @@
 class LaurentMethod: public MeV2ADCMethod {
   public:
     LaurentMethod (std::string datacardname);
-    short adcFromMev (float mev, int sensor);
+    float adcFromMevNoPed (float mev, int sensor);
     void setBeamEnergy(int energy);
 
   protected:

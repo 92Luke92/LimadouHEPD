@@ -20,7 +20,7 @@ class calomev2adcmethod
 {
    public:
       calomev2adcmethod(std::string datacardname);
-      virtual short adcFromMev(float mev, int sensor) = 0;
+      short adcFromMev(float mev, int sensor);
       void dumpDatacard();
       virtual void setBeamEnergy(int energy) {beamEnergy=energy;}
       void SetPedFromCalib(LCaloCalibration calocalib);
@@ -28,6 +28,7 @@ class calomev2adcmethod
 
    protected:
       std::vector<std::vector<float>> datacard;
+      virtual float adcFromMevNoPed(float mev, int sensor) = 0;
       int beamEnergy;
       short clipADC(int unclippedADC);
       short clipADC(float unclippedADC)  { return clipADC (static_cast<int> (unclippedADC));}

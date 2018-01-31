@@ -14,7 +14,7 @@ class MatteoMethod : public calomev2adcmethod
 {
   public:
     MatteoMethod(std::string datacardname);
-    short adcFromMev(float mev, int sensor);
+    float adcFromMevNoPed(float mev, int sensor);
     short Err_adcFromMev(float mev, int sensor);
 
   protected:

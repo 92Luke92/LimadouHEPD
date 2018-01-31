@@ -15,7 +15,7 @@
 class MeV2ADCMethod: public calomev2adcmethod {
   public:
     MeV2ADCMethod (std::string datacardname);
-    virtual short adcFromMev (float mev, int sensor) = 0;
+    virtual float adcFromMevNoPed (float mev, int sensor) = 0;
     virtual void setBeamEnergy(int energy) {beamEnergy=energy;};
 
   protected:

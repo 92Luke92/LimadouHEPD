@@ -23,7 +23,7 @@ void LaurentMethod::UpdateMyPMTs(){
 	}
 }
 
-short LaurentMethod::adcFromMev(float mev, int sensor) {
+float LaurentMethod::adcFromMevNoPed(float mev, int sensor) {
    PMTnumbersLaurent thisPMT=MyPMTs[sensor];
    float adcShift = mev * thisPMT.mev2adc;
    float adcShape = thisPMT.a * adcShift + thisPMT.b;

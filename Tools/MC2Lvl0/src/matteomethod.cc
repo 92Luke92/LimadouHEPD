@@ -71,7 +71,7 @@ void MatteoMethod::getPedestals()
 
 
 
-short MatteoMethod::adcFromMev (float mev, int sensor)
+float MatteoMethod::adcFromMevNoPed (float mev, int sensor)
 {
     PMTnumbersMatteo thisPMT = pmtParameters[sensor];
     // See comment at top: slope, intercept defined such that E(data)/E(MC) = slope * E(MC) + intercept

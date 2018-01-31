@@ -46,7 +46,19 @@ void calomev2adcmethod::SetPedFromCalib(LCaloCalibration calocalib) {
 void calomev2adcmethod::SetPedFromDatacard(std::string datacardfile="laurentHGpeakshift.csv") {
     csv2fvec dataPed;
     std::vector<std::vector<float>> datacardPedestals = dataPed.fromDatacard (datacardfile);
-    if (datacardPedestals.empty() ) std::cerr << "MEV2ADC: init failed (pedestals datacard file not found)" << std::endl;
+    if (datacardPedestals.empty() ) std::cerr << "CALOMEV2ADC: init failed (pedestals datacard file not found)" << std::endl;
     for (PMTenum ipmt : PMTiterator) pedestals[ipmt] = datacardPedestals[ipmt][0];
     return;
+}
+
+
+short calomev2adcmethod::adcFromMev (float mev, int sensor) {
+     float rawadc=adcFromMevNoPed(mev, sensor);
+     if (rawadc<0) {
+          std::cerr << "CALOMEV2ADC: Negative raw MeV value for sensor "
+                    << sensor << " : " << rawadc << std::endl;
+          rawadc=0;
+     }
+     float pedadc= rawadc + pedestals[sensor];
+     return clipADC(pedadc);
 }

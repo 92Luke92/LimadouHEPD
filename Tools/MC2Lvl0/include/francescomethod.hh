@@ -15,7 +15,7 @@ class FrancescoMethod: public MeV2ADCMethod
 {
    public:
       FrancescoMethod(std::string datacardname,std::string pardatacardname);
-      short adcFromMev(float mev, int sensor);
+      float adcFromMevNoPed(float mev, int sensor);
       void setBeamEnergy(int energy) {beamEnergy=energy;};
 
    protected:

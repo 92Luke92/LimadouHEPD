@@ -63,7 +63,7 @@ short FrancescoMethod::SmearADC(short ADC,int sensor){
 	else return static_cast<short> (smearedADC);
 }
 
-short FrancescoMethod::adcFromMev(float mev, int sensor) {
+float FrancescoMethod::adcFromMevNoPed(float mev, int sensor) {
    PMTnumbersFrancesco thisPMT=MyPMTs[sensor];
    float adcShift = mev * thisPMT.mev2adc;
    int unclippedPMT = static_cast<int> (adcShift + thisPMT.pedMean);
