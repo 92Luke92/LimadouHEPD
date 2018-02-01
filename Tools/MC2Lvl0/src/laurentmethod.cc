@@ -11,10 +11,10 @@
 
 
 LaurentMethod::LaurentMethod(std::string datacardname):prescaledmev2adcmethod(datacardname){
-  UpdateMyPMTs();
+  updatePMTs();
 }
 
-void LaurentMethod::UpdateMyPMTs(){
+void LaurentMethod::updatePMTs(){
 	int i=0;
 	for (auto pmt : PMTs) {
 		PMTnumbersLaurent tmp(PMTs[i]);
@@ -27,9 +27,8 @@ float LaurentMethod::adcFromMevNoPed(float mev, int sensor) {
    PMTnumbersLaurent thisPMT=MyPMTs[sensor];
    float adcShift = mev * thisPMT.mev2adc;
    float adcShape = thisPMT.a * adcShift + thisPMT.b;
-   if (adcShape<=0) adcShape=adcShift; // could be switched to 0
-   int unclippedPMT = static_cast<int> (adcShape + thisPMT.pedMean);
-   return clipADC(unclippedPMT);
+   if (adcShape<=0) adcShape=0;//adcShift;
+   return adcShape;
 }
 
 

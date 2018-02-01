@@ -13,11 +13,12 @@
 FrancescoMethod::FrancescoMethod(std::string datacardname,std::string pardatacardname)
    : prescaledmev2adcmethod(datacardname)
 {
-	UpdateMyPMTs();
+	updatePMTs();
 	initRandom(pardatacardname);
+        convertParameterDatacard();
 }
 
-void FrancescoMethod::UpdateMyPMTs(){
+void FrancescoMethod::updatePMTs(){
 	int i=0;
 	for (auto pmt : PMTs) {
 		PMTnumbersFrancesco tmp(PMTs[i]);
@@ -29,10 +30,8 @@ void FrancescoMethod::UpdateMyPMTs(){
 void FrancescoMethod::initRandom(std::string pardatacardname) {
   csv2fvec parfile;
   pardatacard=parfile.fromDatacard(pardatacardname);
-  if (pardatacard.empty()) std::cerr << "FMethod: initRandom failed (pardatacardname file not found)" << std::endl;
+  if (pardatacard.empty()) std::cerr << "FMethod: initRandom failed (datacard file not found)" << std::endl;
   Rand= new TRandom3(time(0));
-  convertParameterDatacard();
-
 }
 
 void FrancescoMethod::convertParameterDatacard(){
@@ -63,12 +62,14 @@ short FrancescoMethod::SmearADC(short ADC,int sensor){
 	else return static_cast<short> (smearedADC);
 }
 
+
 float FrancescoMethod::adcFromMevNoPed(float mev, int sensor) {
    PMTnumbersFrancesco thisPMT=MyPMTs[sensor];
    float adcShift = mev * thisPMT.mev2adc;
    int unclippedPMT = static_cast<int> (adcShift + thisPMT.pedMean);
-   short smeared=SmearADC(unclippedPMT,sensor);
-   return clipADC(smeared);
+   short smeared=SmearADC(unclippedPMT,sensor) - static_cast<short> (thisPMT.pedMean );
+   if (smeared<0) smeared=0;
+   return smeared;
 }
 
 

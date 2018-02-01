@@ -28,7 +28,7 @@ class LaurentMethod: public prescaledmev2adcmethod {
 
 
   private:
-     void UpdateMyPMTs();
+     void updatePMTs();
      std::array<PMTnumbersLaurent, NPMT>  MyPMTs;
 
 };

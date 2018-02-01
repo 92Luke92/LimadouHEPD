@@ -37,7 +37,7 @@ class FrancescoMethod: public prescaledmev2adcmethod
    std::array<PMTnumbersFrancesco, NPMT>  MyPMTs;
 
    void  initRandom(std::string pardatacardname);
-   void  UpdateMyPMTs();
+   void  updatePMTs();
    void  convertParameterDatacard();
    short SmearADC(short ADC,int sensor);
 };
