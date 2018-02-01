@@ -17,20 +17,14 @@ class MatteoMethod : public calomev2adcmethod
     float adcFromMevNoPed(float mev, int sensor);
     short Err_adcFromMev(float mev, int sensor);
 
-  protected:
+  private:
     void init();
-    void getFitParameters();
-    void getPedestals();
-
 
     struct PMTnumbersMatteo  {
       float Slope, ErrSlope;
       float Interc, ErrInterc;
-      float pedMean;
     };
 
-
-   private:
     std::array<PMTnumbersMatteo, NPMT>  pmtParameters;
 
 };

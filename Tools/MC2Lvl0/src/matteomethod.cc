@@ -36,12 +36,6 @@ MatteoMethod::MatteoMethod (std::string datacardname) : calomev2adcmethod (datac
 
 void MatteoMethod::init()
 {
-    getFitParameters();
-    getPedestals();
-}
-
-void MatteoMethod::getFitParameters()
-{
     for (auto line : datacard) {
         const int iPMT = static_cast<int> (line[0]);
         PMTnumbersMatteo pmt;
@@ -55,18 +49,6 @@ void MatteoMethod::getFitParameters()
 }
 
 
-void MatteoMethod::getPedestals()
-{
-    csv2fvec dataPed;
-    std::vector<std::vector<float>> datacardPedestals = dataPed.fromDatacard ("laurentHGpeakshift.csv");
-    if (datacardPedestals.empty() ) std::cerr << "MatteoM: init failed (pedestals datacard file not found)" << std::endl;
-    int iPMT = 0;
-    for (auto line : datacardPedestals) {
-        pmtParameters[iPMT].pedMean = line[0];
-        iPMT++;
-    }
-    return;
-}
 
 
 
@@ -75,7 +57,6 @@ float MatteoMethod::adcFromMevNoPed (float mev, int sensor)
     PMTnumbersMatteo thisPMT = pmtParameters[sensor];
     // See comment at top: slope, intercept defined such that E(data)/E(MC) = slope * E(MC) + intercept
     float fadc = mev * mev * thisPMT.Slope + mev * thisPMT.Interc;
-    fadc += thisPMT.pedMean;
     return clipADC (fadc);
 }
 
