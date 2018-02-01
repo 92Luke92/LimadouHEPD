@@ -43,8 +43,7 @@ void MatteoMethod::init()
 void MatteoMethod::getFitParameters()
 {
     for (auto line : datacard) {
-        const int idx = static_cast<int> (line[0]);
-        PMTenum iPMT = PMTiterator[idx];
+        const int iPMT = static_cast<int> (line[0]);
         PMTnumbersMatteo pmt;
         pmt.Slope = line[1];
         pmt.Interc = line[2];

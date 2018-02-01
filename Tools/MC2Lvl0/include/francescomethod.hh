@@ -8,10 +8,10 @@
 #ifndef FRANCESCOMETHOD_HH
 #define FRANCESCOMETHOD_HH
 
-#include <mev2adcmethod.hh>
+#include <prescaledmev2adcmethod.hh>
 #include "TRandom3.h"
 
-class FrancescoMethod: public MeV2ADCMethod
+class FrancescoMethod: public prescaledmev2adcmethod
 {
    public:
       FrancescoMethod(std::string datacardname,std::string pardatacardname);

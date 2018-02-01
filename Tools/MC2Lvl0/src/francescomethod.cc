@@ -11,7 +11,7 @@
 
 
 FrancescoMethod::FrancescoMethod(std::string datacardname,std::string pardatacardname)
-   : MeV2ADCMethod(datacardname)
+   : prescaledmev2adcmethod(datacardname)
 {
 	UpdateMyPMTs();
 	initRandom(pardatacardname);

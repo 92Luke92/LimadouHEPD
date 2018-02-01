@@ -15,6 +15,7 @@ calomev2adcmethod::calomev2adcmethod(std::string datacardname)
    csv2fvec datagetter;
    datacard=datagetter.fromDatacard(datacardname);
    if (datacard.empty()) std::cerr << "CaloM2A: init failed (datacard file not found)" << std::endl;
+   setPedFromDatacard(); // consistency with previous numbers / methods, will be changed to datacards
 }
 
 
@@ -36,14 +37,14 @@ short calomev2adcmethod::clipADC(int unclippedADC) {
 }
 
 
-void calomev2adcmethod::SetPedFromCalib(LCaloCalibration calocalib) {
+void calomev2adcmethod::setPedFromCalib(LCaloCalibration calocalib) {
      const double* peds= calocalib.GetPedestal();
      for (PMTenum ipmt : PMTiterator) pedestals[ipmt] = peds[ipmt];
      return;
 }
 
 
-void calomev2adcmethod::SetPedFromDatacard(std::string datacardfile="laurentHGpeakshift.csv") {
+void calomev2adcmethod::setPedFromDatacard(std::string datacardfile) {
     csv2fvec dataPed;
     std::vector<std::vector<float>> datacardPedestals = dataPed.fromDatacard (datacardfile);
     if (datacardPedestals.empty() ) std::cerr << "CALOMEV2ADC: init failed (pedestals datacard file not found)" << std::endl;

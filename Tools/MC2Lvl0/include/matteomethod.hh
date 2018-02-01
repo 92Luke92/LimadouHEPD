@@ -8,7 +8,7 @@
 #ifndef MATTEOMETHOD_HH
 #define MATTEOMETHOD_HH
 
-#include <mev2adcmethod.hh>
+#include <calomev2adcmethod.hh>
 
 class MatteoMethod : public calomev2adcmethod
 {

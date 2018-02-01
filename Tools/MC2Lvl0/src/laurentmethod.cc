@@ -10,7 +10,7 @@
 #include "laurentmethod.hh"
 
 
-LaurentMethod::LaurentMethod(std::string datacardname):MeV2ADCMethod(datacardname){
+LaurentMethod::LaurentMethod(std::string datacardname):prescaledmev2adcmethod(datacardname){
   UpdateMyPMTs();
 }
 

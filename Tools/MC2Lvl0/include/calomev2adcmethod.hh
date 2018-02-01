@@ -23,8 +23,8 @@ class calomev2adcmethod
       short adcFromMev(float mev, int sensor);
       void dumpDatacard();
       virtual void setBeamEnergy(int energy) {beamEnergy=energy;}
-      void SetPedFromCalib(LCaloCalibration calocalib);
-      void SetPedFromDatacard(std::string dataname);
+      void setPedFromCalib(LCaloCalibration calocalib);
+      void setPedFromDatacard(std::string dataname="laurentHGpeakshift.csv");
 
    protected:
       std::vector<std::vector<float>> datacard;

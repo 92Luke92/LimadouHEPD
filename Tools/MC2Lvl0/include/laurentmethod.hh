@@ -9,9 +9,9 @@
 #ifndef LAURENTMETHOD_HH
 #define LAURENTMETHOD_HH
 
-#include <mev2adcmethod.hh>
+#include <prescaledmev2adcmethod.hh>
 
-class LaurentMethod: public MeV2ADCMethod {
+class LaurentMethod: public prescaledmev2adcmethod {
   public:
     LaurentMethod (std::string datacardname);
     float adcFromMevNoPed (float mev, int sensor);
