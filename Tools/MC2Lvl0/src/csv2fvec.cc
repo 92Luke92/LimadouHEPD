@@ -24,8 +24,7 @@ const char* getenvdatacard=std::getenv ("DATACARDS");
     if (getenvdatacard) {
         datacarddir=getenvdatacard;
     } else {
-        std::cerr << "CSV2FVEC: Warning - environment variable DATACARDS empty" << std::endl <<
-                     "          Switching to default = ../data" << std::endl;
+        std::cerr << "CSV2FVEC: Warning - environment variable DATACARDS empty; switching to default = ../data" << std::endl;
         datacarddir = "../data";
     }
     return fromFile (datacarddir + "/" + datacardname);
@@ -50,7 +49,7 @@ std::vector<std::vector<float>> csv2fvec::fromFile (std::string filename)
         }
         entries.push_back (vline);
     }
-    std::cout << "CSV2VEC: success loading " << filename << " ("  << entries.size() << " entries)" << std::endl;
+    std::cout << "CSV2FVEC: success loading " << filename << " ("  << entries.size() << " entries)" << std::endl;
     return entries;
 }
 
