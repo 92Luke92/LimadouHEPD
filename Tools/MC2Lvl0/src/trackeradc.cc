@@ -10,12 +10,14 @@
 #include <iostream>
 #include <cmath> // floor
 #include "TVector2.h"
+#include "csv2fvec.hh"
 
 
 
 
-std::array<short,NCHAN> TrackerADC::GetStrips()
+std::array<short,NCHAN> TrackerADC::getStripsFromPos(std::vector<std::vector<Edep_Pos>> vvinfo)
 {
+  allEpos=vvinfo;
   std::array<short,NCHAN> allStrips;
     for (trSides side : trSidesIterator) {
         uint offset = static_cast<uint> (side) * SIDE_CHAN;
@@ -110,4 +112,19 @@ short TrackerADC::GetLocalStrip (trSides side, TVector3 MCpos)
         if (stripNbr >= SIDE_CHAN) stripNbr = SIDE_CHAN - 1;
     }
     return stripNbr;
+}
+
+
+void TrackerADC::setPedFromCalib(LTrackerCalibration trkcalib, int nslot) {
+    const double* peds=trkcalib.GetPedestal(nslot);
+    for (int i=0; i<NCHAN; i++) trPed[i] = static_cast<short> (peds[i]);
+}
+
+
+void TrackerADC::setPedFromDatacard(std::string datacardfile) {
+    csv2fvec dataPed;
+    std::vector<std::vector<float>> datacardPedestals = dataPed.fromDatacard (datacardfile);
+    if (datacardPedestals.empty() ) std::cerr << "TRKMEV2ADC: init failed (pedestals datacard file not found)" << std::endl;
+    for (int i=0; i<4096; i++) trPed[i] = static_cast<short> (datacardPedestals[i][0]);
+    for (int i=4096; i<NCHAN; i++) trPed[i] = 1330;
 }

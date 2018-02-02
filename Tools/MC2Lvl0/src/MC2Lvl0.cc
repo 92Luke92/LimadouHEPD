@@ -38,7 +38,7 @@ std::string  getLvl0filename (const std::string mcfilename);
 void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc);
 std::vector<float> CaloHitsToEdep (std::vector<RootCaloHit>);
 void getPMTs (std::vector<RootCaloHit>, ushort * pmt_high, ushort * pmt_low, EcalADC ecaladc);
-void getStrips (std::vector<RootTrackerHit>, short* strips);
+void getStrips (std::vector<RootTrackerHit>, short* strips, TrackerADC trkadc);
 int getMCTrackHitsEnergy(std::vector<RootTrackerHit> trHits);
 
 
@@ -68,6 +68,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     TBranch* b_Event = new TBranch;
     Tmc->SetBranchAddress ("Event", &MCevt, &b_Event);
     EcalADC ecaladc(EcalADC::Francesco);
+    TrackerADC trkadc;
 
     if (ne>100000) ne=100000;
 
@@ -81,7 +82,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
         ev->Reset();
 
         getPMTs (caloHits, ev->pmt_high, ev->pmt_low, ecaladc);
-        getStrips (trackerHits, ev->strip);
+        getStrips (trackerHits, ev->strip, trkadc);
         lvl0writer->Fill();
         std::cout << ie << "\r" << std::flush;
     }
@@ -131,12 +132,11 @@ void getPMTs (std::vector<RootCaloHit> CaloHits, ushort* pmt_high, ushort* pmt_l
 
 
 
-void getStrips (std::vector<RootTrackerHit> TrackerHits, short* strips)
+void getStrips (std::vector<RootTrackerHit> TrackerHits, short* strips, TrackerADC trkadc)
 {
     HitsToEdepPos h2ep;
     std::vector<std::vector<Edep_Pos>> TrackerEdepPos = h2ep.Tracker2Edep_PosConverter (TrackerHits);
-    TrackerADC trkadc (TrackerEdepPos);
-    std::array<short,NCHAN> trkstrips = trkadc.GetStrips();
+    std::array<short,NCHAN> trkstrips = trkadc.getStripsFromPos(TrackerEdepPos);
     for (uint ic = 0; ic < NCHAN; ic++) {
         strips[ic] = trkstrips[ic];
     }
