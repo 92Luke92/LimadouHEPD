@@ -51,7 +51,7 @@ mkdir $DEST
 BINDIR=`dirname $0`
 echo "binary file dir = " $BINDIR
 echo "output dir = " $DEST                
-SOURCEDIR=$SOURCEDIR"/*.root"
+SOURCEDIR=$SOURCEDIR"/Data-2*Events*.root"
 #echo "source dir = " $SOURCEDIR
 hadd $DEST$MERGEDFILE $SOURCEDIR
 
