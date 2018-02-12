@@ -42,6 +42,7 @@
 #define CALO_PL 16
 #define LYSO_CU 9
 #define VETO_PL 5
+#define INTEGTIME 60000
 
 using namespace std;
 
@@ -106,13 +107,13 @@ void TriggerScan(TString rootname)
    Run->SaveAs(header);
 
    TGraph *lost_triggers_vs_time = new TGraph();
-   lost_triggers_vs_time->SetTitle("Lost triggers vs event time;Event time (ms); Lost triggers");
+   lost_triggers_vs_time->SetTitle("Lost triggers vs event time;Event time (s); Lost triggers");
    
    TGraph *alive_time_vs_time = new TGraph();
-   alive_time_vs_time->SetTitle("Alive time vs event time; Event time (ms); Alive time (ms)");
+   alive_time_vs_time->SetTitle("Alive time vs event time; Event time (s); Alive time (ms)");
    
    TGraph *dead_time_vs_time = new TGraph();
-   dead_time_vs_time->SetTitle("Dead time vs event time; Event time (ms); Dead time (ms)");
+   dead_time_vs_time->SetTitle("Dead time vs event time; Event time (s); Dead time (ms)");
    
    const char *subdetector[EASIROC_CH] = {"T1e","T2e","T3e","T4e","T5e","T6e",
 					  "P1se","P2sw","P3se","P4sw","P5se","P6sw",
@@ -159,7 +160,7 @@ void TriggerScan(TString rootname)
       if (kk==8)
 	 name_rate_meter = "Trigger MASK 8 [Generic Trigger Mask]";
 
-      rate_meter_vs_time[kk]->SetTitle(Form("%s; Event time (ms); Rate meter (Hz)", name_rate_meter));
+      rate_meter_vs_time[kk]->SetTitle(Form("%s; Event time (s); Rate meter (Hz) ", name_rate_meter));
    }
 
    TGraph *pmt_rate_meter_vs_time[65];
@@ -168,11 +169,11 @@ void TriggerScan(TString rootname)
       pmt_rate_meter_vs_time[kk] = new TGraph();
    }
    for(int kk=0;kk<58;kk++) {
-      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (CH%i); Run time (ms); PMT rate meter (Hz)", subdetector[kk], kk));
+      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (CH%i); Run time (s); PMT rate meter (Hz)", subdetector[kk], kk));
    }
    pmt_rate_meter_vs_time[58]->SetTitle("Null PMT");
    for(int kk=59;kk<65;kk++) {
-      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (CH%i); Run time (ms); PMT rate meter (Hz)", subdetector[kk-1], kk-1));
+      pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (CH%i); Run time (s); PMT rate meter (Hz)", subdetector[kk-1], kk-1));
    }
    
    Int_t cpu_startRunTime_vect[1000];
@@ -183,10 +184,16 @@ void TriggerScan(TString rootname)
       cpu_startRunTime_vect[(j-1)/2] = metaData.CPU_time[0];
 
       for(int kk=0; kk<65; kk++)
-	pmt_rate_meter_vs_time[kk]->SetPoint(j, metaData.CPU_time[0], metaData.PMT_rate_meter[kk]);
+	pmt_rate_meter_vs_time[kk]->SetPoint(j, metaData.CPU_time[0]/1000., metaData.PMT_rate_meter[kk]);
       
    }      
-   
+
+   Int_t time_flag = 0;
+   Int_t numevent_int = 0;
+   Int_t sum[9];
+   for(int kk=0;kk<9;kk++)
+      sum[kk] = 0;
+
    for(int i = 0; i < nEvents; i++) //Event loop
    {
       rootfile.GetEntry(i);
@@ -194,19 +201,40 @@ void TriggerScan(TString rootname)
       if(metaData.run_type == 0x634E) // to skip mixed virgin event
 	 continue;
       
-      event_time = cpu_startRunTime_vect[ev.run_id - first_run_nr] + ev.hepd_time/1e+2; //unit = ms
+      event_time = cpu_startRunTime_vect[ev.run_id - first_run_nr] + ev.hepd_time/1e+2; //unit = ms //TODO: add broadcast time
             
-      lost_triggers_vs_time->SetPoint(i, event_time, ev.lost_trigger);
-      alive_time_vs_time->SetPoint(i, event_time, ev.alive_time*0.005);
-      dead_time_vs_time->SetPoint(i, event_time, ev.dead_time*0.005);
+      lost_triggers_vs_time->SetPoint(i, event_time/1000., ev.lost_trigger);
+      alive_time_vs_time->SetPoint(i, event_time/1000., ev.alive_time*0.005);
+      dead_time_vs_time->SetPoint(i, event_time/1000., ev.dead_time*0.005);
 
       for(int ch=0;ch<EASIROC_CH;ch++) //PMT channel loop ch[0-63]
-      {
-	 if(ev.trigger_flag[ch]>0) h_FlagCount_vs_Ch->Fill(ch);
+	 if(ev.trigger_flag[ch] > 0)
+	    h_FlagCount_vs_Ch->Fill(ch);
+
+      if (i == 0){
+	 time_flag = event_time + INTEGTIME;
+	 //cout << "start time = " << time_flag << endl;
       }
-	
-      for(int kk=0;kk<9;kk++)
-	rate_meter_vs_time[kk]->SetPoint(i, event_time, ev.rate_meter[kk]);
+      
+      if (event_time < time_flag){
+	 numevent_int++;
+	 for(int kk=0;kk<9;kk++)
+	    sum[kk] += ev.rate_meter[kk];
+      }
+      else
+      {
+	 //cout << "num events = "<< numevent_int << endl;
+	 for(int kk=0;kk<9;kk++)
+	 {
+	   
+ 	    rate_meter_vs_time[kk]->SetPoint(rate_meter_vs_time[kk]->GetN(), (time_flag+INTEGTIME/2.)/1000., (double)sum[kk]/numevent_int);
+	    sum[kk] = 0;
+	    time_flag = event_time + INTEGTIME;
+	 }
+	 //cout << "start time = " << time_flag << endl;
+	 numevent_int = 0;
+	    
+      }	 
       
    } //End of event loop
    

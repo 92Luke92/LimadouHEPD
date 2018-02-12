@@ -9,13 +9,13 @@ EXT="merged.root"
 
 if [ "$#" -eq 1 ]; then
     if [ $1 = "-h" ]; then
-        echo " _________________________________________________________________________"  
-        echo "|                                                                         |"
-        echo '|  export PATH=/your/path/LimadouHEPD/QuickLook/bin:$PATH   (required)    |'
-        echo "|                                                                         |" 
-        echo "|  use:  HEPDquickLook  <root files dir>  <output dir> (absolute paths)   |"
-        echo "|                                                                         |"
-        echo "|_________________________________________________________________________|"
+        echo " __________________________________________________________________________"  
+        echo "|                                                                          |"
+        echo '| export PATH=/your/path/LimadouHEPD/QuickLook/bin:$PATH   (required)      |'
+        echo "|                                                                          |" 
+        echo "| usage:  HEPDquickLook  [level0 root file dir]  [output dir] (abs paths)  |"
+        echo "|                                                                          |"
+        echo "|__________________________________________________________________________|"
         echo ""                                       
         exit -1
     else
@@ -51,7 +51,7 @@ mkdir $DEST
 BINDIR=`dirname $0`
 echo "binary file dir = " $BINDIR
 echo "output dir = " $DEST                
-SOURCEDIR=$SOURCEDIR"/*.root"
+SOURCEDIR=$SOURCEDIR"/Data-2*Events*.root"
 #echo "source dir = " $SOURCEDIR
 hadd $DEST$MERGEDFILE $SOURCEDIR
 
