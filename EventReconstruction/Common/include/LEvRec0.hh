@@ -33,6 +33,11 @@ public:
   void DumpEventIndex() const;
   bool IsZeroSuppressed() const;
   bool IsVirgin() const;
+
+  const int trigger(const int i, const int j) const;
+  const int plane(const int i, const int j) const;
+  const int lyso(const int i) const;
+  const int veto (const int i, const int j) const;
 };
 
 

@@ -5,9 +5,11 @@
 #include <vector>
 #include <fstream>
 
+class LCalibration;
 
 class LCaloCalibration {
 public:
+  friend class LCalibration;
   LCaloCalibration();
   LCaloCalibration(const int RunIdINP,
 		   const double* ped, const double *rms); // outliers? momenta 3-4?

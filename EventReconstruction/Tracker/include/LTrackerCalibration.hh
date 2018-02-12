@@ -6,8 +6,11 @@
 #include <fstream>
 #include <iostream>
 
+class LCalibration;
+
 class LTrackerCalibration {
 public:
+  friend class LCalibration;
   LTrackerCalibration();
   LTrackerCalibration(const int RunIdINP);
   void Add(const LTrackerCalibrationSlot lcal);
