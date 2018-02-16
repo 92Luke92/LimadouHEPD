@@ -20,6 +20,7 @@ int main(int argc, char **argv){
    TString cpu;
    TString hvps;
    TString run;
+   TString run2;
    TString scint;
    TString sil;
    TString tel;
@@ -85,6 +86,7 @@ int main(int argc, char **argv){
    cpu = xslPath+"CPUTimeTempTemplate.xsl";
    hvps = xslPath+"HVPSConfigTemplate.xsl";
    run = xslPath+"RunInfoTemplate.xsl";
+   run2 = xslPath+"FastInfoTemplate.xsl";
    scint = xslPath+"ScintConfigTemplate.xsl";
    sil = xslPath+"SilConfigTemplate.xsl";
    tel = xslPath+"TelemetryTemplate.xsl";
@@ -97,6 +99,7 @@ int main(int argc, char **argv){
    CPUTimeTempToXML(argv[1], cpu);
    HVPSConfigToXML(argv[1], hvps);
    RunInfoToXML(argv[1], run);
+   FastInfoToXML(argv[1], run2);
    ScintConfigToXML(argv[1], scint);
    SilConfigToXML(argv[1], sil);
    TelemetryToXML(argv[1], tel);
