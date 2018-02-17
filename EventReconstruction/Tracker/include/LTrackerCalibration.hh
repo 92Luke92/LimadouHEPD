@@ -32,8 +32,10 @@ public:
   inline const double* GetSigma(const int nSlot) const {return calarray.at(nSlot).GetSigma();};
   inline const double* GetNGIndex(const int nSlot) const {return calarray.at(nSlot).GetNGIndex();};
   inline const bool* GetCNMask(const int nSlot) const {return calarray.at(nSlot).GetCNMask();};
-  inline LTrackerMask GetMaskOnSigma(const int nSlot, const double sigmaMin, const double sigmaMax){return calarray.at(nSlot).GetMaskOnSigma(sigmaMin, sigmaMax);};
+   inline LTrackerMask GetMaskOnSigma(const int nSlot, const double sigmaMin, const double sigmaMax){return calarray.at(nSlot).GetMaskOnSigma(sigmaMin, sigmaMax);};
   inline LTrackerMask GetMaskOnNGI(const int nSlot, const double ngiMin, const double ngiMax){return calarray.at(nSlot).GetMaskOnNGI(ngiMin, ngiMax);};
+  inline LTrackerMask GetMaskOnColumn(const int nSlot){return calarray.at(nSlot).GetMaskOnColumn();};
+   
   LTrackerCalibration& operator=(const LTrackerCalibration& other);
   LTrackerCalibration& operator+=(const LTrackerCalibration& rhs); // compound assignment (does not need to be a member,
   friend LTrackerCalibration operator+(LTrackerCalibration lhs,        // passing lhs by value helps optimize chained a+b+c

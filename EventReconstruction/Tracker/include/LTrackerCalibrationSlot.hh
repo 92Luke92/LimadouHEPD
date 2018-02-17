@@ -9,7 +9,7 @@
 class LTrackerCalibrationSlot {
   public:
   LTrackerCalibrationSlot(){Reset();};
-  LTrackerCalibrationSlot(int StartE, int StopE, double *rawsig, double *ped, double *sig, double *ngi, bool *cnm);;
+  LTrackerCalibrationSlot(int StartE, int StopE, double *rawsig, double *ped, double *sig, double *ngi, bool *cnm, bool * column_mask);
   LTrackerCalibrationSlot(const LTrackerCalibrationSlot &other);
   void Write(std::ofstream *output);
   static LTrackerCalibrationSlot Read(std::ifstream *input);
@@ -21,8 +21,11 @@ class LTrackerCalibrationSlot {
   inline const double* GetSigma() const {return sigma;};
   inline const double* GetNGIndex() const {return ngindex;};
   inline const bool* GetCNMask() const {return CN_mask;};
+  inline const bool* GetColumnMask() const {return column_mask;};
+   
   LTrackerMask GetMaskOnSigma(const double sigmaMin, const double sigmaMax);
   LTrackerMask GetMaskOnNGI(const double NGIMin, const double NGIMax);
+  LTrackerMask GetMaskOnColumn();
   void Reset();
   LTrackerCalibrationSlot& operator=(const LTrackerCalibrationSlot& other);
   LTrackerCalibrationSlot& operator+=(const LTrackerCalibrationSlot& rhs); // compound assignment (does not need to be a member,
@@ -38,6 +41,7 @@ private:
   double sigma[NCHAN];
   double ngindex[NCHAN];
   bool CN_mask[NCHAN];
+  bool column_mask[N_COLUMN];
 };
 
 

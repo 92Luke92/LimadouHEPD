@@ -104,7 +104,7 @@ std::vector<LTrackerCluster> GetClusters(const double* cont, const double *sigma
       if(newmaxindex1 == maxindex1) {
 	break;
       } else {
-	maxindex1 = newmaxindex1;
+	 maxindex1 = newmaxindex1;
 	max1 = newmax1;
       }
     }
@@ -202,7 +202,9 @@ LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal) {
   const double *sigma = cal.GetTrackerCalibration()->GetSigma(0);
   LTrackerMask hotmask=cal.GetTrackerCalibration()->GetMaskOnSigma(0,COLDSIGMA,HOTSIGMA);//set the variables!!!
   LTrackerMask ngmask=cal.GetTrackerCalibration()->GetMaskOnNGI(0,NGILOW,NGIHIGH);//set the variables!!!
-  LTrackerMask evmask=(hotmask&&ngmask);
+
+  LTrackerMask colmask=cal.GetTrackerCalibration()->GetMaskOnColumn(0);
+  LTrackerMask evmask=(hotmask&&ngmask&&colmask);
 
   //CN calculation
   LTrackerMask cnmask=cal.GetTrackerCalibration()->GetCNMask(0);

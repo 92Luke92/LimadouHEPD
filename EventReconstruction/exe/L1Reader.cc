@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
   int nentries=inputFile.GetEntries();
   for(int ie=0; ie<nentries; ++ie) {
     inputFile.GetEntry(ie);
-    if(ie%1000==0)cev.Dump();
+    if(ie%1000==0)    cev.Dump();
   }
 
   inputFile.Close();

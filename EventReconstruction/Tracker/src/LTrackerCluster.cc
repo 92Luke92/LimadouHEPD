@@ -105,7 +105,7 @@ LTrackerCluster::LTrackerCluster(const int inpSeed, const double *inpCont, const
       sn[i]=-999.;
     } else {
       count[i]=inpCont[inpSeed-CLUSTERCHANNELS/2+i];
-      sigma[i]=inpSigma[inpSeed-CLUSTERCHANNELS/2+i];;
+      sigma[i]=inpSigma[inpSeed-CLUSTERCHANNELS/2+i];
       sn[i]=count[i]/sigma[i];
     }
   }
