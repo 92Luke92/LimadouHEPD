@@ -31,7 +31,7 @@
 #include "LTrackerMask.hh"
 
 
-int TrackerQuickLook(std::string namefile){
+int TrackerQuickLook(TString namefile, TString outPath){
    //gROOT->Reset();
    //gDirectory->GetList()->Delete();
    gErrorIgnoreLevel = 5000 ;
@@ -43,7 +43,11 @@ int TrackerQuickLook(std::string namefile){
    /*TSystem filename_nopath;
      const char * nopath = filename_nopath.BaseName((const char*)namefile.c_str());
    */  const char *nopath = "StringaIntrodottaDaRoma2";
-   TString outname = namefile;
+   TString outname = outPath;
+   const char * _temp = namefile;
+   outname += "/";
+   outname += basename(_temp);
+
    TString outnameStart;
    TString outnameEnd;
    outname.ReplaceAll(".root", 5, "_TrackerQL.pdf", 14);
@@ -130,7 +134,7 @@ int TrackerQuickLook(std::string namefile){
       }
    }
     
-   LEvRec0File input(namefile.c_str());
+   LEvRec0File input(namefile.Data());
    LEvRec0 ev;
    LEvRec0Md metaData;
   
@@ -154,15 +158,12 @@ int TrackerQuickLook(std::string namefile){
    }
     
    //Calibration on file
-   LTrackerCalibrationManager::GetInstance().LoadRun(namefile.c_str());
+   LTrackerCalibrationManager::GetInstance().LoadRun(namefile.Data());
    LTrackerCalibration * cal = LTrackerCalibrationManager::
       GetInstance().Calibrate(NCALIBEVENTS_QL, 0);
    //int slots=cal->GetNSlots();
     
    for(int ipk = 0; ipk < N_PKG; ++ipk){
-
-      if(ipk%50 == 0)
-         std::cout<<"Processing events "<< ipk<<std::endl;
 
       const double *sigmaraw_chan = cal->GetSigmaRaw(ipk);
       const double *sigma_chan = cal->GetSigma(ipk);

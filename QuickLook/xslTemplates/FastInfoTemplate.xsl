@@ -26,27 +26,37 @@
 	 <table border="1">
 	   <tr bgcolor="#1acd32">
 	         	    
-	     <td>
-	     <table border="1">
+	     <!-- <td> -->
+	     <!-- <table border="1"> -->
+	     <!--   <tr  bgcolor="#1acd32"> -->
+	     <!--     <td height="30" align="center" colspan="2"> Run ID </td> -->
+	     <!--   </tr> -->
+	     <!--   <tr> -->
+	     <!--     <td width="60" height="30" align="center">Boot nr.</td> -->
+	     <!--     <td width="60" height="30" align="center">Run nr.</td> -->
+	     <!--   </tr> -->
+	     <!-- </table> -->
+	     <!-- </td> -->
+
+	       <td>
 	       <tr  bgcolor="#1acd32">
-	         <td height="30" align="center" colspan="2"> Run ID </td>
 	       </tr>
 	       <tr>
 	         <td width="60" height="30" align="center">Boot nr.</td>
 	         <td width="60" height="30" align="center">Run nr.</td>
 	       </tr>
-	     </table>
-	     </td>
-	     
+	       </td>
+
 	     
 	     <td width="150" height="30" align="center">Run Type</td>
-	     <td width="150" height="30" align="center">Real Run Duration (s)</td>
-	     <td width="150" height="30" align="center"> Events   </td>
-	     <td width="150" height="30" align="center"> Orbit Zone Applied </td>
-	     <td width="150" height="30" align="center"> Longitude [Start; Stop] </td>
-	     <td width="150" height="30" align="center"> Latitude [Start; Stop]   </td>
-	     <td width="150" height="30" align="center"> Veto   </td>
-	     <td width="250" height="30" align="center"> Trigger Mask   </td>
+	     <td width="100" height="30" align="center">Events </td>
+	     <td width="150" height="30" align="center">Run Duration (s)</td>
+	     <td width="150" height="30" align="center">Applied Orbit Zone </td>
+	     <td width="160" height="30" align="center">Latitude [Start; Stop] </td>
+	     <td width="180" height="30" align="center">Longitude [Start; Stop] </td>
+	     <td width="250" height="30" align="center">Trigger Mask </td>
+	     <td width="80" height="30" align="center">Veto </td>
+
 
 	   </tr>
 
@@ -72,43 +82,43 @@
 	       </xsl:choose>
 	       
 
-	       <td width="150" height="30" align="center"><xsl:value-of select="REAL_RUN_DURATION"/>        </td>
-	       <td width="150" height="30" align="center"><xsl:value-of select="N_EVENTS"/>        </td>
-
+	       <td width="100" height="30" align="center"><xsl:value-of select="N_EVENTS"/>        </td>
+	       <td width="150" height="30" align="center"><xsl:value-of select="RUN_DURATION"/>        </td>
 		 
 		 <xsl:choose>
 		 <xsl:when test="ORBIT_error &gt;'0'">
-	           <td  bgcolor="#ff0000" width="150" height="30" align="center"> <xsl:value-of select="ORBIT_ZONE_Applied"/> </td>
+	           <td  bgcolor="#ff0000" width="150" height="30" align="center"> <xsl:value-of select="Applied_ORBIT_ZONE"/> </td>
 		 </xsl:when>
 		 <xsl:when test="ORBIT_error_yellow &gt;'0'">
-	          <td  bgcolor="#ffff00" width="150" height="30" align="center"> <xsl:value-of select="ORBIT_ZONE_Applied"/> </td>
+	          <td  bgcolor="#ffff00" width="150" height="30" align="center"> <xsl:value-of select="Applied_ORBIT_ZONE"/> </td>
 		 </xsl:when>
 		 <xsl:otherwise>
-		   <td width="150" height="30" align="center"><xsl:value-of select="ORBIT_ZONE_Applied"/>        </td>
+		   <td width="150" height="30" align="center"><xsl:value-of select="Applied_ORBIT_ZONE"/>        </td>
 		 </xsl:otherwise>
 		 </xsl:choose>
 
-	       <xsl:choose>
-		  <xsl:when test="LONG_error &gt;'0'">
-		  <td  bgcolor="#ff0000" width="150" height="30" align="center"> <xsl:value-of select="LONGITUDE"/> </td>
-		</xsl:when>
-		<xsl:otherwise>
-		  <td width="150" height="30" align="center"><xsl:value-of select="LONGITUDE"/>        </td>
-		</xsl:otherwise>
-		</xsl:choose>
-
 		<xsl:choose>
 		  <xsl:when test="LAT_error &gt;'0'">
-		    <td  bgcolor="#ff0000" width="150" height="30" align="center"> <xsl:value-of select="LATITUDE"/> </td>
+		    <td  bgcolor="#ff0000" width="160" height="30" align="center"> <xsl:value-of select="LATITUDE"/> </td>
 		  </xsl:when>
 		  <xsl:otherwise>
-		    <td width="150" height="30" align="center"><xsl:value-of select="LATITUDE"/>        </td>
+		    <td width="160" height="30" align="center"><xsl:value-of select="LATITUDE"/>        </td>
 		  </xsl:otherwise>
 		</xsl:choose>
 
-		<td width="150" height="30" align="center"><xsl:value-of select="VETO"/>        </td>
+		<xsl:choose>
+		  <xsl:when test="LONG_error &gt;'0'">
+		  <td  bgcolor="#ff0000" width="180" height="30" align="center"> <xsl:value-of select="LONGITUDE"/> </td>
+		</xsl:when>
+		<xsl:otherwise>
+		  <td width="180" height="30" align="center"><xsl:value-of select="LONGITUDE"/>        </td>
+		</xsl:otherwise>
+		</xsl:choose>
+
+
 		<td width="250" height="30" align="center"><xsl:value-of select="TRIGGER"/>        </td>
-	       
+		<td width="80" height="30" align="center"><xsl:value-of select="VETO"/>        </td>
+		
 	     </tr>	
 	 </table>
 

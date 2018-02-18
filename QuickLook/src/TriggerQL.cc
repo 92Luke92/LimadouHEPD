@@ -46,11 +46,14 @@
 
 using namespace std;
 
-void TriggerScan(TString rootname)
+void TriggerScan(TString rootname, TString outPath )
 {
    gErrorIgnoreLevel = 5000 ;
-   
-   TString outname = rootname;
+   const char * _temp = rootname;
+
+   TString outname = outPath;
+   outname+= "/";
+   outname+= basename(_temp);
    outname.ReplaceAll(".root", 5, "_TriggerQL.pdf", 14);
    
    UShort_t first_run_nr;
@@ -177,16 +180,25 @@ void TriggerScan(TString rootname)
    }
    
    Int_t cpu_startRunTime_vect[1000];
+   Int_t OBDH_timestamp[1000];
+   Int_t OBDH_time_sec[1000];
+   Int_t OBDH_time_ms[1000];
    
    for(int j=1; j<Tmd_entries; j+=2) //Tmd loop
    {
       rootfile.GetTmdEntry(j); 
       cpu_startRunTime_vect[(j-1)/2] = metaData.CPU_time[0];
 
+      OBDH_time_sec[(j-1)/2] = metaData.broadcast.OBDH.sec;
+      OBDH_time_ms[(j-1)/2] = metaData.broadcast.OBDH.ms;
+      OBDH_timestamp[(j-1)/2] = metaData.timestamp.OBDH;
+      
       for(int kk=0; kk<65; kk++)
 	pmt_rate_meter_vs_time[kk]->SetPoint(j, metaData.CPU_time[0]/1000., metaData.PMT_rate_meter[kk]);
       
    }      
+   // TDatime da(2009,01,01,00,00,00);
+   // gStyle->SetTimeOffset(da.Convert());
 
    Int_t time_flag = 0;
    Int_t numevent_int = 0;
@@ -200,9 +212,11 @@ void TriggerScan(TString rootname)
       
       if(metaData.run_type == 0x634E) // to skip mixed virgin event
 	 continue;
-      
+
+      // event_time = 1230764400+OBDH_time_sec[ev.run_id - first_run_nr];
+      //event_time += cpu_startRunTime_vect[ev.run_id - first_run_nr] - OBDH_timestamp[(ev.run_id - first_run_nr] ;// -  ev.hepd_time/1e+2; 
       event_time = cpu_startRunTime_vect[ev.run_id - first_run_nr] + ev.hepd_time/1e+2; //unit = ms //TODO: add broadcast time
-            
+
       lost_triggers_vs_time->SetPoint(i, event_time/1000., ev.lost_trigger);
       alive_time_vs_time->SetPoint(i, event_time/1000., ev.alive_time*0.005);
       dead_time_vs_time->SetPoint(i, event_time/1000., ev.dead_time*0.005);
@@ -252,9 +266,13 @@ void TriggerScan(TString rootname)
    gPad->SetGrid();
    alive_time_vs_time->SetMarkerStyle(7);
    alive_time_vs_time->Draw("AP");
+   // alive_time_vs_time->GetXaxis()->SetTimeDisplay(1);
+   // alive_time_vs_time->GetXaxis()->SetTimeFormat("%H:%M:%s");
    c_alive_dead_time->cd(2);
    gPad->SetGrid();
    dead_time_vs_time->SetMarkerStyle(7);
+   // dead_time_vs_time->GetXaxis()->SetTimeDisplay(1);
+   // dead_time_vs_time->GetXaxis()->SetTimeFormat("%H:%M:%s");
    dead_time_vs_time->Draw("AP");
    TString alive_dead_time_fig = "3_alive_dead_time.png";    
    c_alive_dead_time->SaveAs(alive_dead_time_fig);
@@ -288,6 +306,7 @@ void TriggerScan(TString rootname)
       gPad->SetGrid();
       rate_meter_vs_time[p]->SetMarkerStyle(7);
       rate_meter_vs_time[p]->Draw("AP");
+      //rate_meter_vs_time[p]->GetXaxis()->SetTimeDisplay(1);
    }
    TString rate_meter_trig_mask_0_3_fig = "5_rate_meter_trig_mask_0_3.png";    
    c_rate_meter_trig_mask_0_3->SaveAs(rate_meter_trig_mask_0_3_fig); 
@@ -301,6 +320,7 @@ void TriggerScan(TString rootname)
       gPad->SetGrid();
       rate_meter_vs_time[p]->SetMarkerStyle(7);
       rate_meter_vs_time[p]->Draw("AP");
+      //rate_meter_vs_time[p]->GetXaxis()->SetTimeDisplay(1);
    }
    TString rate_meter_trig_mask_4_6_fig = "6_rate_meter_trig_mask_4_6.png";    
    c_rate_meter_trig_mask_4_6->SaveAs(rate_meter_trig_mask_4_6_fig); 
@@ -315,6 +335,7 @@ void TriggerScan(TString rootname)
       gPad->SetGrid();
       rate_meter_vs_time[p]->SetMarkerStyle(7);
       rate_meter_vs_time[p]->Draw("AP");
+      //rate_meter_vs_time[p]->GetXaxis()->SetTimeDisplay(1);
    }
 
    TString rate_meter_trig_mask_7_9_fig = "7_rate_meter_trig_mask_7_9.png";    

@@ -35,25 +35,45 @@ if [ "$#" -ne 2 ]; then
     exit -1
 fi                                                     
 
+BINDIR=`dirname $0`
 SOURCEDIR=$1
-cd $SOURCEDIR
-echo "source dir = " $SOURCEDIR
-NAME=$(ls *.root | sort -V | head -1)
-#OUTDIR="${NAME%.root}"
-MERGEDFILE="${NAME%???????????}"
-#MERGEDFILE="${NAME%Channel*}"
-MERGEDFILE=$MERGEDFILE$EXT
+
+cd $SOURCEDIR/..
+echo "pws" $PWD
+NAMEDIR=${PWD##*/}
+cd -
+
+echo ""
+echo "HEPDquicklook.sh ###############  executable dir = " $BINDIR
+echo "HEPDquicklook.sh ###############  source dir = " $SOURCEDIR
+
+#NAME=$(ls $SOURCEDIR*.root | sort -V | head -1)
+#NAME=${NAME##*/} # to get basename
+#MERGEDFILE="${NAME%???????????}"
+#MERGEDFILE=$MERGEDFILE$EXT
+
+MERGEDFILE=$NAMEDIR$EXT
 OUTPATH=$2
 OUTDIR="/QL_outdir/"
 DEST=$OUTPATH$OUTDIR   
-cd -
-mkdir $DEST 
-BINDIR=`dirname $0`
-echo "binary file dir = " $BINDIR
-echo "output dir = " $DEST                
-SOURCEDIR=$SOURCEDIR"/Data-2*Events*.root"
-#echo "source dir = " $SOURCEDIR
-hadd $DEST$MERGEDFILE $SOURCEDIR
 
-QuickLook $DEST$MERGEDFILE -x "xslTemplates/" #-o $DEST        
+if [ ! -d $DEST ]; then
+    mkdir $DEST
+fi
+ 
+echo "HEPDquicklook.sh ###############  output dir = " $DEST
+echo "HEPDquicklook.sh ###############  output file = " $MERGEDFILE
+SOURCEDIR=$SOURCEDIR"/Data-2*Events*.root"
+
+if [ -f $DEST$MERGEDFILE ]; then
+   printf "HEPDquicklook.sh ###############  Merged file already created\n\n"
+else
+    hadd $DEST$MERGEDFILE $SOURCEDIR
+fi
+
+
+
+$BINDIR/QuickLook $DEST$MERGEDFILE -x "xslTemplates/" -o $DEST        
 cp -r $BINDIR"/../xslTemplates" $DEST                                                       
+
+#for i in $(ls -d HEPD001*); do HEPDquickLook.sh $i/L0_files $i ;  done

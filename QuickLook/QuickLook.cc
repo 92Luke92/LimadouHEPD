@@ -1,5 +1,6 @@
 #include <iostream>
 #include "LTrackerQuicklook.hh"
+#include "LScintQuicklook.hh"
 #include "housekeeping.hh"
 #include <stdlib.h>
 #include <TSystem.h>
@@ -75,10 +76,10 @@ int main(int argc, char **argv){
 
    
    
-   TriggerScan(argv[1]);
-   PMTScan(argv[1]);
+   TriggerScan(argv[1], outPath);
+   PMTScan(argv[1], outPath);
    
-   TrackerQuickLook(argv[1]);
+   TrackerQuickLook(argv[1], outPath);
       
    broad1 = xslPath+"TimeBroadcastTemplate.xsl";
    broad2 = xslPath+"GPSBroadcastTemplate.xsl";
@@ -93,21 +94,22 @@ int main(int argc, char **argv){
    dump= xslPath+"DUMPConfigTemplate.xsl";
    hvps_mon = xslPath+"HVPSMonitorTemplate.xsl";
 
-   HVPSMonitorToXML(argv[1], hvps_mon);
-   DUMPConfigToXML(argv[1], dump);
-   BroadcastToXML(argv[1], broad1, broad2);
-   CPUTimeTempToXML(argv[1], cpu);
-   HVPSConfigToXML(argv[1], hvps);
-   RunInfoToXML(argv[1], run);
-   FastInfoToXML(argv[1], run2);
-   ScintConfigToXML(argv[1], scint);
-   SilConfigToXML(argv[1], sil);
-   TelemetryToXML(argv[1], tel);
+   HVPSMonitorToXML(argv[1], outPath, hvps_mon);
+   DUMPConfigToXML(argv[1], outPath, dump);
+   BroadcastToXML(argv[1], outPath, broad1, broad2);
+   CPUTimeTempToXML(argv[1], outPath, cpu);
+   HVPSConfigToXML(argv[1], outPath, hvps);
+   RunInfoToXML(argv[1], outPath, run);
+   FastInfoToXML(argv[1], outPath, run2);
+   ScintConfigToXML(argv[1], outPath, scint);
+   SilConfigToXML(argv[1], outPath, sil);
+   TelemetryToXML(argv[1], outPath, tel);
+   
   
 
    const char *char_outPath = outPath;
-//   gROOT->ProcessLine(Form(".!mkdir -p %s",char_outPath));         not required anymore
-//   gROOT->ProcessLine(Form(".!mv *.pdf *.xml %s", char_outPath));
+   //gROOT->ProcessLine(Form(".!mkdir -p %s",char_outPath));         
+   //gROOT->ProcessLine(Form(".!mv *.pdf *.xml %s", char_outPath));
            
    
   return 0; 

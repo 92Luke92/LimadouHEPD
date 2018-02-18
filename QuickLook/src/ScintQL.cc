@@ -43,12 +43,14 @@
 
 using namespace std;
 
-void PMTScan(TString rootname)
+void PMTScan(TString rootname, TString outPath )
 {
    //cout << "Rootname:" << rootname << endl;
    gErrorIgnoreLevel = 5000 ;
-   
-   TString outname = rootname;
+   const char * _temp = rootname;
+   TString outname = outPath;
+   outname+= "/";
+   outname+= basename(_temp);
    TString outnameStart;
    TString outnameEnd;
    outname.ReplaceAll(".root", 5, "_ScintillatorQL.pdf", 19);
