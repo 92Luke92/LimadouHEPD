@@ -1155,6 +1155,8 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
    int new_runid = ev.run_id;
    int Tentries = rootfile.GetEntries();
    int nEntriesForRun[Tmd_entries/2];
+   for (int j=0; j<Tmd_entries/2; j++ )
+      nEntriesForRun[j] = 0;
    int runInMergedFile = 0;
 
 // calculating the number of events for each single run
