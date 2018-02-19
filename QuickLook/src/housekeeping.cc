@@ -1148,6 +1148,9 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
    int n_events = 0;
    //cout << "Number of Tmd entries: " << Tmd_entries << endl;
    rootfile.GetEntry(0);
+   rootfile.GetTmdEntry(0);
+   int start_bootnr = metaData.boot_nr;
+   int new_bootnr = ev.boot_nr;
    int start_runid = ev.run_id;
    int new_runid = ev.run_id;
    int Tentries = rootfile.GetEntries();
@@ -1159,13 +1162,15 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
    {
       rootfile.GetEntry(nev);
       new_runid = ev.run_id;
+      new_bootnr = ev.boot_nr;
       n_events++;
       
-      if (new_runid != start_runid)
+      if ((new_runid != start_runid) || (new_bootnr   != start_bootnr))
       {
 	 nEntriesForRun[runInMergedFile] = (n_events-1);
 	 n_events = 1;
 	 start_runid = new_runid;
+	 start_bootnr = new_bootnr;
 	 // cout << "Events in Run "  << runInMergedFile << " = " << nEntriesForRun[runInMergedFile] << endl;
 	 runInMergedFile++;
 
