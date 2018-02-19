@@ -21,7 +21,7 @@
 	 <h2>Fast Info </h2>
 	 <h5>We defined 5 orbit zones: equatorial, south polar, north polar, SAA (South Atlantic Anomaly) and default zone (when no orbit information is available).</h5>
 	 <h5>By standby zone we do not mean one of the above-mentioned orbit zones, but we mean that HEPD is not in data acquisition. </h5>
-	 <xsl:for-each select="//RUN_INFO2">
+	
 	     
 	 <table border="1">
 	   <tr bgcolor="#1acd32">
@@ -59,8 +59,9 @@
 
 
 	   </tr>
+	   
 
-	 
+	    <xsl:for-each select="//RUN_INFO2">
 	     <tr>
 	       	       
 	       <td>
@@ -120,10 +121,11 @@
 		<td width="80" height="30" align="center"><xsl:value-of select="VETO"/>        </td>
 		
 	     </tr>	
-	 </table>
 
+	     
 	 
-	  </xsl:for-each>
+	    </xsl:for-each>
+	     </table>
   	
        </body>
      </html>
