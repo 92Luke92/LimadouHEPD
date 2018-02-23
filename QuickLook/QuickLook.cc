@@ -78,7 +78,8 @@ int main(int argc, char **argv){
    
    TriggerScan(argv[1], outPath);
    PMTScan(argv[1], outPath);
-   
+   EventRateL0(argv[1], outPath);
+ 
    TrackerQuickLook(argv[1], outPath);
       
    broad1 = xslPath+"TimeBroadcastTemplate.xsl";
@@ -105,7 +106,7 @@ int main(int argc, char **argv){
    SilConfigToXML(argv[1], outPath, sil);
    TelemetryToXML(argv[1], outPath, tel);
    
-  
+
 
    const char *char_outPath = outPath;
    //gROOT->ProcessLine(Form(".!mkdir -p %s",char_outPath));         
