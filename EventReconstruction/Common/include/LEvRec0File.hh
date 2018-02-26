@@ -23,6 +23,7 @@ public:
   int GetEntry(int iEntry);
   int GetMDEntry(int iEntry);
   int GetEntries();
+  int GetMDEntries();
   void Open(const char* inpFile);
   void Reset(void);
   void Close();

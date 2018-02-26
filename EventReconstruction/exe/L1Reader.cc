@@ -13,10 +13,15 @@ int main(int argc, char **argv) {
   LEvRec1File inputFile(argv[1],"READ");
   LEvRec1 cev;
   inputFile.SetTheEventPointer(cev);
+
   int nentries=inputFile.GetEntries();
   for(int ie=0; ie<nentries; ++ie) {
     inputFile.GetEntry(ie);
-    if(ie%1000==0)    cev.Dump();
+    if(ie == 0 || ie == 1 )
+       inputFile.GetMDEntry(ie);
+    if(ie%1000==0)
+       cev.Dump(ie);
+    
   }
 
   inputFile.Close();

@@ -228,6 +228,13 @@ int LEvRec0File::GetEntries() {
   return fTree->GetEntries();
 }
 
+
+
+int LEvRec0File::GetMDEntries() {
+  return Tmd->GetEntries();
+}
+
+
 void LEvRec0File::Close() {
   Reset();
   return;

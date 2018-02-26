@@ -140,3 +140,53 @@ LEvRec0Md::LEvRec0Md(){
       broadcast.GPS.NU[i] = 0; 
       
 }
+
+void LEvRec0Md::Dump(void) const {
+
+   std::cout << "boot_nr = " << boot_nr << std::endl;
+   std::cout << "run_id = " << run_id  << std::endl;
+   std::cout << "run_type = " << run_type << std::endl;
+   std::cout << "run_duration = " << run_duration << std::endl;
+   std::cout << "orbit_Zone = " << orbit_Zone << std::endl;
+   for(int i=0; i<3; ++i)
+      std::cout << "silConfig.ladder_on["<< i << "] = " << silConfig.ladder_on[i] << std::endl;
+   for(int i=0; i<3; ++i)
+      std::cout << "silConfig.ladder_mask["<< i << "] = " << silConfig.ladder_mask[i] << std::endl;
+   std::cout << "silConfig.plane_HV[0] = "  << silConfig.plane_HV[0] << std::endl;
+   std::cout << "silConfig.plane_HV[1] = " << silConfig.plane_HV[1] << std::endl;
+   std::cout << "silConfig.adj_strip =  " << silConfig.adj_strip << std::endl;
+   std::cout << "silConfig.zero_supp_thrd = " << silConfig.zero_supp_thrd << std::endl; 
+   std::cout << "silConfig.thrd_CN_HIGH = " << (int)silConfig.thrd_CN_HIGH << std::endl;
+   std::cout << "silConfig.thrd_CN_LOW = " << (int)silConfig.thrd_CN_LOW << std::endl;
+   std::cout << "silConfig.calib_event_CN = " << silConfig.calib_event_CN << std::endl;
+   std::cout << "silConfig.calib_event_ped = " << silConfig.calib_event_ped << std::endl;
+   std::cout << "silConfig.calib_event_RMS = " << silConfig.calib_event_RMS << std::endl;
+   std::cout << "silConfig.calib_event_gauss = " << silConfig.calib_event_gauss << std::endl;
+   std::cout << "silConfig.gauss_check = " << silConfig.gauss_check << std::endl;
+   for(int i=0; i<2; ++i)
+      std::cout << "trigger_mask[" << i << "] = " << (int)trigger_mask[i] << std::endl; 
+   for(int i=0; i<120; ++i)
+      std::cout << "easiroc_config[" << i << "] = "  << easiroc_config[i] << std::endl;
+   for(int i=0; i<2; ++i)
+      std::cout << "PMT_mask[" << i << "] = " << PMT_mask[i] << std::endl;    
+   for(int i=0; i<12; ++i)
+      std::cout << "HV_mask[" << i << "] = " << HV_mask[i] << std::endl;
+   for(int i=0; i<10; ++i)
+      std::cout << "HV_value["<< i << "] = " << HV_value[i] << std::endl; 
+   for(int i=0; i<4; ++i)
+      std::cout << "gen_trig_mask[" << i << "] = " << gen_trig_mask[i] << std::endl;
+
+   std::cout << "broadcast.GPS.sec = " << broadcast.GPS.sec << std::endl;
+   for(int i=0; i<3; ++i)
+      std::cout << "broadcast.GPS.axis_pos[" << i<< "] = " << broadcast.GPS.axis_pos[i] << std::endl;
+   for(int i=0; i<3; ++i)
+      std::cout << "broadcast.GPS.axis_vel["<< i<< "] = " << broadcast.GPS.axis_vel[i] << std::endl;
+   std::cout << "broadcast.GPS.dataID = " << broadcast.GPS.dataID << std::endl;
+   std::cout << "broadcast.GPS.lon = " << broadcast.GPS.lon << std::endl;
+   std::cout << "broadcast.GPS.lat = " << broadcast.GPS.lat << std::endl;
+   for(int i=0; i<3; ++i)
+      std::cout << "broadcast.GPS.NU[" << i << "] = "
+		<< (int)broadcast.GPS.NU[i] << std::endl; 
+
+  return;
+}

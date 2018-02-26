@@ -201,9 +201,13 @@ public:
    short              PMT_temp[2]; // 0 = startrun, 1 stoprun
 
    Status_Register_t  status_reg;
+
+   void               Dump(void) const;
    
 };
+
 #pragma pack(pop)
+
 
 
 #endif

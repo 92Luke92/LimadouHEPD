@@ -9,10 +9,13 @@
 #include "LScintillatorSignal.hh"
 #include "LVetoSignal.hh"
 #include "LLysoSignal.hh"
+#include "LEvRec0.hh"
+
 
 #include <cstddef>
 
 struct LEvRec1Stream;
+class LEvRec0MD;
 
 class LEvRec1 {
 
@@ -20,15 +23,17 @@ public:
   LEvRec1();
   ~LEvRec1();
   inline int GetNOfTrackerClusters(void) const {return static_cast<int>(tracker.GetSize());};
-  void Dump(void) const;
+  void Dump(int entry) const;
   void DumpTracker(void) const;
   void DumpCalo(void) const;
   void DumpTrigger(void) const;
   void DumpScintillator(void) const;
   void DumpVeto(void) const;
   void DumpLyso(void) const;
+  void DumpMD(int entry) const;
   void FillRandom(void);
   void CopyFromLEvRec1Stream(const LEvRec1Stream evstr);
+ 
 
   unsigned short   runType;
   unsigned short   boot_nr;
@@ -50,10 +55,13 @@ public:
   LVetoSignal veto;
   LLysoSignal lyso;
 
+  LEvRec0Md   lev0MD;
+
 private:
   void Reset();
 
 };
+
 
 
 struct LEvRec1Stream {
