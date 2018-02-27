@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   int nentries=inputFile.GetEntries();
   for(int ie=0; ie<nentries; ++ie) {
     inputFile.GetEntry(ie);
-    if(ie == 0 || ie == 1 )
+    if(ie == 0 && inputFile.ContainsMD()) // to dump only header run (entry 0 of MD Tree)
        inputFile.GetMDEntry(ie);
     if(ie%1000==0)
        cev.Dump(ie);

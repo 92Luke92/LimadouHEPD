@@ -5,14 +5,21 @@
 
 LEvRec1File::LEvRec1File(const char *inpFile, const char *openMode="READ") {
   WritableFLAG=false; // safety
+  metaDataFlag=true;
   evptr= 0;
   
   std::string omstr(openMode);
   if((omstr.compare("READ"))==0) {                // READ MODE
     fFile=TFile::Open(inpFile, "READ");
     fTree=(TTree*)fFile->Get("L1");
-    std::cout << "Getting L1Md" << std::endl;
-    fTreeMD=(TTree*)fFile->Get("L1md");
+    if(fFile->GetListOfKeys()->Contains("L1md")) // for backward compatibility
+       fTreeMD=(TTree*)fFile->Get("L1md");
+    else
+    {
+       std::cout << "Old L1 File without metaData Tree "<< std::endl;
+       metaDataFlag=false;
+    }
+    
     InitializeBranches();
     WritableFLAG=false;
   } else if((omstr.compare("WRITE"))==0) {        // WRITE MODE
@@ -136,29 +143,31 @@ void LEvRec1File::InitializeBranches(void) {
   dead_timeBR = fTree->GetBranch("dead_time");
 
   // MetaData Tree
-  run_idMDBR = fTreeMD->GetBranch("run_id");
-  boot_nrMDBR = fTreeMD->GetBranch("boot_nr");
-  run_typeMDBR = fTreeMD->GetBranch("run_type");
-  run_durationBR = fTreeMD->GetBranch("run_duration");
-  orbitZoneBR = fTreeMD->GetBranch("orbitZone");
-  silConfigurationBR = fTreeMD->GetBranch("silConfiguration");
-  trigger_maskBR = fTreeMD->GetBranch("trigger_mask[2]");
-  easiroc_confBR = fTreeMD->GetBranch("easiroc_conf[60]");
-  PMT_maskBR = fTreeMD->GetBranch("PMT_mask[64]");
-  HV_maskBR = fTreeMD->GetBranch("HV_mask[12]");
-  HV_valueBR = fTreeMD->GetBranch("HV_value[10]");
-  gen_trig_maskBR = fTreeMD->GetBranch("gen_trig_mask[18]");
-  OBDH_infoBR = fTreeMD->GetBranch("OBDH_info");
-  GPS_infoBR = fTreeMD->GetBranch("GPS_info");
-  AOCC_infoBR = fTreeMD->GetBranch("AOCC_info");
-  star_sensor_infoBR = fTreeMD->GetBranch("star_sensor_info");
-  PMT_rate_meterBR = fTreeMD->GetBranch("PMT_rate_meter[65]");
-  CPU_tempBR = fTreeMD->GetBranch("CPU_temp_start_stop_Run[2]");
-  PMT_tempBR = fTreeMD->GetBranch("PMT_temp_start_stop_Run[2]");
-  CPU_timeBR = fTreeMD->GetBranch("CPU_time_start_stop_Run[2]");
-  CPU_timestampBR = fTreeMD->GetBranch("CPU_timestamp");
-  status_registerBR = fTreeMD->GetBranch("status_register");
-
+  if (metaDataFlag)
+  {
+     run_idMDBR = fTreeMD->GetBranch("run_id");
+     boot_nrMDBR = fTreeMD->GetBranch("boot_nr");
+     run_typeMDBR = fTreeMD->GetBranch("run_type");
+     run_durationBR = fTreeMD->GetBranch("run_duration");
+     orbitZoneBR = fTreeMD->GetBranch("orbitZone");
+     silConfigurationBR = fTreeMD->GetBranch("silConfiguration");
+     trigger_maskBR = fTreeMD->GetBranch("trigger_mask[2]");
+     easiroc_confBR = fTreeMD->GetBranch("easiroc_conf[60]");
+     PMT_maskBR = fTreeMD->GetBranch("PMT_mask[64]");
+     HV_maskBR = fTreeMD->GetBranch("HV_mask[12]");
+     HV_valueBR = fTreeMD->GetBranch("HV_value[10]");
+     gen_trig_maskBR = fTreeMD->GetBranch("gen_trig_mask[18]");
+     OBDH_infoBR = fTreeMD->GetBranch("OBDH_info");
+     GPS_infoBR = fTreeMD->GetBranch("GPS_info");
+     AOCC_infoBR = fTreeMD->GetBranch("AOCC_info");
+     star_sensor_infoBR = fTreeMD->GetBranch("star_sensor_info");
+     PMT_rate_meterBR = fTreeMD->GetBranch("PMT_rate_meter[65]");
+     CPU_tempBR = fTreeMD->GetBranch("CPU_temp_start_stop_Run[2]");
+     PMT_tempBR = fTreeMD->GetBranch("PMT_temp_start_stop_Run[2]");
+     CPU_timeBR = fTreeMD->GetBranch("CPU_time_start_stop_Run[2]");
+     CPU_timestampBR = fTreeMD->GetBranch("CPU_timestamp");
+     status_registerBR = fTreeMD->GetBranch("status_register");
+  }
 
   SetAddresses();  
 
@@ -326,7 +335,8 @@ int LEvRec1File::SetTheEventPointer(LEvRec1 &ev) {
   }
   evptr=&ev;
 
-  SetMDPointer(ev);
+  if(metaDataFlag)
+     SetMDPointer(ev);
      
   return 0;
 }

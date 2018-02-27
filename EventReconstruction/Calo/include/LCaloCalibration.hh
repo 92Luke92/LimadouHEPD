@@ -40,7 +40,7 @@ private:
   // Calib infos
   int RunId;
 
-   double pedestal[NPMT]; // if the order of the channels is according to the level1 format, the ReadRoot method is wrong!!! (Alessandro)
+  double pedestal[NPMT]; // if the order of the channels is according to the level1 format, the ReadRoot method is wrong!!! (Alessandro)
   double sigma[NPMT];  // if the order of the channels is according to the level1 format, the ReadRoot method is wrong!!! (Alessandro)
   /*  int outliers[NPMT];
   double skewness[NPMT];

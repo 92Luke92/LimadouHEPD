@@ -216,7 +216,8 @@ void TriggerScan(TString rootname, TString outPath )
       // event_time = 1230764400+OBDH_time_sec[ev.run_id - first_run_nr];
       //event_time += cpu_startRunTime_vect[ev.run_id - first_run_nr] - OBDH_timestamp[(ev.run_id - first_run_nr] ;// -  ev.hepd_time/1e+2; 
       event_time = cpu_startRunTime_vect[ev.run_id - first_run_nr] + ev.hepd_time/1e+2; //unit = ms //TODO: add broadcast time
-
+      if(event_time == 0 )
+	 cout << "ev time 0: index = " << ev.event_index << " run id = " << ev.run_id << endl;
       lost_triggers_vs_time->SetPoint(i, event_time/1000., ev.lost_trigger);
       alive_time_vs_time->SetPoint(i, event_time/1000., ev.alive_time*0.005);
       dead_time_vs_time->SetPoint(i, event_time/1000., ev.dead_time*0.005);
@@ -241,10 +242,10 @@ void TriggerScan(TString rootname, TString outPath )
 	 for(int kk=0;kk<9;kk++)
 	 {
 	   
- 	    rate_meter_vs_time[kk]->SetPoint(rate_meter_vs_time[kk]->GetN(), (time_flag+INTEGTIME/2.)/1000., (double)sum[kk]/numevent_int);
+ 	    rate_meter_vs_time[kk]->SetPoint(rate_meter_vs_time[kk]->GetN(), (time_flag-INTEGTIME/2.)/1000., (double)sum[kk]/numevent_int);
 	    sum[kk] = 0;
-	    time_flag = event_time + INTEGTIME;
 	 }
+	 time_flag = event_time + INTEGTIME;
 	 //cout << "start time = " << time_flag << endl;
 	 numevent_int = 0;
 	    

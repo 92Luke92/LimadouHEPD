@@ -19,17 +19,18 @@ public:
   int GetMDEntries();
   void Write();
   void Close();
-  void SetMDTreeAddress(LEvRec1 l1ev);
   int SetMDPointer(LEvRec1 &ev);  
 
   inline bool IsOpen() {return fFile->IsOpen();}
+  inline bool ContainsMD() {return metaDataFlag; }
 
   // Write MODE
   int SetRunId(const int rid);
   void Fill(const LEvRec1 event);
   void FillMD();
   void FillRandom(const int nEvents);
-  
+  void SetMDTreeAddress(LEvRec1 l1ev);
+   
   ~LEvRec1File();
   
   friend class LEvRec0File; // to set RunId and BootNr...
@@ -112,6 +113,7 @@ private:
   TBranch *status_registerBR;
    
   bool WritableFLAG;
+  bool metaDataFlag;
   void CreateTrees();
   void InitializeBranches();
   void SetAddresses();
