@@ -42,9 +42,19 @@
 #define CALO_PL 16
 #define LYSO_CU 9
 #define VETO_PL 5
-#define INTEGTIME 60000
+#define INTEGTIME 20000
 
 using namespace std;
+
+int runIDtoStartTime(int (*matrix)[2], int size, int runID)
+{
+   int ret = -1;
+
+   for(int j=0; j<size; j++)
+      if(matrix[j][1] == runID)
+	 ret = matrix[j][0];
+   return ret;
+}
 
 void TriggerScan(TString rootname, TString outPath )
 {
@@ -179,16 +189,18 @@ void TriggerScan(TString rootname, TString outPath )
       pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (CH%i); Run time (s); PMT rate meter (Hz)", subdetector[kk-1], kk-1));
    }
    
-   Int_t cpu_startRunTime_vect[1000];
    Int_t OBDH_timestamp[1000];
    Int_t OBDH_time_sec[1000];
    Int_t OBDH_time_ms[1000];
+
+   int cpuStartTime[Tmd_entries/2][2];
    
    for(int j=1; j<Tmd_entries; j+=2) //Tmd loop
    {
       rootfile.GetTmdEntry(j); 
-      cpu_startRunTime_vect[(j-1)/2] = metaData.CPU_time[0];
 
+      cpuStartTime[(j-1)/2][0] = metaData.CPU_time[0];
+      cpuStartTime[(j-1)/2][1] = metaData.run_id;
       OBDH_time_sec[(j-1)/2] = metaData.broadcast.OBDH.sec;
       OBDH_time_ms[(j-1)/2] = metaData.broadcast.OBDH.ms;
       OBDH_timestamp[(j-1)/2] = metaData.timestamp.OBDH;
@@ -199,7 +211,7 @@ void TriggerScan(TString rootname, TString outPath )
    }      
    // TDatime da(2009,01,01,00,00,00);
    // gStyle->SetTimeOffset(da.Convert());
-
+   
    Int_t time_flag = 0;
    Int_t numevent_int = 0;
    Int_t sum[9];
@@ -209,26 +221,29 @@ void TriggerScan(TString rootname, TString outPath )
    for(int i = 0; i < nEvents; i++) //Event loop
    {
       rootfile.GetEntry(i);
-      
+	    
       if(metaData.run_type == 0x634E) // to skip mixed virgin event
 	 continue;
 
+      
       // event_time = 1230764400+OBDH_time_sec[ev.run_id - first_run_nr];
       //event_time += cpu_startRunTime_vect[ev.run_id - first_run_nr] - OBDH_timestamp[(ev.run_id - first_run_nr] ;// -  ev.hepd_time/1e+2; 
-      event_time = cpu_startRunTime_vect[ev.run_id - first_run_nr] + ev.hepd_time/1e+2; //unit = ms //TODO: add broadcast time
-      if(event_time == 0 )
-	 cout << "ev time 0: index = " << ev.event_index << " run id = " << ev.run_id << endl;
+
+      event_time = runIDtoStartTime(cpuStartTime, Tmd_entries/2, ev.run_id) + ev.hepd_time/1e+2; //unit = ms //TODO: add broadcast time
+
       lost_triggers_vs_time->SetPoint(i, event_time/1000., ev.lost_trigger);
       alive_time_vs_time->SetPoint(i, event_time/1000., ev.alive_time*0.005);
       dead_time_vs_time->SetPoint(i, event_time/1000., ev.dead_time*0.005);
 
+
+      
       for(int ch=0;ch<EASIROC_CH;ch++) //PMT channel loop ch[0-63]
 	 if(ev.trigger_flag[ch] > 0)
 	    h_FlagCount_vs_Ch->Fill(ch);
 
       if (i == 0){
 	 time_flag = event_time + INTEGTIME;
-	 //cout << "start time = " << time_flag << endl;
+	 // cout << "start time = " << time_flag << endl;
       }
       
       if (event_time < time_flag){
@@ -245,12 +260,10 @@ void TriggerScan(TString rootname, TString outPath )
  	    rate_meter_vs_time[kk]->SetPoint(rate_meter_vs_time[kk]->GetN(), (time_flag-INTEGTIME/2.)/1000., (double)sum[kk]/numevent_int);
 	    sum[kk] = 0;
 	 }
-	 time_flag = event_time + INTEGTIME;
-	 //cout << "start time = " << time_flag << endl;
+	 // cout << "start time = " << time_flag << endl;
 	 numevent_int = 0;
-	    
+	 time_flag = event_time + INTEGTIME;
       }	 
-      
    } //End of event loop
    
    
@@ -456,7 +469,7 @@ void TriggerScan(TString rootname, TString outPath )
    TString rate_meter_pmt_55_64 = "14_pmt_rate_meter_55_64.png";
    c_rate_meter_pmt_55_64->SaveAs(rate_meter_pmt_55_64);
 
-   
+
    const char *char_outname = outname;
    gROOT->ProcessLine(Form(".!convert `ls -v *.png` %s",char_outname));
    gROOT->ProcessLine(".!rm *.png");

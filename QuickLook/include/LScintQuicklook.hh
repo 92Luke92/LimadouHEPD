@@ -10,6 +10,7 @@ void PrintHelp(void);
 void PMTScan(TString rootname, TString outPath);
 void TriggerScan(TString rootname, TString outPath);
 void EventRateL0(TString rootname, TString outPath);
+int  runIDtoStartTime(int (*matrix)[2], int size, int runID);
 
 #endif
  
