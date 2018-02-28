@@ -203,6 +203,7 @@ public:
 
    Status_Register_t  status_reg;
 
+   void               Dump(void) const;
 };
 
 #pragma pack(pop)
