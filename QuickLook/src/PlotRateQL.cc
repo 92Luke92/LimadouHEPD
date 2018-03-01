@@ -40,7 +40,7 @@
 #include "LEvRec0File.hh"
 #include "LEvRec0.hh"
 
-#define INTEG_TIME 1000//integration time in ms
+#define INTEG_TIME 10000//integration time in ms
 #define VERBOSE false	
 using namespace std;
 
@@ -58,6 +58,7 @@ void EventRateL0(TString rootname, TString outPath){
     outname+= basename(_temp);
     outname.ReplaceAll(".root", 5, "_EventRateQL.pdf", 16);
     cout << "\nOutput PDF File : " << outname << "\n";
+    cout << "\nRate Integration time= " << INTEG_TIME << "\n";
 
 // data interfacing 
 
@@ -204,32 +205,29 @@ void EventRateL0(TString rootname, TString outPath){
    cRun->Print(outnameStart);
 
   for (int nb=0; nb< NN_boot; nb++){
-//	cout << "\n*********** TMd Boot number["<<nb<<"]="<< BOOT_temp[nb]<< "***************\n";
+  	for (int ir=0; ir<N_Tmd; ir++){
+		if (ir%2==0){
+			cRun= new TCanvas("Run");
+			cRun->Divide (1, 2);
+			pt= new TPaveText(.1,.55,.9,.9);
 
 
-   for (int ir=0; ir<N_Tmd; ir++){
-	if (ir%2==0){
-		cRun= new TCanvas("Run");
-		cRun->Divide (1, 2);
-		pt= new TPaveText(.1,.55,.9,.9);
+		}
+		if (ir%2!=0)	pt= new TPaveText(.1,.1,.9,.45);
 
-
-	}
-	if (ir%2!=0)	pt= new TPaveText(.1,.1,.9,.45);
-
-	pt->SetTextSize(0.03);
-	pt->AddText(Form("BootN= %d, RunN= %d", Tmd_BootN[ir], Tmd_runN[ir] ));
-	pt->AddText(Form("CPU start-stop time (s): [%4.3f - %4.3f]", CPU_run_time[ir][0]/1000, CPU_run_time[ir][1]/1000));
-	pt->AddText(Form("Orbit zone: Calculated-Applied %d - %d",  Tmd_run_orbit[ir][0],  Tmd_run_orbit[ir][1]));
-	pt->AddText(Form("Applied Orbit Zone Configuration = ")+  Orbit_Zone[Tmd_run_orbit[ir][1]]);
-	pt->AddText(Form("    TriggerMask [%d] -> ", Tmd_run_TriggerMask[ir])+TriggerMask[Tmd_run_TriggerMask[ir]]);
-	pt->AddText(Form("    Veto  [%d] -> ", Tmd_run_Veto[ir])+ Veto[Tmd_run_Veto[ir]]);
-	pt->AddText(Form("Latitude [ %4.3f -> %4.3f ]", Tmd_run_lat[ir][0],  Tmd_run_lat[ir][1]));
-	pt->AddText(Form("Longitude [ %4.3f -> %4.3f ]", Tmd_run_long[ir][0],  Tmd_run_long[ir][1]));
-	cRun->cd();
-	pt->Draw();
-	if (ir%2!=0 ||N_Tmd==1)	cRun->Print(outname);
-   }
+		pt->SetTextSize(0.03);
+		pt->AddText(Form("BootN= %d, RunN= %d", Tmd_BootN[ir], Tmd_runN[ir] ));
+		pt->AddText(Form("CPU start-stop time (s): [%4.3f - %4.3f]", CPU_run_time[ir][0]/1000, CPU_run_time[ir][1]/1000));
+		pt->AddText(Form("Orbit zone: Calculated-Applied %d - %d",  Tmd_run_orbit[ir][0],  Tmd_run_orbit[ir][1]));
+		pt->AddText(Form("Applied Orbit Zone Configuration = ")+  Orbit_Zone[Tmd_run_orbit[ir][1]]);
+		pt->AddText(Form("    TriggerMask [%d] -> ", Tmd_run_TriggerMask[ir])+TriggerMask[Tmd_run_TriggerMask[ir]]);
+		pt->AddText(Form("    Veto  [%d] -> ", Tmd_run_Veto[ir])+ Veto[Tmd_run_Veto[ir]]);
+		pt->AddText(Form("Latitude [ %4.3f -> %4.3f ]", Tmd_run_lat[ir][0],  Tmd_run_lat[ir][1]));
+		pt->AddText(Form("Longitude [ %4.3f -> %4.3f ]", Tmd_run_long[ir][0],  Tmd_run_long[ir][1]));
+		cRun->cd();
+		pt->Draw();
+		if (ir%2!=0 ||N_Tmd==1)	cRun->Print(outname);
+   	}
 
 /////////////////////////////////////GRAPH INITIALIZATION *************************
 
@@ -262,74 +260,104 @@ void EventRateL0(TString rootname, TString outPath){
 	gname2[3]=Form("BootN_%d_Applied_NorthPol_rate_lat", BOOT_temp[nb]);
 	gname2[4]=Form("BootN_%d_Applied_Default_rate_lat", BOOT_temp[nb]);//no broadcast available
 
-
-	int jt[5];
-	int j[5];
-
  	for (int ig=0; ig<5; ig++){	
 		average_rate[ig]= new TGraph();
 		average_rate2[ig]= new TGraph();
-		j[ig]=0;
-		jt[ig]=0;
  	}
-        TH2D *h_rate_orbit;
-         const char *h2_name;
-         h2_name=Form("BootN_%d_Orbit_events", BOOT_temp[nb]);
-         h_rate_orbit=new TH2D(h2_name, h2_name,361,-180,+180, 181, -90, +90);
+        TH2D *h_events_orbit;
+        const char *h2_name;
+        h2_name=Form("BootN_%d_Orbit_events", BOOT_temp[nb]);
+        h_events_orbit=new TH2D(h2_name, h2_name,361,-180,+180, 181, -90, +90);
 
 
 //////////////////////////////////////////////////////////////////////////////
 
 // event loop
   	UInt_t event_time;
-  	Int_t time_flag=0;
+	Int_t time_flag=0;
   	Int_t time_flag_old=0;
 
 	Int_t numevent_int=0;
 	double event_lat=0;
 	double event_long=0;
-	
+	int zone=-1;
         double MaxY=0;
+	double lat_dt=0;
+        double long_dt=0;
+
+	Int_t check_events=0;
   	for(int ie=0; ie<nEntries; ++ie) {
         	File.GetEntry(ie);
         	for (int ir=0; ir<N_Tmd; ir++){
                 	if (cev.run_id==Tmd_runN[ir] && cev.boot_nr==Tmd_BootN[ir]){
-				
-				double lat_dt= (Tmd_run_lat[ir][1]- Tmd_run_lat[ir][0])/(CPU_run_time[ir][1]-CPU_run_time[ir][0]);
-				double long_dt= (Tmd_run_long[ir][1]- Tmd_run_long[ir][0])/(CPU_run_time[ir][1]-CPU_run_time[ir][0]);
-
-				int zone= Tmd_run_orbit[ir][1];
-      				event_time = CPU_run_time[ir][0]+ cev.hepd_time/1e+2; //unit = ms
-				event_lat =  Tmd_run_lat[ir][0]+(event_time-CPU_run_time[ir][0])*lat_dt;
-				event_long = Tmd_run_long[ir][0]+(event_time-CPU_run_time[ir][0])*long_dt;
-				if (event_long>=180.) event_long-=360.;
-				if (event_long<-180.) event_long+=360.;
-      				if (ie == 0)    	{
-					time_flag = event_time + INTEG_TIME;
+		  		event_time = CPU_run_time[ir][0]+ cev.hepd_time/1e+2; //unit = ms
+				if ( Tmd_run_orbit[ir][0]!=0xAA  ) {//if no broadcast no latitude-longitude
+					lat_dt= (Tmd_run_lat[ir][1]- Tmd_run_lat[ir][0])/(CPU_run_time[ir][1]-CPU_run_time[ir][0]);
+					long_dt= (Tmd_run_long[ir][1]- Tmd_run_long[ir][0])/(CPU_run_time[ir][1]-CPU_run_time[ir][0]);
+					event_lat =  Tmd_run_lat[ir][0]+(event_time-CPU_run_time[ir][0])*lat_dt;
+					event_long = Tmd_run_long[ir][0]+(event_time-CPU_run_time[ir][0])*long_dt;
+					if (event_long>=180.) event_long-=360.;
+					if (event_long<-180.) event_long+=360.;
+					h_events_orbit->Fill(event_long, event_lat);
+				}
+      				if (ie == 0)    {
+					time_flag = CPU_run_time[ir][0]+ INTEG_TIME;
 					time_flag_old = CPU_run_time[ir][0];
+					zone= Tmd_run_orbit[ir][1];		
 				}
 
 				if (event_time>=time_flag_old && event_time   < time_flag)     {
 					numevent_int++;
+					zone= Tmd_run_orbit[ir][1];		
 				}
        				else {
-					average_rate[zone]->SetPoint(jt[zone], time_flag/1.e3, numevent_int/(INTEG_TIME/1.e3)); 
-					jt[zone]++;
-						MaxY=max(MaxY,numevent_int/(INTEG_TIME/1.e3)); 
-
-					if ( Tmd_run_orbit[ir][0]!=0xAA  ) {
-						average_rate2[zone]->SetPoint(j[zone], event_lat, numevent_int/(INTEG_TIME/1.e3));//if no broadcast no latitude-longitude 
-						h_rate_orbit->Fill(event_long, event_lat, numevent_int);
-						j[zone]++;
+					if ((time_flag-time_flag_old)>0) {
+						average_rate[zone]->SetPoint(average_rate[zone]->GetN(), time_flag/1.e3, numevent_int/((time_flag-time_flag_old)/1.e3));
+						MaxY=max(MaxY,numevent_int/((time_flag-time_flag_old)/1.e3)); 
+						check_events+=numevent_int;
+						if (VERBOSE==true){
+							std::cout<< "\nset Point "<< average_rate[zone]->GetN()<<" : zone="<<zone<<"\n\tnumevent_int= "<< numevent_int<< ", dt (s)="<<(time_flag-time_flag_old)/1.e3<<  "\n\tx=time_flag (s)="<<time_flag/1.e3<< ", y=rate(Hz)="<<  numevent_int/((time_flag-time_flag_old)/1.e3);
+						}
+						if ( Tmd_run_orbit[ir][0]!=0xAA  ) {//if no broadcast no latitude-longitude 
+						 //lat and long correspondent to time_flag+INTEG_TIME
+                                        	        event_long=Tmd_run_long[ir][0]+(time_flag-CPU_run_time[ir][0])*long_dt;
+                                                	if (event_long>=180.) event_long-=360.;
+                                                	if (event_long<-180.) event_long+=360.;
+                                                	event_lat=Tmd_run_lat[ir][0]+(time_flag-CPU_run_time[ir][0])*lat_dt;
+ 							average_rate2[zone]->SetPoint(average_rate2[zone]->GetN(), event_lat, numevent_int/((time_flag-time_flag_old)/1.e3));
+						}
 					}
-					time_flag_old=event_time;
-					time_flag = event_time + INTEG_TIME;
-					numevent_int = 0;
+					zone= Tmd_run_orbit[ir][1];		
+					if (event_time<CPU_run_time[ir][1]) time_flag_old= event_time;
+					else time_flag_old=CPU_run_time[ir][1];						
+					if (event_time + INTEG_TIME<CPU_run_time[ir][1]) time_flag = event_time + INTEG_TIME;
+					else {
+						time_flag = CPU_run_time[ir][1]+50;
+					}
+					numevent_int = 1;
+				
          			}
+				if (ie==nEntries-1){//last events
+					average_rate[zone]->SetPoint(average_rate[zone]->GetN(), time_flag/1.e3, numevent_int/((time_flag-time_flag_old)/1.e3));
+					MaxY=max(MaxY,numevent_int/((time_flag-time_flag_old)/1.e3));
+					check_events+=numevent_int;
+					if (VERBOSE==true){
+						std::cout<< "\nset LAST Point "<< average_rate[zone]->GetN()<<": zone="<<zone<<"\n\tnumevent_int= "<< numevent_int<< ", dt (s)="<<(time_flag-time_flag_old)/1.e3<<  "\n\tx=time_flag (s)="<<time_flag/1.e3<< ", y=rate(Hz)="<<  numevent_int/((time_flag-time_flag_old)/1.e3);
+					}
+
+                                        if ( Tmd_run_orbit[ir][0]!=0xAA  ) {//if no broadcast no latitude-longitude 
+                                                 //lat and long correspondent to time_flag+INTEG_TIME
+	                                        event_long=Tmd_run_long[ir][0]+(time_flag-CPU_run_time[ir][0])*long_dt;
+                                                if (event_long>=180.) event_long-=360.;
+                                                if (event_long<-180.) event_long+=360.;
+                                                event_lat=Tmd_run_lat[ir][0]+(time_flag-CPU_run_time[ir][0])*lat_dt;
+                                                average_rate2[zone]->SetPoint(average_rate2[zone]->GetN(), event_lat, numevent_int/((time_flag-time_flag_old)/1.e3));
+                                        }
+				}
       			}
                 }//Tmd loop
       }// event loop
-
+      std::cout<< "\n\nCHECK: Total number of events="<< nEntries<< "\t check_events="<<check_events;
 /////////////////////////////////
 
 
@@ -426,15 +454,15 @@ void EventRateL0(TString rootname, TString outPath){
 	crate3->SetTitle(mg_name3);
 	crate3->SetName(mg_name3);
 	crate3->cd();
-	h_rate_orbit->GetYaxis()->SetTitle("Latitude");
-        h_rate_orbit->GetXaxis()->SetTitle("Longitude");
-        h_rate_orbit->GetZaxis()->SetTitle("#events");
+	h_events_orbit->GetYaxis()->SetTitle("Latitude");
+        h_events_orbit->GetXaxis()->SetTitle("Longitude");
+        h_events_orbit->GetZaxis()->SetTitle("#events");
 
-        h_rate_orbit->SetTitle(h2_name);
-        h_rate_orbit->SetName(h2_name);
-        h_rate_orbit->SetDrawOption("COLZ");
+        h_events_orbit->SetTitle(h2_name);
+        h_events_orbit->SetName(h2_name);
+        h_events_orbit->SetDrawOption("COLZ");
 	gStyle->SetOptStat(0);
-        h_rate_orbit->Draw("COLZ");
+        h_events_orbit->Draw("COLZ");
 	outnameEnd = outname+")";
 	crate3->Print(outnameEnd);
 
