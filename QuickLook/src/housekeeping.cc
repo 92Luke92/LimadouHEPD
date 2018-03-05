@@ -778,7 +778,18 @@ void HVPSConfigToXML(TString rootname, TString outPath, TString xslPath = "")
       outputFile << "\t<HV_PMT6_error>"  <<  0 << "</HV_PMT6_error>\n";
       outputFile << "\t<HV_PMT7_error>"  <<  0 << "</HV_PMT7_error>\n";
       outputFile << "\t<HV_PMT8_error>"  <<  0 << "</HV_PMT8_error>\n";
-      outputFile << "\t<HV_PMT9_error>"  <<  0 << "</HV_PMT9_error>\n"; 
+      outputFile << "\t<HV_PMT9_error>"  <<  0 << "</HV_PMT9_error>\n";
+
+      outputFile << "\t<MASK_PMT0_OFF>"  << 0 << "</MASK_PMT0_OFF>\n";
+      outputFile << "\t<MASK_PMT1_OFF>"  << 0 << "</MASK_PMT1_OFF>\n";
+      outputFile << "\t<MASK_PMT2_OFF>"  << 0 << "</MASK_PMT2_OFF>\n";
+      outputFile << "\t<MASK_PMT3_OFF>"  << 0 << "</MASK_PMT3_OFF>\n";
+      outputFile << "\t<MASK_PMT4_OFF>"  << 0 << "</MASK_PMT4_OFF>\n";
+      outputFile << "\t<MASK_PMT5_OFF>"  << 0 << "</MASK_PMT5_OFF>\n";
+      outputFile << "\t<MASK_PMT6_OFF>"  << 0 << "</MASK_PMT6_OFF>\n";
+      outputFile << "\t<MASK_PMT7_OFF>"  << 0 << "</MASK_PMT7_OFF>\n";
+      outputFile << "\t<MASK_PMT8_OFF>"  << 0 << "</MASK_PMT8_OFF>\n";
+      outputFile << "\t<MASK_PMT9_OFF>"  << 0 << "</MASK_PMT9_OFF>\n";
       
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
       outputFile << "\t<RUN_NR>"  << metaData.run_id  << "</RUN_NR>\n";
@@ -857,44 +868,65 @@ void HVPSConfigToXML(TString rootname, TString outPath, TString xslPath = "")
 
       if(metaData.HV_mask[0] == 0)
 	outputFile << "\t<MASK_PMT0>"  << "ON"  << "</MASK_PMT0>\n";
-      if(metaData.HV_mask[0] == 1)
+      if(metaData.HV_mask[0] == 1){
 	outputFile << "\t<MASK_PMT0>"  << "OFF" << "</MASK_PMT0>\n";
+        outputFile << "\t<MASK_PMT0_OFF>"  << 1 << "</MASK_PMT0_OFF>\n";
+	}
       if(metaData.HV_mask[1] == 0)
 	outputFile << "\t<MASK_PMT1>"  << "ON"  << "</MASK_PMT1>\n";
-      if(metaData.HV_mask[1] == 1)
+      if(metaData.HV_mask[1] == 1){
 	outputFile << "\t<MASK_PMT1>"  << "OFF"  << "</MASK_PMT1>\n";
+        outputFile << "\t<MASK_PMT1_OFF>"  << 1 << "</MASK_PMT1_OFF>\n";
+	}
       if(metaData.HV_mask[2] == 0)
 	outputFile << "\t<MASK_PMT2>"  << "ON"  << "</MASK_PMT2>\n";
-      if(metaData.HV_mask[2] == 1)
-	outputFile << "\t<MASK_PMT2>"  << "OFF" << "</MASK_PMT2>\n";
+      if(metaData.HV_mask[2] == 1){
+	outputFile << "\t<MASK_PMT2>"  << "OFF"  << "</MASK_PMT2>\n";
+        outputFile << "\t<MASK_PMT2_OFF>"  << 1 << "</MASK_PMT2_OFF>\n";
+	}
       if(metaData.HV_mask[3] == 0)
 	outputFile << "\t<MASK_PMT3>"  << "ON"  << "</MASK_PMT3>\n";
-      if(metaData.HV_mask[3] == 1)
-	outputFile << "\t<MASK_PMT3>"  << "OFF" << "</MASK_PMT3>\n";
+      if(metaData.HV_mask[3] == 1){
+	outputFile << "\t<MASK_PMT3>"  << "OFF"  << "</MASK_PMT3>\n";
+        outputFile << "\t<MASK_PMT3_OFF>"  << 1 << "</MASK_PMT3_OFF>\n";
+	}
       if(metaData.HV_mask[4] == 0)
 	outputFile << "\t<MASK_PMT4>"  << "ON"  << "</MASK_PMT4>\n";
-      if(metaData.HV_mask[4] == 1)
-	outputFile << "\t<MASK_PMT4>"  << "OFF" << "</MASK_PMT4>\n";
+      if(metaData.HV_mask[4] == 1){
+	outputFile << "\t<MASK_PMT4>"  << "OFF"  << "</MASK_PMT4>\n";
+        outputFile << "\t<MASK_PMT4_OFF>"  << 1 << "</MASK_PMT4_OFF>\n";
+	}	
       if(metaData.HV_mask[5] == 0)
 	outputFile << "\t<MASK_PMT5>"  << "ON"  << "</MASK_PMT5>\n";
-      if(metaData.HV_mask[5] == 1)
-	outputFile << "\t<MASK_PMT5>" << "OFF"  << "</MASK_PMT5>\n";
+      if(metaData.HV_mask[5] == 1){
+	outputFile << "\t<MASK_PMT5>"  << "OFF"  << "</MASK_PMT5>\n";
+        outputFile << "\t<MASK_PMT5_OFF>"  << 1 << "</MASK_PMT5_OFF>\n";
+	}		
       if(metaData.HV_mask[6] == 0)
 	outputFile << "\t<MASK_PMT6>" << "ON"   << "</MASK_PMT6>\n";
-      if(metaData.HV_mask[6] == 1)
-	outputFile << "\t<MASK_PMT6>" << "OFF"  << "</MASK_PMT6>\n";
+      if(metaData.HV_mask[6] == 1){
+	outputFile << "\t<MASK_PMT6>"  << "OFF"  << "</MASK_PMT6>\n";
+        outputFile << "\t<MASK_PMT6_OFF>"  << 1 << "</MASK_PMT6_OFF>\n";
+	}		
       if(metaData.HV_mask[7] == 0)
 	outputFile << "\t<MASK_PMT7>" << "ON"   << "</MASK_PMT7>\n";
-      if(metaData.HV_mask[7] == 1)
-	outputFile << "\t<MASK_PMT7>" << "OFF" << "</MASK_PMT7>\n";
+      if(metaData.HV_mask[7] == 1){
+	outputFile << "\t<MASK_PMT7>"  << "OFF"  << "</MASK_PMT7>\n";
+        outputFile << "\t<MASK_PMT7_OFF>"  << 1 << "</MASK_PMT7_OFF>\n";
+	}		
       if(metaData.HV_mask[8] == 0)
 	outputFile << "\t<MASK_PMT8>" << "ON"  << "</MASK_PMT8>\n";
-      if(metaData.HV_mask[8] == 1)
-	outputFile << "\t<MASK_PMT8>" << "OFF" << "</MASK_PMT8>\n";
+      if(metaData.HV_mask[8] == 1){
+	outputFile << "\t<MASK_PMT8>"  << "OFF"  << "</MASK_PMT8>\n";
+        outputFile << "\t<MASK_PMT8_OFF>"  << 1 << "</MASK_PMT8_OFF>\n";
+	}		
       if(metaData.HV_mask[9] == 0)
 	outputFile << "\t<MASK_PMT9>" << "ON" << "</MASK_PMT9>\n";
-      if(metaData.HV_mask[9] == 1)
-	outputFile << "\t<MASK_PMT9>" << "OFF" << "</MASK_PMT9>\n";
+      if(metaData.HV_mask[9] == 1){
+	outputFile << "\t<MASK_PMT9>"  << "OFF"  << "</MASK_PMT9>\n";
+        outputFile << "\t<MASK_PMT9_OFF>"  << 1 << "</MASK_PMT9_OFF>\n";
+	}		
+	
 
       outputFile << "</HVPSCONFIG>\n";
 
