@@ -196,7 +196,7 @@ void EventRateL0(TString rootname, TString outPath){
    pt->AddText("DIRECTORY:");
    pt->AddText(outPath);
    pt->AddText("ROOT file:");
-   pt->AddText(basename(rootname));
+   pt->AddText(_temp);
    pt->AddText(Form("Total number of boots= %d", NN_boot));
    pt->AddText(Form("TMd entries = %d -> Run entries = %d", N2_Tmd, N_Tmd));
    pt->AddText(Form("N events= %d", File.GetEntries()));
