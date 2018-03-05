@@ -384,7 +384,7 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
       OBDH_ms_vect[j] = metaData.broadcast.OBDH.ms;
       OBDH_sec_vect[j]=  metaData.broadcast.OBDH.sec;
       OBDH_timestamp_vect[j] = metaData.timestamp.OBDH;
-      
+      cout << "OBDH TIMESTAMP VECT" << OBDH_sec_vect[j] << endl; 
 
       if (j%2!=0) {
 	CPU_Time[j-1]=metaData.CPU_time[0];
@@ -438,21 +438,23 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
       if(longitude > 180 && longitude < -180)
 	 outputFile << "\t<LONGITUDE_error>"   <<  0 << "</LONGITUDE_error>\n";
       
-      UShort_t ABS_diff_sec[Tmd_entries];
-      UShort_t ABS_Time_Run_ms[Tmd_entries];
-      UShort_t ABS_Time_Run_sec[Tmd_entries];
+      UInt_t ABS_diff_sec[Tmd_entries];
+      UInt_t ABS_Time_Run_ms[Tmd_entries];
+      UInt_t ABS_Time_Run_sec[Tmd_entries];
 
 
       if (t%2==0) {
        	ABS_diff_sec[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])/1000;
        	ABS_Time_Run_ms[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])%1000;  	
        	ABS_Time_Run_sec[t]=OBDH_sec_vect[t]+ABS_diff_sec[t];
+	 
       }
 
       if (t%2!=0) {
        	ABS_diff_sec[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])/1000;
-       	ABS_Time_Run_ms[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])%1000;  	
+       	ABS_Time_Run_ms[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])%1000;
        	ABS_Time_Run_sec[t]=OBDH_sec_vect[t]+ABS_diff_sec[t];
+	 
       }
       
       TDatime h;
@@ -472,13 +474,13 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
       timestamp_AOCC_2009 = 1230764400+metaData.broadcast.AOCC.sec;
       timestamp_ABS_2009 = 1230764400+ABS_Time_Run_sec[t];
       
-     	
+           	
       h.Set(timestamp_OBDH_2009);
       GPS.Set(timestamp_GPS_2009);
       AOCC.Set(timestamp_AOCC_2009);
       absolute.Set(timestamp_ABS_2009);
-    
-    
+
+          
       
       if (metaData.broadcast.OBDH.sec == 0xBBBBBBBB){
 	outputFile << "\t<OBDH_S>" << "N.A." << "</OBDH_S>\n";
