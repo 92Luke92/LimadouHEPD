@@ -44,9 +44,11 @@ int TrackerQuickLook(TString namefile, TString outPath){
      const char * nopath = filename_nopath.BaseName((const char*)namefile.c_str());
    */  const char *nopath = "StringaIntrodottaDaRoma2";
    TString outname = outPath;
-   const char * _temp = namefile;
+   TString _temp= namefile;
+
+   _temp.Replace(0, _temp.Last('/'), "");
    outname += "/";
-   outname += basename(_temp);
+   outname += _temp;
 
    TString outnameStart;
    TString outnameEnd;

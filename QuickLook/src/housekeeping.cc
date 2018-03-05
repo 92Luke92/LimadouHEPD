@@ -50,9 +50,11 @@ void HVPSMonitorToXML(TString rootname, TString outPath, TString xslPath = "")
      // cout << "Number of THVpmt entries: " << THVpmt_entries << endl;
   
      TString filename = outPath;
-     const char * _temp = rootname;
+     TString _temp = rootname ;
+     _temp.Replace(0, _temp.Last('/'), "");
+
      filename += "/";
-     filename += basename(_temp);
+     filename += _temp;
      filename.ReplaceAll(".root", 5, "_HVPSMonitor.xml", 16);
 
      ofstream outputFile;
@@ -199,9 +201,11 @@ void DUMPConfigToXML(TString rootname, TString outPath, TString xslPath = "")
      //cout << "Number of TConf entries: " << TConf_entries << endl;
   
      TString filename = outPath;
-     const char * _temp = rootname;
+     TString _temp = rootname ;
+     _temp.Replace(0, _temp.Last('/'), "");
+
      filename += "/";
-     filename += basename(_temp);
+     filename += _temp;
      filename.ReplaceAll(".root", 5, "_DUMPConfig.xml", 15);
 
      ofstream outputFile;
@@ -327,9 +331,11 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
   cout << endl << "Processing Broadcast to xml files:" << rootname << endl;
 
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_Time.xml",9 );
 
   ofstream outputFile;
@@ -341,7 +347,7 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
 
   TString filename2 = outPath;
   filename2 += "/";
-  filename2 += basename(_temp);
+  filename2 += _temp;
   filename2.ReplaceAll(".root", 5, "_GPS.xml",8 );
 
   ofstream outputFile2;
@@ -384,7 +390,7 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
       OBDH_ms_vect[j] = metaData.broadcast.OBDH.ms;
       OBDH_sec_vect[j]=  metaData.broadcast.OBDH.sec;
       OBDH_timestamp_vect[j] = metaData.timestamp.OBDH;
-      cout << "OBDH TIMESTAMP VECT" << OBDH_sec_vect[j] << endl; 
+      //cout << "OBDH TIMESTAMP VECT" << OBDH_sec_vect[j] << endl; 
 
       if (j%2!=0) {
 	CPU_Time[j-1]=metaData.CPU_time[0];
@@ -580,9 +586,11 @@ void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath = "")
   cout << endl << "Processing CPU Time to xml file:" << rootname << endl;
 
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_CPUTimeTemp.xml", 16);
 
   ofstream outputFile;
@@ -715,9 +723,11 @@ void HVPSConfigToXML(TString rootname, TString outPath, TString xslPath = "")
   cout << endl <<  "Processing HVPS to xml file:" << rootname << endl;
 
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_HVPSConfig.xml", 15);
 
   ofstream outputFile;
@@ -943,9 +953,11 @@ void RunInfoToXML(TString rootname, TString outPath, TString xslPath = "")
   cout << endl << "Processing Run Info to xml file:" << rootname << endl;
   
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_RunInfo.xml", 12);
 
   ofstream outputFile;
@@ -1147,9 +1159,11 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
   
   
    TString filename = outPath;
-   const char * _temp = rootname;
+   TString _temp = rootname ;
+   _temp.Replace(0, _temp.Last('/'), "");
+
    filename += "/";
-   filename += basename(_temp);
+   filename += _temp;
    filename.ReplaceAll(".root", 5, "_FastInfo.xml", 13);
 
    ofstream outputFile;
@@ -1488,9 +1502,11 @@ void ScintConfigToXML(TString rootname, TString outPath, TString xslPath = "")
   cout << endl <<  "Processing Scint to xml file:" << rootname << endl;
 
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_ScintConfig.xml", 16);
 
   ofstream outputFile;
@@ -1637,9 +1653,11 @@ void SilConfigToXML(TString rootname, TString outPath, TString xslPath = "")
   cout << endl << "Processing Silicon Config to xml file:" << rootname << endl;
 
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_SilConfig.xml", 14);
 
   ofstream outputFile;
@@ -1905,9 +1923,11 @@ void TelemetryToXML(TString rootname, TString outPath,  TString xslPath = "")
   cout << endl << "Processing Telemetry to xml file:" << rootname << endl;
   
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_Telemetry.xml", 14);
 
   ofstream outputFile;
