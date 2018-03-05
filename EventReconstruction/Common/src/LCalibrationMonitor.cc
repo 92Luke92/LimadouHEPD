@@ -25,14 +25,14 @@ LCalibration* CalculateWindow(const char * infile,double *err_sigma_LG,double *e
     getline(input, buffer);
     if(buffer.size()>3)readfile.push_back(buffer);         
   }     
-  LCalibration* output=LCalibration::Read(readfile.at(readfile.size()-1).c_str());
+  LCalibration* output=LCalibration::ReadROOT(readfile.at(readfile.size()-1).c_str());
 
   int wsize=readfile.size()>WINDOW_LEN ? readfile.size()-WINDOW_LEN : 0;
   LCalibration* calbuffer[WINDOW_LEN];
    
   int islot=0;
   for(int iw=readfile.size()-2;iw>=wsize;--iw){
-    calbuffer[islot]=LCalibration::Read(readfile.at(iw).c_str());
+    calbuffer[islot]=LCalibration::ReadROOT(readfile.at(iw).c_str());
     calbuffer[islot]->SetInputFile(readfile.at(iw).c_str());
     (*output) += (*calbuffer[islot]);
     ++islot;
@@ -276,10 +276,10 @@ void IsGoodGraphics(const LCalibration *reference,const double* err_sigma_LG,con
 
 void WindowTimeEvolution(LCalibration* calibs[WINDOW_LEN],int islot){
   gStyle->SetPalette(1);
-  TH2D* PMT_LG_mean_histo=new TH2D("PMT_LG_pedestal_history","PMT LG pedestal;;PMT;ADC",islot,0,islot,NPMT+2,0,NPMT);
-  TH2D* PMT_HG_mean_histo=new TH2D("PMT_HG_pedestal_history","PMT HG pedestal;;PMT;ADC",islot,0,islot,NPMT+2,0,NPMT);
-  TH2D* PMT_LG_sigma_histo=new TH2D("PMT_LG_sigma_history","PMT LG sigma;:PMT;ADC",islot,0,islot,NPMT+2,0,NPMT);
-  TH2D* PMT_HG_sigma_histo=new TH2D("PMT_HG_sigma_history","PMT HG sigma;:PMT;ADC",islot,0,islot,NPMT+2,0,NPMT);
+  TH2D* PMT_LG_mean_histo=new TH2D("PMT_LG_pedestal_history","PMT LG pedestal;;PMT;ADC",islot,0,islot,NPMT,0,NPMT);
+  TH2D* PMT_HG_mean_histo=new TH2D("PMT_HG_pedestal_history","PMT HG pedestal;;PMT;ADC",islot,0,islot,NPMT,0,NPMT);
+  TH2D* PMT_LG_sigma_histo=new TH2D("PMT_LG_sigma_history","PMT LG sigma;:PMT;ADC",islot,0,islot,NPMT,0,NPMT);
+  TH2D* PMT_HG_sigma_histo=new TH2D("PMT_HG_sigma_history","PMT HG sigma;:PMT;ADC",islot,0,islot,NPMT,0,NPMT);
 
   TH2D* TRK_mean_histo[2][N_LADDER];
   TH2D* TRK_sigma_histo[2][N_LADDER];
@@ -288,10 +288,10 @@ void WindowTimeEvolution(LCalibration* calibs[WINDOW_LEN],int islot){
 
   for(int iSide=0;iSide<2;++iSide){
     for(int iLd=0;iLd<N_LADDER;++iLd){
-      TRK_mean_histo[iSide][iLd]=new TH2D(Form("TRK_pedestal_history_side_%c_ladder_%d",iSide==0 ? 'p' : 'n',iLd),Form("TRK pedestal side %c ladder %d;;chan;ADC",iSide==0 ? 'p' : 'n',iLd),islot,0,islot,SIDE_CHAN+2,0,SIDE_CHAN);
+      TRK_mean_histo[iSide][iLd]=new TH2D(Form("TRK_pedestal_history_side_%c_ladder_%d",iSide==0 ? 'p' : 'n',iLd),Form("TRK pedestal side %c ladder %d;;chan;ADC",iSide==0 ? 'p' : 'n',iLd),islot,0,islot,SIDE_CHAN,0,SIDE_CHAN);
       TRK_mean_histo[iSide][iLd]->GetXaxis()->SetLabelSize(labelsize);
       TRK_mean_histo[iSide][iLd]->SetStats(0);
-      TRK_sigma_histo[iSide][iLd]=new TH2D(Form("TRK_sigma_historyside_%c_ladder_%d",iSide==0 ? 'p' : 'n',iLd),Form("TRK sigma side %c ladder %d;;chan;ADC",iSide==0 ? 'p' : 'n',iLd),islot,0,islot,SIDE_CHAN+2,0,SIDE_CHAN);
+      TRK_sigma_histo[iSide][iLd]=new TH2D(Form("TRK_sigma_historyside_%c_ladder_%d",iSide==0 ? 'p' : 'n',iLd),Form("TRK sigma side %c ladder %d;;chan;ADC",iSide==0 ? 'p' : 'n',iLd),islot,0,islot,SIDE_CHAN,0,SIDE_CHAN);
       TRK_sigma_histo[iSide][iLd]->GetXaxis()->SetLabelSize(labelsize);
       TRK_sigma_histo[iSide][iLd]->SetStats(0);
     }
@@ -335,16 +335,16 @@ void WindowTimeEvolution(LCalibration* calibs[WINDOW_LEN],int islot){
     for(int iPmt=0;iPmt<NPMT;++iPmt){
 
       PMT_LG_mean_histo->Fill(iW+1,iPmt,PMTmeanLG[iW][iPmt]);
-      PMT_LG_mean_histo->GetXaxis()->SetBinLabel(iW+1,finalname.c_str());
+      PMT_LG_mean_histo->GetXaxis()->SetBinLabel(iW,finalname.c_str());
 
       PMT_HG_mean_histo->Fill(iW+1,iPmt,PMTmeanHG[iW][iPmt]);
-      PMT_HG_mean_histo->GetXaxis()->SetBinLabel(iW+1,finalname.c_str());
+      PMT_HG_mean_histo->GetXaxis()->SetBinLabel(iW,finalname.c_str());
 
       PMT_LG_sigma_histo->Fill(iW+1,iPmt,PMTsigmaLG[iW][iPmt]);
-      PMT_LG_sigma_histo->GetXaxis()->SetBinLabel(iW+1,finalname.c_str());
+      PMT_LG_sigma_histo->GetXaxis()->SetBinLabel(iW,finalname.c_str());
 
       PMT_HG_sigma_histo->Fill(iW+1,iPmt,PMTsigmaHG[iW][iPmt]);
-      PMT_HG_sigma_histo->GetXaxis()->SetBinLabel(iW+1,finalname.c_str());
+      PMT_HG_sigma_histo->GetXaxis()->SetBinLabel(iW,finalname.c_str());
 
     }
 
