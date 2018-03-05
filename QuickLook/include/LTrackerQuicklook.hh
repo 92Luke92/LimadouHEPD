@@ -12,12 +12,9 @@ const double GAUSCHANNELTHRESHOLD=3.5;
 
 const int NCALIBEVENTS_QL=1024;
 
-int TrackerQuickLook(std::string namefile);
+int TrackerQuickLook(TString namefile, TString outPath);
 void LTrackerCalibrationQL(std::string namefile);
 void PrintHelp(void);
-void PMTScan(TString rootname);
-void TriggerScan(TString rootname);
-
 
 #endif
  

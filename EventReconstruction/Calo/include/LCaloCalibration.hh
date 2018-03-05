@@ -5,9 +5,11 @@
 #include <vector>
 #include <fstream>
 
+class LCalibration;
 
 class LCaloCalibration {
 public:
+  friend class LCalibration;
   LCaloCalibration();
   LCaloCalibration(const int RunIdINP,
 		   const double* ped, const double *rms); // outliers? momenta 3-4?
@@ -38,7 +40,7 @@ private:
   // Calib infos
   int RunId;
 
-   double pedestal[NPMT]; // if the order of the channels is according to the level1 format, the ReadRoot method is wrong!!! (Alessandro)
+  double pedestal[NPMT]; // if the order of the channels is according to the level1 format, the ReadRoot method is wrong!!! (Alessandro)
   double sigma[NPMT];  // if the order of the channels is according to the level1 format, the ReadRoot method is wrong!!! (Alessandro)
   /*  int outliers[NPMT];
   double skewness[NPMT];

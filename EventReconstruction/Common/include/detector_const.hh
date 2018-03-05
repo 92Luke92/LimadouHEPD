@@ -4,6 +4,7 @@
 const int VA_CHAN=64;
 const int ADC_CHAN=3*VA_CHAN;  // 192
 const int LADDER_CHAN=4*ADC_CHAN; // 768
+const int COLUMN_CHAN=2*LADDER_CHAN; // 1536
 const int SIDE_CHAN=LADDER_CHAN/2; 
 const int NCHAN = 6*LADDER_CHAN; // 4608
 const int SIDE_VA=6;

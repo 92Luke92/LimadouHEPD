@@ -21,8 +21,8 @@ void LReco01Manager::LoadSteering(const char* steerFileIN) {
   steer.Load(steerFile);
   // Load calibration
   calFileName = steer.GetParameter<std::string>("CALBFILE");
-  //cal = LCalibration::ReadROOT(calFileName.c_str());
-  cal = LCalibration::Read(calFileName.c_str());
+  cal = LCalibration::ReadROOT(calFileName.c_str());
+  //cal = LCalibration::Read(calFileName.c_str());
   // Input file 
   L0fname = steer.GetParameter<std::string>("INPFILE");
   // Output folder
@@ -110,6 +110,9 @@ void LReco01Manager::Run(void) {
   NewOutFile();
   LEvRec0 lev0;
   inFile->SetTheEventPointer(lev0);
+  LEvRec0Md lev0MD;
+  inFile->SetMdPointer(lev0MD);
+
   int nentries=inFile->GetEntries();
   std::cout << __LRECO01MANAGER__ << "Looping on file " << L0fname << " (" << nentries << " entries)" << std::endl;
   int startEvent = (skipEvents==-1 ? 0 : skipEvents);
@@ -119,11 +122,22 @@ void LReco01Manager::Run(void) {
 		<<"event " << i0 << "/" <<nentries << std::endl;
     }
     inFile->GetEntry(i0);
-    LEvRec1 l1ev = L0ToL1(lev0,cal);
-    outFile->Fill(L0ToL1(lev0,cal));
+    
+    LEvRec1 l1ev = L0ToL1(lev0, cal);
+    outFile->Fill(L0ToL1(lev0, cal));
     ++fevtcounter;
     if(maxFileEvents!=-1 && fevtcounter>maxFileEvents-1) break;
+
+    if(i0 == 0 || i0 == 1)
+    {
+        inFile->GetMDEntry(i0);
+	l1ev.lev0MD = lev0MD;
+
+	outFile->SetMDTreeAddress(l1ev);
+	outFile->FillMD();
+    }
   }
+
   std::cout << __LRECO01MANAGER__ << std::endl;
   inFile->Close();
   delete inFile;

@@ -43,9 +43,10 @@ void LEvRec1::Reset(){
 }
 
 
-void LEvRec1::Dump() const {
+void LEvRec1::Dump(int entry) const {
   DumpTracker();
   DumpCalo();
+  DumpMD(entry);
   return;
 }
 
@@ -80,6 +81,13 @@ void LEvRec1::DumpVeto() const {
 
 void LEvRec1::DumpLyso() const {
   lyso.Dump();
+  return;
+}
+
+void LEvRec1::DumpMD(int entry) const {
+   if(entry == 0 || entry == 1 )
+      lev0MD.Dump() ;
+   
   return;
 }
 

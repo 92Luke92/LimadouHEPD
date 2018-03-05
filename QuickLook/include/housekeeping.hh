@@ -15,14 +15,15 @@
 
 using namespace std;
 
-void HVPSMonitorToXML(TString rootname, TString xslPath);
-void DUMPConfigToXML(TString rootname, TString xslPath);
-void BroadcastToXML(TString rootname, TString xslPath, TString xslPath2);
-void CPUTimeTempToXML(TString rootname, TString xslPath);
-void HVPSConfigToXML(TString rootname, TString xslPath);
-void RunInfoToXML(TString rootname, TString xslPath);
-void ScintConfigToXML(TString rootname, TString xslPath);
-void SilConfigToXML(TString rootname, TString xslPath);
-void TelemetryToXML(TString rootname, TString xslPath);
+void HVPSMonitorToXML(TString rootname, TString outPath, TString xslPath);
+void DUMPConfigToXML(TString rootname, TString outPath, TString xslPath);
+void BroadcastToXML(TString rootname, TString outPath, TString xslPath, TString xslPath2);
+void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath);
+void HVPSConfigToXML(TString rootname, TString outPath, TString xslPath);
+void RunInfoToXML(TString rootname, TString outPath, TString xslPath);
+void ScintConfigToXML(TString rootname, TString outPath, TString xslPath);
+void SilConfigToXML(TString rootname, TString outPath, TString xslPath);
+void TelemetryToXML(TString rootname, TString outPath, TString xslPath);
+void FastInfoToXML(TString rootname, TString outPath, TString xslPath);
    
 #endif

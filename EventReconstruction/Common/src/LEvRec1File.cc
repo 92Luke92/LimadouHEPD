@@ -5,17 +5,27 @@
 
 LEvRec1File::LEvRec1File(const char *inpFile, const char *openMode="READ") {
   WritableFLAG=false; // safety
-  evptr=0;
+  metaDataFlag=true;
+  evptr= 0;
   
   std::string omstr(openMode);
   if((omstr.compare("READ"))==0) {                // READ MODE
     fFile=TFile::Open(inpFile, "READ");
     fTree=(TTree*)fFile->Get("L1");
+    if(fFile->GetListOfKeys()->Contains("L1md")) // for backward compatibility
+       fTreeMD=(TTree*)fFile->Get("L1md");
+    else
+    {
+       std::cout << "Old L1 File without metaData Tree "<< std::endl;
+       metaDataFlag=false;
+    }
+    
     InitializeBranches();
     WritableFLAG=false;
   } else if((omstr.compare("WRITE"))==0) {        // WRITE MODE
     fFile = TFile::Open(inpFile, "NEW");
     WritableFLAG=true;
+    
     CreateTrees();
   } else {                                        // UNKNOWN MODE
     std::cerr << "Open mode \"" << openMode << "\" unknwon. No file opened." << std::endl;
@@ -29,7 +39,7 @@ void LEvRec1File::CreateTrees() {
   }
 
   fFile->cd();
-  //fTreeMd = new TTree("L1md", "Limadou Level 1 meta data"); // What do we put inside it???
+  fTreeMD = new TTree("L1md", "Limadou Level 1 meta data"); // What do we put inside it???
   fTree = new TTree("L1", "Limadou Level 1 events");
   // Tracker
   tracker_nClBR = fTree->Branch("tracker_nCl", 0, "tracker_nCl/I");
@@ -74,16 +84,16 @@ void LEvRec1File::CreateTrees() {
   trigger_indexBR = fTree->Branch("trigger_index", 0, "trigger_index/i");
   hepd_timeBR = fTree->Branch("hepd_time", 0, "hepd_time/i");
   PMTBoard_trigger_counterBR = fTree->Branch("PMTBoard_trigger_counter", 0, "PMTBoard_trigger_counter/i");
-  lost_triggerBR = fTree->Branch("lost_trigger", 0, "lsot_trigger/s");
+  lost_triggerBR = fTree->Branch("lost_trigger", 0, "lost_trigger/s");
   rate_meterBR = fTree->Branch("rate_meter[9]", 0, "rate_meter[9]/s");
   alive_timeBR = fTree->Branch("alive_time", 0, "alive_time/i");
   dead_timeBR = fTree->Branch("dead_time", 0, "dead_time/i");
 
-
   SetAddresses();
-
+ 
   return;
 }
+
 
 void LEvRec1File::InitializeBranches(void) {
   tracker_nClBR = fTree->GetBranch("tracker_nCl");
@@ -131,6 +141,33 @@ void LEvRec1File::InitializeBranches(void) {
   rate_meterBR = fTree->GetBranch("rate_meter[9]");
   alive_timeBR = fTree->GetBranch("alive_time");
   dead_timeBR = fTree->GetBranch("dead_time");
+
+  // MetaData Tree
+  if (metaDataFlag)
+  {
+     run_idMDBR = fTreeMD->GetBranch("run_id");
+     boot_nrMDBR = fTreeMD->GetBranch("boot_nr");
+     run_typeMDBR = fTreeMD->GetBranch("run_type");
+     run_durationBR = fTreeMD->GetBranch("run_duration");
+     orbitZoneBR = fTreeMD->GetBranch("orbitZone");
+     silConfigurationBR = fTreeMD->GetBranch("silConfiguration");
+     trigger_maskBR = fTreeMD->GetBranch("trigger_mask[2]");
+     easiroc_confBR = fTreeMD->GetBranch("easiroc_conf[60]");
+     PMT_maskBR = fTreeMD->GetBranch("PMT_mask[64]");
+     HV_maskBR = fTreeMD->GetBranch("HV_mask[12]");
+     HV_valueBR = fTreeMD->GetBranch("HV_value[10]");
+     gen_trig_maskBR = fTreeMD->GetBranch("gen_trig_mask[18]");
+     OBDH_infoBR = fTreeMD->GetBranch("OBDH_info");
+     GPS_infoBR = fTreeMD->GetBranch("GPS_info");
+     AOCC_infoBR = fTreeMD->GetBranch("AOCC_info");
+     star_sensor_infoBR = fTreeMD->GetBranch("star_sensor_info");
+     PMT_rate_meterBR = fTreeMD->GetBranch("PMT_rate_meter[65]");
+     CPU_tempBR = fTreeMD->GetBranch("CPU_temp_start_stop_Run[2]");
+     PMT_tempBR = fTreeMD->GetBranch("PMT_temp_start_stop_Run[2]");
+     CPU_timeBR = fTreeMD->GetBranch("CPU_time_start_stop_Run[2]");
+     CPU_timestampBR = fTreeMD->GetBranch("CPU_timestamp");
+     status_registerBR = fTreeMD->GetBranch("status_register");
+  }
 
   SetAddresses();  
 
@@ -194,6 +231,64 @@ void LEvRec1File::SetAddresses() {
   return;  
 }
 
+void LEvRec1File::SetMDTreeAddress(LEvRec1 l1ev) {
+   
+   fTreeMD->Branch("boot_nr", &l1ev.lev0MD.boot_nr, "boot_nr/s");
+   fTreeMD->Branch("run_id", &l1ev.lev0MD.run_id);
+   fTreeMD->Branch("run_type", &l1ev.lev0MD.run_type);
+   fTreeMD->Branch("run_duration", &l1ev.lev0MD.run_duration);
+   fTreeMD->Branch("orbitZone", &l1ev.lev0MD.orbit_Zone);
+
+   fTreeMD->Branch("silConfiguration", &l1ev.lev0MD.silConfig.ladder_on[0],
+   		"ladder_on[3]/O:ladder_mask[3]/O:plane_HV[2]/s:adj_strip/s"
+   		":zero_supp_thrd/s:thrd_CN_HIGH/b:thrd_CN_LOW/b:calib_event_CN/s"
+   		":calib_event_ped/s:calib_event_RMS/s:calib_event_gauss/s:gauss_check/s");
+   
+   fTreeMD->Branch("trigger_mask[2]", &l1ev.lev0MD.trigger_mask[0], "trigger_mask[2]/b");
+   fTreeMD->Branch("easiroc_conf[60]", &l1ev.lev0MD.easiroc_config[0]); 
+   fTreeMD->Branch("PMT_mask[64]", &l1ev.lev0MD.PMT_mask[0]);
+   fTreeMD->Branch("HV_mask[12]", &l1ev.lev0MD.HV_mask[0]);
+   fTreeMD->Branch("HV_value[10]", &l1ev.lev0MD.HV_value[0]);
+   fTreeMD->Branch("gen_trig_mask[18]", &l1ev.lev0MD.gen_trig_mask[0]);
+
+   // broadcasta data
+   fTreeMD->Branch("OBDH_info", &l1ev.lev0MD.broadcast.OBDH.sec,
+   		   "sec_OBDH/i:ms_OBDH/s:NU[2]/b" );
+   fTreeMD->Branch("GPS_info", &l1ev.lev0MD.broadcast.GPS.sec,
+   		   "sec_GPS/i:axis_pos[3]/I:axis_vel[3]/I:dataID/b"
+   		   ":lon/I:lat/I:NU[3]/b");
+   fTreeMD->Branch("AOCC_info", &l1ev.lev0MD.broadcast.AOCC.sec,
+   		   "sec_AOCC/i:us_AOCC/i:x_coord[3]/b:y_coord[3]/b"
+   		   ":z_coord[3]/b:roll_angle[3]/b:pitch_angle[3]/b"
+   		   ":yaw_angle[3]/b:roll_angl_vel/s:pitch_angl_vel/s"
+   		   ":yaw_angl_vel/s:attitude_det/b:magn_torquer/b"
+   		   ":magn_torquer_pulse[3]/s:q1/i:q2/i:q3/i");
+   fTreeMD->Branch("star_sensor_info", &l1ev.lev0MD.broadcast.star_sensor.sec_ss11,
+   		   "sec_ss11/i:us_ss11/i:att_quat_ss11[4]/i:sec_ss21/i:us_ss21/i"
+   		   ":att_quat_ss21[4]/i:sec_ss31/i:us_ss31/i:att_quat_ss31[4]/i"
+   		   ":quat_valID_x1/b:sec_ss12/i:us_ss12/i:att_quat_ss12[4]/i"
+   		   ":sec_ss22/i:us_ss22/i:att_quat_ss22[4]/i:sec_ss32/i:us_ss32/i"
+   		   ":att_quat_ss32[4]/i:quat_valID_x2/b:attitude_det/b:NU/b");
+   
+   // scinentific packet
+   fTreeMD->Branch("PMT_rate_meter[65]", &l1ev.lev0MD.PMT_rate_meter[0]);
+   fTreeMD->Branch("CPU_temp_start_stop_Run[2]", &l1ev.lev0MD.CPU_temp[0]);
+   fTreeMD->Branch("PMT_temp_start_stop_Run[2]", &l1ev.lev0MD.PMT_temp[0]);
+   fTreeMD->Branch("CPU_time_start_stop_Run[2]", &l1ev.lev0MD.CPU_time[0]);
+   
+   // timestamp CPU
+   fTreeMD->Branch("CPU_timestamp", &l1ev.lev0MD.timestamp.OBDH,
+   		   "OBDH/i:GPS/i:AOCC/i:star_sensor/i");
+   
+   // board status
+   fTreeMD->Branch("status_register", &l1ev.lev0MD.status_reg.statusDAQ,
+   		   "statusDAQ/s:statusPMT/s:statusTM_TC/s:statusHV_PS/s"
+   		   ":CPU_board_boot/s:statusCPU/s");
+   
+   return;
+}
+
+
 void LEvRec1File::Fill(const LEvRec1 event) {
   if(!(WritableFLAG && fFile)) {
     std::cerr << "Trying to fill a file not open or open in Read MODE." << std::endl;
@@ -202,10 +297,21 @@ void LEvRec1File::Fill(const LEvRec1 event) {
 
   // Stream the LEvRec1 class
   evstr.CopyFromLEvRec1(event);
+
   fTree->Fill();
-    
   return;
 }
+
+void LEvRec1File::FillMD() {
+  if(!(WritableFLAG && fFile)) {
+    std::cerr << "Trying to fill a file not open or open in Read MODE." << std::endl;
+    return;
+  }
+  
+  fTreeMD->Fill();
+  return;
+}
+
 
 void LEvRec1File::FillRandom(const int nEvents) {
   if(!(WritableFLAG && fFile)) {
@@ -227,11 +333,58 @@ int LEvRec1File::SetTheEventPointer(LEvRec1 &ev) {
     std::cerr << "Trying to address a file open in Write MODE." << std::endl;
     return -999;
   }
-  
   evptr=&ev;
+
+  if(metaDataFlag)
+     SetMDPointer(ev);
+     
   return 0;
 }
 
+
+
+int LEvRec1File::SetMDPointer(LEvRec1 &ev) {
+  if(WritableFLAG) {
+    std::cerr << "Trying to address a file open in Write MODE." << std::endl;
+    return -999;
+  }
+
+  fTreeMD->SetBranchAddress("boot_nr", &ev.lev0MD.boot_nr);
+  fTreeMD->SetBranchAddress("run_id", &ev.lev0MD.run_id);
+
+  fTreeMD->SetBranchAddress("run_type", &ev.lev0MD.run_type);
+  fTreeMD->SetBranchAddress("run_duration", &ev.lev0MD.run_duration);
+  fTreeMD->SetBranchAddress("orbitZone", &ev.lev0MD.orbit_Zone);
+   
+  fTreeMD->SetBranchAddress("silConfiguration", &ev.lev0MD.silConfig.ladder_on);
+
+  fTreeMD->SetBranchAddress("trigger_mask[2]", &ev.lev0MD.trigger_mask[0]);
+  fTreeMD->SetBranchAddress("easiroc_conf[60]", &ev.lev0MD.easiroc_config[0]);
+  fTreeMD->SetBranchAddress("PMT_mask[64]", &ev.lev0MD.PMT_mask[0]);
+  fTreeMD->SetBranchAddress("HV_mask[12]", &ev.lev0MD.HV_mask[0]);
+  fTreeMD->SetBranchAddress("HV_value[10]", &ev.lev0MD.HV_value[0]);
+  fTreeMD->SetBranchAddress("gen_trig_mask[18]", &ev.lev0MD.gen_trig_mask[0]);
+
+  // broadcasta data
+  fTreeMD->SetBranchAddress("OBDH_info", &ev.lev0MD.broadcast.OBDH.sec);
+  fTreeMD->SetBranchAddress("GPS_info", &ev.lev0MD.broadcast.GPS.sec);
+  fTreeMD->SetBranchAddress("AOCC_info", &ev.lev0MD.broadcast.AOCC.sec);
+  fTreeMD->SetBranchAddress("star_sensor_info", &ev.lev0MD.broadcast.star_sensor.sec_ss11);
+
+  // scientific packet
+  fTreeMD->SetBranchAddress("PMT_rate_meter[65]", &ev.lev0MD.PMT_rate_meter[0]);
+  fTreeMD->SetBranchAddress("CPU_temp_start_stop_Run[2]", &ev.lev0MD.CPU_temp[0]);
+  fTreeMD->SetBranchAddress("PMT_temp_start_stop_Run[2]", &ev.lev0MD.PMT_temp[0]);
+  fTreeMD->SetBranchAddress("CPU_time_start_stop_Run[2]", &ev.lev0MD.CPU_time[0]);
+
+  // timestamp CPU 
+  fTreeMD->SetBranchAddress("CPU_timestamp", &ev.lev0MD.timestamp.OBDH);
+
+  // board status 
+  fTreeMD->SetBranchAddress("status_register", &ev.lev0MD.status_reg.statusDAQ);
+
+  return 0;
+}
 
 
 int LEvRec1File::GetEntry(int iEntry) {
@@ -240,6 +393,7 @@ int LEvRec1File::GetEntry(int iEntry) {
     return -999;
   }
   fTree->GetEntry(iEntry);
+
   evptr->CopyFromLEvRec1Stream(evstr);
   return 0;
 }
@@ -248,6 +402,23 @@ int LEvRec1File::GetEntry(int iEntry) {
 
 int LEvRec1File::GetEntries() {
   return fTree->GetEntries();
+}
+
+
+int LEvRec1File::GetMDEntry(int iEntry) {
+   if(WritableFLAG) {
+      std::cerr << "Trying to get the entry of a file open in Write MODE." << std::endl;
+      return -999;
+   }
+
+   fTreeMD->GetEntry(iEntry);
+
+   return 0;
+}
+
+
+int LEvRec1File::GetMDEntries() {
+  return fTreeMD->GetEntries();
 }
 
 void LEvRec1File::Write() {
@@ -261,6 +432,10 @@ void LEvRec1File::Close() {
       if(WritableFLAG==false) fTree=0;
       else delete fTree;
     }
+    if(fTreeMD) {
+       if(WritableFLAG==false) fTreeMD=0;
+       else delete fTreeMD;
+    }
     fFile->Close();
     fFile=0;
   }
@@ -273,6 +448,10 @@ LEvRec1File::~LEvRec1File() {
     if(fTree) {
       if(WritableFLAG==false) fTree=0;
       else delete fTree;
+    }
+    if(fTreeMD) {
+       if(WritableFLAG==false) fTreeMD=0;
+       else delete fTreeMD;
     }
     fFile->Close();
   }
