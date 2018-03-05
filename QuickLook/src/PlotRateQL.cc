@@ -50,12 +50,13 @@ void EventRateL0(TString rootname, TString outPath){
     cout << "\n--------------------------------------------\n";
    
    cout << "\nQuickLook -> Running  EventRateL0\n";
-   const char * _temp = rootname;
-    cout << "\ninput ROOT  File : " << rootname ;
+   TString _temp = rootname ;
+   _temp.Replace(0, _temp.Last('/'), "");
 
+   cout << "\ninput ROOT  File : " << rootname ;
     TString outname=outPath;
     outname+="/";
-    outname+= basename(_temp);
+    outname+= _temp;
     outname.ReplaceAll(".root", 5, "_EventRateQL.pdf", 16);
     cout << "\nOutput PDF File : " << outname << "\n";
     cout << "\nRate Integration time= " << INTEG_TIME << "\n";
