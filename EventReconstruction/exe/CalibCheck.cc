@@ -150,11 +150,11 @@ int main(int argc, char **argv) {
 
    for (int l = 0; l<NCHAN; l++)
    {
-      sil_ped_diff[l] = sil_pedestal[l][argc-2] - sil_pedestal[l][1];
+      sil_ped_diff[l] = sil_pedestal[l][argc-2] - sil_pedestal[l][0];
       // std::cout << "argc = "<< argc << "  last cal ped = "
       // 		<< sil_pedestal[l][argc-2] <<" first cal ped = "
       // 		<< sil_pedestal[l][1] << std::endl;
-      sil_sigma_diff[l] = sil_sigma[l][argc-2]  - sil_sigma[l][1] ;
+      sil_sigma_diff[l] = sil_sigma[l][argc-2]  - sil_sigma[l][0] ;
 
    }
    TGraph  *sil_ped_diff_gr =  new TGraph(COLUMN_CHAN, &index2[COLUMN_CHAN],
