@@ -4,6 +4,8 @@
 #include "detector_const.hh"
 #include <vector>
 #include <fstream>
+#define PED 0
+#define SIG 1
 
 class LCalibration;
 
@@ -35,7 +37,12 @@ public:
   friend LCaloCalibration operator+(LCaloCalibration lhs,        // passing lhs by value helps optimize chained a+b+c
 		     const LCaloCalibration& rhs);// otherwise, both parameters may be const references 
   LCaloCalibration& operator/=(const double& rhs);
-  
+
+  const int trigger_cal(const int i, const int j, int flag) const;
+  const int plane_cal(const int i, const int j, int flag) const;
+  const int lyso_cal(const int i, int flag) const;
+  const int veto_cal(const int i, const int j, int flag) const;
+
 private:
   // Calib infos
   int RunId;
