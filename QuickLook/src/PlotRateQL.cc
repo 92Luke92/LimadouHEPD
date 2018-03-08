@@ -53,6 +53,7 @@ void EventRateL0(TString rootname, TString outPath){
     cout << "\n--------------------------------------------\n";
    
    cout << "\nQuickLook -> Running  EventRateL0\n";
+   TString outname = outPath;
    TString _temp = rootname ;
    _temp.Replace(0, _temp.Last('/'), "");
   
