@@ -37,12 +37,15 @@
 #include <string.h>
 #include <unistd.h>
 #include <sstream>
+#include <fstream>
 #include "LEvRec0File.hh"
 #include "LEvRec0.hh"
 
 #define INTEG_TIME 1000//integration time in ms
 #define VERBOSE false	
 using namespace std;
+
+TCanvas *earth();
 
 void EventRateL0(TString rootname, TString outPath){
 
@@ -296,8 +299,14 @@ void EventRateL0(TString rootname, TString outPath){
                 	if (cev.run_id==Tmd_runN[ir] && cev.boot_nr==Tmd_BootN[ir]){
 				
 				double lat_dt= (Tmd_run_lat[ir][1]- Tmd_run_lat[ir][0])/(CPU_run_time[ir][1]-CPU_run_time[ir][0]);
-				double long_dt= (Tmd_run_long[ir][1]- Tmd_run_long[ir][0])/(CPU_run_time[ir][1]-CPU_run_time[ir][0]);
-
+				double long_dt= (Tmd_run_long[ir][1]- Tmd_run_long[ir][0] );
+				
+				if (long_dt > 180)
+				   long_dt-= 360;
+				else if (long_dt < -180)
+				   long_dt+= 360;
+				long_dt/=(CPU_run_time[ir][1]-CPU_run_time[ir][0]);
+				
 				int zone= Tmd_run_orbit[ir][1];
       				event_time = CPU_run_time[ir][0]+ cev.hepd_time/1e+2; //unit = ms
 				event_lat =  Tmd_run_lat[ir][0]+(event_time-CPU_run_time[ir][0])*lat_dt;
@@ -421,7 +430,7 @@ void EventRateL0(TString rootname, TString outPath){
 	crate2->Print(outname);
 
 
- 	TCanvas *crate3=new TCanvas();
+ 	TCanvas *crate3= earth();//new TCanvas();
 	TString mg_name3=Form("BootN_%d_orbital_events_lat_long", BOOT_temp[nb]);
 	crate3->SetTitle(mg_name3);
 	crate3->SetName(mg_name3);
@@ -434,7 +443,7 @@ void EventRateL0(TString rootname, TString outPath){
         h_rate_orbit->SetName(h2_name);
         h_rate_orbit->SetDrawOption("COLZ");
 	gStyle->SetOptStat(0);
-        h_rate_orbit->Draw("COLZ");
+	h_rate_orbit->Draw("SAME, COLZ");
 	outnameEnd = outname+")";
 	crate3->Print(outnameEnd);
 
@@ -449,3 +458,56 @@ void EventRateL0(TString rootname, TString outPath){
 }
 
 
+TCanvas *earth(){
+   gStyle->SetOptTitle(1);
+   gStyle->SetOptStat(0);
+   TCanvas *c1 = new TCanvas("c1","earth_projections");
+   
+
+   TString dat = gROOT->GetTutorialsDir();
+   dat.Append("/graphics/world.dat");
+   std::ifstream infile(dat.Data());
+   if (infile){
+      TGraph*g = new TGraph(dat);
+      c1->cd();
+      TH2F *hm = new TH2F("hm","",  180, -180, 180, 161, -80.5, 80.5);
+      TH2F *hoverlay = new TH2F("hover","",  180, -180, 180, 161, -80.5, 80.5);
+      hm->Draw("");
+      g->Draw("p same");
+      hm->GetYaxis()->SetTitleFont(132);
+      hm->GetYaxis()->SetLabelFont(132);
+      hm->GetXaxis()->SetTitleFont(132);
+      hm->GetXaxis()->SetLabelFont(132);
+      hm->GetXaxis()->SetTitle("Longitude (deg)");
+      hm->GetYaxis()->SetTitle("Latitude (deg)");
+   }
+   else {
+//      TH2F *ha = new TH2F("ha","Aitoff",    180, -180, 180, 179, -89.5, 89.5);
+      TH2F *hm = new TH2F("hm","",  180, -180, 180, 161, -80.5, 80.5);
+//      TH2F *hs = new TH2F("hs","Sinusoidal",180, -180, 180, 181, -90.5, 90.5);
+//      TH2F *hp = new TH2F("hp","Parabolic", 180, -180, 180, 181, -90.5, 90.5);
+      TString dat2 = gROOT->GetTutorialsDir();
+      dat2.Append("/graphics/earth.dat");
+      dat2.ReplaceAll("/./","/");
+      ifstream in;
+      in.open(dat2.Data());
+      Float_t x,y;
+      while (1) {
+	 in >> x >> y;
+	 if (!in.good()) break;
+	 // ha->Fill(x,y, 1);
+	 hm->Fill(x,y, 1);
+	 // hs->Fill(x,y, 1);
+	 // hp->Fill(x,y, 1);
+      }
+      in.close();
+      // c1->cd(1); ha->Draw("aitoff");
+      hm->SetLineColor(1);
+      hm->SetLineWidth(1);
+      hm->Draw("cont2");
+   
+      // c1->cd(3); hs->Draw("sinusoidal");
+      // c1->cd(4); hp->Draw("parabolic");
+   }
+   return c1;
+}
