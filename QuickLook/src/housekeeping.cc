@@ -50,9 +50,11 @@ void HVPSMonitorToXML(TString rootname, TString outPath, TString xslPath = "")
      // cout << "Number of THVpmt entries: " << THVpmt_entries << endl;
   
      TString filename = outPath;
-     const char * _temp = rootname;
+     TString _temp = rootname ;
+     _temp.Replace(0, _temp.Last('/'), "");
+
      filename += "/";
-     filename += basename(_temp);
+     filename += _temp;
      filename.ReplaceAll(".root", 5, "_HVPSMonitor.xml", 16);
 
      ofstream outputFile;
@@ -199,9 +201,11 @@ void DUMPConfigToXML(TString rootname, TString outPath, TString xslPath = "")
      //cout << "Number of TConf entries: " << TConf_entries << endl;
   
      TString filename = outPath;
-     const char * _temp = rootname;
+     TString _temp = rootname ;
+     _temp.Replace(0, _temp.Last('/'), "");
+
      filename += "/";
-     filename += basename(_temp);
+     filename += _temp;
      filename.ReplaceAll(".root", 5, "_DUMPConfig.xml", 15);
 
      ofstream outputFile;
@@ -327,9 +331,11 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
   cout << endl << "Processing Broadcast to xml files:" << rootname << endl;
 
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_Time.xml",9 );
 
   ofstream outputFile;
@@ -341,7 +347,7 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
 
   TString filename2 = outPath;
   filename2 += "/";
-  filename2 += basename(_temp);
+  filename2 += _temp;
   filename2.ReplaceAll(".root", 5, "_GPS.xml",8 );
 
   ofstream outputFile2;
@@ -384,7 +390,7 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
       OBDH_ms_vect[j] = metaData.broadcast.OBDH.ms;
       OBDH_sec_vect[j]=  metaData.broadcast.OBDH.sec;
       OBDH_timestamp_vect[j] = metaData.timestamp.OBDH;
-      
+      //cout << "OBDH TIMESTAMP VECT" << OBDH_sec_vect[j] << endl; 
 
       if (j%2!=0) {
 	CPU_Time[j-1]=metaData.CPU_time[0];
@@ -438,21 +444,23 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
       if(longitude > 180 && longitude < -180)
 	 outputFile << "\t<LONGITUDE_error>"   <<  0 << "</LONGITUDE_error>\n";
       
-      UShort_t ABS_diff_sec[Tmd_entries];
-      UShort_t ABS_Time_Run_ms[Tmd_entries];
-      UShort_t ABS_Time_Run_sec[Tmd_entries];
+      UInt_t ABS_diff_sec[Tmd_entries];
+      UInt_t ABS_Time_Run_ms[Tmd_entries];
+      UInt_t ABS_Time_Run_sec[Tmd_entries];
 
 
       if (t%2==0) {
        	ABS_diff_sec[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])/1000;
        	ABS_Time_Run_ms[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])%1000;  	
        	ABS_Time_Run_sec[t]=OBDH_sec_vect[t]+ABS_diff_sec[t];
+	 
       }
 
       if (t%2!=0) {
        	ABS_diff_sec[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])/1000;
-       	ABS_Time_Run_ms[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])%1000;  	
+       	ABS_Time_Run_ms[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])%1000;
        	ABS_Time_Run_sec[t]=OBDH_sec_vect[t]+ABS_diff_sec[t];
+	 
       }
       
       TDatime h;
@@ -472,13 +480,13 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
       timestamp_AOCC_2009 = 1230764400+metaData.broadcast.AOCC.sec;
       timestamp_ABS_2009 = 1230764400+ABS_Time_Run_sec[t];
       
-     	
+           	
       h.Set(timestamp_OBDH_2009);
       GPS.Set(timestamp_GPS_2009);
       AOCC.Set(timestamp_AOCC_2009);
       absolute.Set(timestamp_ABS_2009);
-    
-    
+
+          
       
       if (metaData.broadcast.OBDH.sec == 0xBBBBBBBB){
 	outputFile << "\t<OBDH_S>" << "N.A." << "</OBDH_S>\n";
@@ -578,9 +586,11 @@ void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath = "")
   cout << endl << "Processing CPU Time to xml file:" << rootname << endl;
 
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_CPUTimeTemp.xml", 16);
 
   ofstream outputFile;
@@ -713,9 +723,11 @@ void HVPSConfigToXML(TString rootname, TString outPath, TString xslPath = "")
   cout << endl <<  "Processing HVPS to xml file:" << rootname << endl;
 
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_HVPSConfig.xml", 15);
 
   ofstream outputFile;
@@ -778,7 +790,18 @@ void HVPSConfigToXML(TString rootname, TString outPath, TString xslPath = "")
       outputFile << "\t<HV_PMT6_error>"  <<  0 << "</HV_PMT6_error>\n";
       outputFile << "\t<HV_PMT7_error>"  <<  0 << "</HV_PMT7_error>\n";
       outputFile << "\t<HV_PMT8_error>"  <<  0 << "</HV_PMT8_error>\n";
-      outputFile << "\t<HV_PMT9_error>"  <<  0 << "</HV_PMT9_error>\n"; 
+      outputFile << "\t<HV_PMT9_error>"  <<  0 << "</HV_PMT9_error>\n";
+
+      outputFile << "\t<MASK_PMT0_OFF>"  << 0 << "</MASK_PMT0_OFF>\n";
+      outputFile << "\t<MASK_PMT1_OFF>"  << 0 << "</MASK_PMT1_OFF>\n";
+      outputFile << "\t<MASK_PMT2_OFF>"  << 0 << "</MASK_PMT2_OFF>\n";
+      outputFile << "\t<MASK_PMT3_OFF>"  << 0 << "</MASK_PMT3_OFF>\n";
+      outputFile << "\t<MASK_PMT4_OFF>"  << 0 << "</MASK_PMT4_OFF>\n";
+      outputFile << "\t<MASK_PMT5_OFF>"  << 0 << "</MASK_PMT5_OFF>\n";
+      outputFile << "\t<MASK_PMT6_OFF>"  << 0 << "</MASK_PMT6_OFF>\n";
+      outputFile << "\t<MASK_PMT7_OFF>"  << 0 << "</MASK_PMT7_OFF>\n";
+      outputFile << "\t<MASK_PMT8_OFF>"  << 0 << "</MASK_PMT8_OFF>\n";
+      outputFile << "\t<MASK_PMT9_OFF>"  << 0 << "</MASK_PMT9_OFF>\n";
       
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
       outputFile << "\t<RUN_NR>"  << metaData.run_id  << "</RUN_NR>\n";
@@ -857,44 +880,65 @@ void HVPSConfigToXML(TString rootname, TString outPath, TString xslPath = "")
 
       if(metaData.HV_mask[0] == 0)
 	outputFile << "\t<MASK_PMT0>"  << "ON"  << "</MASK_PMT0>\n";
-      if(metaData.HV_mask[0] == 1)
+      if(metaData.HV_mask[0] == 1){
 	outputFile << "\t<MASK_PMT0>"  << "OFF" << "</MASK_PMT0>\n";
+        outputFile << "\t<MASK_PMT0_OFF>"  << 1 << "</MASK_PMT0_OFF>\n";
+	}
       if(metaData.HV_mask[1] == 0)
 	outputFile << "\t<MASK_PMT1>"  << "ON"  << "</MASK_PMT1>\n";
-      if(metaData.HV_mask[1] == 1)
+      if(metaData.HV_mask[1] == 1){
 	outputFile << "\t<MASK_PMT1>"  << "OFF"  << "</MASK_PMT1>\n";
+        outputFile << "\t<MASK_PMT1_OFF>"  << 1 << "</MASK_PMT1_OFF>\n";
+	}
       if(metaData.HV_mask[2] == 0)
 	outputFile << "\t<MASK_PMT2>"  << "ON"  << "</MASK_PMT2>\n";
-      if(metaData.HV_mask[2] == 1)
-	outputFile << "\t<MASK_PMT2>"  << "OFF" << "</MASK_PMT2>\n";
+      if(metaData.HV_mask[2] == 1){
+	outputFile << "\t<MASK_PMT2>"  << "OFF"  << "</MASK_PMT2>\n";
+        outputFile << "\t<MASK_PMT2_OFF>"  << 1 << "</MASK_PMT2_OFF>\n";
+	}
       if(metaData.HV_mask[3] == 0)
 	outputFile << "\t<MASK_PMT3>"  << "ON"  << "</MASK_PMT3>\n";
-      if(metaData.HV_mask[3] == 1)
-	outputFile << "\t<MASK_PMT3>"  << "OFF" << "</MASK_PMT3>\n";
+      if(metaData.HV_mask[3] == 1){
+	outputFile << "\t<MASK_PMT3>"  << "OFF"  << "</MASK_PMT3>\n";
+        outputFile << "\t<MASK_PMT3_OFF>"  << 1 << "</MASK_PMT3_OFF>\n";
+	}
       if(metaData.HV_mask[4] == 0)
 	outputFile << "\t<MASK_PMT4>"  << "ON"  << "</MASK_PMT4>\n";
-      if(metaData.HV_mask[4] == 1)
-	outputFile << "\t<MASK_PMT4>"  << "OFF" << "</MASK_PMT4>\n";
+      if(metaData.HV_mask[4] == 1){
+	outputFile << "\t<MASK_PMT4>"  << "OFF"  << "</MASK_PMT4>\n";
+        outputFile << "\t<MASK_PMT4_OFF>"  << 1 << "</MASK_PMT4_OFF>\n";
+	}	
       if(metaData.HV_mask[5] == 0)
 	outputFile << "\t<MASK_PMT5>"  << "ON"  << "</MASK_PMT5>\n";
-      if(metaData.HV_mask[5] == 1)
-	outputFile << "\t<MASK_PMT5>" << "OFF"  << "</MASK_PMT5>\n";
+      if(metaData.HV_mask[5] == 1){
+	outputFile << "\t<MASK_PMT5>"  << "OFF"  << "</MASK_PMT5>\n";
+        outputFile << "\t<MASK_PMT5_OFF>"  << 1 << "</MASK_PMT5_OFF>\n";
+	}		
       if(metaData.HV_mask[6] == 0)
 	outputFile << "\t<MASK_PMT6>" << "ON"   << "</MASK_PMT6>\n";
-      if(metaData.HV_mask[6] == 1)
-	outputFile << "\t<MASK_PMT6>" << "OFF"  << "</MASK_PMT6>\n";
+      if(metaData.HV_mask[6] == 1){
+	outputFile << "\t<MASK_PMT6>"  << "OFF"  << "</MASK_PMT6>\n";
+        outputFile << "\t<MASK_PMT6_OFF>"  << 1 << "</MASK_PMT6_OFF>\n";
+	}		
       if(metaData.HV_mask[7] == 0)
 	outputFile << "\t<MASK_PMT7>" << "ON"   << "</MASK_PMT7>\n";
-      if(metaData.HV_mask[7] == 1)
-	outputFile << "\t<MASK_PMT7>" << "OFF" << "</MASK_PMT7>\n";
+      if(metaData.HV_mask[7] == 1){
+	outputFile << "\t<MASK_PMT7>"  << "OFF"  << "</MASK_PMT7>\n";
+        outputFile << "\t<MASK_PMT7_OFF>"  << 1 << "</MASK_PMT7_OFF>\n";
+	}		
       if(metaData.HV_mask[8] == 0)
 	outputFile << "\t<MASK_PMT8>" << "ON"  << "</MASK_PMT8>\n";
-      if(metaData.HV_mask[8] == 1)
-	outputFile << "\t<MASK_PMT8>" << "OFF" << "</MASK_PMT8>\n";
+      if(metaData.HV_mask[8] == 1){
+	outputFile << "\t<MASK_PMT8>"  << "OFF"  << "</MASK_PMT8>\n";
+        outputFile << "\t<MASK_PMT8_OFF>"  << 1 << "</MASK_PMT8_OFF>\n";
+	}		
       if(metaData.HV_mask[9] == 0)
 	outputFile << "\t<MASK_PMT9>" << "ON" << "</MASK_PMT9>\n";
-      if(metaData.HV_mask[9] == 1)
-	outputFile << "\t<MASK_PMT9>" << "OFF" << "</MASK_PMT9>\n";
+      if(metaData.HV_mask[9] == 1){
+	outputFile << "\t<MASK_PMT9>"  << "OFF"  << "</MASK_PMT9>\n";
+        outputFile << "\t<MASK_PMT9_OFF>"  << 1 << "</MASK_PMT9_OFF>\n";
+	}		
+	
 
       outputFile << "</HVPSCONFIG>\n";
 
@@ -909,9 +953,11 @@ void RunInfoToXML(TString rootname, TString outPath, TString xslPath = "")
   cout << endl << "Processing Run Info to xml file:" << rootname << endl;
   
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_RunInfo.xml", 12);
 
   ofstream outputFile;
@@ -1113,9 +1159,11 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
   
   
    TString filename = outPath;
-   const char * _temp = rootname;
+   TString _temp = rootname ;
+   _temp.Replace(0, _temp.Last('/'), "");
+
    filename += "/";
-   filename += basename(_temp);
+   filename += _temp;
    filename.ReplaceAll(".root", 5, "_FastInfo.xml", 13);
 
    ofstream outputFile;
@@ -1454,9 +1502,11 @@ void ScintConfigToXML(TString rootname, TString outPath, TString xslPath = "")
   cout << endl <<  "Processing Scint to xml file:" << rootname << endl;
 
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_ScintConfig.xml", 16);
 
   ofstream outputFile;
@@ -1603,9 +1653,11 @@ void SilConfigToXML(TString rootname, TString outPath, TString xslPath = "")
   cout << endl << "Processing Silicon Config to xml file:" << rootname << endl;
 
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_SilConfig.xml", 14);
 
   ofstream outputFile;
@@ -1871,9 +1923,11 @@ void TelemetryToXML(TString rootname, TString outPath,  TString xslPath = "")
   cout << endl << "Processing Telemetry to xml file:" << rootname << endl;
   
   TString filename = outPath;
-  const char * _temp = rootname;
+  TString _temp = rootname ;
+  _temp.Replace(0, _temp.Last('/'), "");
+
   filename += "/";
-  filename += basename(_temp);
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_Telemetry.xml", 14);
 
   ofstream outputFile;

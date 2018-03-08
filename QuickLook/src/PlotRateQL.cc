@@ -47,8 +47,11 @@ using namespace std;
 const TString Get_VetoConf_Name(const int V);
 const TString Get_TriggerMask_Name(const int TM);
 
+<<<<<<< HEAD
 
 TCanvas *earth();
+=======
+>>>>>>> 40658d352a26d1355e4b0f35e4c585a40a213da5
 
 void EventRateL0(TString rootname, TString outPath){
 
@@ -58,6 +61,7 @@ void EventRateL0(TString rootname, TString outPath){
    cout << "\nQuickLook -> Running  EventRateL0\n";
    cout << "\ninput ROOT  File : " << rootname ;
 
+<<<<<<< HEAD
    TString outname=outPath;
    TString _temp = rootname ;
    _temp.Replace(0, _temp.Last('/'), "");
@@ -190,6 +194,140 @@ void EventRateL0(TString rootname, TString outPath){
 
       return;
    }
+=======
+    TString outname=outPath;
+    TString _temp = rootname ;
+    _temp.Replace(0, _temp.Last('/'), "");
+    outname+="/";
+    outname+= _temp;
+    outname.ReplaceAll(".root", 5, "_EventRateQL.pdf", 16);
+    cout << "\nOutput PDF File : " << outname << "\n";
+    cout << "\nRate Integration time= " << INTEG_TIME << "\n";
+
+// data interfacing 
+
+  LEvRec0File File(rootname.Data());
+
+  LEvRec0 cev;
+  LEvRec0Md cmd;
+
+  File.SetTmdPointer(cmd);
+  int N2_Tmd=File.GetTmdEntries();
+  int N_Tmd=N2_Tmd/2;
+
+  int Tmd_BootN[N_Tmd];
+  int BOOT_temp[N_Tmd];
+  int Tmd_runN[N_Tmd];
+
+  double Tmd_run_time[N_Tmd];
+  double CPU_run_time[N_Tmd][2];
+
+  int Tmd_run_Nevents[N_Tmd];
+  int Tmd_run_orbit[N_Tmd][2];
+  double Tmd_run_long[N_Tmd][2];
+  double Tmd_run_lat[N_Tmd][2];
+  int Tmd_run_TriggerMask[N_Tmd];
+  int Tmd_run_Veto[N_Tmd];
+
+  TString Orbit_Zone[6];
+  Orbit_Zone[0]="SAA";
+  Orbit_Zone[1]="Equatorial";
+  Orbit_Zone[2]="South Polar";
+  Orbit_Zone[3]="North Polar";
+  Orbit_Zone[4]="Default";
+  Orbit_Zone[5]="STDBY";
+
+  TString TriggerMask[9];
+  for (int iTM=0; iTM<9; iTM++)    TriggerMask[iTM]=Get_TriggerMask_Name(iTM);
+
+  TString Veto[4];
+  for (int iV=0; iV<4; iV++)    Veto[iV]=Get_VetoConf_Name(iV);
+
+  for (int ir=0; ir<N_Tmd; ir++){
+	Tmd_BootN[ir]=0;
+        BOOT_temp[ir]=0;
+	Tmd_runN[ir]=0;
+	Tmd_run_time[ir]=0;
+	CPU_run_time[ir][0]=0;
+	CPU_run_time[ir][1]=0;
+	Tmd_run_Nevents[ir]=0;
+	Tmd_run_orbit[ir][0]=0;//first: calculated orbital zone
+	Tmd_run_orbit[ir][1]=0;//second: applied orbital zone
+	Tmd_run_long[ir][0]=0;
+	Tmd_run_long[ir][1]=0;
+	Tmd_run_lat[ir][0]=0;
+	Tmd_run_lat[ir][1]=0;
+  	Tmd_run_TriggerMask[ir]=0;
+  	Tmd_run_Veto[ir]=0;
+  }
+  
+
+  int NN_boot=0;// boot counter 
+  for(int ir=0; ir<N2_Tmd; ++ir) {
+  	File.GetTmdEntry(ir); 
+  	if (ir%2==0){
+		Tmd_BootN[ir/2]=cmd.boot_nr;
+        	bool boot2=true;
+		if (ir>0){
+			for (int irr=0; irr<ir/2; irr++){
+				if (Tmd_BootN[ir/2]==Tmd_BootN[irr]) boot2=false;
+			}
+		}	
+		else boot2=true;// (Tmd_BootN[0])
+		if (boot2==true) {
+			BOOT_temp[NN_boot]=Tmd_BootN[ir/2];
+			NN_boot++;
+		}
+	
+		Tmd_runN[ir/2]=cmd.run_id;
+		Tmd_run_long[ir/2][0]=(cmd.broadcast.GPS.lon)*pow(10,-7);
+		Tmd_run_lat[ir/2][0]=(cmd.broadcast.GPS.lat)*pow(10,-7);
+		Tmd_run_orbit[ir/2][0]=(cmd.orbit_Zone>>8);//Calculated
+		Tmd_run_orbit[ir/2][1]=(cmd.orbit_Zone& 0x00FF);//applied
+		Tmd_run_TriggerMask[ir/2]=cmd.trigger_mask[1];
+		Tmd_run_Veto[ir/2]=cmd.trigger_mask[0];
+	}
+	if (ir%2!=0){
+		CPU_run_time[(ir-1)/2][0]=cmd.CPU_time[0];
+		CPU_run_time[(ir-1)/2][1]=cmd.CPU_time[1];//ms
+		Tmd_run_long[(ir-1)/2][1]=(cmd.broadcast.GPS.lon)*pow(10,-7);
+		Tmd_run_lat[(ir-1)/2][1]=(cmd.broadcast.GPS.lat)*pow(10,-7);
+	}
+ 	Tmd_run_time[ir/2]=(cmd.CPU_time[1]-cmd.CPU_time[0])/1000;//seconds
+  }//end loop on Tmd
+  
+
+  cout<< "\n\tTotal number of boots="<< NN_boot;
+  for (int nb=0; nb< NN_boot;nb++)        std::cout<< "\n\tBoot N["<<nb<<"] = "<<BOOT_temp[nb];
+  cout << "\n\tTMd entries = "<< N2_Tmd<<" -> Run entries = "<< N_Tmd;
+  File.SetTheEventPointer(cev);
+  int nEntries=File.GetEntries();
+  cout<< "\n\tEvent Entries="<<nEntries<<"\n";
+
+  if (VERBOSE==true){
+	for (int ir=0; ir<N_Tmd; ir++){
+
+		cout << "\n***********************************************\n";
+		cout << "TMd entry "<< ir<<": boot_nr "<< Tmd_BootN[ir]<<"\n";
+		cout << "TMd entry "<< ir<<": run_nr "<<Tmd_runN[ir]<<"\n";
+		cout << "TMd entry "<< ir<<": start time "<<CPU_run_time[ir][0]<<" ms\n";
+  		cout << "TMd entry "<< ir<<": stop time "<< CPU_run_time[ir][1]<<" ms\n";
+  		cout << "TMd entry "<< ir<<": run time dt "<< Tmd_run_time[ir]<<" s\n";
+ 		cout << "Tmd entry "<< ir<<": Orbit zone: Calculated-Applied "<< Tmd_run_orbit[ir][0] <<" - " << Tmd_run_orbit[ir][1]<<"\n";
+		cout << "Tmd entry "<< ir<<": Orbit zone: Trigger Mask "<< Tmd_run_TriggerMask[ir] <<" - Veto " << Tmd_run_Veto[ir]<<"\n";
+		cout << "Tmd entry "<< ir<<": Orbit zone latitude = [ "<< Tmd_run_lat[ir][0]<< " -> "<< Tmd_run_lat[ir][1]<<" ]\n";
+		cout << "Tmd entry "<< ir<<": Orbit zone longitude = ["<< Tmd_run_long[ir][0]<< " -> "<< Tmd_run_long[ir][1]<<" ]\n";
+	}
+  }  
+  
+  if (nEntries==0) {
+        std::cout<< "\n\n--------------------- TOTAL NUMBER OF ACQUIRED EVENTS=0! ---------------------\n\n";
+        std::cout<< "NO EVENT RATE QL PRODUCED!!!";
+        std::cout<< "\n\n------------------------------------------------------------------------------\n\n";
+
+        return;
+  }
+>>>>>>> 40658d352a26d1355e4b0f35e4c585a40a213da5
         
 
 /// PDF OUTPUT ////////////
@@ -209,6 +347,7 @@ void EventRateL0(TString rootname, TString outPath){
    pt->Draw();
    outnameStart = outname+"(";
    cRun->Print(outnameStart);
+<<<<<<< HEAD
    int Boot_evEntries[NN_boot];
 
    for (int nb=0; nb< NN_boot; nb++) 	Boot_evEntries[nb]=0;
@@ -234,6 +373,33 @@ void EventRateL0(TString rootname, TString outPath){
    }
 /////////////////////////////////////GRAPH INITIALIZATION *************************
    for (int nb=0; nb< NN_boot; nb++){
+=======
+ int Boot_evEntries[NN_boot];
+
+  for (int nb=0; nb< NN_boot; nb++) 	Boot_evEntries[nb]=0;
+  for (int ir=0; ir<N_Tmd; ir++){
+	if (ir%2==0){
+		cRun= new TCanvas("Run");
+		cRun->Divide (1, 2);
+		pt= new TPaveText(.1,.55,.9,.9);
+	}
+	if (ir%2!=0)	pt= new TPaveText(.1,.1,.9,.45);
+	pt->SetTextSize(0.03);
+	pt->AddText(Form("BootN= %d, RunN= %d", Tmd_BootN[ir], Tmd_runN[ir] ));
+	pt->AddText(Form("CPU start-stop time (s): [%4.3f - %4.3f]", CPU_run_time[ir][0]/1000, CPU_run_time[ir][1]/1000));
+	pt->AddText(Form("Orbit zone: Calculated-Applied %d - %d",  Tmd_run_orbit[ir][0],  Tmd_run_orbit[ir][1]));
+	pt->AddText(Form("Applied Orbit Zone Configuration = ")+  Orbit_Zone[Tmd_run_orbit[ir][1]]);
+	pt->AddText(Form("    TriggerMask [%d] -> ", Tmd_run_TriggerMask[ir])+TriggerMask[Tmd_run_TriggerMask[ir]]);
+	pt->AddText(Form("    Veto  [%d] -> ", Tmd_run_Veto[ir])+ Veto[Tmd_run_Veto[ir]]);
+	pt->AddText(Form("Latitude [ %4.3f -> %4.3f ]", Tmd_run_lat[ir][0],  Tmd_run_lat[ir][1]));
+	pt->AddText(Form("Longitude [ %4.3f -> %4.3f ]", Tmd_run_long[ir][0],  Tmd_run_long[ir][1]));
+	cRun->cd();
+	pt->Draw();
+	if (ir%2!=0 || ir==N_Tmd-1) cRun->Print(outname);
+}
+/////////////////////////////////////GRAPH INITIALIZATION *************************
+  for (int nb=0; nb< NN_boot; nb++){
+>>>>>>> 40658d352a26d1355e4b0f35e4c585a40a213da5
 
       TGraph *average_rate[5];
       const char *gname[5];
@@ -255,6 +421,7 @@ void EventRateL0(TString rootname, TString outPath){
       TGraph *average_rate2[5];
 
 
+<<<<<<< HEAD
       const char *gname2[5];
       const char *gtitle2[5];
 
@@ -272,11 +439,22 @@ void EventRateL0(TString rootname, TString outPath){
       const char *h2_name;
       h2_name=Form("BootN_%d_Orbit_events", BOOT_temp[nb]);
       h_events_orbit=new TH2D(h2_name, h2_name,361,-180,+180, 181, -90, +90);
+=======
+ 	for (int ig=0; ig<5; ig++){	
+		average_rate[ig]= new TGraph();
+		average_rate2[ig]= new TGraph();
+ 	}
+        TH2D *h_events_orbit;
+        const char *h2_name;
+        h2_name=Form("BootN_%d_Orbit_events", BOOT_temp[nb]);
+        h_events_orbit=new TH2D(h2_name, h2_name,361,-180,+180, 181, -90, +90);
+>>>>>>> 40658d352a26d1355e4b0f35e4c585a40a213da5
 
 
 //////////////////////////////////////////////////////////////////////////////
 
 // event loop
+<<<<<<< HEAD
       UInt_t event_time;
       Int_t time_flag=0;
       Int_t time_flag_old=0;
@@ -368,6 +546,92 @@ void EventRateL0(TString rootname, TString outPath){
 	       }
 	    }
 	 }//Tmd loop
+=======
+  	UInt_t event_time;
+	Int_t time_flag=0;
+  	Int_t time_flag_old=0;
+
+	Int_t numevent_int=0;
+	double event_lat=0;
+	double event_long=0;
+	int zone=-1;
+        double MaxY=0;
+	double lat_dt=0;
+        double long_dt=0;
+
+	Int_t check_events=0;
+  	for(int ie=0; ie<nEntries; ++ie) {
+        	File.GetEntry(ie);
+        	for (int ir=0; ir<N_Tmd; ir++){
+			 if (Tmd_BootN[ir]==BOOT_temp[nb] && cev.run_id==Tmd_runN[ir] && cev.boot_nr==Tmd_BootN[ir]){
+//                	if (cev.run_id==Tmd_runN[ir] && cev.boot_nr==Tmd_BootN[ir]){
+		  		event_time = CPU_run_time[ir][0]+ cev.hepd_time/1e+2; //unit = ms
+				if ( Tmd_run_orbit[ir][0]!=0xAA  ) {//if no broadcast no latitude-longitude
+					lat_dt= (Tmd_run_lat[ir][1]- Tmd_run_lat[ir][0])/(CPU_run_time[ir][1]-CPU_run_time[ir][0]);
+					long_dt= (Tmd_run_long[ir][1]- Tmd_run_long[ir][0])/(CPU_run_time[ir][1]-CPU_run_time[ir][0]);
+					event_lat =  Tmd_run_lat[ir][0]+(event_time-CPU_run_time[ir][0])*lat_dt;
+					event_long = Tmd_run_long[ir][0]+(event_time-CPU_run_time[ir][0])*long_dt;
+					if (event_long>=180.) event_long-=360.;
+					if (event_long<-180.) event_long+=360.;
+					h_events_orbit->Fill(event_long, event_lat);
+				}
+      				if (ie == 0)    {
+					time_flag = CPU_run_time[ir][0]+ INTEG_TIME;
+					time_flag_old = CPU_run_time[ir][0];
+					zone= Tmd_run_orbit[ir][1];		
+				}
+
+				if (event_time>=time_flag_old && event_time   < time_flag)     {
+					numevent_int++;
+					zone= Tmd_run_orbit[ir][1];		
+				}
+       				else {
+					if ((time_flag-time_flag_old)>0) {
+						average_rate[zone]->SetPoint(average_rate[zone]->GetN(), time_flag/1.e3, numevent_int/((time_flag-time_flag_old)/1.e3));
+						MaxY=max(MaxY,numevent_int/((time_flag-time_flag_old)/1.e3)); 
+						check_events+=numevent_int;
+						if (VERBOSE==true){
+							std::cout<< "\nset Point "<< average_rate[zone]->GetN()<<" : zone="<<zone<<"\n\tnumevent_int= "<< numevent_int<< ", dt (s)="<<(time_flag-time_flag_old)/1.e3<<  "\n\tx=time_flag (s)="<<time_flag/1.e3<< ", y=rate(Hz)="<<  numevent_int/((time_flag-time_flag_old)/1.e3);
+						}
+						if ( Tmd_run_orbit[ir][0]!=0xAA  ) {//if no broadcast no latitude-longitude 
+						 //lat and long correspondent to time_flag+INTEG_TIME
+                                        	        event_long=Tmd_run_long[ir][0]+(time_flag-CPU_run_time[ir][0])*long_dt;
+                                                	if (event_long>=180.) event_long-=360.;
+                                                	if (event_long<-180.) event_long+=360.;
+                                                	event_lat=Tmd_run_lat[ir][0]+(time_flag-CPU_run_time[ir][0])*lat_dt;
+ 							average_rate2[zone]->SetPoint(average_rate2[zone]->GetN(), event_lat, numevent_int/((time_flag-time_flag_old)/1.e3));
+						}
+					}
+					zone= Tmd_run_orbit[ir][1];		
+					if (event_time<CPU_run_time[ir][1]) time_flag_old= event_time;
+					else time_flag_old=CPU_run_time[ir][1];						
+					if (event_time + INTEG_TIME<CPU_run_time[ir][1]) time_flag = event_time + INTEG_TIME;
+					else {
+						time_flag = CPU_run_time[ir][1]+50;
+					}
+					numevent_int = 1;
+				
+         			}
+				if (ie==nEntries-1){//last events
+					average_rate[zone]->SetPoint(average_rate[zone]->GetN(), time_flag/1.e3, numevent_int/((time_flag-time_flag_old)/1.e3));
+					MaxY=max(MaxY,numevent_int/((time_flag-time_flag_old)/1.e3));
+					check_events+=numevent_int;
+					if (VERBOSE==true){
+						std::cout<< "\nset LAST Point "<< average_rate[zone]->GetN()<<": zone="<<zone<<"\n\tnumevent_int= "<< numevent_int<< ", dt (s)="<<(time_flag-time_flag_old)/1.e3<<  "\n\tx=time_flag (s)="<<time_flag/1.e3<< ", y=rate(Hz)="<<  numevent_int/((time_flag-time_flag_old)/1.e3);
+					}
+
+                                        if ( Tmd_run_orbit[ir][0]!=0xAA  ) {//if no broadcast no latitude-longitude 
+                                                 //lat and long correspondent to time_flag+INTEG_TIME
+	                                        event_long=Tmd_run_long[ir][0]+(time_flag-CPU_run_time[ir][0])*long_dt;
+                                                if (event_long>=180.) event_long-=360.;
+                                                if (event_long<-180.) event_long+=360.;
+                                                event_lat=Tmd_run_lat[ir][0]+(time_flag-CPU_run_time[ir][0])*lat_dt;
+                                                average_rate2[zone]->SetPoint(average_rate2[zone]->GetN(), event_lat, numevent_int/((time_flag-time_flag_old)/1.e3));
+                                        }
+				}
+      			}
+                }//Tmd loop
+>>>>>>> 40658d352a26d1355e4b0f35e4c585a40a213da5
       }// event loop
       Boot_evEntries[nb]=check_events;
       std::cout<< "\n\n------------------------------------------------------------------------------\n\n";
@@ -380,6 +644,7 @@ void EventRateL0(TString rootname, TString outPath){
 
       if (Boot_evEntries[nb]>0){
 
+<<<<<<< HEAD
 	 for (int ig=0; ig<5; ig++){
 	    average_rate[ig]->GetYaxis()->SetTitle("Rate (Hz)");
 	    average_rate[ig]->GetXaxis()->SetTitle("CPU time (s)");
@@ -419,6 +684,47 @@ void EventRateL0(TString rootname, TString outPath){
 	 TString mg_name=Form("BootN_%d_orbital_rate_time", BOOT_temp[nb]);
 	 crate->SetTitle(mg_name);
 	 crate->SetName(mg_name);
+=======
+ 	for (int ig=0; ig<5; ig++){
+ 		average_rate[ig]->GetYaxis()->SetTitle("Rate (Hz)");
+		average_rate[ig]->GetXaxis()->SetTitle("CPU time (s)");
+		average_rate[ig]->SetMarkerStyle(20);
+		average_rate[ig]->SetMarkerSize(0.4);
+
+	 	average_rate[ig]->SetTitle(gtitle[ig]);
+		average_rate[ig]->SetName(gname[ig]);
+		average_rate[ig]->SetFillStyle(0);
+		average_rate[ig]->SetDrawOption("AP");	
+		average_rate[ig]->SetLineWidth(0);
+
+ 		average_rate2[ig]->GetYaxis()->SetTitle("Rate (Hz)");
+		average_rate2[ig]->GetXaxis()->SetTitle("latitude");
+		average_rate2[ig]->SetMarkerStyle(20);
+		average_rate2[ig]->SetMarkerSize(0.4);
+
+	 	average_rate2[ig]->SetTitle(gtitle[ig]);
+		average_rate2[ig]->SetName(gname2[ig]);
+		average_rate2[ig]->SetFillStyle(0);
+		average_rate2[ig]->SetDrawOption("AP");	
+		average_rate2[ig]->SetLineWidth(0);
+	}
+	average_rate[0]->SetMarkerColor(kRed);
+	average_rate[1]->SetMarkerColor(kBlack);
+ 	average_rate[2]->SetMarkerColor(kBlue);
+	average_rate[3]->SetMarkerColor(kGreen);
+	average_rate[4]->SetMarkerColor(kMagenta);
+
+	average_rate2[0]->SetMarkerColor(kRed);
+	average_rate2[1]->SetMarkerColor(kBlack);
+ 	average_rate2[2]->SetMarkerColor(kBlue);
+	average_rate2[3]->SetMarkerColor(kGreen);
+	average_rate2[4]->SetMarkerColor(kMagenta);
+
+ 	TCanvas *crate=new TCanvas();
+	TString mg_name=Form("BootN_%d_orbital_rate_time", BOOT_temp[nb]);
+	crate->SetTitle(mg_name);
+	crate->SetName(mg_name);
+>>>>>>> 40658d352a26d1355e4b0f35e4c585a40a213da5
 
    
 	 TMultiGraph *mg = new TMultiGraph();
@@ -454,6 +760,7 @@ void EventRateL0(TString rootname, TString outPath){
 	    if (average_rate2[ig]->GetN()>0) mg2->Add(average_rate2[ig]); 
 	 }
  
+<<<<<<< HEAD
 	 crate2->cd();
 	 mg2->SetTitle(mg_name2 + Form(" - rate (Hz) vs latitude [Integ_time=%d s]",INTEG_TIME/1000));
 	 mg2->Draw("AP");
@@ -484,6 +791,38 @@ void EventRateL0(TString rootname, TString outPath){
       }//end if Boot_evEntries[nb]>0
 
    }//end loop nb
+=======
+	crate2->cd();
+	mg2->SetTitle(mg_name2 + Form(" - rate (Hz) vs latitude [Integ_time=%d s]",INTEG_TIME/1000));
+	mg2->Draw("AP");
+	mg2->GetYaxis()->SetTitle("Rate (Hz)");
+	mg2->GetXaxis()->SetTitle("latitude");
+	mg2->GetYaxis()->SetRangeUser(0, MaxY*1.5);
+
+        crate2-> BuildLegend();
+	crate2->Print(outname);
+
+
+ 	TCanvas *crate3=new TCanvas();
+	TString mg_name3=Form("BootN_%d_orbital_events_lat_long", BOOT_temp[nb]);
+	crate3->SetTitle(mg_name3);
+	crate3->SetName(mg_name3);
+	crate3->cd();
+	h_events_orbit->GetYaxis()->SetTitle("Latitude");
+        h_events_orbit->GetXaxis()->SetTitle("Longitude");
+        h_events_orbit->GetZaxis()->SetTitle("#events");
+
+        h_events_orbit->SetTitle(h2_name);
+        h_events_orbit->SetName(h2_name);
+        h_events_orbit->SetDrawOption("COLZ");
+	gStyle->SetOptStat(0);
+        h_events_orbit->Draw("COLZ");
+	crate3->Print(outname);
+
+ 	}//end if Boot_evEntries[nb]>0
+
+}//end loop nb
+>>>>>>> 40658d352a26d1355e4b0f35e4c585a40a213da5
    pt = new TPaveText(.1,.1,.9,.9);
    cRun = new TCanvas("Run");
    pt->AddText(Form("Total number of boots= %d", NN_boot));
@@ -496,6 +835,7 @@ void EventRateL0(TString rootname, TString outPath){
    cRun->Print(outnameEnd);
 
 
+<<<<<<< HEAD
    File.Close();
    cout << "\nEventRateL0 ... done \nOutput PDF File: " << outname << "\n\n";
    cout << "\n--------------------------------------------\n";
@@ -507,6 +847,13 @@ void EventRateL0(TString rootname, TString outPath){
 //////////////////////////////////////////////////////////////
 
 const TString Get_TriggerMask_Name(const int TM){
+=======
+  File.Close();
+  cout << "\nEventRateL0 ... done \nOutput PDF File: " << outname << "\n\n";
+    cout << "\n--------------------------------------------\n";
+
+  gErrorIgnoreLevel = 1;
+>>>>>>> 40658d352a26d1355e4b0f35e4c585a40a213da5
 
    if (TM<0 || TM>8) {
       std::cout<< "\nTrigger Mask Config "<< TM<< " inexistent!\n";
@@ -538,6 +885,43 @@ const TString Get_VetoConf_Name(const int V){
    return Veto_name[V];
 }
 
+<<<<<<< HEAD
+=======
+//////////////////////////////////////////////////////////////
+
+const TString Get_TriggerMask_Name(const int TM){
+
+  if (TM<0 || TM>8) {
+        std::cout<< "\nTrigger Mask Config "<< TM<< " inexistent!\n";
+        return "NA";
+  }
+  TString TriggerMask_name[9];
+  TriggerMask_name[0]="T";
+  TriggerMask_name[1]="T & P1";
+  TriggerMask_name[2]="T & (P1||P2)";
+  TriggerMask_name[3]="(T3||T4) & (P1||P2)";
+  TriggerMask_name[4]="T & P1 & P2";
+  TriggerMask_name[5]="T & P1 & P2 & P3";
+  TriggerMask_name[6]="T & (P1||P2) & (P15||P16)";
+  TriggerMask_name[7]="T & (P1||P2) & L";
+  TriggerMask_name[8]="Generic";
+  return TriggerMask_name[TM];
+}
+//-------------------------------------------------------------------------//
+const TString Get_VetoConf_Name(const int V){
+  if (V<0 || V>3) {
+        std::cout<< "\nVeto Config "<< V<< " inexistent!\n";
+        return "NA";
+  }
+  TString Veto_name[4];
+  Veto_name[0]="No Veto";
+  Veto_name[1]="Lateral Veto";
+  Veto_name[2]="Bottom Veto";
+  Veto_name[3]="Lateral+ Bottom Veto";
+  return Veto_name[V];
+}
+
+>>>>>>> 40658d352a26d1355e4b0f35e4c585a40a213da5
 //-------------------------------------------------------------------------//
 
 TCanvas *earth(){
