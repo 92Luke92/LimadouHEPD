@@ -60,11 +60,13 @@ int runIDtoStartTime(int **matrix, int size, int runID)
 void TriggerScan(TString rootname, TString outPath )
 {
    gErrorIgnoreLevel = 5000 ;
-   const char * _temp = rootname;
 
    TString outname = outPath;
+   TString _temp = rootname ;
+   _temp.Replace(0, _temp.Last('/'), "");
+     
    outname+= "/";
-   outname+= basename(_temp);
+   outname+= _temp;
    outname.ReplaceAll(".root", 5, "_TriggerQL.pdf", 14);
    
    UShort_t first_run_nr;

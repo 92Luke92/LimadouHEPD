@@ -47,10 +47,12 @@ void PMTScan(TString rootname, TString outPath )
 {
    //cout << "Rootname:" << rootname << endl;
    gErrorIgnoreLevel = 5000 ;
-   const char * _temp = rootname;
    TString outname = outPath;
+   TString _temp = rootname ;
+   _temp.Replace(0, _temp.Last('/'), "");
+   
    outname+= "/";
-   outname+= basename(_temp);
+   outname+= _temp;
    TString outnameStart;
    TString outnameEnd;
    outname.ReplaceAll(".root", 5, "_ScintillatorQL.pdf", 19);
