@@ -156,6 +156,44 @@ LCaloCalibration* LCaloCalibration::ReadRoot(const char *fileIn, enum pmt_calib_
 }
 
 
+const int LCaloCalibration::trigger_cal(const int i, const int j, int flag) const {
+  if(i<0 || i>=NTRIGSCINT) return -999;
+  if(j<0 || j>=2) return -999;
+  if(flag==PED) return pedestal[i+j*NPMT/2];
+  else if(flag==SIG) return sigma[i+j*NPMT/2];
+  else return -999;
+}
+
+const int LCaloCalibration::plane_cal(const int i, const int j, int flag) const {
+  if(i<0 || i>=NSCINTPLANES) return -999;
+  if(j<0 || j>=2) return -999;
+  if(flag==PED) return pedestal[NTRIGSCINT+i+j*NPMT/2];
+  else if(flag==SIG) return sigma[NTRIGSCINT+i+j*NPMT/2];
+  else return -999;
+}
+
+// const int LCaloCalibration::lyso_cal(const int i, int flag) const {
+//   if(i<0 || i>=NLYSOCRYSTALS) return -999;
+//   if(i==0 && flag ==PED) return pedestal[28]; // North West
+//   if(i==1) return pedestal[62]; // North
+//   if(i==2) return pedestal[29]; // North East
+//   if(i==3) return pedestal[30]; // West
+//   if(i==4) return pedestal[31]; // Center
+//   if(i==5) return pedestal[60]; // East
+//   if(i==6) return pedestal[27]; // South West
+//   if(i==7) return pedestal[61]; // South
+//   if(i==8) return pedestal[59]; // South East
+
+// }
+
+// const int LCaloCalibration::veto_cal(const int i, const int j, int flag) const {
+//   if(i<0 || i>=NVETOSCINT) return -999;
+//   if(j<0 || j>=2) return -999;
+//   return pmt_high[NTRIGSCINT+NSCINTPLANES +i+j*NPMT/2];
+
+// }
+
+
 LCaloCalibration& LCaloCalibration::operator=(const LCaloCalibration& other) {
   for(int ipmt=0; ipmt<NPMT; ++ipmt) {
     pedestal[ipmt] = other.GetPedestal()[ipmt];

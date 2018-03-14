@@ -64,6 +64,7 @@ fi
 echo "HEPDquicklook.sh ###############  output dir = " $DEST
 echo "HEPDquicklook.sh ###############  output file = " $MERGEDFILE
 SOURCEDIR=$SOURCEDIR"/Data-2*Events*.root"
+#SOURCEDIR=$SOURCEDIR"/*.root"
 
 if [ -f $DEST$MERGEDFILE ]; then
    printf "HEPDquicklook.sh ###############  Merged file already created\n\n"

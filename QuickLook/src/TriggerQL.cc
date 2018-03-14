@@ -46,7 +46,8 @@
 
 using namespace std;
 
-int runIDtoStartTime(int (*matrix)[2], int size, int runID)
+//int runIDtoStartTime(int (*matrix)[2], int size, int runID)
+int runIDtoStartTime(int **matrix, int size, int runID)
 {
    int ret = -1;
 
@@ -195,12 +196,15 @@ void TriggerScan(TString rootname, TString outPath )
    Int_t OBDH_time_sec[1000];
    Int_t OBDH_time_ms[1000];
 
-   int cpuStartTime[Tmd_entries/2][2];
-   
+   //   int cpuStartTime[Tmd_entries/2][2];
+   int **cpuStartTime = new int*[Tmd_entries/2] ;
+
+   for(int l=0; l<Tmd_entries/2; l++)
+      cpuStartTime[l] = new int[2];
+	 
    for(int j=1; j<Tmd_entries; j+=2) //Tmd loop
    {
       rootfile.GetTmdEntry(j); 
-
       cpuStartTime[(j-1)/2][0] = metaData.CPU_time[0];
       cpuStartTime[(j-1)/2][1] = metaData.run_id;
       OBDH_time_sec[(j-1)/2] = metaData.broadcast.OBDH.sec;
@@ -213,6 +217,7 @@ void TriggerScan(TString rootname, TString outPath )
    }      
    // TDatime da(2009,01,01,00,00,00);
    // gStyle->SetTimeOffset(da.Convert());
+   
    
    Int_t time_flag = 0;
    Int_t numevent_int = 0;
@@ -231,7 +236,7 @@ void TriggerScan(TString rootname, TString outPath )
       // event_time = 1230764400+OBDH_time_sec[ev.run_id - first_run_nr];
       //event_time += cpu_startRunTime_vect[ev.run_id - first_run_nr] - OBDH_timestamp[(ev.run_id - first_run_nr] ;// -  ev.hepd_time/1e+2; 
 
-      event_time = runIDtoStartTime(cpuStartTime, Tmd_entries/2, ev.run_id) + ev.hepd_time/1e+2; //unit = ms //TODO: add broadcast time
+      event_time = runIDtoStartTime(&cpuStartTime[0], Tmd_entries/2, ev.run_id) + ev.hepd_time/1e+2; //unit = ms //TODO: add broadcast time
 
       lost_triggers_vs_time->SetPoint(i, event_time/1000., ev.lost_trigger);
       alive_time_vs_time->SetPoint(i, event_time/1000., ev.alive_time*0.005);
@@ -263,7 +268,7 @@ void TriggerScan(TString rootname, TString outPath )
 	    sum[kk] = 0;
 	 }
 	 // cout << "start time = " << time_flag << endl;
-	 numevent_int = 0;
+	 numevent_int = 1;
 	 time_flag = event_time + INTEGTIME;
       }	 
    } //End of event loop
