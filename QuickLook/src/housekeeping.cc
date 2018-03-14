@@ -27,6 +27,7 @@
 #include "housekeeping.hh"
 #include <TDatime.h>
 
+#include <iomanip>
 
 void HVPSMonitorToXML(TString rootname, TString outPath, TString xslPath = "")
 {
