@@ -214,7 +214,12 @@ LEvRec1 LReco01Manager::L0ToL1(const LEvRec0 lev0IN, const LCalibration *calIN) 
   result.alive_time = lev0IN.alive_time;
   result.dead_time = lev0IN.dead_time;
 
-  result.tracker=GetTrackerSignal(lev0IN, *calIN);
+  if(lev0IN.runType==0x4E) result.tracker=GetTrackerSignal(lev0IN, *calIN);
+  else if(lev0IN.runType==0x55) result.tracker=GetTrackerSignalCompressed(lev0IN, *calIN);
+  else {
+    std::cerr << __LRECO01MANAGER__ << "RunType unmanageable: " << lev0IN.runType==55 << std::endl;
+    return 0;
+  }
   result.trig=GetTriggerSignal(lev0IN, *calIN);
   result.scint=GetScintillatorSignal(lev0IN, *calIN);
   result.veto=GetVetoSignal(lev0IN, *calIN);
