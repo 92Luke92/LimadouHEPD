@@ -1,4 +1,5 @@
 #include "LEvRec1File.hh"
+#include "TObject.h"
 #include <string>
 #include <iostream>
 
@@ -40,7 +41,9 @@ void LEvRec1File::CreateTrees() {
 
   fFile->cd();
   fTreeMD = new TTree("L1md", "Limadou Level 1 meta data"); // What do we put inside it???
+  fTreeMD->SetDirectory(fFile);
   fTree = new TTree("L1", "Limadou Level 1 events");
+  fTree->SetDirectory(fFile);
   // Tracker
   tracker_nClBR = fTree->Branch("tracker_nCl", 0, "tracker_nCl/I");
   tracker_seedBR = fTree->Branch("tracker_seed[tracker_nCl]",0, "tracker_seed[tracker_nCl]/I");
@@ -422,7 +425,7 @@ int LEvRec1File::GetMDEntries() {
 }
 
 void LEvRec1File::Write() {
-  if(fFile && WritableFLAG) fFile->Write();
+  if(fFile && WritableFLAG) fFile->Write(0, TObject::kOverwrite);
   return;
 }
 

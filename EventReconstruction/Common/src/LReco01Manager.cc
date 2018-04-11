@@ -213,12 +213,17 @@ LEvRec1 LReco01Manager::L0ToL1(const LEvRec0 lev0IN, const LCalibration *calIN) 
   for(int i=0; i<NRATEMETER; ++i) result.rate_meter[i] = lev0IN.rate_meter[i];
   result.alive_time = lev0IN.alive_time;
   result.dead_time = lev0IN.dead_time;
-
-  if(lev0IN.runType==0x4E) result.tracker=GetTrackerSignal(lev0IN, *calIN);
-  else if(lev0IN.runType==0x55) result.tracker=GetTrackerSignalCompressed(lev0IN, *calIN);
+  
+  if(lev0IN.runType==0x4E) {
+    result.tracker=GetTrackerSignal(lev0IN, *calIN);
+  }
+  else if(lev0IN.runType==0x55) {
+    result.tracker=GetTrackerSignalCompressed(lev0IN, *calIN);
+  }
   else {
-    std::cerr << __LRECO01MANAGER__ << "RunType unmanageable: " << lev0IN.runType==55 << std::endl;
-    return 0;
+    std::cerr << __LRECO01MANAGER__ << "RunType unmanageable: " << lev0IN.runType << std::endl; 
+    LEvRec1 ___result_res;
+    return ___result_res;
   }
   result.trig=GetTriggerSignal(lev0IN, *calIN);
   result.scint=GetScintillatorSignal(lev0IN, *calIN);
