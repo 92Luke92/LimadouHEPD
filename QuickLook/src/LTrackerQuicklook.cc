@@ -337,9 +337,9 @@ int CompressedTrackerQL(LEvRec0File input,TString outname){
   for(int iSide=0;iSide<N_SIDES;++iSide){
     char plan=(iSide==0 ? 'p' : 'n');
     for(int iLd=0;iLd<N_LADDER;++iLd){
-      CountsPosition[iSide][iLd]=new TH2D(Form("Counts_clean_%c_%d",plan,iLd),Form("Counts_clean_%c_%d;chan;ADC",plan,iLd),SIDE_CHAN,0,SIDE_CHAN,200,-200,500);
+      CountsPosition[iSide][iLd]=new TH2D(Form("Counts_clean_%c_%d",plan,iLd),Form("Counts_clean_%c_%d;chan;ADC",plan,iLd),SIDE_CHAN,0,SIDE_CHAN,200,-200,2000);
       //ClusterSize[iSide][iLd]=new TH1D(Form("Clustersize_%c_%d",plan,iLd),Form("Clustersize_%c_%d;clustersize;counts",plan,iLd),6,0,6);
-      SeedCounts[iSide][iLd]=new TH1D(Form("Cluster_counts_distribution_%c_%d",plan,iLd),Form("Cluster_counts_distribution_%c_%d;ADC;counts",plan,iLd),100,0,500);
+      SeedCounts[iSide][iLd]=new TH1D(Form("Cluster_counts_distribution_%c_%d",plan,iLd),Form("Cluster_counts_distribution_%c_%d;ADC;counts",plan,iLd),100,1,2000);
     }
   }
   double data[NCHAN];
@@ -420,8 +420,8 @@ int CompressedTrackerQL(LEvRec0File input,TString outname){
 
   drawing6_chan_2D(CountsPosition[0])->Print(outname,"pdf");
   drawing6_chan_2D(CountsPosition[1])->Print(outname,"pdf");
-  drawing6_chan_1D(SeedCounts[0],true)->Print(outname,"pdf");
-  drawing6_chan_1D(SeedCounts[1],true)->Print(outname,"pdf");
+  drawing6_chan_1D(SeedCounts[0],true,false)->Print(outname,"pdf");
+  drawing6_chan_1D(SeedCounts[1],true,false)->Print(outname,"pdf");
   output->Print(outnameEnd,"pdf");
 
   gErrorIgnoreLevel = 1;
