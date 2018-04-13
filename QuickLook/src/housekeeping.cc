@@ -51,7 +51,7 @@ void HVPSMonitorToXML(TString rootname, TString outPath, TString xslPath = "")
   
      TString filename = outPath;
      TString _temp = rootname ;
-     _temp.Replace(0, _temp.Last('/'), "");
+     _temp.Replace(0, _temp.Last('/')+1, "");
 
      filename += "/";
      filename += _temp;
@@ -202,7 +202,7 @@ void DUMPConfigToXML(TString rootname, TString outPath, TString xslPath = "")
   
      TString filename = outPath;
      TString _temp = rootname ;
-     _temp.Replace(0, _temp.Last('/'), "");
+     _temp.Replace(0, _temp.Last('/')+1, "");
 
      filename += "/";
      filename += _temp;
@@ -332,7 +332,7 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
 
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+  _temp.Replace(0, _temp.Last('/')+1, "");
 
   filename += "/";
   filename += _temp;
@@ -587,7 +587,7 @@ void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath = "")
 
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+  _temp.Replace(0, _temp.Last('/')+1, "");
 
   filename += "/";
   filename += _temp;
@@ -724,7 +724,7 @@ void HVPSConfigToXML(TString rootname, TString outPath, TString xslPath = "")
 
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+  _temp.Replace(0, _temp.Last('/')+1, "");
 
   filename += "/";
   filename += _temp;
@@ -954,7 +954,7 @@ void RunInfoToXML(TString rootname, TString outPath, TString xslPath = "")
   
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+  _temp.Replace(0, _temp.Last('/')+1, "");
 
   filename += "/";
   filename += _temp;
@@ -1160,7 +1160,7 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
   
    TString filename = outPath;
    TString _temp = rootname ;
-   _temp.Replace(0, _temp.Last('/'), "");
+   _temp.Replace(0, _temp.Last('/')+1, "");
 
    filename += "/";
    filename += _temp;
@@ -1503,7 +1503,7 @@ void ScintConfigToXML(TString rootname, TString outPath, TString xslPath = "")
 
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+  _temp.Replace(0, _temp.Last('/')+1, "");
 
   filename += "/";
   filename += _temp;
@@ -1654,7 +1654,7 @@ void SilConfigToXML(TString rootname, TString outPath, TString xslPath = "")
 
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+  _temp.Replace(0, _temp.Last('/')+1, "");
 
   filename += "/";
   filename += _temp;
@@ -1924,7 +1924,7 @@ void TelemetryToXML(TString rootname, TString outPath,  TString xslPath = "")
   
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+  _temp.Replace(0, _temp.Last('/')+1, "");
 
   filename += "/";
   filename += _temp;

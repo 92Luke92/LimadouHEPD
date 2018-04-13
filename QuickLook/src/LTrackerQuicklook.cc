@@ -46,7 +46,7 @@ int TrackerQuickLook(TString namefile, TString outPath){
    TString outname = outPath;
    TString _temp= namefile;
 
-   _temp.Replace(0, _temp.Last('/'), "");
+   _temp.Replace(0, _temp.Last('/')+1, "");
    outname += "/";
    outname += _temp;
 

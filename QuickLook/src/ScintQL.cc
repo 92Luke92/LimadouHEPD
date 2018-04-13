@@ -49,7 +49,7 @@ void PMTScan(TString rootname, TString outPath )
    gErrorIgnoreLevel = 5000 ;
    TString outname = outPath;
    TString _temp = rootname ;
-   _temp.Replace(0, _temp.Last('/'), "");
+   _temp.Replace(0, _temp.Last('/')+1, "");
    
    outname+= "/";
    outname+= _temp;

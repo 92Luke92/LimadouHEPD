@@ -448,9 +448,6 @@ void EventRateL0(TString rootname, TString outPath){
 	h_rate_orbit->Draw("SAME, COLZ");
 	outnameEnd = outname+")";
 	crate3->Print(outnameEnd);
-	TFile *filetest = new TFile("filetest.root","recreate");
-	crate3->Write();
-	filetest->Close();
 
 }//end loop nb
 
