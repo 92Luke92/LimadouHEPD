@@ -1297,6 +1297,7 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
 	 outputFile << "<RUN_INFO2>\n";
 
 	 TString current_mask="(";
+	 TString trigger_mask="";
 	 int veto = (short)metaData.trigger_mask[0];
 
 	 outputFile << "\t<LATITUDE_error>"   <<  0 << "</LATITUDE_error>\n";
@@ -1399,8 +1400,44 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
 	 outputFile << "\t<LONGITUDE>" << "[" << long_vect_start[x]<< "; "<< long_vect_stop[x] <<"]"<< "</LONGITUDE>\n";
 
 	 x=x+1;
+
+	 if((short)metaData.trigger_mask[1]==0)
+	    trigger_mask+="T";
+
+	 if((short)metaData.trigger_mask[1]==1)
+	    trigger_mask+="T and P1";
+
+	 if((short)metaData.trigger_mask[1]==2)
+	    trigger_mask+="T and (P1 or P2)";
+
+	 if((short)metaData.trigger_mask[1]==3)
+	   trigger_mask+="(T3 or T4) and (P1 or P2)";
+	   
+
+	 if((short)metaData.trigger_mask[1]==4)
+	    trigger_mask+="T and P1 and P2";
+
+	 if((short)metaData.trigger_mask[1]==5)
+	    trigger_mask+="T and P1 and P2 and P3";
+
+	 if((short)metaData.trigger_mask[1]==6)
+	    trigger_mask+="T and (P1 or P2) and (P15 or P16)";
+
+	 if((short)metaData.trigger_mask[1]==7)
+	    trigger_mask+="T and (P1 or P2) and L";
+     
+	 //cout << "current mask  "<< current_mask << endl;
+
+	 if((short)metaData.trigger_mask[1]==8)
+	    outputFile << "\t<TRIGGER>"  << "GENERIC TRIGGER MASK" << "</TRIGGER>\n";
+	 else
+	    outputFile << "\t<TRIGGER>"  <<   trigger_mask  << "</TRIGGER>\n";
+	 
   
-	 int on=0;
+
+
+	 if((short)metaData.trigger_mask[1]==0){
+	   int on=0;
 	 if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
 	    on=1;
 	    current_mask+="T1 ";
@@ -1446,34 +1483,385 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
 	    }
 	 }
 	 current_mask+=")";
+	 }
+	 
 
 	 if((short)metaData.trigger_mask[1]==1)
-	    current_mask+=" and P1";
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     current_mask+=")";
+	 
+	     current_mask+=" and P1";
+	   }
 
 	 if((short)metaData.trigger_mask[1]==2)
-	    current_mask+=" and (P1 or P2)";
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";
 
-	 if((short)metaData.trigger_mask[1]==3)
-	    current_mask+=" and (P1 or P2)";
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and (P1 or P2)";
+
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==0 || metaData.PMT_mask[39]==0))
+	       current_mask+=" and P1";
+
+	     if((metaData.PMT_mask[6]==0 || metaData.PMT_mask[38]==0) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and P2";
+	     
+	   }
+
+	 
+	 if((short)metaData.trigger_mask[1]==3){
+
+	   if((metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1) && (metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1))
+	     current_mask+="(T3 or T4)";
+
+	   if((metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1) && (metaData.PMT_mask[3]==0 || metaData.PMT_mask[35]==0))
+	     current_mask+="T3";
+
+	   if((metaData.PMT_mask[2]==0 || metaData.PMT_mask[34]==0) && (metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1))
+	     current_mask+="T4";
+
+	   if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	     current_mask+=" and (P1 or P2)";
+
+	   if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==0 || metaData.PMT_mask[39]==0))
+	     current_mask+=" and P1";
+
+	   if((metaData.PMT_mask[6]==0 || metaData.PMT_mask[38]==0) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	     current_mask+=" and P2";	   
+	 }
 
 	 if((short)metaData.trigger_mask[1]==4)
-	    current_mask+=" and P1 and P2";
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";
+	     current_mask+=" and P1 and P2";
+	   }
 
 	 if((short)metaData.trigger_mask[1]==5)
-	    current_mask+=" and P1 and P2 and P3";
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";  
+	     current_mask+=" and P1 and P2 and P3";
+	   }
 
+	 
 	 if((short)metaData.trigger_mask[1]==6)
-	    current_mask+=" and (P1 or P2) and (P15 or P16)";
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";
+	     
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and (P1 or P2)";
+
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==0 || metaData.PMT_mask[39]==0))
+	       current_mask+=" and P1";
+
+	     if((metaData.PMT_mask[6]==0 || metaData.PMT_mask[38]==0) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and P2";
+
+	     if((metaData.PMT_mask[20]==1 || metaData.PMT_mask[52]==1) && (metaData.PMT_mask[21]==1 || metaData.PMT_mask[53]==1))
+	       current_mask+=" and (P15 or P16)";
+
+	     if((metaData.PMT_mask[20]==1 || metaData.PMT_mask[52]==1) && (metaData.PMT_mask[21]==0 || metaData.PMT_mask[53]==0))
+	       current_mask+=" and P15";
+
+	     if((metaData.PMT_mask[20]==0 || metaData.PMT_mask[52]==0) && (metaData.PMT_mask[21]==1 || metaData.PMT_mask[53]==1))
+	       current_mask+=" and P16";
+	   }
+	    
 
 	 if((short)metaData.trigger_mask[1]==7)
-	    current_mask+=" and (P1 or P2) and L";
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";
+	     
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and (P1 or P2) and L";
+
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==0 || metaData.PMT_mask[39]==0))
+	       current_mask+=" and P1 and L";
+
+	     if((metaData.PMT_mask[6]==0 || metaData.PMT_mask[38]==0) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and P2 and L";
+	   }
      
 	 //cout << "current mask  "<< current_mask << endl;
 
 	 if((short)metaData.trigger_mask[1]==8)
-	    outputFile << "\t<TRIGGER>"  << "GENERIC TRIGGER MASK" << "</TRIGGER>\n";
+	    outputFile << "\t<TRIGGER_PMT_MASK>"  << "GENERIC TRIGGER MASK" << "</TRIGGER_PMT_MASK>\n";
 	 else
-	    outputFile << "\t<TRIGGER>"  <<   current_mask  << "</TRIGGER>\n";
+	    outputFile << "\t<TRIGGER_PMT_MASK>"  <<   current_mask  << "</TRIGGER_PMT_MASK>\n";
 
 	 if(veto==0)
             outputFile << "\t<VETO>"  << "NO" << "</VETO>\n";
