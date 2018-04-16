@@ -46,7 +46,7 @@ int TrackerQuickLook(TString namefile, TString outPath){
    TString outname = outPath;
    TString _temp= namefile;
 
-   _temp.Replace(0, _temp.Last('/')+1, "");
+   _temp.Replace(0, _temp.Last('/'), "");
    outname += "/";
    outname += _temp;
 
@@ -156,7 +156,8 @@ int TrackerQuickLook(TString namefile, TString outPath){
    else
    {
       std::cout << "Not Virgin Run " << std::endl;
-      return -1;
+      int res= CompressedTrackerQL(input,outname);
+      return res;
    }
     
    //Calibration on file
@@ -316,4 +317,115 @@ int TrackerQuickLook(TString namefile, TString outPath){
    gErrorIgnoreLevel = 1;
 
    return 0;
+}
+
+int CompressedTrackerQL(LEvRec0File input,TString outname){
+
+  LEvRec0 ev;
+  LEvRec0Md metaData;
+
+  input.SetTheEventPointer(ev);
+  input.SetTmdPointer(metaData);
+  //  input.GetEntry(0);
+
+  const int MAXEVENTS = input.GetEntries();
+  //std::cout<<"The events are "<<MAXEVENTS<<std::endl;
+  TH2D* CountsPosition[N_SIDES][N_LADDER];
+  //TH1D* ClusterSize[N_SIDES][N_LADDER];
+  TH1D* SeedCounts[N_SIDES][N_LADDER];
+
+  for(int iSide=0;iSide<N_SIDES;++iSide){
+    char plan=(iSide==0 ? 'p' : 'n');
+    for(int iLd=0;iLd<N_LADDER;++iLd){
+      CountsPosition[iSide][iLd]=new TH2D(Form("Counts_clean_%c_%d",plan,iLd),Form("Counts_clean_%c_%d;chan;ADC",plan,iLd),SIDE_CHAN,0,SIDE_CHAN,200,-200,2000);
+      //ClusterSize[iSide][iLd]=new TH1D(Form("Clustersize_%c_%d",plan,iLd),Form("Clustersize_%c_%d;clustersize;counts",plan,iLd),6,0,6);
+      SeedCounts[iSide][iLd]=new TH1D(Form("Cluster_counts_distribution_%c_%d",plan,iLd),Form("Cluster_counts_distribution_%c_%d;ADC;counts",plan,iLd),100,1,2000);
+    }
+  }
+  double data[NCHAN];
+  //  double fakesigma[NCHAN];
+  for(int iChan=0;iChan<NCHAN;++iChan){
+    data[iChan]=0;
+    //fakesigma[iChan]=1.;
+  }
+  //  std::vector<LTrackerCluster> clusters;
+  for(int iEv=0;iEv<MAXEVENTS;++iEv){
+    //    std::cout<<"Processing event "<<iEv<<std::endl;
+    input.GetEntry(iEv);
+    for(int ichan=0; ichan < NCHAN; ichan++){
+      data[ichan] = ev.strip[ichan];
+      CountsPosition[ChanToSide(ichan)][ChanToLadder(ichan)]->Fill(ChanToSideChan(ichan),data[ichan]);
+    }
+    for(int iChan=0;iChan<NCHAN;++iChan){
+      if(data[iChan]!=0.){
+	double evdata[CLUSTERCHANNELS];
+	double fakesigma[CLUSTERCHANNELS];
+	double sum=0;
+	for(int iCl=0; iCl<CLUSTERCHANNELS;++iCl){
+	  evdata[iCl]=data[iChan+iCl];
+	  fakesigma[iCl]=1.;
+	  sum+=evdata[iCl];
+	}
+	LTrackerCluster evcluster(iChan+2,evdata,fakesigma);
+	SeedCounts[ChanToSide(iChan+2)][ChanToLadder(iChan+2)]->Fill(sum);
+	iChan+=CLUSTERCHANNELS-1;
+      }
+    }
+
+  }
+  /*
+  for(int iCl=0;iCl<static_cast<int>(clusters.size());++iCl){
+    int seed=clusters.at(iCl).seed;
+    SeedCounts[ChanToSide(seed)][ChanToLadder(seed)]->Fill(clusters.at(iCl).GetCounts(0));
+  }
+  */
+  TString outnameStart;
+  TString outnameEnd;
+  outname.ReplaceAll(".root", 5, "_TrackerQL.pdf", 14);
+  outnameStart = outname+"(";
+  outnameEnd = outname+")";
+
+
+  TCanvas *output=new TCanvas();
+  TString nameOutFile(outname);
+  //  unsigned int run_in, boot_nr;                                                                                                                        
+  std::stringstream ss;
+  ss << input.GetEntries();
+  TString numEvents = ss.str();
+  ss.str("");
+  input.GetTmdEntry(0);
+  ss << metaData.run_id;
+  // ss << input.GetRunId();                                                                                                                               
+  TString runID = ss.str();
+  runID += "-";
+  ss.str("");
+  input.GetTmdEntry(input.GetTmdEntries() -1);
+  ss << metaData.run_id;
+  runID += ss.str();
+  // ss << input.GetBootNr();                                                                                                                              
+  ss.str("");
+  ss << metaData.boot_nr;
+  TString bootNr = ss.str();
+
+  TPaveText *pt = new TPaveText(.25,.2,.75,.6);
+  pt->AddText("ROOT file: ");
+  pt->AddText(nameOutFile);
+  pt->AddText("Boot Nr: ");
+  pt->AddText(bootNr);
+  pt->AddText("Run Nr: ");
+  pt->AddText(runID);
+  pt->AddText("Number of events: ");
+  pt->AddText(numEvents);
+  pt->Draw();
+  output->Print(outnameStart,"pdf");
+
+  drawing6_chan_2D(CountsPosition[0])->Print(outname,"pdf");
+  drawing6_chan_2D(CountsPosition[1])->Print(outname,"pdf");
+  drawing6_chan_1D(SeedCounts[0],true,false)->Print(outname,"pdf");
+  drawing6_chan_1D(SeedCounts[1],true,false)->Print(outname,"pdf");
+  output->Print(outnameEnd,"pdf");
+
+  gErrorIgnoreLevel = 1;
+
+  return 1;
 }

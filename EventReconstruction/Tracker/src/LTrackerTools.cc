@@ -223,6 +223,28 @@ LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal) {
 }
 
 
+LTrackerSignal GetTrackerSignalCompressed(const LEvRec0 lev0, const LCalibration cal) {
+  double cont[NCHAN];
+  //const double *ped = cal.GetTrackerCalibration()->GetPedestal(0);
+  const double *sigma = cal.GetTrackerCalibration()->GetSigma(0);
+  LTrackerMask hotmask=cal.GetTrackerCalibration()->GetMaskOnSigma(0,COLDSIGMA,HOTSIGMA);//set the variables!!!
+  LTrackerMask ngmask=cal.GetTrackerCalibration()->GetMaskOnNGI(0,NGILOW,NGIHIGH);//set the variables!!!
+
+  LTrackerMask colmask=cal.GetTrackerCalibration()->GetMaskOnColumn(0);
+  LTrackerMask evmask=(hotmask&&ngmask&&colmask);
+
+  for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich]);
+  std::vector<LTrackerCluster> tmp = GetClusters(cont, sigma,&evmask);
+  // sorting on the eta SN
+  std::sort(tmp.begin(), tmp.end(), std::greater<LTrackerCluster>());    
+
+  LTrackerSignal result;
+  for(auto tmpit : tmp) result.push_back(tmpit);
+  
+  return result;
+}
+
+
 void ComputeCN(const short *counts, const double *pedestal, const LTrackerMask *CN_mask, double *CN) {
   double sumVA[N_VA];
   int countVA[N_VA];

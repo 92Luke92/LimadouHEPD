@@ -10,7 +10,7 @@
 #include "TStyle.h"
 #include "TLine.h"
 
-TCanvas *drawing6_chan_1D(TH1D *ladder[N_LADDER],bool log){
+TCanvas *drawing6_chan_1D(TH1D *ladder[N_LADDER],const bool log,const bool logx){
   TCanvas *display=new TCanvas();
   display->Divide(3,2);
   
@@ -26,6 +26,7 @@ TCanvas *drawing6_chan_1D(TH1D *ladder[N_LADDER],bool log){
     display->cd(pad);
     gPad->cd(pad);
     if(log) gPad->SetLogy();
+    if(logx) gPad->SetLogx();
     ladder[i]->SetStats(0);
     ladder[i]->Draw();
   }
