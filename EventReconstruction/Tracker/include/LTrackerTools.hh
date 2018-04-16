@@ -23,6 +23,7 @@ std::vector<LTrackerCluster> GetClusters(const double* cont, const double *sigma
 std::vector<LTrackerCluster> GetClusters2Chan(const double* cont, const double *sigma, const LTrackerMask *mask=0);
 void ComputeCN(const short *counts, const double *pedestal, const LTrackerMask *CN_mask, double *CN);
 LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal);
+LTrackerSignal GetTrackerSignalCompressed(const LEvRec0 lev0, const LCalibration cal);
 
 
 

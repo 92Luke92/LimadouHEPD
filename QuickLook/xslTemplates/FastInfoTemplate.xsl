@@ -55,6 +55,7 @@
 	     <td width="160" height="30" align="center">Latitude [Start; Stop] </td>
 	     <td width="180" height="30" align="center">Longitude [Start; Stop] </td>
 	     <td width="250" height="30" align="center">Trigger Mask </td>
+	     <td width="250" height="30" align="center">Trigger Mask and PMT Mask </td>
 	     <td width="80" height="30" align="center">Veto </td>
 
 
@@ -118,6 +119,7 @@
 
 
 		<td width="250" height="30" align="center"><xsl:value-of select="TRIGGER"/>        </td>
+		<td width="250" height="30" align="center"><xsl:value-of select="TRIGGER_PMT_MASK"/>        </td>
 		<td width="80" height="30" align="center"><xsl:value-of select="VETO"/>        </td>
 		
 	     </tr>	
