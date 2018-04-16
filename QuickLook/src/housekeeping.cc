@@ -28,7 +28,7 @@
 #include <TDatime.h>
 
 #include <iomanip>
-#define time0 1230768000
+#define OBDH_TO_EPOCH_OFFSET_SEC 1230768000
 
 void HVPSMonitorToXML(TString rootname, TString outPath, TString xslPath = "")
 {
@@ -477,10 +477,10 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
       Int_t timestamp_ABS_2009;
       
 
-      timestamp_OBDH_2009 = time0++metaData.broadcast.OBDH.sec;
-      timestamp_GPS_2009 = time0+metaData.broadcast.GPS.sec;
-      timestamp_AOCC_2009 = time0+metaData.broadcast.AOCC.sec;
-      timestamp_ABS_2009 = time0+ABS_Time_Run_sec[t];
+      timestamp_OBDH_2009 = OBDH_TO_EPOCH_OFFSET_SEC+metaData.broadcast.OBDH.sec;
+      timestamp_GPS_2009 = OBDH_TO_EPOCH_OFFSET_SEC+metaData.broadcast.GPS.sec;
+      timestamp_AOCC_2009 = OBDH_TO_EPOCH_OFFSET_SEC+metaData.broadcast.AOCC.sec;
+      timestamp_ABS_2009 = OBDH_TO_EPOCH_OFFSET_SEC+ABS_Time_Run_sec[t];
       
            	
       h.Set(timestamp_OBDH_2009);
