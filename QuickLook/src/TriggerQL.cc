@@ -61,6 +61,8 @@ void TriggerScan(TString rootname, TString outPath )
 {
    gErrorIgnoreLevel = 5000 ;
 
+   // Page numbers
+   char c[14]; int n = 1;
    TString outname = outPath;
    TString _temp = rootname ;
    _temp.Replace(0, _temp.Last('/')+1, "");
@@ -120,6 +122,8 @@ void TriggerScan(TString rootname, TString outPath )
    pt->AddText(numEvents);
    pt->Draw();
    TString header = "1_header.png";
+   TText l; l.SetTextSize(0.05); l.SetTextAlign(22); 
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    Run->SaveAs(header);
 
    TGraph *lost_triggers_vs_time = new TGraph();
@@ -279,6 +283,8 @@ void TriggerScan(TString rootname, TString outPath )
    lost_triggers_vs_time->SetMarkerStyle(7);
    TString lost_trig_fig = "2_lost_triggers.png"; 
    lost_triggers_vs_time->Draw("AP");
+   l.SetTextSize(0.04);
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_lost_triggers->SaveAs(lost_trig_fig);
  
    TCanvas *c_alive_dead_time = new TCanvas("c_alive_dead_time","",1200,600);
@@ -296,6 +302,7 @@ void TriggerScan(TString rootname, TString outPath )
    // dead_time_vs_time->GetXaxis()->SetTimeFormat("%H:%M:%s");
    dead_time_vs_time->Draw("AP");
    TString alive_dead_time_fig = "3_alive_dead_time.png";    
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_alive_dead_time->SaveAs(alive_dead_time_fig);
   
    TCanvas *c_trig_flag= new TCanvas("c_trig_flag"," ",1200,600);
@@ -314,6 +321,7 @@ void TriggerScan(TString rootname, TString outPath )
    line->SetLineWidth(2);
    line->Draw("same");
    TString trig_flag_fig = "4_trigger_flag.png";    
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_trig_flag->SaveAs(trig_flag_fig);
 
 
@@ -330,6 +338,8 @@ void TriggerScan(TString rootname, TString outPath )
       //rate_meter_vs_time[p]->GetXaxis()->SetTimeDisplay(1);
    }
    TString rate_meter_trig_mask_0_3_fig = "5_rate_meter_trig_mask_0_3.png";    
+   l.SetTextSize(0.06);
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_rate_meter_trig_mask_0_3->SaveAs(rate_meter_trig_mask_0_3_fig); 
   
    TCanvas* c_rate_meter_trig_mask_4_6 = new TCanvas("c_rate_meter_trig_mask_4_6"," ",
@@ -344,6 +354,7 @@ void TriggerScan(TString rootname, TString outPath )
       //rate_meter_vs_time[p]->GetXaxis()->SetTimeDisplay(1);
    }
    TString rate_meter_trig_mask_4_6_fig = "6_rate_meter_trig_mask_4_6.png";    
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_rate_meter_trig_mask_4_6->SaveAs(rate_meter_trig_mask_4_6_fig); 
   
    TCanvas* c_rate_meter_trig_mask_7_9 = new TCanvas("c_rate_meter_trig_mask_7_9"," ",
@@ -360,6 +371,7 @@ void TriggerScan(TString rootname, TString outPath )
    }
 
    TString rate_meter_trig_mask_7_9_fig = "7_rate_meter_trig_mask_7_9.png";    
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_rate_meter_trig_mask_7_9->SaveAs(rate_meter_trig_mask_7_9_fig);
 
    
@@ -376,6 +388,8 @@ void TriggerScan(TString rootname, TString outPath )
    }
 
    TString rate_meter_pmt_1_9 = "8_pmt_rate_meter_1_9.png";
+   l.SetTextSize(0.12); 
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c);  
    c_rate_meter_pmt_1_9->SaveAs(rate_meter_pmt_1_9);
    /*
    TCanvas* myc = new TCanvas("myc"," ",1200,600);
@@ -396,6 +410,7 @@ void TriggerScan(TString rootname, TString outPath )
    }
 
    TString rate_meter_pmt_10_18 = "9_pmt_rate_meter_10_18.png";
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c);  
    c_rate_meter_pmt_10_18->SaveAs(rate_meter_pmt_10_18);
 
    TCanvas* c_rate_meter_pmt_19_27 = new TCanvas("c_rate_meter_pmt_19_27"," ",1200,600);
@@ -410,6 +425,7 @@ void TriggerScan(TString rootname, TString outPath )
    }
 
    TString rate_meter_pmt_19_27 = "10_pmt_rate_meter_19_27.png";
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_rate_meter_pmt_19_27->SaveAs(rate_meter_pmt_19_27);
 
    TCanvas* c_rate_meter_pmt_28_36 = new TCanvas("c_rate_meter_pmt_28_36"," ",1200,600);
@@ -424,6 +440,7 @@ void TriggerScan(TString rootname, TString outPath )
    }
 
    TString rate_meter_pmt_28_36 = "11_pmt_rate_meter_28_36.png";
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_rate_meter_pmt_28_36->SaveAs(rate_meter_pmt_28_36);
 
    TCanvas* c_rate_meter_pmt_37_45 = new TCanvas("c_rate_meter_pmt_37_45"," ",1200,600);
@@ -438,6 +455,7 @@ void TriggerScan(TString rootname, TString outPath )
    }
 
    TString rate_meter_pmt_37_45 = "12_pmt_rate_meter_37_45.png";
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c);  
    c_rate_meter_pmt_37_45->SaveAs(rate_meter_pmt_37_45);
 
    TCanvas* c_rate_meter_pmt_46_54 = new TCanvas("c_rate_meter_pmt_46_54"," ",1200,600);
@@ -452,6 +470,7 @@ void TriggerScan(TString rootname, TString outPath )
    }
 
    TString rate_meter_pmt_46_54 = "13_pmt_rate_meter_46_54.png";
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_rate_meter_pmt_46_54->SaveAs(rate_meter_pmt_46_54);
 
    TCanvas* c_rate_meter_pmt_55_64 = new TCanvas("c_rate_meter_pmt_55_64"," ",1200,600);
@@ -474,6 +493,7 @@ void TriggerScan(TString rootname, TString outPath )
    }
 
    TString rate_meter_pmt_55_64 = "14_pmt_rate_meter_55_64.png";
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_rate_meter_pmt_55_64->SaveAs(rate_meter_pmt_55_64);
 
 
