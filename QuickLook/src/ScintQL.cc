@@ -45,6 +45,9 @@ using namespace std;
 
 void PMTScan(TString rootname, TString outPath )
 {
+
+   // Page numbers
+   char c[27]; int n = 1;
    //cout << "Rootname:" << rootname << endl;
    gErrorIgnoreLevel = 5000 ;
    TString outname = outPath;
@@ -108,9 +111,14 @@ void PMTScan(TString rootname, TString outPath )
    pt->AddText("Number of events: ");
    pt->AddText(numEvents);
    pt->Draw();
+   TText l; l.SetTextSize(0.03); l.SetTextAlign(22); 
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    outnameStart = outname+"(";
    Run->Print(outnameStart); 
   
+
+
+
    const char *subdetector[EASIROC_CH] = {"T1e","T2e","T3e","T4e","T5e","T6e",
 					  "P1se","P2sw","P3se","P4sw","P5se","P6sw","P7se","P8sw","P9se","P10sw","P11se","P12sw","P13se","P14sw","P15se","P16sw",
 					  "VNu","VEu","VSu","VWu","VBne",
@@ -216,6 +224,7 @@ void PMTScan(TString rootname, TString outPath )
    }
 
    TCanvas *cp = new TCanvas("cp","",1200,600);
+     
    gPad->SetGrid();
   
    prof_pmt_high->SetLineWidth(2);  
@@ -227,7 +236,10 @@ void PMTScan(TString rootname, TString outPath )
    line_high->SetLineWidth(2);
    line_high->Draw("same");
   
+   l.SetTextSize(0.04);
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    cp->Print(outname); 
+   
    prof_pmt_low->SetLineWidth(2);   
    prof_pmt_low->Draw();
 
@@ -239,6 +251,9 @@ void PMTScan(TString rootname, TString outPath )
    line_low->SetLineColor(2);
    line_low->SetLineWidth(2);
    line_low->Draw("same");
+
+   l.SetTextSize(0.04);
+   sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    cp->Print(outname); 
   
    //Trigger Plane (T1-T3) - High gain
@@ -266,6 +281,8 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_high[p+29]->Draw();
       }
    }
+   l.SetTextSize(0.08);
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_trig_T1_T3_high->Print(outname);
 
    //Trigger Plane (T4-T6) - High gain
@@ -293,6 +310,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_high[p+32]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_trig_T4_T6_high->Print(outname);
 
    //Trigger Plane (T1-T3) - Low gain
@@ -320,6 +338,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_low[p+29]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_trig_T1_T3_low->Print(outname);
 
    //Trigger Plane (T4-T6) - Low gain
@@ -347,6 +366,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_low[p+32]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_trig_T4_T6_low->Print(outname);
 
    //Trigger Plane Correlation Plots (T1-T6) - High gain
@@ -366,6 +386,7 @@ void PMTScan(TString rootname, TString outPath )
       if(p==5) h_pmt_comp_high[p]->SetTitle("T6w vs T6e (CH37 vs CH5) - High Gain");
       h_pmt_comp_high[p]->Draw("colz");
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_trig_corr_high->Print(outname);
 
    //Trigger Plane Correlation Plots (T1-T6) - Low gain
@@ -385,6 +406,7 @@ void PMTScan(TString rootname, TString outPath )
       if(p==5) h_pmt_comp_low[p]->SetTitle("T6w vs T6e (CH37 vs CH5) - Low Gain");
       h_pmt_comp_low[p]->Draw("colz");
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_trig_corr_low->Print(outname);
 
    //Calorimeter (P1-P4) - High gain
@@ -414,6 +436,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_high[p+34]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_calo_P1_P4_high->Print(outname);
 
    //Calorimeter (P5-P8) - High gain
@@ -443,6 +466,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_high[p+38]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_calo_P5_P8_high->Print(outname);
 
    //Calorimeter (P9-P12) - High gain
@@ -472,6 +496,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_high[p+42]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_calo_P9_P12_high->Print(outname);
 
    //Calorimeter (P13-P16) - High gain
@@ -501,6 +526,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_high[p+46]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_calo_P13_P16_high->Print(outname);
 
    //Calorimeter (P1-P4) - Low gain
@@ -530,6 +556,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_low[p+34]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_calo_P1_P4_low->Print(outname);
 
    //Calorimeter (P5-P8) - Low gain
@@ -559,6 +586,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_low[p+38]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_calo_P5_P8_low->Print(outname);
 
    //Calorimeter (P9-P12) - Low gain
@@ -588,6 +616,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_low[p+42]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_calo_P9_P12_low->Print(outname);
 
    //Calorimeter (P13-P16) - Low gain
@@ -617,6 +646,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_low[p+46]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_calo_P13_P16_low->Print(outname);
 
    //Calorimeter Correlation Plots (P1-P8) - High gain
@@ -638,6 +668,7 @@ void PMTScan(TString rootname, TString outPath )
       if(p==13) h_pmt_comp_high[p]->SetTitle("P8ne vs P8sw (CH45 vs CH13) - High Gain");
       h_pmt_comp_high[p]->Draw("colz");
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_calo_corr_P1_P8_high->Print(outname);
 
    //Calorimeter Correlation Plots (P9-P16) - High gain
@@ -659,6 +690,7 @@ void PMTScan(TString rootname, TString outPath )
       if(p==21) h_pmt_comp_high[p]->SetTitle("P16ne vs P16sw (CH53 vs CH21) - High Gain");
       h_pmt_comp_high[p]->Draw("colz");
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_calo_corr_P9_P16_high->Print(outname);
 
    //Calorimeter Correlation Plots (P1-P8) - Low gain
@@ -680,6 +712,7 @@ void PMTScan(TString rootname, TString outPath )
       if(p==13) h_pmt_comp_low[p]->SetTitle("P8ne vs P8sw (CH45 vs CH13) - Low Gain");
       h_pmt_comp_low[p]->Draw("colz");
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_calo_corr_P1_P8_low->Print(outname);
 
    //Calorimeter Correlation Plots (P9-P16) - Low gain
@@ -701,6 +734,7 @@ void PMTScan(TString rootname, TString outPath )
       if(p==21) h_pmt_comp_low[p]->SetTitle("P16ne vs P16sw (CH53 vs CH21) - Low Gain");
       h_pmt_comp_low[p]->Draw("colz");
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_calo_corr_P9_P16_low->Print(outname);
 
    //Lyso - High gain
@@ -733,6 +767,8 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_high[p+54]->Draw();
       }
    }
+   l.SetTextSize(0.09);
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c);	
    c_lyso_high->Print(outname);
 
    //Lyso - Low gain
@@ -764,6 +800,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_low[p+54]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_lyso_low->Print(outname);  
 
    //Veto - High gain
@@ -795,6 +832,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_high[p+49]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_veto_high->Print(outname);
 
    //Veto - Low gain
@@ -826,6 +864,7 @@ void PMTScan(TString rootname, TString outPath )
 	 h_pmt_low[p+49]->Draw();
       }
    }
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_veto_low->Print(outname);  
 
    //Veto Correlation Plots - High gain
@@ -844,6 +883,8 @@ void PMTScan(TString rootname, TString outPath )
       if(p==26) h_pmt_comp_high[p]->SetTitle("VBsw vs VBne (CH58 vs CH26) - High Gain");
       h_pmt_comp_high[p]->Draw("colz");
    }
+   l.SetTextSize(0.08); 
+   sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
    c_veto_corr_high->Print(outname);
 
    //Veto Correlation Plots - Low gain
@@ -865,6 +906,8 @@ void PMTScan(TString rootname, TString outPath )
       if(p==26)   
       {   
 	 outnameEnd = outname+")";
+	 l.SetTextSize(0.08); 
+	 sprintf(c,"%d",n++); l.DrawTextNDC(.96, 0.03, c); 
 	 c_veto_corr_low->Print(outnameEnd);
       }
    }
