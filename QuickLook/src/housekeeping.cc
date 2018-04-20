@@ -601,10 +601,10 @@ void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath = "")
     exit(0);
   }
 
-  Short_t CPU_temp_start;
-  Short_t CPU_temp_stop;
-  Short_t PMT_temp_start;
-  Short_t PMT_temp_stop;
+  Double_t CPU_temp_start;
+  Double_t CPU_temp_stop;
+  Double_t PMT_temp_start;
+  Double_t PMT_temp_stop;
   UInt_t REAL_run_duration;
   LEvRec0File rootfile(rootname.Data());
   LEvRec0 ev;
@@ -648,8 +648,7 @@ void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath = "")
 	  PMT_temp_start = metaData.PMT_temp[0]*0.25;
 	  PMT_temp_stop = metaData.PMT_temp[1]*0.25;
 	  REAL_run_duration= (metaData.CPU_time[1]-metaData.CPU_time[0])/1000;
-
-	 
+	  	 
 	  if ((CPU_temp_start <-10) && (CPU_temp_start >-20))
 	    outputFile << "\t<CPU_TEMP_START_Y>"  <<  1  << "</CPU_TEMP_START_Y>\n";
 	  
@@ -704,7 +703,7 @@ void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath = "")
 	  outputFile << "\t<CPU_TEMP_START>" <<  CPU_temp_start  << "</CPU_TEMP_START>\n";
 	  outputFile << "\t<CPU_TEMP_STOP>"  <<  CPU_temp_stop  << "</CPU_TEMP_STOP>\n";
 	  outputFile << "\t<PMT_TEMP_START>" <<  PMT_temp_start << "</PMT_TEMP_START>\n";
-	  outputFile << "\t<PMT_TEMP_STOP>"  <<  PMT_temp_stop  << "</PMT_TEMP_STOP>\n";
+	  outputFile <<  "\t<PMT_TEMP_STOP>"  <<  PMT_temp_stop  << "</PMT_TEMP_STOP>\n";
 
 	  outputFile << "</CPUTIMETEMP>\n";   
  
