@@ -57,11 +57,14 @@ bool LOfflineL0Selector::CalibrationCheck(void) const {
 
 void LOfflineL0Selector::LoadCalibration(const LCalibration *calin) {
 	calibration=calin->GetCaloHGCalibration();
-	
+	LCaloCalibration *calibrationLG = calin->GetCaloLGCalibration();
+
 	if(CalibrationCheck()==false) return;
 
 	const double *pedestal = calibration->GetPedestal();
 	const double *sigma = calibration->GetSigma();
+	const double *pedestalLG = calibrationLG->GetPedestal();
+	const double *sigmaLG = calibrationLG->GetSigma();
 	
 	// pedestals
 	for(int i=0; i<NTRIGSCINT; ++i) {
@@ -72,15 +75,15 @@ void LOfflineL0Selector::LoadCalibration(const LCalibration *calin) {
 		plane_pedestal[i][0] = pedestal[NTRIGSCINT+i];
 		plane_pedestal[i][1] = pedestal[NTRIGSCINT+i+NPMT/2];
 	}
-	lyso_pedestal[0] = pedestal[28]; // North West
-	lyso_pedestal[1] = pedestal[62]; // North
-	lyso_pedestal[2] = pedestal[29]; // North East
-	lyso_pedestal[3] = pedestal[30]; // West
-	lyso_pedestal[4] = pedestal[31]; // Center
-	lyso_pedestal[5] = pedestal[60]; // East
-	lyso_pedestal[6] = pedestal[27]; // South West
-	lyso_pedestal[7] = pedestal[61]; // South
-	lyso_pedestal[8] = pedestal[59]; // South East
+	lyso_pedestal[0] = pedestalLG[28]; // North West
+	lyso_pedestal[1] = pedestalLG[62]; // North
+	lyso_pedestal[2] = pedestalLG[29]; // North East
+	lyso_pedestal[3] = pedestalLG[30]; // West
+	lyso_pedestal[4] = pedestalLG[31]; // Center
+	lyso_pedestal[5] = pedestalLG[60]; // East
+	lyso_pedestal[6] = pedestalLG[27]; // South West
+	lyso_pedestal[7] = pedestalLG[61]; // South
+	lyso_pedestal[8] = pedestalLG[59]; // South East
 
 	for(int i=0; i<NVETOSCINT; ++i) {
 		// First index: north, east, south, west, bottom
@@ -98,15 +101,15 @@ void LOfflineL0Selector::LoadCalibration(const LCalibration *calin) {
 		plane_sigma[i][0] = sigma[NTRIGSCINT+i];
 		plane_sigma[i][1] = sigma[NTRIGSCINT+i+NPMT/2];
 	}
-	lyso_sigma[0] = sigma[28]; // North West
-	lyso_sigma[1] = sigma[62]; // North
-	lyso_sigma[2] = sigma[29]; // North East
-	lyso_sigma[3] = sigma[30]; // West
-	lyso_sigma[4] = sigma[31]; // Center
-	lyso_sigma[5] = sigma[60]; // East
-	lyso_sigma[6] = sigma[27]; // South West
-	lyso_sigma[7] = sigma[61]; // South
-	lyso_sigma[8] = sigma[59]; // South East
+	lyso_sigma[0] = sigmaLG[28]; // North West
+	lyso_sigma[1] = sigmaLG[62]; // North
+	lyso_sigma[2] = sigmaLG[29]; // North East
+	lyso_sigma[3] = sigmaLG[30]; // West
+	lyso_sigma[4] = sigmaLG[31]; // Center
+	lyso_sigma[5] = sigmaLG[60]; // East
+	lyso_sigma[6] = sigmaLG[27]; // South West
+	lyso_sigma[7] = sigmaLG[61]; // South
+	lyso_sigma[8] = sigmaLG[59]; // South East
 
 
 	for(int i=0; i<NVETOSCINT; ++i) {

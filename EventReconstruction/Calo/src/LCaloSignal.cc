@@ -286,4 +286,14 @@ int LCaloSignal::GetCountsOf2ndMSU(const bool isHG, const double threshold) cons
   
   return result;
 }
-  
+
+double LCaloSignal::GetCounts(const bool isHG) const {
+  int result=0.;
+  for(int unit=0; unit<nunits; ++unit)
+    for(int ipmt=0; ipmt<npmts; ++ipmt)
+      result += (isHG ? cont_hg[unit][ipmt] : cont_lg[unit][ipmt]);
+  return result;  
+}
+
+
+

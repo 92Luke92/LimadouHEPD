@@ -32,6 +32,7 @@ public:
   int GetCountsOf2ndMSU(const bool isHG, const double threshold = THRESHOLD) const;
   double GetSNOfUnit(const int unit, const bool isHG) const;
   int GetCountsOfUnit(const int unit, const bool isHG) const;
+  double GetCounts(const bool isHG) const;
   
 protected:
   void CreateContainers(void);

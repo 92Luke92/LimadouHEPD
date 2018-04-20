@@ -41,18 +41,18 @@ const int LEvRec0::plane(const int i, const int j) const {
   return pmt_high[NTRIGSCINT+i+j*NPMT/2];
 }
 
-const int LEvRec0::lyso(const int i) const {
+const int LEvRec0::lyso(const int i) const {  //***## LOW GAIN FOR LYSO ##***
   if(i<0 || i>=NLYSOCRYSTALS) return -999;
-  if(i==0) return pmt_high[28]; // North West
-  if(i==1) return pmt_high[62]; // North
-  if(i==2) return pmt_high[29]; // North East
-  if(i==3) return pmt_high[30]; // West
-  if(i==4) return pmt_high[31]; // Center
-  if(i==5) return pmt_high[60]; // East
-  if(i==6) return pmt_high[27]; // South West
-  if(i==7) return pmt_high[61]; // South
-//  if(i==2) return pmt_high[59]; // South East
-  if(i==8) return pmt_high[59]; // South East
+  if(i==0) return pmt_low[28]; // North West 
+  if(i==1) return pmt_low[62]; // North
+  if(i==2) return pmt_low[29]; // North East
+  if(i==3) return pmt_low[30]; // West
+  if(i==4) return pmt_low[31]; // Center
+  if(i==5) return pmt_low[60]; // East
+  if(i==6) return pmt_low[27]; // South West
+  if(i==7) return pmt_low[61]; // South
+//  if(i==2) return pmt_low[59]; // South East
+  if(i==8) return pmt_low[59]; // South East
 
 }
 
