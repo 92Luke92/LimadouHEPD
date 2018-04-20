@@ -360,13 +360,14 @@ int CompressedTrackerQL(LEvRec0File input,TString outname){
       if(data[iChan]!=0.){
 	double evdata[CLUSTERCHANNELS];
 	double fakesigma[CLUSTERCHANNELS];
+	double sum=0;
 	for(int iCl=0; iCl<CLUSTERCHANNELS;++iCl){
 	  evdata[iCl]=data[iChan+iCl];
 	  fakesigma[iCl]=1.;
+	  sum+=evdata[iCl];
 	}
 	LTrackerCluster evcluster(iChan+2,evdata,fakesigma);
-	SeedCounts[ChanToSide(iChan+2)][ChanToLadder(iChan+2)]->Fill(evcluster.GetCounts(0));
-	//clusters.push_back(evcluster);
+	SeedCounts[ChanToSide(iChan+2)][ChanToLadder(iChan+2)]->Fill(sum);
 	iChan+=CLUSTERCHANNELS-1;
       }
     }
