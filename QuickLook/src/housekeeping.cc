@@ -28,6 +28,7 @@
 #include <TDatime.h>
 
 #include <iomanip>
+#define OBDH_TO_EPOCH_OFFSET_SEC 1230768000
 
 void HVPSMonitorToXML(TString rootname, TString outPath, TString xslPath = "")
 {
@@ -476,10 +477,10 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
       Int_t timestamp_ABS_2009;
       
 
-      timestamp_OBDH_2009 = 1230764400+metaData.broadcast.OBDH.sec;
-      timestamp_GPS_2009 = 1230764400+metaData.broadcast.GPS.sec;
-      timestamp_AOCC_2009 = 1230764400+metaData.broadcast.AOCC.sec;
-      timestamp_ABS_2009 = 1230764400+ABS_Time_Run_sec[t];
+      timestamp_OBDH_2009 = OBDH_TO_EPOCH_OFFSET_SEC+metaData.broadcast.OBDH.sec;
+      timestamp_GPS_2009 = OBDH_TO_EPOCH_OFFSET_SEC+metaData.broadcast.GPS.sec;
+      timestamp_AOCC_2009 = OBDH_TO_EPOCH_OFFSET_SEC+metaData.broadcast.AOCC.sec;
+      timestamp_ABS_2009 = OBDH_TO_EPOCH_OFFSET_SEC+ABS_Time_Run_sec[t];
       
            	
       h.Set(timestamp_OBDH_2009);
@@ -601,10 +602,10 @@ void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath = "")
     exit(0);
   }
 
-  Short_t CPU_temp_start;
-  Short_t CPU_temp_stop;
-  Short_t PMT_temp_start;
-  Short_t PMT_temp_stop;
+  Double_t CPU_temp_start;
+  Double_t CPU_temp_stop;
+  Double_t PMT_temp_start;
+  Double_t PMT_temp_stop;
   UInt_t REAL_run_duration;
   LEvRec0File rootfile(rootname.Data());
   LEvRec0 ev;
@@ -648,8 +649,7 @@ void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath = "")
 	  PMT_temp_start = metaData.PMT_temp[0]*0.25;
 	  PMT_temp_stop = metaData.PMT_temp[1]*0.25;
 	  REAL_run_duration= (metaData.CPU_time[1]-metaData.CPU_time[0])/1000;
-
-	 
+	  	 
 	  if ((CPU_temp_start <-10) && (CPU_temp_start >-20))
 	    outputFile << "\t<CPU_TEMP_START_Y>"  <<  1  << "</CPU_TEMP_START_Y>\n";
 	  
@@ -704,7 +704,7 @@ void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath = "")
 	  outputFile << "\t<CPU_TEMP_START>" <<  CPU_temp_start  << "</CPU_TEMP_START>\n";
 	  outputFile << "\t<CPU_TEMP_STOP>"  <<  CPU_temp_stop  << "</CPU_TEMP_STOP>\n";
 	  outputFile << "\t<PMT_TEMP_START>" <<  PMT_temp_start << "</PMT_TEMP_START>\n";
-	  outputFile << "\t<PMT_TEMP_STOP>"  <<  PMT_temp_stop  << "</PMT_TEMP_STOP>\n";
+	  outputFile <<  "\t<PMT_TEMP_STOP>"  <<  PMT_temp_stop  << "</PMT_TEMP_STOP>\n";
 
 	  outputFile << "</CPUTIMETEMP>\n";   
  
@@ -1297,6 +1297,7 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
 	 outputFile << "<RUN_INFO2>\n";
 
 	 TString current_mask="(";
+	 TString trigger_mask="";
 	 int veto = (short)metaData.trigger_mask[0];
 
 	 outputFile << "\t<LATITUDE_error>"   <<  0 << "</LATITUDE_error>\n";
@@ -1399,8 +1400,44 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
 	 outputFile << "\t<LONGITUDE>" << "[" << long_vect_start[x]<< "; "<< long_vect_stop[x] <<"]"<< "</LONGITUDE>\n";
 
 	 x=x+1;
+
+	 if((short)metaData.trigger_mask[1]==0)
+	    trigger_mask+="T";
+
+	 if((short)metaData.trigger_mask[1]==1)
+	    trigger_mask+="T and P1";
+
+	 if((short)metaData.trigger_mask[1]==2)
+	    trigger_mask+="T and (P1 or P2)";
+
+	 if((short)metaData.trigger_mask[1]==3)
+	   trigger_mask+="(T3 or T4) and (P1 or P2)";
+	   
+
+	 if((short)metaData.trigger_mask[1]==4)
+	    trigger_mask+="T and P1 and P2";
+
+	 if((short)metaData.trigger_mask[1]==5)
+	    trigger_mask+="T and P1 and P2 and P3";
+
+	 if((short)metaData.trigger_mask[1]==6)
+	    trigger_mask+="T and (P1 or P2) and (P15 or P16)";
+
+	 if((short)metaData.trigger_mask[1]==7)
+	    trigger_mask+="T and (P1 or P2) and L";
+     
+	 //cout << "current mask  "<< current_mask << endl;
+
+	 if((short)metaData.trigger_mask[1]==8)
+	    outputFile << "\t<TRIGGER>"  << "GENERIC TRIGGER MASK" << "</TRIGGER>\n";
+	 else
+	    outputFile << "\t<TRIGGER>"  <<   trigger_mask  << "</TRIGGER>\n";
+	 
   
-	 int on=0;
+
+
+	 if((short)metaData.trigger_mask[1]==0){
+	   int on=0;
 	 if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
 	    on=1;
 	    current_mask+="T1 ";
@@ -1446,34 +1483,385 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
 	    }
 	 }
 	 current_mask+=")";
+	 }
+	 
 
 	 if((short)metaData.trigger_mask[1]==1)
-	    current_mask+=" and P1";
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     current_mask+=")";
+	 
+	     current_mask+=" and P1";
+	   }
 
 	 if((short)metaData.trigger_mask[1]==2)
-	    current_mask+=" and (P1 or P2)";
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";
 
-	 if((short)metaData.trigger_mask[1]==3)
-	    current_mask+=" and (P1 or P2)";
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and (P1 or P2)";
+
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==0 || metaData.PMT_mask[39]==0))
+	       current_mask+=" and P1";
+
+	     if((metaData.PMT_mask[6]==0 || metaData.PMT_mask[38]==0) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and P2";
+	     
+	   }
+
+	 
+	 if((short)metaData.trigger_mask[1]==3){
+
+	   if((metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1) && (metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1))
+	     current_mask+="(T3 or T4)";
+
+	   if((metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1) && (metaData.PMT_mask[3]==0 || metaData.PMT_mask[35]==0))
+	     current_mask+="T3";
+
+	   if((metaData.PMT_mask[2]==0 || metaData.PMT_mask[34]==0) && (metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1))
+	     current_mask+="T4";
+
+	   if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	     current_mask+=" and (P1 or P2)";
+
+	   if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==0 || metaData.PMT_mask[39]==0))
+	     current_mask+=" and P1";
+
+	   if((metaData.PMT_mask[6]==0 || metaData.PMT_mask[38]==0) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	     current_mask+=" and P2";	   
+	 }
 
 	 if((short)metaData.trigger_mask[1]==4)
-	    current_mask+=" and P1 and P2";
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";
+	     current_mask+=" and P1 and P2";
+	   }
 
 	 if((short)metaData.trigger_mask[1]==5)
-	    current_mask+=" and P1 and P2 and P3";
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";  
+	     current_mask+=" and P1 and P2 and P3";
+	   }
 
+	 
 	 if((short)metaData.trigger_mask[1]==6)
-	    current_mask+=" and (P1 or P2) and (P15 or P16)";
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";
+	     
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and (P1 or P2)";
+
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==0 || metaData.PMT_mask[39]==0))
+	       current_mask+=" and P1";
+
+	     if((metaData.PMT_mask[6]==0 || metaData.PMT_mask[38]==0) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and P2";
+
+	     if((metaData.PMT_mask[20]==1 || metaData.PMT_mask[52]==1) && (metaData.PMT_mask[21]==1 || metaData.PMT_mask[53]==1))
+	       current_mask+=" and (P15 or P16)";
+
+	     if((metaData.PMT_mask[20]==1 || metaData.PMT_mask[52]==1) && (metaData.PMT_mask[21]==0 || metaData.PMT_mask[53]==0))
+	       current_mask+=" and P15";
+
+	     if((metaData.PMT_mask[20]==0 || metaData.PMT_mask[52]==0) && (metaData.PMT_mask[21]==1 || metaData.PMT_mask[53]==1))
+	       current_mask+=" and P16";
+	   }
+	    
 
 	 if((short)metaData.trigger_mask[1]==7)
-	    current_mask+=" and (P1 or P2) and L";
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";
+	     
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and (P1 or P2) and L";
+
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==0 || metaData.PMT_mask[39]==0))
+	       current_mask+=" and P1 and L";
+
+	     if((metaData.PMT_mask[6]==0 || metaData.PMT_mask[38]==0) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and P2 and L";
+	   }
      
 	 //cout << "current mask  "<< current_mask << endl;
 
 	 if((short)metaData.trigger_mask[1]==8)
-	    outputFile << "\t<TRIGGER>"  << "GENERIC TRIGGER MASK" << "</TRIGGER>\n";
+	    outputFile << "\t<TRIGGER_PMT_MASK>"  << "GENERIC TRIGGER MASK" << "</TRIGGER_PMT_MASK>\n";
 	 else
-	    outputFile << "\t<TRIGGER>"  <<   current_mask  << "</TRIGGER>\n";
+	    outputFile << "\t<TRIGGER_PMT_MASK>"  <<   current_mask  << "</TRIGGER_PMT_MASK>\n";
 
 	 if(veto==0)
             outputFile << "\t<VETO>"  << "NO" << "</VETO>\n";

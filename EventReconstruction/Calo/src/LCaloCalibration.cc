@@ -172,26 +172,44 @@ const int LCaloCalibration::plane_cal(const int i, const int j, int flag) const 
   else return -999;
 }
 
-// const int LCaloCalibration::lyso_cal(const int i, int flag) const {
-//   if(i<0 || i>=NLYSOCRYSTALS) return -999;
-//   if(i==0 && flag ==PED) return pedestal[28]; // North West
-//   if(i==1) return pedestal[62]; // North
-//   if(i==2) return pedestal[29]; // North East
-//   if(i==3) return pedestal[30]; // West
-//   if(i==4) return pedestal[31]; // Center
-//   if(i==5) return pedestal[60]; // East
-//   if(i==6) return pedestal[27]; // South West
-//   if(i==7) return pedestal[61]; // South
-//   if(i==8) return pedestal[59]; // South East
+const int LCaloCalibration::lyso_cal(const int i, int flag) const {
+   if(i<0 || i>=NLYSOCRYSTALS) return -999;
+   if (flag ==PED)
+   {
+      if(i==0) return pedestal[28]; // North West
+      if(i==1) return pedestal[62]; // North
+      if(i==2) return pedestal[29]; // North East
+      if(i==3) return pedestal[30]; // West
+      if(i==4) return pedestal[31]; // Center
+      if(i==5) return pedestal[60]; // East
+      if(i==6) return pedestal[27]; // South West
+      if(i==7) return pedestal[61]; // South
+      if(i==8) return pedestal[59]; // South East
+   }
+   if (flag == SIG)
+   {
+      if(i==0) return sigma[28]; // North West
+      if(i==1) return sigma[62]; // North
+      if(i==2) return sigma[29]; // North East
+      if(i==3) return sigma[30]; // West
+      if(i==4) return sigma[31]; // Center
+      if(i==5) return sigma[60]; // East
+      if(i==6) return sigma[27]; // South West
+      if(i==7) return sigma[61]; // South
+      if(i==8) return sigma[59]; // South East
+   }
 
-// }
+}
 
-// const int LCaloCalibration::veto_cal(const int i, const int j, int flag) const {
-//   if(i<0 || i>=NVETOSCINT) return -999;
-//   if(j<0 || j>=2) return -999;
-//   return pmt_high[NTRIGSCINT+NSCINTPLANES +i+j*NPMT/2];
+const int LCaloCalibration::veto_cal(const int i, const int j, int flag) const {
+  if(i<0 || i>=NVETOSCINT) return -999;
+  if(j<0 || j>=2) return -999;
+  if (flag==PED)
+     return pedestal[NTRIGSCINT+NSCINTPLANES +i+j*NPMT/2];
+  if (flag==SIG)
+     return sigma[NTRIGSCINT+NSCINTPLANES +i+j*NPMT/2];
 
-// }
+}
 
 
 LCaloCalibration& LCaloCalibration::operator=(const LCaloCalibration& other) {
