@@ -233,7 +233,17 @@ LTrackerSignal GetTrackerSignalCompressed(const LEvRec0 lev0, const LCalibration
   LTrackerMask colmask=cal.GetTrackerCalibration()->GetMaskOnColumn(0);
   LTrackerMask evmask=(hotmask&&ngmask&&colmask);
 
-  for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich]);
+  //for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich]); // OLD COMPRESSED VERSION 
+  for(int ich=0; ich<NCHAN; ++ich) cont[ich]=0.;
+  for(int icl=0; icl<lev0.clust_nr; ++icl) {
+    short iseed = lev0.cluster[icl][0];
+    unsigned short nAdjStrip = lev0.GetNAdjacentStrips();
+    for(int ich=0; ich<2*nAdjStrip+1; ++ich) {
+      unsigned short jch = iseed-nAdjStrip+ich;
+      if(jch<0 || jch>NCHAN-1) continue;
+      cont[jch] = static_cast<double>(lev0.cluster[icl][ich+1]);
+    }
+  }
   std::vector<LTrackerCluster> tmp = GetClusters(cont, sigma,&evmask);
   // sorting on the eta SN
   std::sort(tmp.begin(), tmp.end(), std::greater<LTrackerCluster>());    

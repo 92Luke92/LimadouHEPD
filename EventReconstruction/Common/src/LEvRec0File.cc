@@ -9,6 +9,7 @@ LEvRec0File::LEvRec0File() {
   RunId=-999;
   BootNr=-999;
   runType=0;
+  adj_strip=0;
 }
 
 LEvRec0File::LEvRec0File(const char *inpFile) {
@@ -45,8 +46,16 @@ LEvRec0File::LEvRec0File(const char *outFile, LEvRec0 &event, LEvRec0Md &metadat
    fTree->Branch("dead_time", &event.dead_time, "dead_time/i");
 
    // silicon data
-   fTree->Branch("strip[4608]", &event.strip[0], "strip[4608]/s");
-
+   if(event.IsZeroSuppressed()) {
+    fTree->Branch("clust_nr", &event.clust_nr, "clust_nr/s");
+    std::ostringstream branchname;
+    branchname << "cluster[clust_nr][" << 2*metadata.silConfig.adj_strip+2 << "]";
+    std::ostringstream branchspecs;
+    branchspecs << "cluster[clust_nr][" << 2*metadata.silConfig.adj_strip+2 << "]/s";
+    fTree->Branch(branchname.str().c_str(), &event.cluster[0][0], branchspecs.str().c_str());
+   } else if (event.IsVirgin()) {
+    fTree->Branch("strip[4608]", &event.strip[0], "strip[4608]/s");
+   }
 
    // meta data Tree
    Tmd->Branch("boot_nr", &metadata.boot_nr, "boot_nr/s");
@@ -120,10 +129,15 @@ void LEvRec0File::Open(const char *inpFile) {
   unsigned short run_type; 
   Tmd->SetBranchAddress("run_type",&run_type);
   Tmd->GetEntry(0);
+  
   RunId = static_cast<int>(run_id);
   BootNr = static_cast<int>(boot_nr);
   runType = run_type;
-  
+  if(IsZeroSuppressed()) {
+    LEvRec0Md __metaData;
+    Tmd->SetBranchAddress("silConfiguration", &__metaData.silConfig.ladder_on);
+    adj_strip = __metaData.silConfig.adj_strip;
+  }
   return;
 }
 
@@ -173,8 +187,16 @@ int LEvRec0File::SetTheEventPointer(LEvRec0 &ev) {
   fTree->SetBranchAddress("trigger_flag[64]", &ev.trigger_flag);
   fTree->SetBranchAddress("alive_time", &ev.alive_time);
   fTree->SetBranchAddress("dead_time", &ev.dead_time);
-  fTree->SetBranchAddress("strip[4608]",&ev.strip);
-  
+  if(IsZeroSuppressed()) {
+    ev.SetZeroSuppressedMode(adj_strip);
+    fTree->SetBranchAddress("clust_nr", &ev.clust_nr);
+    std::ostringstream branchname;
+    branchname << "cluster[clust_nr][" << 2*adj_strip+2 << "]";
+    fTree->SetBranchAddress(branchname.str().c_str(), &ev.cluster);
+  } else {
+    ev.SetVirginMode();
+    fTree->SetBranchAddress("strip[4608]",&ev.strip);
+  }
   fTree->SetBranchStatus("*",kTRUE);
   
   return 0;
