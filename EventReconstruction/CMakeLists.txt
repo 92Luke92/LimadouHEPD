@@ -29,7 +29,3 @@ if(DOXYGEN_FOUND)
 		)
 endif(DOXYGEN_FOUND)
 
-
-
-
-#other cmakelists to be added here when written

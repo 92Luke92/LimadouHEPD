@@ -235,6 +235,7 @@ LTrackerSignal GetTrackerSignalCompressed(const LEvRec0 lev0, const LCalibration
 
   //for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich]); // OLD COMPRESSED VERSION 
   for(int ich=0; ich<NCHAN; ++ich) cont[ich]=0.;
+    
   for(int icl=0; icl<lev0.clust_nr; ++icl) {
     short iseed=lev0.cluster[icl][0];
     int side = ChanToSide(iseed);
@@ -260,7 +261,6 @@ LTrackerSignal GetTrackerSignalCompressed(const LEvRec0 lev0, const LCalibration
       }
     }
   }
-  
   std::vector<LTrackerCluster> tmp = GetClusters(cont, sigma,&evmask);
   // sorting on the eta SN
   std::sort(tmp.begin(), tmp.end(), std::greater<LTrackerCluster>());    

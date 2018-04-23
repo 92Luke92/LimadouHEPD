@@ -1,21 +1,17 @@
 #include "detector_const.hh"
 #include "analysis_const.hh"
-#include "LEvRec0File.hh"
 
 #ifndef __LEVREC0__
 #define __LEVREC0__ 1
 
-const unsigned short __MAXCLUSTERNR__ = 100;
+
 
 
 class LEvRec0 {
 
-friend class LEvRec0File;
-
 public:
   LEvRec0();
-  ~LEvRec0();
-
+ 
   unsigned short   runType;
   unsigned short   boot_nr;
   unsigned short   run_id;
@@ -33,26 +29,22 @@ public:
   unsigned int     alive_time;
   unsigned int     dead_time;
 
-  short            *strip;
+  short            strip[NCHAN];
   unsigned short   clust_nr;
-  short            *cluster[__MAXCLUSTERNR__];     
+  short            cluster[MAXCLUSTERNR][1+2*NADJACENTCHANS+1];     
   
   void DumpStrip(void) const;
   void DumpEventIndex() const;
   bool IsZeroSuppressed() const;
   bool IsVirgin() const;
   bool IsStdCalibration() const;
-  inline unsigned short GetNAdjacentStrips(void) const {return __adj_strip;};
+  inline unsigned short GetNAdjacentStrips(void) const {return NADJACENTCHANS;};
 
   const int trigger(const int i, const int j) const;
   const int plane(const int i, const int j) const;
   const int lyso(const int i) const;
   const int veto (const int i, const int j) const;
 
-private:
-  unsigned short __adj_strip;
-  void SetVirginMode(void);
-  void SetZeroSuppressedMode(const unsigned short adj_strip);
 };
 
 

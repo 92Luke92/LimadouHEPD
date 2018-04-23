@@ -6,10 +6,9 @@
 
 LEvRec0::LEvRec0(){
 
-  strip = 0;
+  for(int i=0; i<NCHAN; ++i) strip[i]=0;
   clust_nr = 0;
-  for (int icl =0 ; icl< __MAXCLUSTERNR__; ++icl) cluster[icl] = 0;
-  __adj_strip = 0;
+  for (int icl =0 ; icl< MAXCLUSTERNR; ++icl) for(int ich=0; ich<NADJACENTCHANS; ++ich) cluster[icl][ich] = 0;
 
   runType = 0x0;
   boot_nr=0;
@@ -31,35 +30,6 @@ LEvRec0::LEvRec0(){
   for(int i=0; i<NRATEMETER; ++i) rate_meter[i]=0;
   alive_time=0;
   dead_time=0;
-}
-
-void LEvRec0::SetVirginMode(void) {
-  if(cluster[0] != 0) {
-    for (int icl =0 ; icl< __MAXCLUSTERNR__; ++icl) delete[] cluster[icl];
-    for (int icl =0 ; icl< __MAXCLUSTERNR__; ++icl) cluster[icl] = 0;
-    clust_nr = 0;
-    __adj_strip = 0;
-  }
-  if(!strip) {
-    strip = new short[NCHAN];
-    for(int i=0; i<NCHAN; ++i) strip[i]=0;
-  }
-  return;
-}
-
-void LEvRec0::SetZeroSuppressedMode(const unsigned short adj_strip) {
-  if(strip != 0) {
-    delete[] strip;
-  }
-  if(!cluster[0]) {
-    clust_nr = 0;
-    __adj_strip = adj_strip;
-    for(int icl=0; icl< __MAXCLUSTERNR__; ++icl) {
-      cluster[icl] = new short[2*adj_strip+2];
-      for(int ich=0; ich<2*adj_strip+2; ++ich) cluster[icl][ich] = 0;
-    }
-  }
-  return;
 }
 
 const int LEvRec0::trigger(const int i, const int j) const {
@@ -103,8 +73,9 @@ void LEvRec0::DumpStrip(void) const {
     std::cout << std::endl;
   } else if(IsZeroSuppressed()){
     for(int i=0; i<clust_nr; ++i) {
-      std::cout << cluster[i][0] << "      ";
-      for(int ich=1; ich<=2*__adj_strip+1; ++ich) std::cout << cluster[i][ich] << " ";
+      std::cout << cluster[i][0] << "   ";
+      for(int ich=1; ich<=2*NADJACENTCHANS+1; ++ich) std::cout << cluster[i][ich] << " ";
+      std::cout <<  "      ";
     }
     std::cout << std::endl;
   }
@@ -323,10 +294,4 @@ LEvRec0HVpmt::LEvRec0HVpmt(){
       HV_sil_mon[l] = 0;
    
    
-}
-
-LEvRec0::~LEvRec0(){
-  if(strip) delete[] strip;
-  for (int icl =0 ; icl< __MAXCLUSTERNR__; ++icl) if(cluster[icl]) delete[] cluster[icl];
-
 }

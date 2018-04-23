@@ -425,7 +425,7 @@ int LEvRec1File::GetMDEntries() {
 }
 
 void LEvRec1File::Write() {
-  if(fFile && WritableFLAG) fFile->Write(0, TObject::kOverwrite);
+  if(fFile && WritableFLAG) fFile->Write();//0, TObject::kOverwrite);
   return;
 }
 

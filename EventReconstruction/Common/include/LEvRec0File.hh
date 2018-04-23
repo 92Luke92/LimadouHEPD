@@ -60,7 +60,6 @@ private:
    int RunId;
    int BootNr;
    unsigned short runType;
-   unsigned short adj_strip;
 };
 
 
