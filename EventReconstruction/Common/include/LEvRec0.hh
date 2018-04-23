@@ -41,6 +41,7 @@ public:
   void DumpEventIndex() const;
   bool IsZeroSuppressed() const;
   bool IsVirgin() const;
+  bool IsStdCalibration() const;
   inline unsigned short GetNAdjacentStrips(void) const {return __adj_strip;};
 
   const int trigger(const int i, const int j) const;

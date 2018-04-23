@@ -53,7 +53,7 @@ LEvRec0File::LEvRec0File(const char *outFile, LEvRec0 &event, LEvRec0Md &metadat
     std::ostringstream branchspecs;
     branchspecs << "cluster[clust_nr][" << 2*metadata.silConfig.adj_strip+2 << "]/s";
     fTree->Branch(branchname.str().c_str(), &event.cluster[0][0], branchspecs.str().c_str());
-   } else if (event.IsVirgin()) {
+   } else if (event.IsVirgin() || event.IsStdCalibration()) {
     fTree->Branch("strip[4608]", &event.strip[0], "strip[4608]/s");
    }
 

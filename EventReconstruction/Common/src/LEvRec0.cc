@@ -98,7 +98,7 @@ const int LEvRec0::veto(const int i, const int j) const {
 
 void LEvRec0::DumpStrip(void) const {
   std::cout << "strip" << std::endl;
-  if(IsVirgin()) {
+  if(IsVirgin() || IsStdCalibration()) {
     for(int i=0; i<NCHAN;++i) std::cout << strip[i] << " ";
     std::cout << std::endl;
   } else if(IsZeroSuppressed()){
@@ -139,6 +139,14 @@ bool  LEvRec0::IsVirgin(void) const {
    return ret;
 }
 
+//0x1B STD CALIBRATION
+bool  LEvRec0::IsStdCalibration(void) const {
+   bool ret = false;
+   //std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
+   if (runType == 0x001B)
+      ret = true;
+   return ret;
+}
 
 
 LEvRec0Md::LEvRec0Md(){
@@ -319,6 +327,6 @@ LEvRec0HVpmt::LEvRec0HVpmt(){
 
 LEvRec0::~LEvRec0(){
   if(strip) delete[] strip;
-  for (int icl =0 ; icl< __MAXCLUSTERNR__; ++icl) delete[] cluster[icl];
+  for (int icl =0 ; icl< __MAXCLUSTERNR__; ++icl) if(cluster[icl]) delete[] cluster[icl];
 
 }
