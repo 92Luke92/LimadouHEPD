@@ -2,6 +2,7 @@
 #include "LL1Selector.hh"
 #include "detector_const.hh"
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <string>
 
