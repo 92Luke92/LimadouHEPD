@@ -243,7 +243,7 @@ LTrackerSignal GetTrackerSignalCompressed(const LEvRec0 lev0, const LCalibration
     unsigned short nAdjStrip = lev0.GetNAdjacentStrips();
     if(side == 0) { // p-side
       for(int i=0; i<2*nAdjStrip+1; ++i) {
-        int deltaseed = -2+i;
+        int deltaseed = -nAdjStrip+i;
         int index = schan+deltaseed;
         if(index<0 || index>SIDE_CHAN-1) {
           continue; // channels not physically connected
@@ -253,7 +253,7 @@ LTrackerSignal GetTrackerSignalCompressed(const LEvRec0 lev0, const LCalibration
       }
     } else {      // n-side
       for(int i=0; i<2*nAdjStrip+1; ++i) {
-        int deltaseed = -2+i;
+        int deltaseed = -nAdjStrip+i;
         int index = schan+deltaseed;
         // account for degeneracy
         if(index<0) deltaseed+=SIDE_CHAN;
