@@ -118,24 +118,22 @@ void LReco01Manager::Run(void) {
   int startEvent = (skipEvents==-1 ? 0 : skipEvents);
   for(int i0=startEvent; i0<nentries; ++i0){
     if(i0%PRINTOUTEVENTS==0) {
-      std::cout << __LRECO01MANAGER__
-		<<"event " << i0 << "/" <<nentries << std::endl;
+      std::cout << __LRECO01MANAGER__ <<"event " << i0 << "/" <<nentries << std::endl;
     }
     inFile->GetEntry(i0);
-    
+
     LEvRec1 l1ev = L0ToL1(lev0, cal);
-    outFile->Fill(L0ToL1(lev0, cal));
+    outFile->Fill(l1ev);
     ++fevtcounter;
     if(maxFileEvents!=-1 && fevtcounter>maxFileEvents-1) break;
-
-    if(i0 == 0 || i0 == 1)
-    {
-        inFile->GetMDEntry(i0);
-	l1ev.lev0MD = lev0MD;
-
-	outFile->SetMDTreeAddress(l1ev);
-	outFile->FillMD();
-    }
+  }
+  // metadata
+  for(int i0 = 0; i0 <2; ++i0) {
+    inFile->GetMDEntry(i0);
+    LEvRec1 l1ev;
+    l1ev.lev0MD = lev0MD;
+    outFile->SetMDTreeAddress(l1ev);
+    outFile->FillMD();
   }
 
   std::cout << __LRECO01MANAGER__ << std::endl;
@@ -214,10 +212,10 @@ LEvRec1 LReco01Manager::L0ToL1(const LEvRec0 lev0IN, const LCalibration *calIN) 
   result.alive_time = lev0IN.alive_time;
   result.dead_time = lev0IN.dead_time;
   
-  if(lev0IN.runType==0x4E) {
+  if(lev0IN.IsVirgin()) {
     result.tracker=GetTrackerSignal(lev0IN, *calIN);
   }
-  else if(lev0IN.runType==0x55) {
+  else if(lev0IN.IsZeroSuppressed()) {
     result.tracker=GetTrackerSignalCompressed(lev0IN, *calIN);
   }
   else {

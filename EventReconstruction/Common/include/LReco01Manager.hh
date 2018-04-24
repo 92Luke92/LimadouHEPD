@@ -1,7 +1,7 @@
 #ifndef __LRECO01MANAGER__
 #define __LRECO01MANAGER__ "LReco01Manager   ########## "
 
-#include <string>
+#include <string.h>
 #include "LEvRec0File.hh"
 #include "LEvRec1File.hh"
 #include "LCalibration.hh"

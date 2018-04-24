@@ -5,8 +5,11 @@
 #include <iostream>
 
 LEvRec0::LEvRec0(){
+
   for(int i=0; i<NCHAN; ++i) strip[i]=0;
-  
+  clust_nr = 0;
+  for (int icl =0 ; icl< MAXCLUSTERNR; ++icl) for(int ich=0; ich<NADJACENTCHANS; ++ich) cluster[icl][ich] = 0;
+
   runType = 0x0;
   boot_nr=0;
   run_id=0;
@@ -63,8 +66,17 @@ const int LEvRec0::veto(const int i, const int j) const {
 
 void LEvRec0::DumpStrip(void) const {
   std::cout << "strip" << std::endl;
-  for(int i=0; i<NCHAN;++i) std::cout << strip[i] << " ";
-  std::cout << std::endl;
+  if(IsVirgin() || IsStdCalibration()) {
+    for(int i=0; i<NCHAN;++i) std::cout << strip[i] << " ";
+    std::cout << std::endl;
+  } else if(IsZeroSuppressed()){
+    for(int i=0; i<clust_nr; ++i) {
+      std::cout << cluster[i][0] << "   ";
+      for(int ich=1; ich<=2*NADJACENTCHANS+1; ++ich) std::cout << cluster[i][ich] << " ";
+      std::cout <<  "      ";
+    }
+    std::cout << std::endl;
+  }
   return;
 }
 
@@ -96,6 +108,14 @@ bool  LEvRec0::IsVirgin(void) const {
    return ret;
 }
 
+//0x1B STD CALIBRATION
+bool  LEvRec0::IsStdCalibration(void) const {
+   bool ret = false;
+   //std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
+   if (runType == 0x001B)
+      ret = true;
+   return ret;
+}
 
 
 LEvRec0Md::LEvRec0Md(){

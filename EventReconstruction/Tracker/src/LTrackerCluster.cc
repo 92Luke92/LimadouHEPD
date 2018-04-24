@@ -87,12 +87,54 @@ LTrackerCluster::LTrackerCluster(){
   etaSN=-999.;  
 }
 
-LTrackerCluster::LTrackerCluster(const int inpSeed, const double *inpCont, const double *inpSigma){
+void LTrackerCluster::LTrackerCluster_ASOF20180423(const int inpSeed, const double *inpCont, const double *inpSigma){
   if(inpSeed<0 || inpSeed>NCHAN) {
     LTrackerCluster();
     std::cerr << "LTrackerCluster::LTrackerCluster(int inpSeed, double *inpCont, double *inpSigma)   error:"
 	     << " inpSeed=" << inpSeed << ". Default constructor used."
 	     << std::endl;
+    return;
+  }
+
+  seed=inpSeed;
+  int side = ChanToSide(seed);
+  int schan = ChanToSideChan(seed);
+  if(side == 0) { // p-side
+    for(int i=0; i<CLUSTERCHANNELS; ++i) {
+      int index = schan-2+i;
+      if(index<0 || index>SIDE_CHAN-1) {
+        count[i]=-999.;
+        sigma[i]=-999.;
+        sn[i]=-999.;
+      } else {
+        count[i]=inpCont[inpSeed-CLUSTERCHANNELS/2+i];
+        sigma[i]=inpSigma[inpSeed-CLUSTERCHANNELS/2+i];
+        sn[i]=count[i]/sigma[i];
+      }
+    }
+  } else {      // n-side
+    for(int i=0; i<CLUSTERCHANNELS; ++i) {
+      int index = schan-2+i;
+      // account for degeneracy
+      if(index<0) index+=SIDE_CHAN;
+      else if(index>SIDE_CHAN-1) index-=SIDE_CHAN;
+      // always fill
+      count[i]=inpCont[inpSeed+index];
+      sigma[i]=inpSigma[inpSeed+index];
+      sn[i]=count[i]/sigma[i];
+    }
+  }
+
+  ComputeEta();
+  return;
+}
+
+LTrackerCluster::LTrackerCluster(const int inpSeed, const double *inpCont, const double *inpSigma){
+  if(inpSeed<0 || inpSeed>NCHAN) {
+    LTrackerCluster();
+    std::cerr << "LTrackerCluster::LTrackerCluster(int inpSeed, double *inpCont, double *inpSigma)   error:"
+       << " inpSeed=" << inpSeed << ". Default constructor used."
+       << std::endl;
     return;
   }
 

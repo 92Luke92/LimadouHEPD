@@ -43,7 +43,7 @@ public:
   inline int GetRunId(){return RunId;};
   inline int GetBootNr(){return BootNr;};
   inline unsigned short GetRunType(){return runType;};
-  inline bool IsZeroSuppressed(){return GetRunType()==0x36;};
+  inline bool IsZeroSuppressed(){return (GetRunType()==0x36 || GetRunType()==0x0055);};
   inline bool IsVirgin(){return GetRunType()==0x4e;};
   inline bool IsMixed(){return GetRunType()==0x63;};
   inline const char* GetName(){return fFile->GetName();};

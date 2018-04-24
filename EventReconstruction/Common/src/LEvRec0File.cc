@@ -1,4 +1,5 @@
 #include "LEvRec0File.hh"
+#include "TBranch.h"
 #include <iostream>
 #include <sstream>
 
@@ -6,6 +7,8 @@ LEvRec0File::LEvRec0File() {
   fFile=0;
   fTree=0;
   Tmd=0;
+  TConf=0;
+  THVpmt=0;
   RunId=-999;
   BootNr=-999;
   runType=0;
@@ -45,8 +48,14 @@ LEvRec0File::LEvRec0File(const char *outFile, LEvRec0 &event, LEvRec0Md &metadat
    fTree->Branch("dead_time", &event.dead_time, "dead_time/i");
 
    // silicon data
-   fTree->Branch("strip[4608]", &event.strip[0], "strip[4608]/s");
-
+   if(event.IsZeroSuppressed()) {
+    fTree->Branch("clust_nr", &event.clust_nr, "clust_nr/s");
+    std::ostringstream branchspecs;
+    branchspecs << "cluster[clust_nr][" << 2*metadata.silConfig.adj_strip+2 << "]/S";
+    fTree->Branch("cluster", &event.cluster[0][0], branchspecs.str().c_str());
+    } else if (event.IsVirgin() || event.IsStdCalibration()) {
+    fTree->Branch("strip[4608]", &event.strip[0], "strip[4608]/s");
+   }
 
    // meta data Tree
    Tmd->Branch("boot_nr", &metadata.boot_nr, "boot_nr/s");
@@ -120,16 +129,20 @@ void LEvRec0File::Open(const char *inpFile) {
   unsigned short run_type; 
   Tmd->SetBranchAddress("run_type",&run_type);
   Tmd->GetEntry(0);
+  
   RunId = static_cast<int>(run_id);
   BootNr = static_cast<int>(boot_nr);
   runType = run_type;
-  
+ 
   return;
 }
 
 void LEvRec0File::Reset() {
   if(fFile) {
     fTree=0;
+    Tmd=0;
+    TConf=0;
+    THVpmt=0;
     fFile->Close();
   }
   RunId=-999;
@@ -173,9 +186,15 @@ int LEvRec0File::SetTheEventPointer(LEvRec0 &ev) {
   fTree->SetBranchAddress("trigger_flag[64]", &ev.trigger_flag);
   fTree->SetBranchAddress("alive_time", &ev.alive_time);
   fTree->SetBranchAddress("dead_time", &ev.dead_time);
-  fTree->SetBranchAddress("strip[4608]",&ev.strip);
-  
-  fTree->SetBranchStatus("*",kTRUE);
+  if(IsZeroSuppressed()) {
+    fTree->SetBranchAddress("clust_nr", &ev.clust_nr);
+    TBranch *branch = fTree->GetBranch("cluster");
+    branch->SetAddress(ev.cluster);
+  } else {
+    TBranch *branch = fTree->GetBranch("strip[4608]");
+    branch->SetAddress(ev.strip);
+  }
+  fTree->SetBranchStatus("*",true);
   
   return 0;
 }
