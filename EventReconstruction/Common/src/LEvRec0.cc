@@ -6,9 +6,12 @@
 
 LEvRec0::LEvRec0(){
 
-  for(int i=0; i<NCHAN; ++i) strip[i]=0;
+  for(int i=0; i<NCHAN; ++i)
+     strip[i]=0;
   clust_nr = 0;
-  for (int icl =0 ; icl< MAXCLUSTERNR; ++icl) for(int ich=0; ich<NADJACENTCHANS; ++ich) cluster[icl][ich] = 0;
+  for (int icl =0 ; icl< MAXCLUSTERNR; ++icl)
+     for(int ich=0; ich<NADJACENTCHANS; ++ich)
+	cluster[icl][ich] = 0;
 
   runType = 0x0;
   boot_nr=0;
@@ -27,7 +30,8 @@ LEvRec0::LEvRec0(){
   
   PMTBoard_trigger_counter = 0;
   
-  for(int i=0; i<NRATEMETER; ++i) rate_meter[i]=0;
+  for(int i=0; i<NRATEMETER; ++i)
+     rate_meter[i]=0;
   alive_time=0;
   dead_time=0;
 }

@@ -30,16 +30,19 @@ public:
   unsigned int     dead_time;
 
   short            strip[NCHAN];
+  unsigned short   clust_nr;
+  short            cluster[MAXCLUSTERNR][1+2*NADJACENTCHANS+1];
    
   void  DumpStrip(void);
   void  DumpEventIndex();
-  bool   IsComp();
-  bool   IsVirgin();
-  
+  bool  IsComp();
+  bool  IsVirgin();
+  bool  IsStdCalibration() const;
+
 };
 
 
-
+#pragma pack(push, 1)
 struct silicon_config_t
 {  
    bool               ladder_on[3]; 

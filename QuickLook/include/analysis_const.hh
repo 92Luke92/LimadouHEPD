@@ -19,4 +19,7 @@ const double GAUSSTHRESHOLD=0.0027;
 const double GAUSINDEX_CUT=3.;
 const double SIGMAHOT=20.;
 
+const unsigned short MAXCLUSTERNR = 300;
+const unsigned short NADJACENTCHANS =2;
+
 #endif

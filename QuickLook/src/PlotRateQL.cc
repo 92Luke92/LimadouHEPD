@@ -492,10 +492,6 @@ void EventRateL0(TString rootname, TString outPath){
 	gStyle->SetOptStat(0);
 	h_events_orbit->Draw("SAME, COLZ");
 	crate3->Print(outname);
-	TFile *filetest = new TFile("filetest.root","recreate");
-        crate3->Write();
-        filetest->Close();
-
  	}//end if Boot_evEntries[nb]>0
 
 }//end loop nb
