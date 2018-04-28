@@ -11,4 +11,4 @@ std::string	OUTFOLD	  outdir		// output dir
 int		SKIPEVTS  -1			// events to skip
 int		MAXFEVTS  100000		// max number of events to process (-1 is all)
 
-bool		VERBOSE	  1			// set the verbosity level: 0 default (only important messages), 1 intermediate (not event-wise), 2 event-wise verbosity
+int		VERBOSE	  1			// set the verbosity level: 0 default (only important messages), 1 intermediate (not event-wise), 2 event-wise verbosity
