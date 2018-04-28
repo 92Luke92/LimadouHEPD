@@ -3,10 +3,12 @@
 
 std::string 	CALBFILE  test.cal		// calibration file
 std::string	INPFILE	  inputFile		// input file
+std::string		EQHGFILE	eqHG.txt 	// High gain equalization file
+std::string		EQLGFILE	eqLG.txt 	// Low  gain equalization file
 
 std::string	OUTFOLD	  outdir		// output dir
 
 int		SKIPEVTS  -1			// events to skip
 int		MAXFEVTS  100000		// max number of events to process (-1 is all)
 
-bool		VERBOSE	  true			// set the verbosity level
+bool		VERBOSE	  1			// set the verbosity level: 0 default (only important messages), 1 intermediate (not event-wise), 2 event-wise verbosity

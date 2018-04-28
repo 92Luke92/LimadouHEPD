@@ -33,7 +33,15 @@ public:
   void DumpMD(int entry) const;
   void FillRandom(void);
   void CopyFromLEvRec1Stream(const LEvRec1Stream evstr);
- 
+
+ // Analysis
+  bool DiscontinousSignal(const double threshold_sn) const;
+  int GetLastHitPlane(const double threshold_sn) const;
+  double GetMSPlaneToMSBarRatio(const double threshold_sn) const;
+  double GetScintCounts(const double threshold_sn) const;
+  double GetTriggerCounts(const double threshold_sn) const;
+
+  unsigned short GetLastHitPlane(const double threshold_sn=SNTHRESHOLDFORCALOANALYSIS);
 
   unsigned short   runType;
   unsigned short   boot_nr;

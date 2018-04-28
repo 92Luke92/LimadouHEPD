@@ -37,4 +37,7 @@ const double ETAMIN=-0.2;
 const double ETAMAX=1.2;
 const double ETARANGE=ETAMAX-ETAMIN;
 
+// CALO
+const double SNTHRESHOLDFORCALOANALYSIS=10.;
+
 #endif

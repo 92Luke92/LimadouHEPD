@@ -21,7 +21,8 @@ public:
   inline double GetCountsOfMST(const bool isHG, const double threshold = THRESHOLD) const {return GetCountsOfMSU(isHG,threshold);};
   inline double GetCountsOf2ndMST(const bool isHG, const double threshold = THRESHOLD) const {return GetCountsOf2ndMSU(isHG,threshold);};
   bool SignalSharedAmongBars(const bool isHG, const double threshold = THRESHOLD) const;
-  
+  double GetSN(const bool isHG, const double threshold) const;
+  double GetCounts(const bool isHG, const double threshold) const;
 };
 
 

@@ -1,4 +1,5 @@
 #include "LEvRec1.hh"
+#include "LReco01Manager.hh"
 #include <iostream>
 
 LEvRec1::LEvRec1() {
@@ -198,10 +199,12 @@ void LEvRec1Stream::CopyFromLEvRec1(const LEvRec1 event) {
   Reset();
   nClusters = event.GetNOfTrackerClusters();
   if(nClusters>MAXNCLUSTERS) {
-    std::cerr << "LEvRec1Stream::CopyFromLEvRec1 error! Event containing "
+    if(LReco01Manager::GetInstance().verboseFLAG>=2) {
+      std::cerr << "LEvRec1Stream::CopyFromLEvRec1 error! Event containing "
 	      << nClusters << " clusters passed as input. I copy only the first "
 	      << "MAXNCLUSTERS=" << MAXNCLUSTERS << std::endl;
-    std::cerr << "nClusters too is set to this number." << std::endl;
+      std::cerr << "nClusters too is set to this number." << std::endl;
+    }
     nClusters=MAXNCLUSTERS;
     // Warning! This approach relies on the cls vector having decending order in SN.
     // But it does not distinguish the single ladders! You may have the situation when
@@ -383,4 +386,36 @@ void LEvRec1Stream::Reset() {
 
 LEvRec1Stream::~LEvRec1Stream() {
   Reset();
+}
+
+bool LEvRec1::DiscontinousSignal(const double threshold_sn) const {
+  int lastPlane = GetLastHitPlane(threshold_sn);
+  bool isHG=true;
+  for(int i = 0; i<lastPlane; ++i ) if(scint.GetSNOfUnit(i, isHG)<threshold_sn) return false;
+  return true;
+}
+
+int LEvRec1::GetLastHitPlane(const double threshold_sn) const {
+  int lastPlane=-999;
+  bool isHG=true;
+  for(int i=0; i<NSCINTPLANES; ++i) if(scint.GetSNOfUnit(i, isHG)<threshold_sn) lastPlane = i;
+  return lastPlane;
+}
+
+double LEvRec1::GetMSPlaneToMSBarRatio(const double threshold_sn) const {
+  bool isHG=true;
+  double result = scint.GetCountsOfMSU(isHG,threshold_sn)/trig.GetCountsOfMSU(isHG,threshold_sn);
+  return result;
+}
+
+double LEvRec1::GetScintCounts(const double threshold_sn) const {
+  bool isHG = true;
+  double result = scint.GetCounts(isHG, threshold_sn);
+  return result;
+}
+
+double LEvRec1::GetTriggerCounts(const double threshold_sn) const {
+  bool isHG = true;
+  if(trig.GetSN(isHG,threshold_sn)<threshold_sn) return -999.; // signal shared allowed
+  else return trig.GetCounts(isHG, threshold_sn);
 }

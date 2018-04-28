@@ -2,7 +2,7 @@
 #define __LCALOSIGNAL__ 1
 
 #include <cstddef>
-const double THRESHOLD=5.; // s/n ratio
+const double THRESHOLD=10.; // s/n ratio
 
 class LCaloSignal {
 public:
@@ -28,11 +28,11 @@ public:
   int GetThe2ndMostSignificantUnit(const bool isHG, const double threshold = THRESHOLD) const;
   double GetSNOfMSU(const bool isHG, const double threshold = THRESHOLD) const;
   double GetSNOf2ndMSU(const bool isHG, const double threshold = THRESHOLD) const;
-  int GetCountsOfMSU(const bool isHG, const double threshold = THRESHOLD) const;
-  int GetCountsOf2ndMSU(const bool isHG, const double threshold = THRESHOLD) const;
+  double GetCountsOfMSU(const bool isHG, const double threshold = THRESHOLD) const;
+  double GetCountsOf2ndMSU(const bool isHG, const double threshold = THRESHOLD) const;
   double GetSNOfUnit(const int unit, const bool isHG) const;
-  int GetCountsOfUnit(const int unit, const bool isHG) const;
-  double GetCounts(const bool isHG) const;
+  double GetCountsOfUnit(const int unit, const bool isHG) const;
+  double GetCounts(const bool isHG, const double threshold = THRESHOLD) const;
   
 protected:
   void CreateContainers(void);

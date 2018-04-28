@@ -3,6 +3,7 @@
 #include <iostream>
 #include <random>
 #include <chrono>
+#include <math.h>
 
 
 LCaloSignal::LCaloSignal() {
@@ -195,12 +196,12 @@ void LCaloSignal::FillRandom(void) {
 
 double LCaloSignal::GetSNOfUnit(const int unit, const bool isHG) const {
   double result=0;
-  for(int ipmt=0; ipmt<npmts; ++ipmt) result += (isHG ? sn_hg[unit][ipmt] : sn_lg[unit][ipmt]);
-  return result;  
+  for(int ipmt=0; ipmt<npmts; ++ipmt) result += (isHG ? sn_hg[unit][ipmt]*sn_hg[unit][ipmt] : sn_lg[unit][ipmt]*sn_lg[unit][ipmt]);
+  return sqrt(result);  
 }
 
-int LCaloSignal::GetCountsOfUnit(const int unit, const bool isHG) const {
-  int result=0;
+double LCaloSignal::GetCountsOfUnit(const int unit, const bool isHG) const {
+  double result=0.;
   for(int ipmt=0; ipmt<npmts; ++ipmt) result += (isHG ? cont_hg[unit][ipmt] : cont_lg[unit][ipmt]);
   return result;  
 }
@@ -267,9 +268,9 @@ double LCaloSignal::GetSNOf2ndMSU(const bool isHG, const double threshold) const
   
   return result;
 }
-int LCaloSignal::GetCountsOfMSU(const bool isHG, const double threshold) const {
+double LCaloSignal::GetCountsOfMSU(const bool isHG, const double threshold) const {
   int msu=GetTheMostSignificantUnit(isHG, threshold);
-  int result=-999;
+  double result=-999;
   if(msu!=-999) {
     result=GetCountsOfUnit(msu,isHG);
   } 
@@ -277,9 +278,9 @@ int LCaloSignal::GetCountsOfMSU(const bool isHG, const double threshold) const {
   return result;
 }
 
-int LCaloSignal::GetCountsOf2ndMSU(const bool isHG, const double threshold) const {
+double LCaloSignal::GetCountsOf2ndMSU(const bool isHG, const double threshold) const {
   int msu2=GetThe2ndMostSignificantUnit(isHG, threshold);
-  int result=-999;
+  double result=-999;
   if(msu2!=-999){
     result=GetCountsOfUnit(msu2,isHG);
   } 
@@ -287,11 +288,14 @@ int LCaloSignal::GetCountsOf2ndMSU(const bool isHG, const double threshold) cons
   return result;
 }
 
-double LCaloSignal::GetCounts(const bool isHG) const {
+double LCaloSignal::GetCounts(const bool isHG, const double threshold_sn) const {
   int result=0.;
   for(int unit=0; unit<nunits; ++unit)
-    for(int ipmt=0; ipmt<npmts; ++ipmt)
+    if(GetSNOfUnit(unit, isHG)>threshold_sn) {
+      for(int ipmt=0; ipmt<npmts; ++ipmt) {
       result += (isHG ? cont_hg[unit][ipmt] : cont_lg[unit][ipmt]);
+    }
+  }
   return result;  
 }
 
