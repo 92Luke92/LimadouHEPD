@@ -120,7 +120,7 @@ void EqualizeCaloSingleGain(LEvRec1 &lev1, const bool isHG, const LCaloEqualizat
   int OFFSET = 0; // PMT index offset for this kind of calo  
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-     int index = OFFSET+iu+32*ipmt; // even ipmt is east, odd ipmt is west
+     int index = OFFSET+iu*npmts+ipmt; // even ipmt is east, odd ipmt is west
       if(isHG )trigMPV.cont_hg[iu][ipmt] = eq.GetMPVFactor(index);
       else trigMPV.cont_lg[iu][ipmt] = eq.GetMPVFactor(index);
      }
@@ -129,10 +129,10 @@ void EqualizeCaloSingleGain(LEvRec1 &lev1, const bool isHG, const LCaloEqualizat
   LScintillatorSignal scintMPV;
   nunits = scintMPV.GetNUnits();
   npmts = scintMPV.GetNPMTs();
-  OFFSET = NTRIGSCINT; // PMT index offset for this kind of calo  
+  OFFSET = NTRIGSCINT*2; // PMT index offset for this kind of calo  
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-     int index = OFFSET+iu+32*ipmt; // even ipmt is east, odd ipmt is west
+     int index = OFFSET+iu*npmts+ipmt; // even ipmt is east, odd ipmt is west
       if(isHG )scintMPV.cont_hg[iu][ipmt] = eq.GetMPVFactor(index);
       else scintMPV.cont_lg[iu][ipmt] = eq.GetMPVFactor(index);
      }
@@ -141,10 +141,10 @@ void EqualizeCaloSingleGain(LEvRec1 &lev1, const bool isHG, const LCaloEqualizat
   LVetoSignal vetoMPV;
   nunits = vetoMPV.GetNUnits();
   npmts = vetoMPV.GetNPMTs();
-  OFFSET = NTRIGSCINT+NSCINTPLANES; // PMT index offset for this kind of calo  
+  OFFSET = NTRIGSCINT*2+NSCINTPLANES*2; // PMT index offset for this kind of calo  
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-     int index = OFFSET+iu+32*ipmt; // even ipmt is east, odd ipmt is west
+     int index = OFFSET+iu*npmts+ipmt; // even ipmt is east, odd ipmt is west
       if(isHG )vetoMPV.cont_hg[iu][ipmt] = eq.GetMPVFactor(index);
       else vetoMPV.cont_lg[iu][ipmt] = eq.GetMPVFactor(index);
      }
@@ -153,10 +153,10 @@ void EqualizeCaloSingleGain(LEvRec1 &lev1, const bool isHG, const LCaloEqualizat
   LLysoSignal lysoMPV;
   nunits = lysoMPV.GetNUnits();
   npmts = lysoMPV.GetNPMTs();
-  OFFSET = NTRIGSCINT+NSCINTPLANES+NVETOSCINT; // PMT index offset for this kind of calo  
+  OFFSET = NTRIGSCINT*2+NSCINTPLANES*2+NVETOSCINT*2; // PMT index offset for this kind of calo  
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-     int index = (iu<5 ? OFFSET+iu+32*ipmt : OFFSET+(iu-5)+32); //9-7-1-8-5   and 3-2-6-4
+     int index = OFFSET+iu*npmts+ipmt;
       if(isHG )lysoMPV.cont_hg[iu][ipmt] = eq.GetMPVFactor(index);
       else lysoMPV.cont_lg[iu][ipmt] = eq.GetMPVFactor(index);
      }
@@ -164,18 +164,24 @@ void EqualizeCaloSingleGain(LEvRec1 &lev1, const bool isHG, const LCaloEqualizat
 
    
   // ++++++++++++++++++++ First approach
-  // ++++++++++++++++++++ equalize all PMTs to Plane 1 nw
-  const double refMPV = (isHG ? scintMPV.cont_hg[1][1] : scintMPV.cont_lg[1][1]);
+  // ++++++++++++++++++++ equalize all energy PMTs to Plane 1 nw
+  //const double refMPV10mm = (isHG ? scintMPV.cont_hg[1][1] : scintMPV.cont_lg[1][1]);
+  // ++++++++++++++++++++ equalize all trigger and veto PMTs to Trigger bar 3 counter 1
+  //const double refMPV5mm = (isHG ? trigMPV.cont_hg[2][1] : trigMPV.cont_lg[2][1]);
+  // ++++++++++++++++++++ equalize all lyso PMTs to central lyso
+  //const double refMPVlyso = (isHG ? lysoMPV.cont_hg[4][0] : lysoMPV.cont_lg[4][0]);
   // ++++++++++++++++++++ Second approach
   // ++++++++++++++++++++ equalize all PMTs to MIP=100
-  // const double refMPV = 100.;
+  const double refMPV10mm = 200.;
+  const double refMPV5mm = 100.;
+  const double refMPVlyso = 200.;
 
   nunits = trigMPV.GetNUnits();
   npmts = trigMPV.GetNPMTs();
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-      if(isHG) lev1.trig.cont_hg[iu][ipmt] /= (trigMPV.cont_hg[iu][ipmt]*refMPV);
-      else lev1.trig.cont_lg[iu][ipmt] /= (trigMPV.cont_lg[iu][ipmt]*refMPV);
+      if(isHG) lev1.trig.cont_hg[iu][ipmt] /= (trigMPV.cont_hg[iu][ipmt]*refMPV5mm);
+      else lev1.trig.cont_lg[iu][ipmt] /= (trigMPV.cont_lg[iu][ipmt]*refMPV5mm);
     }
   }
 
@@ -183,8 +189,8 @@ void EqualizeCaloSingleGain(LEvRec1 &lev1, const bool isHG, const LCaloEqualizat
   npmts = scintMPV.GetNPMTs();
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-      if(isHG) lev1.scint.cont_hg[iu][ipmt] /= (scintMPV.cont_hg[iu][ipmt]*refMPV);
-      else lev1.scint.cont_lg[iu][ipmt] /= (scintMPV.cont_lg[iu][ipmt]*refMPV);
+      if(isHG) lev1.scint.cont_hg[iu][ipmt] /= (scintMPV.cont_hg[iu][ipmt]*refMPV10mm);
+      else lev1.scint.cont_lg[iu][ipmt] /= (scintMPV.cont_lg[iu][ipmt]*refMPV10mm);
     }
   }
 
@@ -192,8 +198,8 @@ void EqualizeCaloSingleGain(LEvRec1 &lev1, const bool isHG, const LCaloEqualizat
   npmts = vetoMPV.GetNPMTs();
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-      if(isHG) lev1.veto.cont_hg[iu][ipmt] /= (vetoMPV.cont_hg[iu][ipmt]*refMPV);
-      else lev1.veto.cont_lg[iu][ipmt] /= (vetoMPV.cont_lg[iu][ipmt]*refMPV);
+      if(isHG) lev1.veto.cont_hg[iu][ipmt] /= (vetoMPV.cont_hg[iu][ipmt]*refMPV5mm);
+      else lev1.veto.cont_lg[iu][ipmt] /= (vetoMPV.cont_lg[iu][ipmt]*refMPV5mm);
     }
   }
 
@@ -201,8 +207,8 @@ void EqualizeCaloSingleGain(LEvRec1 &lev1, const bool isHG, const LCaloEqualizat
   npmts = lysoMPV.GetNPMTs();
   for(int iu=0; iu<nunits; ++iu) {
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
-      if(isHG) lev1.lyso.cont_hg[iu][ipmt] /= (lysoMPV.cont_hg[iu][ipmt]*refMPV);
-      else lev1.lyso.cont_lg[iu][ipmt] /= (lysoMPV.cont_lg[iu][ipmt]*refMPV);
+      if(isHG) lev1.lyso.cont_hg[iu][ipmt] /= (lysoMPV.cont_hg[iu][ipmt]*refMPVlyso);
+      else lev1.lyso.cont_lg[iu][ipmt] /= (lysoMPV.cont_lg[iu][ipmt]*refMPVlyso);
     }
   }
 
