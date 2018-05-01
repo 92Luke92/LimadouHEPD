@@ -48,7 +48,7 @@ LCaloEqualization* LCaloEqualization::Read(const char *fileIn) {
   if(fin.good()) {
     result = new LCaloEqualization();
     double eqMPV, eqSigma;
-    for (int i = 0; i < NPMT-1; i++) {
+    for (int i = 0; i < NPMT; i++) {
       fin >> eqMPV >> eqSigma; 
       result->addFactors(eqMPV, eqSigma); 
     }
