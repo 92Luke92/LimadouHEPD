@@ -21,7 +21,6 @@
 #include <TTree.h>
 #include <TFile.h>
 #include <TROOT.h>
-
 #include <iostream>
 #include <TH1.h>
 #include <TH2.h>
@@ -42,11 +41,13 @@
 #include "LEvRec0.hh"
 
 #define INTEG_TIME 10000//integration time in ms
-#define VERBOSE true
-#define DEBUG false	
+#define VERBOSE false
+#define DEBUG false
+#define PRINT_METADATA true
+	
 using namespace std;
 
-TCanvas *earth();
+TCanvas *Earth(TString name);
 
 const TString Get_VetoConf_Name(const int V);
 const TString Get_TriggerMask_Name(const int TM);
@@ -225,6 +226,8 @@ void EventRateL0(TString rootname, TString outPath){
  int Boot_evEntries[NN_boot];
 
   for (int nb=0; nb< NN_boot; nb++) 	Boot_evEntries[nb]=0;
+  if (PRINT_METADATA){
+
   for (int ir=0; ir<N_Tmd; ir++){
 	if (ir%2==0){
 		cRun= new TCanvas("Run");
@@ -244,6 +247,7 @@ void EventRateL0(TString rootname, TString outPath){
 	cRun->cd();
 	pt->Draw();
 	if (ir%2!=0 || ir==N_Tmd-1) cRun->Print(outname);
+}
 }
 /////////////////////////////////////GRAPH INITIALIZATION *************************
   for (int nb=0; nb< NN_boot; nb++){
@@ -281,10 +285,16 @@ void EventRateL0(TString rootname, TString outPath){
 		average_rate[ig]= new TGraph();
 		average_rate2[ig]= new TGraph();
  	}
-        TH2D *h_events_orbit;
-        const char *h2_name;
-        h2_name=Form("BootN_%d_Orbit_events", BOOT_temp[nb]);
-        h_events_orbit=new TH2D(h2_name, h2_name,361,-180,+180, 181, -90, +90);
+        TH2D *h_events_orbitR;
+        const char *h2_nameR;
+        h2_nameR=Form("BootN_%d_Orbit_EventRate", BOOT_temp[nb]);
+        h_events_orbitR=new TH2D(h2_nameR, h2_nameR,361,-180,+180, 181, -90, +90);
+
+        TH2D *h_events_orbitN;
+        const char *h2_nameN;
+        h2_nameN=Form("BootN_%d_Orbit_eventsN", BOOT_temp[nb]);
+        h_events_orbitN=new TH2D(h2_nameN, h2_nameN,361,-180,+180, 181, -90, +90);
+
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -307,6 +317,7 @@ void EventRateL0(TString rootname, TString outPath){
         	File.GetEntry(ie);
         	for (int ir=0; ir<N_Tmd; ir++){
 			 if (Tmd_BootN[ir]==BOOT_temp[nb] && cev.run_id==Tmd_runN[ir] && cev.boot_nr==Tmd_BootN[ir]){
+				 Boot_evEntries[nb]++;
 		  		event_time = CPU_run_time[ir][0]+ cev.hepd_time/1e+2; //unit = ms
 				if ( Tmd_run_orbit[ir][0]!=0xAA  ) {//if no broadcast no latitude-longitude
 					lat_dt= (Tmd_run_lat[ir][1]- Tmd_run_lat[ir][0])/(CPU_run_time[ir][1]-CPU_run_time[ir][0]);
@@ -321,7 +332,6 @@ void EventRateL0(TString rootname, TString outPath){
 					event_long = Tmd_run_long[ir][0]+(event_time-CPU_run_time[ir][0])*long_dt;
 					if (event_long>=180.) event_long-=360.;
 					if (event_long<-180.) event_long+=360.;
-					h_events_orbit->Fill(event_long, event_lat);
 				}
       				if (ie == 0)    {
 					time_flag = CPU_run_time[ir][0]+ INTEG_TIME;
@@ -347,6 +357,9 @@ void EventRateL0(TString rootname, TString outPath){
                                                 	if (event_long>=180.) event_long-=360.;
                                                 	if (event_long<-180.) event_long+=360.;
                                                 	event_lat=Tmd_run_lat[ir][0]+(time_flag-CPU_run_time[ir][0])*lat_dt;
+                                                        h_events_orbitR->Fill(event_long,event_lat, numevent_int/((time_flag-time_flag_old)/1.e3));
+                                                        h_events_orbitN->Fill(event_long,event_lat, 1);
+
  							average_rate2[zone]->SetPoint(average_rate2[zone]->GetN(), event_lat, numevent_int/((time_flag-time_flag_old)/1.e3));
 						}
 					}
@@ -374,13 +387,18 @@ void EventRateL0(TString rootname, TString outPath){
                                                 if (event_long>=180.) event_long-=360.;
                                                 if (event_long<-180.) event_long+=360.;
                                                 event_lat=Tmd_run_lat[ir][0]+(time_flag-CPU_run_time[ir][0])*lat_dt;
+                                                h_events_orbitR->Fill(event_long,event_lat, numevent_int/((time_flag-time_flag_old)/1.e3));
+                                                h_events_orbitN->Fill(event_long,event_lat, 1);
+
                                                 average_rate2[zone]->SetPoint(average_rate2[zone]->GetN(), event_lat, numevent_int/((time_flag-time_flag_old)/1.e3));
                                         }
 				}
       			}
                 }//Tmd loop
       }// event loop
-      Boot_evEntries[nb]=check_events;
+//      Boot_evEntries[nb]=check_events;
+ std:: cout<< "\ncheck_events="<< check_events<<"\tBoot_evEntries["<<nb<<"]="<<Boot_evEntries[nb];
+
       if (VERBOSE){
 	      std::cout<< "\n------------------------------------------------------------------------------\n";
 	      std::cout<< "\nBOOT N. "<<BOOT_temp[nb];
@@ -476,24 +494,30 @@ void EventRateL0(TString rootname, TString outPath){
         crate2-> BuildLegend();
 	crate2->Print(outname);
 
+        TString mg_name3=Form("BootN_%d_orbital_event_rate_Hz_lat_long", BOOT_temp[nb]);
+        TCanvas *crate3=Earth(mg_name3);  //new TCanvas();
+        gPad->SetGrid();
 
-	TCanvas *crate3= earth();//new TCanvas(); 
-	TString mg_name3=Form("BootN_%d_orbital_events_lat_long", BOOT_temp[nb]);
-	crate3->SetTitle(mg_name3);
-	crate3->SetName(mg_name3);
-	crate3->cd();
-	h_events_orbit->GetYaxis()->SetTitle("Latitude");
-        h_events_orbit->GetXaxis()->SetTitle("Longitude");
-        h_events_orbit->GetZaxis()->SetTitle("#events");
+        crate3->SetTitle(mg_name3);
+        crate3->SetName(mg_name3);
+        crate3->cd();
+        h_events_orbitR->Divide(h_events_orbitN);
 
-        h_events_orbit->SetTitle(h2_name);
-        h_events_orbit->SetName(h2_name);
-        h_events_orbit->SetDrawOption("COLZ");
-	gStyle->SetOptStat(0);
-	h_events_orbit->Draw("SAME, COLZ");
-	crate3->Print(outname);
+        h_events_orbitR->GetYaxis()->SetTitle("Latitude");
+        h_events_orbitR->GetXaxis()->SetTitle("Longitude");
+        h_events_orbitR->GetZaxis()->SetTitle("rate(Hz)");
+	h_events_orbitR->GetZaxis()->SetTitleOffset(0.2);
+
+
+        h_events_orbitR->SetTitle(mg_name3);
+        h_events_orbitR->SetName(mg_name3);
+        h_events_orbitR->SetDrawOption("SAME, COLZ");
+        gStyle->SetOptStat(0);
+        h_events_orbitR->Draw("SAME,COLZ");
+        crate3->Print(outname);
+
+
  	}//end if Boot_evEntries[nb]>0
-
 }//end loop nb
    pt = new TPaveText(.1,.1,.9,.9);
    cRun = new TCanvas("Run");
@@ -514,8 +538,8 @@ void EventRateL0(TString rootname, TString outPath){
   gErrorIgnoreLevel = 1;
 
 }
-
-TCanvas *earth(){
+///////////////////////
+TCanvas *Earth(TString name){
    gStyle->SetOptTitle(1);
    gStyle->SetOptStat(0);
    TCanvas *c1 = new TCanvas("c1","earth_projections");
@@ -536,6 +560,10 @@ TCanvas *earth(){
       hm->GetXaxis()->SetLabelFont(132);
       hm->GetXaxis()->SetTitle("Longitude (deg)");
       hm->GetYaxis()->SetTitle("Latitude (deg)");
+
+      hm->SetTitle(name);
+      hm->SetName(name);
+
    }
    else {
 //      TH2F *ha = new TH2F("ha","Aitoff",    180, -180, 180, 179, -89.5, 89.5);
@@ -558,6 +586,9 @@ TCanvas *earth(){
       }
       in.close();
       // c1->cd(1); ha->Draw("aitoff");
+      hm->SetTitle(name);
+      hm->SetName(name);
+
       hm->SetLineColor(1);
       hm->SetLineWidth(1);
       hm->Draw("cont2");
