@@ -26,7 +26,7 @@ const TString Get_TriggerMask_Name(const int TM);
 
 //first and last unit to Print in pdf (in output root file all PMTs are plotted)  :
 #define FIRST_UNIT 0	
-#define LAST_UNIT 8
+#define LAST_UNIT 10
 //0->5 Trigger (NTRIGSCINT=6)
 //6->21 Calo Planes (NSCINTPLANES=16)
 //22->26 Veto Planes  (NVETOSCINT=5)
@@ -67,6 +67,9 @@ int main(int argc, char **argv) {
 // data interfacing 
   TH1D *h_pmt_high1[64];
   TH1D *h_pmt_high2[64];
+//NEW
+  TH1D *h_pmt_low1[64];
+  TH1D *h_pmt_low2[64];
 
 
 ///////////////////////   FILE 1 ////////////////////////
@@ -78,10 +81,16 @@ int main(int argc, char **argv) {
   LEvRec0Md cmd;
   File1.SetMdPointer(cmd);
   int N_Tmd1=File1.GetMDEntries();
-  std::cout << "TMd entries = "<< N_Tmd1<<"\n";
+  std::cout << "TMd entries = "<< N_Tmd1<<" -> N Runs = " <<N_Tmd1/2 << "\n";
+  
+  int BootN1[2];
+  int RunN1[2];
+
+
   File1.GetMDEntry(0);
-  int BootN1=cmd.boot_nr;
-  int RunN1=cmd.run_id;
+  BootN1[0]=cmd.boot_nr;
+  RunN1[0]=cmd.run_id;
+
   int TriggerMask1=cmd.trigger_mask[1];
   int Veto1=cmd.trigger_mask[0];
   double Tmd_run_long1[2];
@@ -91,19 +100,36 @@ int main(int argc, char **argv) {
 
   File1.GetMDEntry(1);
 
-  int CPUtime1[2];
+  BootN1[1]=cmd.boot_nr;
+  RunN1[1]=cmd.run_id;
 
+  int CPUtime1[2];
   CPUtime1[0]=cmd.CPU_time[0];
   CPUtime1[1]=cmd.CPU_time[1];
   Tmd_run_long1[1]=(cmd.broadcast.GPS.lon)*pow(10,-7);
   Tmd_run_lat1[1]=(cmd.broadcast.GPS.lat)*pow(10,-7);
 
-  std::cout << "BootN= "<< BootN1<<"\t RunN= "<< RunN1<<"\n";
-  std::cout << "TriggerMask= "<< TriggerMask1<<" -> "<< TriggerMask_name[TriggerMask1]<<"\n";
-  std::cout << "Veto= "<< Veto1<<" -> "<<VetoConf_name[Veto1] << "\n";
-  std::cout << "Run Duration (s)= "<< (CPUtime1[1]-CPUtime1[0])/1.e3<<" s\n";
-  std::cout << "Latitude= [ "<< Tmd_run_lat1[0]<<" -> "<<Tmd_run_lat1[1]<<" ]\n";
-  std::cout << "Longitude= [ "<< Tmd_run_long1[0]<<" -> "<<Tmd_run_long1[1]<<" ]\n";
+
+  if (N_Tmd1>2){
+	  File1.GetMDEntry(N_Tmd1-1);
+	  BootN1[1]=cmd.boot_nr;
+	  RunN1[1]=cmd.run_id;
+	  CPUtime1[1]=cmd.CPU_time[1];
+	  Tmd_run_long1[1]=(cmd.broadcast.GPS.lon)*pow(10,-7);
+	  Tmd_run_lat1[1]=(cmd.broadcast.GPS.lat)*pow(10,-7);
+  }
+
+if (N_Tmd1==2)  {
+	std::cout << "BootN= "<< BootN1[0]<<"\t RunN= "<< RunN1[0]<<"\n";
+  	std::cout << "TriggerMask= "<< TriggerMask1<<" -> "<< TriggerMask_name[TriggerMask1]<<"\n";
+  	std::cout << "Veto= "<< Veto1<<" -> "<<VetoConf_name[Veto1] << "\n";
+}
+else std::cout << "First RUN: BootN= "<< BootN1[0]<<"\t RunN= "<< RunN1[0]<<" -> Last RUN: BootN= "<<BootN1[1]<<"\t RunN= "<< RunN1[1] <<"\n";
+
+  std::cout << "First CPU Time (s)= "<< (CPUtime1[0])/1.e3<< " -> Last CPU Time (s)= "<< (CPUtime1[1])/1.e3<<"\n";
+  std::cout << "Total Runs Duration (s)= "<< (CPUtime1[1]-CPUtime1[0])/1.e3<<" s\n";
+  std::cout << "Latitude Range= [ "<< Tmd_run_lat1[0]<<" -> "<<Tmd_run_lat1[1]<<" ]\n";
+  std::cout << "Longitude Range= [ "<< Tmd_run_long1[0]<<" -> "<<Tmd_run_long1[1]<<" ]\n";
 
   LEvRec0 cev;
   File1.SetTheEventPointer(cev);
@@ -111,11 +137,23 @@ int main(int argc, char **argv) {
   std::cout<< "\nnEntries= "<<nEntries1<<"\n";
 
   TString hname_high1;
+//NEW
+  TString hname_low1;
 
 for (int ch=0; ch<64; ch++){
-	hname_high1 = Form("BootN_%d_RunN_%d_PMT_High_Gain_Ch_", BootN1, RunN1);
+	if (N_Tmd1==2) 	{
+		hname_high1 = Form("BootN_%d_RunN_%d_PMT_High_Gain_Ch_", BootN1[0], RunN1[0]);
+		hname_low1 = Form("BootN_%d_RunN_%d_PMT_Low_Gain_Ch_", BootN1[0], RunN1[0]);
+	}
+	else {
+		hname_high1 = Form("BootN_%d_RunN_%d-BootN_%d_RunN_%dPMT_High_Gain_Ch_", BootN1[0], RunN1[0],BootN1[1], RunN1[1]);
+		hname_low1 = Form("BootN_%d_RunN_%d-BootN_%d_RunN_%dPMT_Low_Gain_Ch_", BootN1[0], RunN1[0],BootN1[1], RunN1[1]);
+	}	
    	hname_high1 += ch;
    	h_pmt_high1[ch] = new TH1D(hname_high1,hname_high1,256,0,4096);
+   	hname_low1 += ch;
+   	h_pmt_low1[ch] = new TH1D(hname_low1,hname_low1,256,0,4096);
+
 }
 
 // event loop
@@ -123,11 +161,16 @@ for (int ch=0; ch<64; ch++){
     File1.GetEntry(ie);
     for (int ch=0; ch<64; ch++){   
         h_pmt_high1[ch]->Fill(cev.pmt_high[ch]);
+        h_pmt_low1[ch]->Fill(cev.pmt_low[ch]);
     }//channel loop
   }// event loop
  
-///////////////////////   FILE 2 ////////////////////////
 
+
+///////////////////////   FILE 2 ////////////////////////
+  
+  
+ 
   std::cout << "\n\n*************************** File2 ***************************\n\n" ;
 
   LEvRec0File File2(rootname2);
@@ -136,10 +179,14 @@ for (int ch=0; ch<64; ch++){
   
   File2.SetMdPointer(cmd);
   int N_Tmd2=File2.GetMDEntries();
-  std::cout << "TMd entries= "<< N_Tmd2<<"\n";
+  std::cout << "TMd entries = "<< N_Tmd2<<" -> N Runs = " <<N_Tmd2/2 << "\n";
+
+  int BootN2[2];
+  int RunN2[2];
+
   File2.GetMDEntry(0);
-  int BootN2=cmd.boot_nr;
-  int RunN2=cmd.run_id;
+  BootN2[0]=cmd.boot_nr;
+  RunN2[0]=cmd.run_id;
   int TriggerMask2=cmd.trigger_mask[1];
   int Veto2=cmd.trigger_mask[0];
   int CPUtime2[2];
@@ -150,19 +197,34 @@ for (int ch=0; ch<64; ch++){
   Tmd_run_lat2[0]=(cmd.broadcast.GPS.lat)*pow(10,-7);
 
   File2.GetMDEntry(1);
- 
+  BootN2[1]=cmd.boot_nr;
+  RunN2[1]=cmd.run_id;
+
   CPUtime2[0]=cmd.CPU_time[0];
   CPUtime2[1]=cmd.CPU_time[1];
   Tmd_run_long2[1]=(cmd.broadcast.GPS.lon)*pow(10,-7);
   Tmd_run_lat2[1]=(cmd.broadcast.GPS.lat)*pow(10,-7);
+  if (N_Tmd2>2){
+	  File2.GetMDEntry(N_Tmd2-1);
+	  BootN2[1]=cmd.boot_nr;
+	  RunN2[1]=cmd.run_id;
+	  CPUtime2[1]=cmd.CPU_time[1];
+	  Tmd_run_long2[1]=(cmd.broadcast.GPS.lon)*pow(10,-7);
+	  Tmd_run_lat2[1]=(cmd.broadcast.GPS.lat)*pow(10,-7);
+  }
+
+if (N_Tmd2==2)  {
+	std::cout << "BootN= "<< BootN2[0]<<"\t RunN= "<< RunN2[0]<<"\n";
+  	std::cout << "TriggerMask= "<< TriggerMask2<<" -> "<< TriggerMask_name[TriggerMask2]<<"\n";
+  	std::cout << "Veto= "<< Veto2<<" -> "<<VetoConf_name[Veto2] << "\n";
+}
+else std::cout << "First RUN: BootN= "<< BootN2[0]<<"\t RunN= "<< RunN2[0]<<" -> Last RUN: BootN= "<<BootN2[1]<<"\t RunN= "<< RunN2[1] <<"\n";
 
 
-  std::cout << "BootN= "<< BootN2<<"\t RunN= "<< RunN2<<"\n";
-  std::cout << "TriggerMask= "<< TriggerMask2<<" -> "<< TriggerMask_name[TriggerMask2]<<"\n";
-  std::cout << "Veto= "<< Veto2<<" -> "<<VetoConf_name[Veto2] << "\n";
-  std::cout << "Run Duration (s)= "<< (CPUtime2[1]-CPUtime2[0])/1.e3<<" s\n";
-  std::cout << "Latitude= [ "<< Tmd_run_lat2[0]<<" -> "<<Tmd_run_lat2[1]<<" ]\n";
-  std::cout << "Longitude= [ "<< Tmd_run_long2[0]<<" -> "<<Tmd_run_long2[1]<<" ]\n";
+  std::cout << "First CPU Time (s)= "<< (CPUtime2[0])/1.e3<< " -> Last CPU Time (s)= "<< (CPUtime2[1])/1.e3<<"\n";
+  std::cout << "Total Runs Duration (s)= "<<  (CPUtime2[1]-CPUtime2[0])/1.e3<<" s\n";
+  std::cout << "Latitude Range= [ "<< Tmd_run_lat2[0]<<" -> "<<Tmd_run_lat2[1]<<" ]\n";
+  std::cout << "Longitude Range= [ "<< Tmd_run_long2[0]<<" -> "<<Tmd_run_long2[1]<<" ]\n";
 
 
   File2.SetTheEventPointer(cev);
@@ -170,10 +232,23 @@ for (int ch=0; ch<64; ch++){
   std::cout<< "\nnEntries= "<<nEntries2<<"\n";
 
   TString hname_high2;
+//NEW
+  TString hname_low2;
+
   for (int ch=0; ch<64; ch++){
-	hname_high2 = Form("BootN_%d_RunN_%d_PMT_High_Gain_Ch_", BootN2, RunN2);
+	if (N_Tmd2==2) 	{
+		hname_high2 = Form("BootN_%d_RunN_%d_PMT_High_Gain_Ch_", BootN2[0], RunN2[0]);
+		hname_low2 = Form("BootN_%d_RunN_%d_PMT_Low_Gain_Ch_", BootN2[0], RunN2[0]);
+	}
+	else {
+		hname_high2 = Form("BootN_%d_RunN_%d-BootN_%d_RunN_%dPMT_High_Gain_Ch_", BootN2[0], RunN2[0],BootN2[1], RunN2[1]);
+		hname_low2 = Form("BootN_%d_RunN_%d-BootN_%d_RunN_%dPMT_Low_Gain_Ch_", BootN2[0], RunN2[0],BootN2[1], RunN2[1]);
+	}
    	hname_high2 += ch;
    	h_pmt_high2[ch] = new TH1D(hname_high2,hname_high2,256,0,4096);
+   	hname_low2 += ch;
+   	h_pmt_low2[ch] = new TH1D(hname_low2,hname_low2,256,0,4096);
+
   }
 
 // event loop
@@ -181,6 +256,8 @@ for (int ch=0; ch<64; ch++){
     File2.GetEntry(ie);
     for (int ch=0; ch<64; ch++){   
         h_pmt_high2[ch]->Fill(cev.pmt_high[ch]);
+        h_pmt_low2[ch]->Fill(cev.pmt_low[ch]);
+
     }//channel loop
   }// event loop
 
@@ -189,9 +266,9 @@ for (int ch=0; ch<64; ch++){
 //OUTPUT FILE
   std::cout << "\n\n*************************** Output Files ***************************\n\n" ;
 
-   TString outname=Form("Comparison_BootN_%d_runN_%d_BootN_%d_runN_%d.root", BootN1, RunN1, BootN2, RunN2);
+   TString outname=Form("Comparison_BootN_%d_runN_%d-BootN_%d_runN_%d_vs_BootN_%d_runN_%d-BootN_%d_runN_%d.root", BootN1[0], RunN1[0], BootN1[1], RunN1[1], BootN2[0], RunN2[0], BootN2[1], RunN2[1]);
    std::cout << "\nOutput Root File:" << outname << "\n";
-  TFile fout(outname, "new");
+  TFile fout(outname, "recreate");
   outname.ReplaceAll(".root", 5, "_ScintillatorQL.pdf", 19);
   std::cout << "\nOutput PDF File:" << outname << "\n\n";
 
@@ -207,22 +284,42 @@ for (int ch=0; ch<64; ch++){
    
    TString nameFile1(rootname1);
    pt->AddText(nameFile1);
-   pt->AddText(Form("BootN= %d - RunN= %d", BootN1, RunN1));
-   pt->AddText(Form("TriggerMask= %d -> ", TriggerMask1)+ TriggerMask_name[TriggerMask1]);
-   pt->AddText(Form("Veto= %d -> ", Veto1)+ VetoConf_name[Veto1]);
+
+if (N_Tmd1==2)  {
+   	pt->AddText(Form("BootN= %d - RunN= %d", BootN1[0], RunN1[0]));
+   	pt->AddText(Form("TriggerMask= %d -> ", TriggerMask1)+ TriggerMask_name[TriggerMask1]);
+   	pt->AddText(Form("Veto= %d -> ", Veto1)+ VetoConf_name[Veto1]);
+}
+ 
+else{
+   pt->AddText(Form("Number of  Runs= %d", N_Tmd1/2));
+   pt->AddText(Form("First Run: BootN= %d - RunN= %d", BootN1[0], RunN1[0]));
+   pt->AddText(Form("Last Run: BootN= %d - RunN= %d", BootN1[1], RunN1[1]));
+}
 
    pt->AddText(Form("N Entries=%d",nEntries1));
-   pt->AddText(Form("Run duration (s)=%4.3f",(CPUtime1[1]-CPUtime1[0])/1.e3));
-   pt->AddText(Form("Latitude= [ %4.3f -> %4.3f ]",Tmd_run_lat1[0], Tmd_run_lat1[1]));
-   pt->AddText(Form("Longitude=[ %4.3f -> %4.3f ]",Tmd_run_long1[0], Tmd_run_long1[1]));
+   pt->AddText(Form("First CPU Time (s)= %4.3f, Last CPU Time (s)=%4.3f",(CPUtime1[0]/1.e3), (CPUtime1[1]/1.e3)));
+   pt->AddText(Form("Total Runs duration (s)=%4.3f",(CPUtime1[1]-CPUtime1[0])/1.e3));
+   pt->AddText(Form("Latitude Range= [ %4.3f -> %4.3f ]",Tmd_run_lat1[0], Tmd_run_lat1[1]));
+   pt->AddText(Form("Longitude Range=[ %4.3f -> %4.3f ]",Tmd_run_long1[0], Tmd_run_long1[1]));
   
 
    TString nameFile2(rootname2);
    pt->AddText(nameFile2 );
-   pt->AddText(Form("BootN= %d - RunN= %d", BootN2, RunN2));
-   pt->AddText(Form("TriggerMask= %d -> ", TriggerMask2)+ TriggerMask_name[TriggerMask2]);
-   pt->AddText(Form("Veto= %d -> ", Veto2)+ VetoConf_name[Veto2]);
+
+   if (N_Tmd2==2)  {
+   	pt->AddText(Form("BootN= %d - RunN= %d", BootN2[0], RunN2[0]));
+   	pt->AddText(Form("TriggerMask= %d -> ", TriggerMask2)+ TriggerMask_name[TriggerMask2]);
+	pt->AddText(Form("Veto= %d -> ", Veto2)+ VetoConf_name[Veto2]);
+   }
+   else{
+	   pt->AddText(Form("Number of  Runs= %d", N_Tmd2/2));
+	   pt->AddText(Form("First Run: BootN= %d - RunN= %d", BootN2[0], RunN2[0]));
+	   pt->AddText(Form("Last Run: BootN= %d - RunN= %d", BootN2[1], RunN2[1]));
+}
+
    pt->AddText(Form("N Entries=%d",nEntries2));
+   pt->AddText(Form("First CPU Time (s)= %4.3f, Last CPU Time (s)=%4.3f",(CPUtime2[0]/1.e3), (CPUtime2[1]/1.e3)));
    pt->AddText(Form("Run duration (s)=%4.3f",(CPUtime2[1]-CPUtime2[0])/1.e3));
    pt->AddText(Form("Latitude= [ %4.3f -> %4.3f ]",Tmd_run_lat2[0], Tmd_run_lat2[1]));
    pt->AddText(Form("Longitude= [ %4.3f -> %4.3f ]",Tmd_run_long2[0], Tmd_run_long2[1]));
@@ -246,17 +343,17 @@ for (int ch=0; ch<32; ch++){
 		h_pmt_high1[ch+ip*32]->SetNormFactor(1);
 		h_pmt_high2[ch+ip*32]->SetNormFactor(1);
 
-		hname_high1 = Form("BootN_%d_RunN_%d_PMT_High_Gain_Ch_", BootN1, RunN1);
+		hname_high1 = Form("BootN_%d_RunN_%d_PMT_High_Gain_Ch_", BootN1[0], RunN1[0]);
 		hname_high1 += (ch+ip*32);
 
-		hname_high2 = Form("BootN_%d_RunN_%d_PMT_High_Gain_Ch_", BootN2, RunN2);
+		hname_high2 = Form("BootN_%d_RunN_%d_PMT_High_Gain_Ch_", BootN2[0], RunN2[0]);
    		hname_high2 += (ch+ip*32);
 
 
 		TCanvas *c=new TCanvas();
         	c->cd();
-	        c->SetTitle(Unit_PMT[ch+ip*32]);
-        	c->SetName(Unit_PMT[ch+ip*32]);
+	        c->SetTitle(Unit_PMT[ch+ip*32]+"_HG");
+        	c->SetName(Unit_PMT[ch+ip*32]+"_HG");
         	gStyle->SetOptStat(0);
         	h_pmt_high1[ch+ip*32]->Draw();
 	        gStyle->SetOptStat(0);
@@ -264,9 +361,50 @@ for (int ch=0; ch<32; ch++){
 	        gStyle->SetOptStat(0);
         	c->BuildLegend();
         	c->SetLogy();
-        	h_pmt_high1[ch+ip*32]->SetTitle(Unit_PMT[ch+ip*32]);
+        	h_pmt_high1[ch+ip*32]->SetTitle(Unit_PMT[ch+ip*32]+"_HG");
 	        gStyle->SetOptStat(0);
-        	c->Write(Unit_PMT[ch+ip*32]);
+        	c->Write(Unit_PMT[ch+ip*32]+"_HG");
+    		for (int iu=FIRST_UNIT; iu<=LAST_UNIT; iu++){		//PMT To be plotted on pdf
+                        if  (Get_Unit_PMT_ch(iu, ip)==(ch+ip*32))  c->Print(outname);
+		}
+	}
+}
+
+//NEW
+for (int ch=0; ch<32; ch++){   
+	for (int ip=0; ip<2; ip++){
+
+		h_pmt_low1[ch+ip*32]->SetLineColor(kRed);
+		h_pmt_low1[ch+ip*32]->SetLineWidth(2);
+		h_pmt_low2[ch+ip*32]->SetLineColor(kBlack);
+		h_pmt_low2[ch+ip*32]->SetLineWidth(2);
+		h_pmt_low1[ch+ip*32]->GetXaxis()->SetTitle("ADC counts");
+		h_pmt_low2[ch+ip*32]->GetXaxis()->SetTitle("ADC counts");
+
+		h_pmt_low1[ch+ip*32]->SetNormFactor(1);
+		h_pmt_low2[ch+ip*32]->SetNormFactor(1);
+
+		hname_low1 = Form("BootN_%d_RunN_%d_PMT_Low_Gain_Ch_", BootN1[0], RunN1[0]);
+		hname_low1 += (ch+ip*32);
+
+		hname_low2 = Form("BootN_%d_RunN_%d_PMT_Low_Gain_Ch_", BootN2[0], RunN2[0]);
+   		hname_low2 += (ch+ip*32);
+
+
+		TCanvas *c=new TCanvas();
+        	c->cd();
+	        c->SetTitle(Unit_PMT[ch+ip*32]+"_LG");
+        	c->SetName(Unit_PMT[ch+ip*32]+"_LG");
+        	gStyle->SetOptStat(0);
+        	h_pmt_low1[ch+ip*32]->Draw();
+	        gStyle->SetOptStat(0);
+        	h_pmt_low2[ch+ip*32]->Draw("SAME");
+	        gStyle->SetOptStat(0);
+        	c->BuildLegend();
+        	c->SetLogy();
+        	h_pmt_low1[ch+ip*32]->SetTitle(Unit_PMT[ch+ip*32]+"_LG");
+	        gStyle->SetOptStat(0);
+        	c->Write(Unit_PMT[ch+ip*32]+"_LG");
     		for (int iu=FIRST_UNIT; iu<=LAST_UNIT; iu++){		//PMT To be plotted on pdf
                         if  (Get_Unit_PMT_ch(iu, ip)==(ch+ip*32))  c->Print(outname);
 		}
