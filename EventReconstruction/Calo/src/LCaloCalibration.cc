@@ -8,6 +8,18 @@
 #include <random>
 #include <chrono>
 
+const double __CHECKCALO__=0.1;
+
+const bool LCaloCalibration::CheckStatus(const double *refPedestal, const double *refSigma) const {
+  bool result = true;
+  for(int iPmt=0; iPmt<NPMT; ++iPmt) {
+    if(fabs((pedestal[iPmt]-refPedestal[iPmt])/pedestal[iPmt])>__CHECKCALO__) result = false;
+    if(fabs((sigma[iPmt]-refSigma[iPmt])/sigma[iPmt])>__CHECKCALO__) result = false;
+  }
+  if(result==false) std::cerr << __LCALOCALIBRATION__ << " warning! CheckStatus pictured a bad situation!" << std:: endl;
+  return false;
+}
+
 LCaloCalibration::LCaloCalibration() {
   Reset();
 }
