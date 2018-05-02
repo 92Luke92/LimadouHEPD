@@ -68,7 +68,7 @@ void LCaloEqualization::Reset(void) {
 const bool LCaloEqualization::CheckStatus(void) const {
   if(eqFactors.size()==0) return false;
   if(sigmaEqFactors.size()==0) return false;
-  if(eqFactors.at(0) < __WARNINGMPVADCTRHESHOLD__) return false;
-  if(sigmaEqFactors.at(0) < __WARNINGSIGMAADCTRHESHOLD__) return false;
+  if(eqFactors.at(12) < __WARNINGMPVADCTRHESHOLD__ && eqFactors.at(12) != -1.) return false; // check on the first pmt of first plane. No equalization case excluded.
+  if(sigmaEqFactors.at(12) < __WARNINGSIGMAADCTRHESHOLD__&& sigmaEqFactors.at(12) != -1.) return false; // check on the first pmt of first plane. No equalization case excluded.
   return true;
 }
