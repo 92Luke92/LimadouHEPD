@@ -527,6 +527,8 @@ CalorimeterConstructionConfig6::CalorimeterConstructionConfig6()
   cfiberMaterial    = "CarbonFiber";
   honeycombMaterial = "nomex";
   teflonMaterial    = "Teflon";
+  suppLYSOMaterial  = "Aluminium";
+
   /*
     poronMaterial     = "Galactic";
     cfiberMaterial    = "Galactic";
@@ -543,8 +545,9 @@ CalorimeterConstructionConfig6::~CalorimeterConstructionConfig6()
 
 void CalorimeterConstructionConfig6::ComputeObjectsPositioning(){
 
+  suppLYSO_offset = 5.*mm;
  
-  ShiftOrigin = fCalo_Z/2. + 36.16*mm + 0.7*mm;
+  ShiftOrigin = fCalo_Z/2. + 36.16*mm + 0.7*mm + suppLYSO_offset;
   
   fPhysiS1SuppBack_Y = 0;//fS1SuppBottom_X/2.-18.860*mm-fS1SuppBottomHole_X/2.;
   fPhysiS1SuppBack_X = 0;
@@ -655,7 +658,7 @@ void CalorimeterConstructionConfig6::ComputeObjectsPositioning(){
 
   fPhysiCrystalBox_X = 0;
   fPhysiCrystalBox_Y = 0;
-  fPhysiCrystalBox_Z = -fCalo_Z/2. + fCrystal_Z/2.;  
+  fPhysiCrystalBox_Z = -fCalo_Z/2. + fCrystal_Z/2. - suppLYSO_offset;  
   
   fPhysiCFCrystalPanelUp_X = 0;
   fPhysiCFCrystalPanelUp_Y = 0;
@@ -991,6 +994,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   G4Material* porMat          = pMaterial->GetMaterial(poronMaterial);
   //  G4Material* hcMat           = pMaterial->GetMaterial(honeycombMaterial);
   G4Material* teflon          = pMaterial->GetMaterial(teflonMaterial);
+  G4Material* suppLYSOMat     = pMaterial->GetMaterial(suppLYSOMaterial);
 
 
 
@@ -1249,7 +1253,17 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   fSolidPoronFrontPO = new G4Box("PoronPO",fPoronFrontPO_X/2.,fPoronFrontPO_Y/2.,fPoronFrontPO_Z/2.);
  
 
-
+fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offset/2.);
+  fSolidSuppLYSOBox = new G4Box("SolidSuppLYSOBox",44./2.*mm,44./2.*mm,suppLYSO_offset/2.);
+  fSolidSuppLYSOsub1 = new G4SubtractionSolid("SolidSuppLYSOsub1",fSolidSuppLYSO,fSolidSuppLYSOBox,0,G4ThreeVector(44.*mm+7.*mm,44.*mm+7.*mm,0));
+  fSolidSuppLYSOsub2 = new G4SubtractionSolid("SolidSuppLYSOsub2",fSolidSuppLYSOsub1,fSolidSuppLYSOBox,0,G4ThreeVector(0,44.*mm+7.*mm,0));
+  fSolidSuppLYSOsub3 = new G4SubtractionSolid("SolidSuppLYSOsub3",fSolidSuppLYSOsub2,fSolidSuppLYSOBox,0,G4ThreeVector(-44.*mm-7.*mm,44.*mm+7.*mm,0));
+  fSolidSuppLYSOsub4 = new G4SubtractionSolid("SolidSuppLYSOsub4",fSolidSuppLYSOsub3,fSolidSuppLYSOBox,0,G4ThreeVector(44.*mm+7.*mm,0,0));
+  fSolidSuppLYSOsub5 = new G4SubtractionSolid("SolidSuppLYSOsub5",fSolidSuppLYSOsub4,fSolidSuppLYSOBox,0,G4ThreeVector(0,0,0));
+  fSolidSuppLYSOsub6 = new G4SubtractionSolid("SolidSuppLYSOsub6",fSolidSuppLYSOsub5,fSolidSuppLYSOBox,0,G4ThreeVector(-44.*mm-7.*mm,0,0));
+  fSolidSuppLYSOsub7 = new G4SubtractionSolid("SolidSuppLYSOsub7",fSolidSuppLYSOsub6,fSolidSuppLYSOBox,0,G4ThreeVector(44.*mm+7.*mm,-44.*mm-7.*mm,0));
+  fSolidSuppLYSOsub8 = new G4SubtractionSolid("SolidSuppLYSOsub8",fSolidSuppLYSOsub7,fSolidSuppLYSOBox,0,G4ThreeVector(0,-44.*mm-7.*mm,0));
+  fSolidSuppLYSOsub = new G4SubtractionSolid("SolidSuppLYSOsub",fSolidSuppLYSOsub8,fSolidSuppLYSOBox,0,G4ThreeVector(-44.*mm-7.*mm,-44.*mm-7.*mm,0));
 
 
 
@@ -1515,7 +1529,9 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   //  fLogicHoneyCombBottom = new G4LogicalVolume(fSolidHoneyCombBottom,hcMat,"HoneyCombCore"); 
 
-  //fLogicHoneyCombSkinBottom = new G4LogicalVolume(fSolidHoneyCombSkinBottom,cfMat,"HoneyCombSkin"); 
+  //fLogicHoneyCombSkinBottom = new G4LogicalVolume(fSolidHoneyCombSkinBottom,cfMat,"HoneyCombSkin");
+
+  fLogicSuppLYSO = new G4LogicalVolume(fSolidSuppLYSOsub, suppLYSOMat, "LogicSuppLYSO");
 
 
   fLogicScintActiveLayer->SetSensitiveDetector(caloSD);
@@ -1534,7 +1550,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   
 
   fPhysiS1 = new G4PVPlacement(0,
-			       G4ThreeVector(fPhysiS1_X,fPhysiS1_Y,fPhysiS1_Z + ShiftOrigin ),
+			       G4ThreeVector(fPhysiS1_X,fPhysiS1_Y,fPhysiS1_Z + ShiftOrigin + suppLYSO_offset/2.),
 			       "S1",
 			       fLogicS1,                
 			       motherVolume,                
@@ -2380,7 +2396,15 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 						fLogicPoronPlateO,
 						motherVolume,        
 						false,               
-						0,true);  
+						0,true);
+
+  fPhysiSuppLYSO = new G4PVPlacement(0,
+				     G4ThreeVector(0.,0.,-fCalo_Z/2. + fCrystal_Z/2. + 2.*cm),
+				     "SuppLYSO",
+				     fLogicSuppLYSO,
+				     fPhysiCaloBox,
+				     false,
+				     0,true);
 
 
   
@@ -2674,6 +2698,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   fLogicVetoLatY->SetVisAttributes(attBlue);
   fLogicVetoLatY2->SetVisAttributes(attBlue);
   fLogicRealTrapVetoLayer->SetVisAttributes(attBlue);
+  fLogicSuppLYSO->SetVisAttributes(attBlue);
 
  
   
