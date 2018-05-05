@@ -28,6 +28,9 @@ void LReco01Manager::LoadSteering(const char* steerFileIN) {
   eqHG = LCaloEqualization::Read(eqHGFileName);
   eqLGFileName = steer.GetParameter<std::string>("EQLGFILE");
   eqLG = LCaloEqualization::Read(eqLGFileName);
+
+  eqHG->Dump();
+  eqLG->Dump();
   // Input file 
   L0fname = steer.GetParameter<std::string>("INPFILE");
   // Output folder

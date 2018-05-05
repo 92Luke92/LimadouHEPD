@@ -9,12 +9,21 @@ const double __WARNINGSIGMAADCTRHESHOLD__ = 3.;
 
 
 const double LCaloEqualization::GetMPVFactor(const int index) const {
-  if(eqFactors.size() > index) return -999.;
+  if(eqFactors.size() <= index) return -999.;
   else return eqFactors.at(index);
 }
 
+void LCaloEqualization::Dump(void) const {
+  std::cout << __LCALOEQUALIZATION__ << " Dumping eq factors:" << std::endl;
+  for(auto eqit : eqFactors) std::cout << eqit << " ";
+  std::cout << std::endl << __LCALOEQUALIZATION__ << " Dumping eq sigma factors:" << std::endl;
+  for(auto eqit : sigmaEqFactors) std::cout << eqit << " ";
+  std::cout << std::endl;
+  return;  
+}
+
 const double LCaloEqualization::GetSigmaFactor(const int index) const {
-  if(sigmaEqFactors.size() > index) return -999.;
+  if(sigmaEqFactors.size() <= index) return -999.;
   else return sigmaEqFactors.at(index);
 }
 

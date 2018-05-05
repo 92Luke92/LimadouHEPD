@@ -12,6 +12,7 @@ class LCaloEqualization {
  public:
   LCaloEqualization();
   ~LCaloEqualization(){Reset();};
+  void Dump(void) const;
   void Write(const std::string fileOut) const;
   static LCaloEqualization* Read(const std::string fileIn);
   static LCaloEqualization* Read(const char *fileIn);

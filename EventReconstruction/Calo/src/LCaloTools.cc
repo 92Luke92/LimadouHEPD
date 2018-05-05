@@ -182,10 +182,10 @@ void EqualizeCaloSingleGain(LEvRec1 &lev1, const bool isHG, const LCaloEqualizat
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
       if(isHG) {
         if(trigMPV.cont_hg[iu][ipmt] == -1.) continue;
-        lev1.trig.cont_hg[iu][ipmt] /= (trigMPV.cont_hg[iu][ipmt]*refMPV5mm);
+        lev1.trig.cont_hg[iu][ipmt] /= (trigMPV.cont_hg[iu][ipmt]/refMPV5mm);
       } else {
         if(trigMPV.cont_lg[iu][ipmt] == -1.) continue;
-        lev1.trig.cont_lg[iu][ipmt] /= (trigMPV.cont_lg[iu][ipmt]*refMPV5mm);
+        lev1.trig.cont_lg[iu][ipmt] /= (trigMPV.cont_lg[iu][ipmt]/refMPV5mm);
       }
     }
   }
@@ -196,10 +196,10 @@ void EqualizeCaloSingleGain(LEvRec1 &lev1, const bool isHG, const LCaloEqualizat
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
       if(isHG) {
         if(scintMPV.cont_hg[iu][ipmt] == -1.) continue;
-        lev1.scint.cont_hg[iu][ipmt] /= (scintMPV.cont_hg[iu][ipmt]*refMPV10mm);
+        lev1.scint.cont_hg[iu][ipmt] /= (scintMPV.cont_hg[iu][ipmt]/refMPV10mm);
       } else {
         if(scintMPV.cont_lg[iu][ipmt] == -1.) continue;
-        lev1.scint.cont_lg[iu][ipmt] /= (scintMPV.cont_lg[iu][ipmt]*refMPV10mm);
+        lev1.scint.cont_lg[iu][ipmt] /= (scintMPV.cont_lg[iu][ipmt]/refMPV10mm);
       }
     }
   }
@@ -210,10 +210,10 @@ void EqualizeCaloSingleGain(LEvRec1 &lev1, const bool isHG, const LCaloEqualizat
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
       if(isHG) {
         if(vetoMPV.cont_hg[iu][ipmt] == -1.) continue;
-        lev1.veto.cont_hg[iu][ipmt] /= (vetoMPV.cont_hg[iu][ipmt]*refMPV5mm);
+        lev1.veto.cont_hg[iu][ipmt] /= (vetoMPV.cont_hg[iu][ipmt]/refMPV5mm);
       } else {
         if(vetoMPV.cont_lg[iu][ipmt] == -1.) continue;
-        lev1.veto.cont_lg[iu][ipmt] /= (vetoMPV.cont_lg[iu][ipmt]*refMPV5mm);
+        lev1.veto.cont_lg[iu][ipmt] /= (vetoMPV.cont_lg[iu][ipmt]/refMPV5mm);
       }
     }
   }
@@ -224,10 +224,10 @@ void EqualizeCaloSingleGain(LEvRec1 &lev1, const bool isHG, const LCaloEqualizat
     for(int ipmt=0; ipmt<npmts; ++ipmt) {
       if(isHG) {
         if(lysoMPV.cont_hg[iu][ipmt] == -1.) continue;
-        lev1.lyso.cont_hg[iu][ipmt] /= (lysoMPV.cont_hg[iu][ipmt]*refMPVlyso);
+        lev1.lyso.cont_hg[iu][ipmt] /= (lysoMPV.cont_hg[iu][ipmt]/refMPVlyso);
       } else {
         if(lysoMPV.cont_lg[iu][ipmt] == -1.) continue;
-        lev1.lyso.cont_lg[iu][ipmt] /= (lysoMPV.cont_lg[iu][ipmt]*refMPVlyso);
+        lev1.lyso.cont_lg[iu][ipmt] /= (lysoMPV.cont_lg[iu][ipmt]/refMPVlyso);
       }
     }
   }
