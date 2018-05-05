@@ -60,13 +60,15 @@ public:
 private:
   void ComputeObjectsPositioning();
 
-  G4String blanketMaterial;
+  G4String blanket1Material;
+  G4String blanket2Material;
   G4String wallMaterial;
   G4String wallHoneyCombMaterial;
 
   G4double fBlanket_X;
   G4double fBlanket_Y;
-  G4double fBlanket_Z;
+  G4double fBlanket1_Z;
+  G4double fBlanket2_Z;
 
   G4double fWallExternal_X;
   G4double fWallExternal_Y;
@@ -99,15 +101,18 @@ private:
 
   HEPDSWMaterial*  pMaterial;
 
-  G4Box* fSolidBlanket;
+  G4Box* fSolidBlanket1;
+  G4Box* fSolidBlanket2;
   G4SubtractionSolid* fSolidWallExternal;
   G4SubtractionSolid* fSolidWallHoneyComb;
 
-  G4LogicalVolume* fLogicBlanket;
+  G4LogicalVolume* fLogicBlanket1;
+  G4LogicalVolume* fLogicBlanket2;
   G4LogicalVolume* fLogicWallExternal;
   G4LogicalVolume* fLogicWallHoneyComb;
 
-  G4VPhysicalVolume* fPhysiBlanket;
+  G4VPhysicalVolume* fPhysiBlanket1;
+  G4VPhysicalVolume* fPhysiBlanket2;
   G4VPhysicalVolume* fPhysiWallExternalIn;
   G4VPhysicalVolume* fPhysiWallHoneyComb;
   G4VPhysicalVolume* fPhysiWallExternalOut;

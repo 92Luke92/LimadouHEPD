@@ -55,13 +55,13 @@
 
 SatelliteConstructionConfig1::SatelliteConstructionConfig1()
   :fSolidBlanket(0),fSolidWall(0),
-   fLogicBlanket(0),fLogicWall(0),
-   fPhysiBlanket(0),fPhysiWall(0)
+   fLogicBlanket1(0),fLogicBlanket2(0),fLogicWall(0),
+   fPhysiBlanket1(0),fPhysiBlanket2(0),fPhysiWall(0)
 {
   pMaterial     = new HEPDSWMaterial();
   fBlanket_X  = 254*mm;
   fBlanket_Y  = 238*mm;
-  fBlanket_Z  = 0.1*mm;
+  fBlanket_Z  = 0.075*mm;
 
   fWall_X = 345*mm;
   fWall_Y = 490*mm;
@@ -75,7 +75,8 @@ SatelliteConstructionConfig1::SatelliteConstructionConfig1()
   ComputeObjectsPositioning();
   
   // materials
-  blanketMaterial        = "mylar";
+  blanket1Material        = "mylar";
+  blanket2Material        = "Kapton";
   wallMaterial           = "Aluminium";
 }
   
@@ -100,7 +101,7 @@ void SatelliteConstructionConfig1::ComputeObjectsPositioning(){
 
 
 void SatelliteConstructionConfig1::SetBlanketMaterial(G4String aMat){
-  blanketMaterial=aMat; 
+  blanket1Material=aMat; 
 }    
 void SatelliteConstructionConfig1::SetWallMaterial(G4String aMat){
   wallMaterial=aMat; 
@@ -111,8 +112,9 @@ void SatelliteConstructionConfig1::Builder(G4VPhysicalVolume* motherVolume)
 {
 
   pMaterial->DefineMaterials();
-  G4Material* blanketMat = pMaterial->GetMaterial(blanketMaterial);
-  G4Material* wallMat = pMaterial->GetMaterial(wallMaterial);  
+  G4Material* blanket1Mat = pMaterial->GetMaterial(blanket1Material);
+  G4Material* blanket2Mat = pMaterial->GetMaterial(blanket2Material);
+  G4Material* wallMat = pMaterial->GetMaterial(wallMaterial);
 
   G4RotationMatrix* myRot = new G4RotationMatrix; 
 
@@ -124,13 +126,21 @@ void SatelliteConstructionConfig1::Builder(G4VPhysicalVolume* motherVolume)
 					      new G4Box("WallHole",fWallHole_X/2.,fWallHole_Y/2.,fWallHole_Z/2.),
 					      myRot,transWallHole);  
 
-  fLogicBlanket = new G4LogicalVolume(fSolidBlanket,blanketMat,"fLogicThermalBlanket");
+  fLogicBlanket1 = new G4LogicalVolume(fSolidBlanket,blanket1Mat,"fLogicThermalBlanket1");
+  fLogicBlanket2 = new G4LogicalVolume(fSolidBlanket,blanket2Mat,"fLogicThermalBlanket2");
   fLogicWall = new G4LogicalVolume(fSolidWall,wallMat,"fLogicWall");
 
-  fPhysiBlanket = new G4PVPlacement(0,
-				    G4ThreeVector(0,0,fPhysiBlanket_Z),
-				    "SatelliteThermalBlanket",
-				    fLogicBlanket,
+  fPhysiBlanket1 = new G4PVPlacement(0,
+				    G4ThreeVector(0,0,fPhysiBlanket_Z + fWall_Z + 2.*fBlanket_Z),
+				    "SatelliteThermalBlanket1",
+				    fLogicBlanket1,
+				    motherVolume,
+				    false,0,true);
+
+  fPhysiBlanket2 = new G4PVPlacement(0,
+				    G4ThreeVector(0,0,fPhysiBlanket_Z + fBlanket_Z + fWall_Z),
+				    "SatelliteThermalBlanket2",
+				    fLogicBlanket2,
 				    motherVolume,
 				    false,0,true);
 
@@ -152,7 +162,8 @@ void SatelliteConstructionConfig1::Builder(G4VPhysicalVolume* motherVolume)
   G4VisAttributes* attYellow = new G4VisAttributes(G4Colour::Yellow());
   attYellow->SetVisibility(true);
   attYellow->SetForceAuxEdgeVisible(true);
-  fLogicBlanket->SetVisAttributes(attYellow);
+  fLogicBlanket1->SetVisAttributes(attYellow);
+  fLogicBlanket2->SetVisAttributes(attYellow);
 
 
 }

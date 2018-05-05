@@ -60,7 +60,8 @@ public:
 private:
   void ComputeObjectsPositioning();
 
-  G4String blanketMaterial;
+  G4String blanket1Material;
+  G4String blanket2Material;
   G4String wallMaterial;
 
   G4double fBlanket_X;
@@ -89,10 +90,12 @@ private:
   G4Box* fSolidBlanket;
   G4SubtractionSolid* fSolidWall;
 
-  G4LogicalVolume* fLogicBlanket;
+  G4LogicalVolume* fLogicBlanket1;
+  G4LogicalVolume* fLogicBlanket2;
   G4LogicalVolume* fLogicWall;
 
-  G4VPhysicalVolume* fPhysiBlanket;
+  G4VPhysicalVolume* fPhysiBlanket1;
+  G4VPhysicalVolume* fPhysiBlanket2;
   G4VPhysicalVolume* fPhysiWall;
 
 
