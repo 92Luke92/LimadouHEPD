@@ -54,9 +54,9 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 SatelliteConstructionConfig1::SatelliteConstructionConfig1()
-  :fSolidBlanket(0),fSolidWall(0),
-   fLogicBlanket1(0),fLogicBlanket2(0),fLogicWall(0),
-   fPhysiBlanket1(0),fPhysiBlanket2(0),fPhysiWall(0)
+  :fSolidBlanket(0),fSolidWall(0),fSolidLatWall(0),
+   fLogicBlanket1(0),fLogicBlanket2(0),fLogicWall(0),fLogicLatWall(0),
+   fPhysiBlanket1(0),fPhysiBlanket2(0),fPhysiWall(0),fPhysiLatWall(0)
 {
   pMaterial     = new HEPDSWMaterial();
   fBlanket_X  = 254*mm;
@@ -116,19 +116,21 @@ void SatelliteConstructionConfig1::Builder(G4VPhysicalVolume* motherVolume)
   G4Material* blanket2Mat = pMaterial->GetMaterial(blanket2Material);
   G4Material* wallMat = pMaterial->GetMaterial(wallMaterial);
 
-  G4RotationMatrix* myRot = new G4RotationMatrix; 
+  G4RotationMatrix* myRot = new G4RotationMatrix;
 
   fSolidBlanket = new G4Box("fSolidThermalBlanket",fBlanket_X/2.,fBlanket_Y/2.,fBlanket_Z/2);
 
   G4ThreeVector transWallHole(transWallHole_X,transWallHole_Y,0);
   fSolidWall = new G4SubtractionSolid("fSolidWall",
-					      new G4Box("Wall",fWall_X/2.,fWall_Y/2.,fWall_Z/2.),
+				      new G4Box("Wall",fWall_X/2.,fWall_Y/2.,fWall_Z/2.*mm),
 					      new G4Box("WallHole",fWallHole_X/2.,fWallHole_Y/2.,fWallHole_Z/2.),
-					      myRot,transWallHole);  
+					      myRot,transWallHole);
+  fSolidLatWall = new G4Box("fSolidLatWall", fWall_X/2., 2./2.*mm, 400./2.*mm);
 
   fLogicBlanket1 = new G4LogicalVolume(fSolidBlanket,blanket1Mat,"fLogicThermalBlanket1");
   fLogicBlanket2 = new G4LogicalVolume(fSolidBlanket,blanket2Mat,"fLogicThermalBlanket2");
   fLogicWall = new G4LogicalVolume(fSolidWall,wallMat,"fLogicWall");
+  fLogicLatWall = new G4LogicalVolume(fSolidLatWall, wallMat, "fLogicLatWall");
 
   fPhysiBlanket1 = new G4PVPlacement(0,
 				    G4ThreeVector(0,0,fPhysiBlanket_Z + fWall_Z + 2.*fBlanket_Z),
@@ -151,6 +153,14 @@ void SatelliteConstructionConfig1::Builder(G4VPhysicalVolume* motherVolume)
 				 motherVolume,
 				 false,0,true);
 
+  fPhysiLatWall = new G4PVPlacement(0,
+				    G4ThreeVector(1.45*cm,18.5*cm, 19.*cm),
+				 "SatelliteLatWall",
+				 fLogicLatWall,
+				 motherVolume,
+				 false,0,true);
+					       
+
 
   //Visualization Attribute
 
@@ -158,6 +168,7 @@ void SatelliteConstructionConfig1::Builder(G4VPhysicalVolume* motherVolume)
   attGray->SetVisibility(true);
   attGray->SetForceAuxEdgeVisible(true);
   fLogicWall->SetVisAttributes(attGray);
+  fLogicLatWall->SetVisAttributes(attGray);
 
   G4VisAttributes* attYellow = new G4VisAttributes(G4Colour::Yellow());
   attYellow->SetVisibility(true);
