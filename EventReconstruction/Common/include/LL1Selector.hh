@@ -49,6 +49,9 @@ private:
 	bool Mask5(const LEvRec1 ev); // flag: OR(T)&&(P1 && P2 && P3)
 	bool Mask6(const LEvRec1 ev); // flag: OR(T)&&(P1 OR P2)&&(P15 OR P16)
 	bool Mask7(const LEvRec1 ev); // flag: OR(T)&&(P1 OR P2)&& OR(LYSO)
+	bool LateralVeto(const LEvRec1 ev); // true if the event is vetoed
+	bool BottomVeto(const LEvRec1 ev); // true if the event is vetoed
+	bool Veto(const LEvRec1 ev); // true if the event is vetoed
 	bool AntiMask3(const LEvRec1 ev); // not Mask3
 	bool Planes34(const LEvRec1 ev);
 	bool DMask3(const LEvRec1 ev); // flag: (DT3 OR DT4)&&(DP1 OR DP2)

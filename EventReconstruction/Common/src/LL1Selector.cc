@@ -22,6 +22,9 @@ bool LL1Selector::CheckConfiguration(const std::string conf_inp){
 	if(conf_inp.compare("Mask5")==0) check = true;
 	if(conf_inp.compare("Mask6")==0) check = true;
 	if(conf_inp.compare("Mask7")==0) check = true;
+	if(conf_inp.compare("LateralVeto")==0) check = true;
+	if(conf_inp.compare("BottomVeto")==0) check = true;
+	if(conf_inp.compare("Veto")==0) check = true;
 	if(conf_inp.compare("AntiMask3")==0) check = true;
 	if(conf_inp.compare("Planes34")==0) check = true;
 	if(conf_inp.compare("DMask3")==0) check = true;
@@ -83,6 +86,12 @@ void LL1Selector::SetTheFunction(void){
 		_function = std::bind(&LL1Selector::Mask6, this, std::placeholders::_1);
 	} else if(conf.compare("Mask7")==0) {
 		_function = std::bind(&LL1Selector::Mask7, this, std::placeholders::_1);
+	} else if(conf.compare("LateralVeto")==0) {
+		_function = std::bind(&LL1Selector::LateralVeto, this, std::placeholders::_1);
+	} else if(conf.compare("BottomVeto")==0) {
+		_function = std::bind(&LL1Selector::BottomVeto, this, std::placeholders::_1);
+	} else if(conf.compare("Veto")==0) {
+		_function = std::bind(&LL1Selector::Veto, this, std::placeholders::_1);
 	} else if(conf.compare("AntiMask3")==0) {
 		_function = std::bind(&LL1Selector::AntiMask3, this, std::placeholders::_1);
 	} else if(conf.compare("Planes34")==0) {
@@ -261,6 +270,28 @@ bool LL1Selector::Mask7(const LEvRec1 ev)  {
 	bool LysoFLAG=false;
 	for(int i=0; i<NLYSOCRYSTALS; ++i) if(LysoFired(i)) LysoFLAG=true;
 	bool result = Mask2(ev)&&LysoFLAG;
+	return result;
+}
+
+bool LL1Selector::LateralVeto(const LEvRec1 ev)  { // true if the event is vetoed
+	CopySignal(ev);
+	bool VetoFLAG=false;
+	for(int i=0; i<NVETOSCINT-1; ++i) if(VetoFired(i)) VetoFLAG=true;
+	return VetoFLAG;
+}
+
+bool LL1Selector::BottomVeto(const LEvRec1 ev)  { // true if the event is vetoed
+	CopySignal(ev);
+	bool VetoFLAG=false;
+	if(VetoFired(NVETOSCINT-1)) VetoFLAG=true;
+	return VetoFLAG;
+}
+
+bool LL1Selector::Veto(const LEvRec1 ev)  { // true if the event is vetoed
+	CopySignal(ev);
+	bool result=false;
+	if(LateralVeto(ev)) result = true;
+	if(BottomVeto(ev)) result = true;
 	return result;
 }
 

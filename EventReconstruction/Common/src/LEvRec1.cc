@@ -389,16 +389,17 @@ LEvRec1Stream::~LEvRec1Stream() {
 }
 
 bool LEvRec1::DiscontinousSignal(const double threshold_sn) const {
-  int lastPlane = GetLastHitPlane(threshold_sn);
+  int lastPlane = GetLastPlaneHit(threshold_sn);
+  if(lastPlane==-999) return true;
   bool isHG=true;
-  for(int i = 0; i<lastPlane; ++i ) if(scint.GetSNOfUnit(i, isHG)<threshold_sn) return false;
-  return true;
+  for(int i = 0; i<lastPlane; ++i ) if(scint.GetSNOfUnit(i, isHG)<threshold_sn) return true;
+  return false;
 }
 
-int LEvRec1::GetLastHitPlane(const double threshold_sn) const {
+int LEvRec1::GetLastPlaneHit(const double threshold_sn) const {
   int lastPlane=-999;
   bool isHG=true;
-  for(int i=0; i<NSCINTPLANES; ++i) if(scint.GetSNOfUnit(i, isHG)<threshold_sn) lastPlane = i;
+  for(int i=0; i<NSCINTPLANES; ++i) if(scint.GetSNOfUnit(i, isHG)>threshold_sn) lastPlane = i;
   return lastPlane;
 }
 
@@ -416,6 +417,14 @@ double LEvRec1::GetScintCounts(const double threshold_sn) const {
 
 double LEvRec1::GetTriggerCounts(const double threshold_sn) const {
   bool isHG = true;
-  if(trig.GetSN(isHG,threshold_sn)<threshold_sn) return -999.; // signal shared allowed
-  else return trig.GetCounts(isHG, threshold_sn);
+  double result =0.;
+  if(trig.GetSNOfMSU(isHG,threshold_sn)>threshold_sn) {
+    int MSU = trig.GetTheMostSignificantUnit(isHG,threshold_sn);
+    result += trig.GetCountsOfMSU(isHG,threshold_sn);
+    if(trig.GetSNOf2ndMSU(isHG,threshold_sn)>threshold_sn) {
+      int MSU2nd = trig.GetThe2ndMostSignificantUnit(isHG,threshold_sn);
+      if(MSU-MSU2nd==1) result += trig.GetCountsOf2ndMSU(isHG,threshold_sn); // only for adjacent bars
+    }
+  }
+  return result;
 }
