@@ -44,7 +44,7 @@ double LScintillatorSignal::GetZ(const int iu, const int ipmt) const {
 
 double LScintillatorSignal::GetSNOfUnit(const int unit, const bool isHG) const {
   double result=0;
-  if(unit==4) return sqrt(2.)*sn_hg[unit][0]; // PMT 1 broken
+  if(unit==4) return 2.*sn_hg[unit][0]; // PMT 1 broken
   else return LCaloSignal::GetSNOfUnit(unit,isHG);
 }
 

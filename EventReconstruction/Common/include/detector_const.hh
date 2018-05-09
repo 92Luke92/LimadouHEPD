@@ -53,7 +53,7 @@ const double LYSOSIDE=48.;
 
 // z gaps
 const double SILOUT_SILIN_GAP=10.;
-const double SILIN_TRIGGER_GAP=10.;  //???
+//const double SILIN_TRIGGER_GAP=10.;  //see below
 const double TRIG_SCINT_GAP=10.; // ???
 const double SCINT_SCINT_GAP=2.; // ???
 const double SCINT_LYSO_GAP=2; // ???
@@ -64,6 +64,13 @@ const double TRIG_LVETO_ZGAP=10.; // ???
 const double SCINT_XLVETO_GAP=10.; // ???
 const double SCINT_YLVETO_GAP=10.; // ???
 const double LYSO_LYSO_GAP=10.; // ???
+
+const double LADDER_X_SEPARATION = 4.9e-3; // in meters from the ASSIEME design
+const double LADDER_WIDTH = 77.6e-3; // in meters from the ASSIEME design
+const double LADDER_LENGTH = 219.36e-3; // in meters from the ASSIEME design
+const double LADDER_Z_SEPARATION = 10.e-3; // in meters from the ASSIEME design. Centre-to-centre of thicknesses
+
+const double SILIN_TRIGGER_GAP=16.66e-3;  // in meters from the ASSIEME design. Side-to-faced-side, no thicknesses accounted for
 
 
 enum pmt_calib_type {HIGH, LOW};
