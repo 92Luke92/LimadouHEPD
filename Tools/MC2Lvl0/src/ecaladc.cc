@@ -36,8 +36,8 @@ EcalADC::EcalADC(method ecalmethod)
             methodHg = new MatteoMethod("PmtSlopeIntercErr_MeanMatteo.csv");
             methodLg = new MatteoMethod("PmtSlopeIntercErr_MeanMatteo.csv");
         case RawEdep:
-            methodHg = new RawEdepMethod("test.txt");
-            methodLg = new RawEdepMethod("test.txt");
+            methodHg = new RawEdepMethod("laurentHGpeakshift.csv");
+            methodLg = new RawEdepMethod("laurentLGpeakshift.csv");
     }
     initMCpos();
 }
