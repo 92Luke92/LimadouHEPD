@@ -20,6 +20,7 @@
 #include "laurentmethod.hh"
 #include "francescomethod.hh"
 #include "matteomethod.hh"
+#include "rawedepmethod.hh"
 #include "pmtenum.hh"
 
 
@@ -29,7 +30,7 @@
 
 class EcalADC {
   public:
-    enum method {Laurent, Francesco, Matteo};
+    enum method {Laurent, Francesco, Matteo, RawEdep};
     EcalADC(method ecalmethod);
     void SetPositions (std::vector<Edep_Pos> pmt_info );
     void NormalizePMThg ( ushort* pmt_high);

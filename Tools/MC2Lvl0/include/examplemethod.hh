@@ -15,7 +15,7 @@ class ExampleMethod: public calomev2adcmethod
 {
    public:
       ExampleMethod(std::string datacardname);
-      short adcFromMev(float mev, int sensor);
+      short adcFromMevNoPed(float mev, int sensor);
 
    private:
       void init();

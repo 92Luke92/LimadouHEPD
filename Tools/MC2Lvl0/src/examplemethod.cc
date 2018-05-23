@@ -24,7 +24,7 @@ void ExampleMethod::init() {
 
 
 
-short ExampleMethod::adcFromMev(float mev, int sensor) {
+short ExampleMethod::adcFromMevNoPed(float mev, int sensor) {
    sensor++;
    return static_cast<short> (mev);
 }
