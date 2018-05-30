@@ -547,7 +547,7 @@ void CalorimeterConstructionConfig6::ComputeObjectsPositioning(){
 
   suppLYSO_offset = 5.*mm;
  
-  ShiftOrigin = fCalo_Z/2. + 36.16*mm + 0.7*mm + suppLYSO_offset;
+  ShiftOrigin = fCalo_Z/2. + 36.16*mm + 0.7*mm; // + suppLYSO_offset;
   
   fPhysiS1SuppBack_Y = 0;//fS1SuppBottom_X/2.-18.860*mm-fS1SuppBottomHole_X/2.;
   fPhysiS1SuppBack_X = 0;
@@ -658,7 +658,7 @@ void CalorimeterConstructionConfig6::ComputeObjectsPositioning(){
 
   fPhysiCrystalBox_X = 0;
   fPhysiCrystalBox_Y = 0;
-  fPhysiCrystalBox_Z = -fCalo_Z/2. + fCrystal_Z/2. - suppLYSO_offset;  
+  fPhysiCrystalBox_Z = -fCalo_Z/2. + fCrystal_Z/2.;  
   
   fPhysiCFCrystalPanelUp_X = 0;
   fPhysiCFCrystalPanelUp_Y = 0;
@@ -1038,7 +1038,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   // Calorimeter
-  fSolidCaloBox = new G4Box("Calorimeter",fCalo_X/2.,fCalo_Y/2.,fCalo_Z/2.);
+  fSolidCaloBox = new G4Box("Calorimeter",fCalo_X/2.,fCalo_Y/2.,fCalo_Z/2.+suppLYSO_offset/2.);
    
   fSolidScintBox = new G4Box("CalorimeterScint",fScint_X/2.,fScint_Y/2.,fScint_Z/2.);
 
@@ -1682,7 +1682,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 				    0,true);       
   
   fPhysiScintBox = new G4PVPlacement(0,                        
-				     G4ThreeVector(fPhysiScintBox_X,fPhysiScintBox_Y,fPhysiScintBox_Z),
+				     G4ThreeVector(fPhysiScintBox_X,fPhysiScintBox_Y,fPhysiScintBox_Z+0.5*suppLYSO_offset),
 				     "CalorimeterScint",               
 				     fLogicScintBox,                
 				     fPhysiCaloBox,                
@@ -1697,7 +1697,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 				     fCaloLayer_Z);
 
   fPhysiLastScintLayer = new G4PVPlacement(0,                        
-					   G4ThreeVector(fPhysiLastScintLayer_X,fPhysiLastScintLayer_Y,fPhysiLastScintLayer_Z),
+					   G4ThreeVector(fPhysiLastScintLayer_X,fPhysiLastScintLayer_Y,fPhysiLastScintLayer_Z+0.5*suppLYSO_offset),
 					   "LastScintLayer",               
 					   fLogicLastScintLayer,                
 					   fPhysiCaloBox,                
@@ -2023,7 +2023,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
   /* ################################     Cristalli di LYSO     ##################################*/
   
   fPhysiCrystalBox = new G4PVPlacement(0,                        
-				       G4ThreeVector(fPhysiCrystalBox_X,fPhysiCrystalBox_Y,fPhysiCrystalBox_Z),   
+				       G4ThreeVector(fPhysiCrystalBox_X,fPhysiCrystalBox_Y,fPhysiCrystalBox_Z-0.5*suppLYSO_offset),   
 				       "CalorimeterCrystal",               
 				       fLogicCrystalBox,                
 				       fPhysiCaloBox,                
@@ -2399,7 +2399,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 						0,true);
 
   fPhysiSuppLYSO = new G4PVPlacement(0,
-				     G4ThreeVector(0.,0.,-fCalo_Z/2. + fCrystal_Z/2. + 2.*cm),
+				     G4ThreeVector(0.,0.,-fCalo_Z/2. + fCrystal_Z/2. + 2.*cm + suppLYSO_offset/2.),
 				     "SuppLYSO",
 				     fLogicSuppLYSO,
 				     fPhysiCaloBox,
