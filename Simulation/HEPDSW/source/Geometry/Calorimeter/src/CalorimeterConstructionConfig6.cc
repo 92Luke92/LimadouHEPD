@@ -547,7 +547,7 @@ void CalorimeterConstructionConfig6::ComputeObjectsPositioning(){
 
   suppLYSO_offset = 5.*mm;
  
-  ShiftOrigin = fCalo_Z/2. + 36.16*mm + 0.7*mm; // + suppLYSO_offset;
+  ShiftOrigin = fCalo_Z/2. + 36.16*mm + 0.7*mm;
   
   fPhysiS1SuppBack_Y = 0;//fS1SuppBottom_X/2.-18.860*mm-fS1SuppBottomHole_X/2.;
   fPhysiS1SuppBack_X = 0;
@@ -1550,7 +1550,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
   
 
   fPhysiS1 = new G4PVPlacement(0,
-			       G4ThreeVector(fPhysiS1_X,fPhysiS1_Y,fPhysiS1_Z + ShiftOrigin + suppLYSO_offset/2.),
+			       G4ThreeVector(fPhysiS1_X,fPhysiS1_Y,fPhysiS1_Z + ShiftOrigin),
 			       "S1",
 			       fLogicS1,                
 			       motherVolume,                
@@ -1674,7 +1674,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
   // CALO 
   
   fPhysiCaloBox = new G4PVPlacement(0,                        
-				    G4ThreeVector(0,0,ShiftOrigin),   
+				    G4ThreeVector(0,0,ShiftOrigin + suppLYSO_offset/2.),   
 				    "Calorimeter",               
 				    fLogicCaloBox,                
 				    motherVolume,                
@@ -1865,7 +1865,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					    0,true); 
   // blocco carbonio sotto croce  poron
   fPhysiScintCFFrontMPO = new G4PVPlacement(0,                   
-					    G4ThreeVector(fPhysiCFFrontPO_X,-fPhysiCFFrontPO_Y,fPhysiCFFrontPO_Z),     
+					    G4ThreeVector(fPhysiCFFrontPO_X,-fPhysiCFFrontPO_Y,fPhysiCFFrontPO_Z+suppLYSO_offset),     
 					    "CFSupportFMsmall",              
 					    fLogicCFFrontPO,       
 					    fPhysiScintLayer,        
@@ -1873,7 +1873,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					    0,true); 
   // blocco carbonio destra croce poron
   fPhysiScintCFLatPPO = new G4PVPlacement(0,                   
-					  G4ThreeVector(fPhysiCFLatPO_X,fPhysiCFLatPO_Y,fPhysiCFLatPO_Z),     
+					  G4ThreeVector(fPhysiCFLatPO_X,fPhysiCFLatPO_Y,fPhysiCFLatPO_Z+suppLYSO_offset),     
 					  "CFSupportLPsmall",              
 					  fLogicCFLatPO,       
 					  fPhysiScintLayer,        
@@ -1881,7 +1881,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					  0,true); 
   // blocco carbonio sinistra croce poron
   fPhysiScintCFLatMPO = new G4PVPlacement(0,                   
-					  G4ThreeVector(-fPhysiCFLatPO_X,fPhysiCFLatPO_Y,fPhysiCFLatPO_Z),     
+					  G4ThreeVector(-fPhysiCFLatPO_X,fPhysiCFLatPO_Y,fPhysiCFLatPO_Z+suppLYSO_offset),     
 					  "CFSupportLMsmall",              
 					  fLogicCFLatPO,       
 					  fPhysiScintLayer,        
@@ -1890,7 +1890,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
   
   // poron parete laterale sinistra croce poron
   fPhysiScintPoronLatPPO = new G4PVPlacement(0,
-					     G4ThreeVector(fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y,fPhysiPoronLatPO_Z),     
+					     G4ThreeVector(fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y,fPhysiPoronLatPO_Z+suppLYSO_offset),     
 					     "PoronLPsmall",              
 					     fLogicPoronLatPO,       
 					     fPhysiScintLayer,        
@@ -1899,7 +1899,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 
   // poron parete laterla destra croce poron				  
   fPhysiScintPoronLatMPO = new G4PVPlacement(0,                   
-					     G4ThreeVector(-fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y,fPhysiPoronLatPO_Z),     
+					     G4ThreeVector(-fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y,fPhysiPoronLatPO_Z+suppLYSO_offset),     
 					     "PoronLMsmall",              
 					     fLogicPoronLatPO,       
 					     fPhysiScintLayer,        
@@ -1907,7 +1907,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					     0,true); 
   // poron parete sopra croce poron
   fPhysiScintPoronLatUpPO = new G4PVPlacement(0,
-					      G4ThreeVector(fPhysiPoronFrontPO_X,-fPhysiPoronFrontPO_Y,fPhysiPoronFrontPO_Z),     
+					      G4ThreeVector(fPhysiPoronFrontPO_X,-fPhysiPoronFrontPO_Y,fPhysiPoronFrontPO_Z+suppLYSO_offset),     
 					      "PoronFPsmall",              
 					      fLogicPoronFrontPO,     
 					      fPhysiScintLayer,        
@@ -1915,7 +1915,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					      0,true);
   // poron parete sotto croce poron
   fPhysiScintPoronLatDownPO = new G4PVPlacement(0,
-						G4ThreeVector(fPhysiPoronFrontPO_X,fPhysiPoronFrontPO_Y,fPhysiPoronFrontPO_Z),     
+						G4ThreeVector(fPhysiPoronFrontPO_X,fPhysiPoronFrontPO_Y,fPhysiPoronFrontPO_Z+suppLYSO_offset),     
 						"PoronFMsmall",              
 						fLogicPoronFrontPO,     
 						fPhysiScintLayer,        
@@ -2534,25 +2534,25 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 
  
   fPhysiCFSuppTop = new G4PVPlacement(0,      // prima croce all'inizio del calorimetro
-				      G4ThreeVector(fPhysiCFSuppTop_X,fPhysiCFSuppTop_Y,fPhysiCFSuppTop_Z+ ShiftOrigin),
+				      G4ThreeVector(fPhysiCFSuppTop_X,fPhysiCFSuppTop_Y,fPhysiCFSuppTop_Z+ ShiftOrigin + suppLYSO_offset),
 				      "CFSupportTop",
-				      fLogicCFSuppTop, 
+				      fLogicCFSuppTop,
  				      motherVolume,
 				      false,
 				      0,true);
 
 
   fPhysiCFSuppTop = new G4PVPlacement(0,      // prima croce poron all'inizio del calorimetro
-				      G4ThreeVector(fPhysiPORSuppTop_X, fPhysiPORSuppTop_Y, fPhysiPORSuppTop_Z+ ShiftOrigin),
+				      G4ThreeVector(fPhysiPORSuppTop_X, fPhysiPORSuppTop_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset),
 				      "PORSupportTop",
-				      fLogicCFSuppPoron, 
+				      fLogicCFSuppPoron,
  				      motherVolume,
 				      false,
 				      0,true);
 
   // blocco carbonio sopra croce poron
   fPhysiScintCFFrontPPO = new G4PVPlacement(0,                   
-					    G4ThreeVector(fPhysiCFFrontPO_X, fPhysiCFFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					    G4ThreeVector(fPhysiCFFrontPO_X, fPhysiCFFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
 					    "CFSupportFPsmall",              
 					    fLogicCFFrontPO,       
 					    motherVolume,        
@@ -2560,7 +2560,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					    0,true); 
   // blocco carbonio sotto croce  poron
   fPhysiScintCFFrontMPO = new G4PVPlacement(0,                   
-					    G4ThreeVector(fPhysiCFFrontPO_X,-fPhysiCFFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					    G4ThreeVector(fPhysiCFFrontPO_X,-fPhysiCFFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
 					    "CFSupportFMsmall",              
 					    fLogicCFFrontPO,       
 					    motherVolume,        
@@ -2568,7 +2568,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					    0,true); 
   // blocco carbonio destra croce poron
   fPhysiScintCFLatPPO = new G4PVPlacement(0,                   
-					  G4ThreeVector(fPhysiCFLatPO_X,fPhysiCFLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					  G4ThreeVector(fPhysiCFLatPO_X,fPhysiCFLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
 					  "CFSupportLPsmall",              
 					  fLogicCFLatPO,       
 					  motherVolume,        
@@ -2576,7 +2576,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					  0,true); 
   // blocco carbonio sinistra croce poron
   fPhysiScintCFLatMPO = new G4PVPlacement(0,                   
-					  G4ThreeVector(-fPhysiCFLatPO_X,fPhysiCFLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					  G4ThreeVector(-fPhysiCFLatPO_X,fPhysiCFLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
 					  "CFSupportLMsmall",              
 					  fLogicCFLatPO,       
 					  motherVolume,        
@@ -2585,7 +2585,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
   
   // poron parete laterale sinistra croce poron
   fPhysiScintPoronLatPPO = new G4PVPlacement(0,
-					     G4ThreeVector(fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					     G4ThreeVector(fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
 					     "PoronLPsmall",              
 					     fLogicPoronLatPO,       
 					     motherVolume,        
@@ -2594,7 +2594,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
   
   // poron parete laterla destra croce poron				  
   fPhysiScintPoronLatMPO = new G4PVPlacement(0,                   
-					     G4ThreeVector(-fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					     G4ThreeVector(-fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
 					     "PoronLMsmall",              
 					     fLogicPoronLatPO,       
 					     motherVolume,        
@@ -2602,7 +2602,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					     0,true); 
   // poron parete sopra croce poron
   fPhysiScintPoronLatUpPO = new G4PVPlacement(0,
-					      G4ThreeVector(fPhysiPoronFrontPO_X,-fPhysiPoronFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					      G4ThreeVector(fPhysiPoronFrontPO_X,-fPhysiPoronFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
 					      "PoronFPsmall",              
 					      fLogicPoronFrontPO,     
 					      motherVolume,        
@@ -2610,12 +2610,13 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					      0,true);
   // poron parete sotto croce poron
   fPhysiScintPoronLatDownPO = new G4PVPlacement(0,
-						G4ThreeVector(fPhysiPoronFrontPO_X,fPhysiPoronFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+						G4ThreeVector(fPhysiPoronFrontPO_X,fPhysiPoronFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
 						"PoronFMsmall",              
 						fLogicPoronFrontPO,     
 						motherVolume,        
 						false,               
 						0,true);
+  
 
   //  ///////////////////////////////////////////////////////////////////////////////////
 
@@ -2708,14 +2709,14 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
   fLogicS1->SetVisAttributes(attInvisible);  
   fLogicS1ScintContainerP->SetVisAttributes(attInvisible);
   fLogicS1ScintContainerM->SetVisAttributes(attInvisible);
-  fLogicCaloBox->SetVisAttributes(attInvisible); 
+  fLogicCaloBox->SetVisAttributes(attCyan); 
   fLogicScintBox->SetVisAttributes(attInvisible); 
   fLogicScintLayer->SetVisAttributes(attInvisible); 
   fLogicLastScintLayer->SetVisAttributes(attInvisible); 
   fLogicCrystalBlockPlaneContainer->SetVisAttributes(attInvisible); 
   fLogicCrystalBlockRawContainer->SetVisAttributes(attInvisible); 
   fLogicCrystalBlockContainer->SetVisAttributes(attInvisible); 
-  fLogicCrystalBox->SetVisAttributes(attInvisible); 
+  fLogicCrystalBox->SetVisAttributes(attCyan); 
 
 }
 
