@@ -19,11 +19,12 @@ RawEdepMethod::RawEdepMethod(std::string datacardname)
 
 
 void RawEdepMethod::init() {
+   setPedFromDatacard("nullped.csv"); // boy ain't that ugly
    return;
 }
 
 
 float RawEdepMethod::adcFromMevNoPed(float mev, int sensor) {
-   return mev;
+   return 100*mev;
 }
 
