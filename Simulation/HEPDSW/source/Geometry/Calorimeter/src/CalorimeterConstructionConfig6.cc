@@ -1865,7 +1865,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					    0,true); 
   // blocco carbonio sotto croce  poron
   fPhysiScintCFFrontMPO = new G4PVPlacement(0,                   
-					    G4ThreeVector(fPhysiCFFrontPO_X,-fPhysiCFFrontPO_Y,fPhysiCFFrontPO_Z+suppLYSO_offset),     
+					    G4ThreeVector(fPhysiCFFrontPO_X,-fPhysiCFFrontPO_Y,fPhysiCFFrontPO_Z),     
 					    "CFSupportFMsmall",              
 					    fLogicCFFrontPO,       
 					    fPhysiScintLayer,        
@@ -1873,7 +1873,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					    0,true); 
   // blocco carbonio destra croce poron
   fPhysiScintCFLatPPO = new G4PVPlacement(0,                   
-					  G4ThreeVector(fPhysiCFLatPO_X,fPhysiCFLatPO_Y,fPhysiCFLatPO_Z+suppLYSO_offset),     
+					  G4ThreeVector(fPhysiCFLatPO_X,fPhysiCFLatPO_Y,fPhysiCFLatPO_Z),     
 					  "CFSupportLPsmall",              
 					  fLogicCFLatPO,       
 					  fPhysiScintLayer,        
@@ -1881,7 +1881,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					  0,true); 
   // blocco carbonio sinistra croce poron
   fPhysiScintCFLatMPO = new G4PVPlacement(0,                   
-					  G4ThreeVector(-fPhysiCFLatPO_X,fPhysiCFLatPO_Y,fPhysiCFLatPO_Z+suppLYSO_offset),     
+					  G4ThreeVector(-fPhysiCFLatPO_X,fPhysiCFLatPO_Y,fPhysiCFLatPO_Z),     
 					  "CFSupportLMsmall",              
 					  fLogicCFLatPO,       
 					  fPhysiScintLayer,        
@@ -1890,7 +1890,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
   
   // poron parete laterale sinistra croce poron
   fPhysiScintPoronLatPPO = new G4PVPlacement(0,
-					     G4ThreeVector(fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y,fPhysiPoronLatPO_Z+suppLYSO_offset),     
+					     G4ThreeVector(fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y,fPhysiPoronLatPO_Z),     
 					     "PoronLPsmall",              
 					     fLogicPoronLatPO,       
 					     fPhysiScintLayer,        
@@ -1899,7 +1899,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 
   // poron parete laterla destra croce poron				  
   fPhysiScintPoronLatMPO = new G4PVPlacement(0,                   
-					     G4ThreeVector(-fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y,fPhysiPoronLatPO_Z+suppLYSO_offset),     
+					     G4ThreeVector(-fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y,fPhysiPoronLatPO_Z),     
 					     "PoronLMsmall",              
 					     fLogicPoronLatPO,       
 					     fPhysiScintLayer,        
@@ -1907,7 +1907,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					     0,true); 
   // poron parete sopra croce poron
   fPhysiScintPoronLatUpPO = new G4PVPlacement(0,
-					      G4ThreeVector(fPhysiPoronFrontPO_X,-fPhysiPoronFrontPO_Y,fPhysiPoronFrontPO_Z+suppLYSO_offset),     
+					      G4ThreeVector(fPhysiPoronFrontPO_X,-fPhysiPoronFrontPO_Y,fPhysiPoronFrontPO_Z),     
 					      "PoronFPsmall",              
 					      fLogicPoronFrontPO,     
 					      fPhysiScintLayer,        
@@ -1915,7 +1915,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					      0,true);
   // poron parete sotto croce poron
   fPhysiScintPoronLatDownPO = new G4PVPlacement(0,
-						G4ThreeVector(fPhysiPoronFrontPO_X,fPhysiPoronFrontPO_Y,fPhysiPoronFrontPO_Z+suppLYSO_offset),     
+						G4ThreeVector(fPhysiPoronFrontPO_X,fPhysiPoronFrontPO_Y,fPhysiPoronFrontPO_Z),     
 						"PoronFMsmall",              
 						fLogicPoronFrontPO,     
 						fPhysiScintLayer,        
@@ -2585,7 +2585,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
   
   // poron parete laterale sinistra croce poron
   fPhysiScintPoronLatPPO = new G4PVPlacement(0,
-					     G4ThreeVector(fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
+					     G4ThreeVector(fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin+suppLYSO_offset), 
 					     "PoronLPsmall",              
 					     fLogicPoronLatPO,       
 					     motherVolume,        
@@ -2594,7 +2594,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
   
   // poron parete laterla destra croce poron				  
   fPhysiScintPoronLatMPO = new G4PVPlacement(0,                   
-					     G4ThreeVector(-fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
+					     G4ThreeVector(-fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin+suppLYSO_offset), 
 					     "PoronLMsmall",              
 					     fLogicPoronLatPO,       
 					     motherVolume,        
@@ -2602,7 +2602,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					     0,true); 
   // poron parete sopra croce poron
   fPhysiScintPoronLatUpPO = new G4PVPlacement(0,
-					      G4ThreeVector(fPhysiPoronFrontPO_X,-fPhysiPoronFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
+					      G4ThreeVector(fPhysiPoronFrontPO_X,-fPhysiPoronFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin+suppLYSO_offset), 
 					      "PoronFPsmall",              
 					      fLogicPoronFrontPO,     
 					      motherVolume,        
@@ -2610,7 +2610,7 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 					      0,true);
   // poron parete sotto croce poron
   fPhysiScintPoronLatDownPO = new G4PVPlacement(0,
-						G4ThreeVector(fPhysiPoronFrontPO_X,fPhysiPoronFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
+						G4ThreeVector(fPhysiPoronFrontPO_X,fPhysiPoronFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin+suppLYSO_offset), 
 						"PoronFMsmall",              
 						fLogicPoronFrontPO,     
 						motherVolume,        
