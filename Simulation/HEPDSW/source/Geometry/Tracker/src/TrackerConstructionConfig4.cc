@@ -440,10 +440,10 @@ void TrackerConstructionConfig4::Builder(G4VPhysicalVolume* motherVolume)
   rotTracker->rotateZ(180*deg);
   rotTracker->rotateX(180*deg);
 
-  G4double SuppLYSO_offset = 5.*mm;
+  G4double suppLYSO_offset = 5.*mm;
   
   fPhysiTracker = new G4PVPlacement(rotTracker,
-				    G4ThreeVector(fPhysiTracker_X,fPhysiTracker_Y,fPhysiTracker_Z + SuppLYSO_offset),
+				    G4ThreeVector(fPhysiTracker_X,fPhysiTracker_Y,fPhysiTracker_Z + suppLYSO_offset),
 				    "Tracker",
 				    fLogicTracker,
 				    motherVolume,

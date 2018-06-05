@@ -134,36 +134,38 @@ void SatelliteConstructionConfig1::Builder(G4VPhysicalVolume* motherVolume)
   fLogicLatWall = new G4LogicalVolume(fSolidLatWall, wallMat, "fLogicLatWall");
   fLogicUpWall = new G4LogicalVolume(fSolidUpWall, wallMat, "fLogicUpWall");
 
+  G4double suppLYSO_offset = 5.*mm;
+  
   fPhysiBlanket1 = new G4PVPlacement(0,
-				    G4ThreeVector(0,0,fPhysiBlanket_Z + fWall_Z + 2.*fBlanket_Z),
+				    G4ThreeVector(0,0,fPhysiBlanket_Z + fWall_Z + 2.*fBlanket_Z+suppLYSO_offset),
 				    "SatelliteThermalBlanket1",
 				    fLogicBlanket1,
 				    motherVolume,
 				    false,0,true);
 
   fPhysiBlanket2 = new G4PVPlacement(0,
-				    G4ThreeVector(0,0,fPhysiBlanket_Z + fBlanket_Z + fWall_Z),
+				    G4ThreeVector(0,0,fPhysiBlanket_Z + fBlanket_Z + fWall_Z+suppLYSO_offset),
 				    "SatelliteThermalBlanket2",
 				    fLogicBlanket2,
 				    motherVolume,
 				    false,0,true);
 
   fPhysiWall = new G4PVPlacement(0,
-				 G4ThreeVector(fPhysiWall_X,fPhysiWall_Y,fPhysiWall_Z),
+				 G4ThreeVector(fPhysiWall_X,fPhysiWall_Y,fPhysiWall_Z+suppLYSO_offset),
 				 "SatelliteWall",
 				 fLogicWall,
 				 motherVolume,
 				 false,0,true);
 
   fPhysiLatWall = new G4PVPlacement(0,
-				    G4ThreeVector(1.45*cm,18.5*cm, 19.*cm),
+				    G4ThreeVector(1.45*cm,18.5*cm, 19.*cm+suppLYSO_offset),
 				 "SatelliteLatWall",
 				 fLogicLatWall,
 				 motherVolume,
 				 false,0,true);
 
   fPhysiUpWall = new G4PVPlacement(0,
-				    G4ThreeVector(1.45*cm,16.85*cm, fPhysiWall_Z),
+				    G4ThreeVector(1.45*cm,16.85*cm, fPhysiWall_Z+suppLYSO_offset),
 				 "SatelliteUpWall",
 				 fLogicUpWall,
 				 motherVolume,

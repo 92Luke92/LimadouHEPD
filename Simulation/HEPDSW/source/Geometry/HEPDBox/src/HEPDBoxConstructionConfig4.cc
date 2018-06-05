@@ -158,37 +158,38 @@ void HEPDBoxConstructionConfig4::Builder(G4VPhysicalVolume* motherVolume)
   fLogicWallExternal = new G4LogicalVolume(fSolidWallExternal,wallMat,"fLogicWallExternal");
   fLogicWallHoneyComb = new G4LogicalVolume(fSolidWallHoneyComb,wallMat,"fLogicWallHoneyComb");
 
+  G4double suppLYSO_offset = 5.*mm;
 
   fPhysiBlanket1 = new G4PVPlacement(0,
-				    G4ThreeVector(0,0,fPhysiBlanket_Z + fWallHoneyComb_Z/2. + fWallExternal_Z/2. + fBlanket2_Z + 0.005*mm),
+				    G4ThreeVector(0,0,fPhysiBlanket_Z + fWallHoneyComb_Z/2. + fWallExternal_Z/2. + fBlanket2_Z + 0.005*mm + suppLYSO_offset),
 				    "HEPDBoxThermalBlanket1",
 				    fLogicBlanket1,
 				    motherVolume,
 				    false,0,true);
 
   fPhysiBlanket2 = new G4PVPlacement(0,
-				    G4ThreeVector(0,0,fPhysiBlanket_Z + fWallHoneyComb_Z/2. + fWallExternal_Z/2.),
+				    G4ThreeVector(0,0,fPhysiBlanket_Z + fWallHoneyComb_Z/2. + fWallExternal_Z/2.+suppLYSO_offset),
 				    "HEPDBoxThermalBlanket2",
 				    fLogicBlanket2,
 				    motherVolume,
 				    false,0,true);
 
   fPhysiWallExternalIn = new G4PVPlacement(0,
-				    G4ThreeVector(fPhysiWallExternalIn_X,fPhysiWallExternalIn_Y,fPhysiWallExternalIn_Z),
+				    G4ThreeVector(fPhysiWallExternalIn_X,fPhysiWallExternalIn_Y,fPhysiWallExternalIn_Z+suppLYSO_offset),
 				    "HEPDBoxWallExternalIn ",
 				    fLogicWallExternal,
 				    motherVolume,
 				    false,0,true);
 
   fPhysiWallHoneyComb = new G4PVPlacement(0,
-					  G4ThreeVector(fPhysiWallHoneyComb_X,fPhysiWallHoneyComb_Y,fPhysiWallHoneyComb_Z),
+					  G4ThreeVector(fPhysiWallHoneyComb_X,fPhysiWallHoneyComb_Y,fPhysiWallHoneyComb_Z+suppLYSO_offset),
 				    "HEPDBoxHoneyComb",
 				    fLogicWallHoneyComb,
 				    motherVolume,
 				    false,0,true);
 
   fPhysiWallExternalOut = new G4PVPlacement(0,
-				    G4ThreeVector(fPhysiWallExternalOut_X,fPhysiWallExternalOut_Y,fPhysiWallExternalOut_Z),
+				    G4ThreeVector(fPhysiWallExternalOut_X,fPhysiWallExternalOut_Y,fPhysiWallExternalOut_Z+suppLYSO_offset),
 				    "HEPDBoxWallExternalOut ",
 				    fLogicWallExternal,
 				    motherVolume,
