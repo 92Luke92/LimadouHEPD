@@ -58,6 +58,10 @@
 -1		-1
 -1		-1
 -1		-1
+-1              -1
+-1              -1
+-1              -1
+-1              -1
 # Eq factors obtained by F. Palma running over boot number 167, runs 700-3440 included.
 # Selections:
 # (T1 XOR T2) & P1 & P2 & P3 & P14 & P15 & P16 & L4 & bottomVeto & NOT(all.rest)
