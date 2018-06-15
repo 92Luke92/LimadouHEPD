@@ -35,9 +35,15 @@ EcalADC::EcalADC(method ecalmethod)
         case Matteo:
             methodHg = new MatteoMethod("PmtSlopeIntercErr_MeanMatteo.csv");
             methodLg = new MatteoMethod("PmtSlopeIntercErr_MeanMatteo.csv");
+            break;
+        case Synthesis:
+            methodHg = new SynthesisMethod("Synthesis_mean_abc_IQ_abc.csv");
+            methodLg = new SynthesisMethod("Synthesis_mean_abc_IQ_abc.csv");
+            break;
         case RawEdep:
             methodHg = new RawEdepMethod("nullped.csv");
             methodLg = new RawEdepMethod("nullped.csv");
+
     }
     initMCpos();
 }
@@ -73,7 +79,7 @@ void EcalADC::SetPositions(std::vector<Edep_Pos> pmt_info) {
         TVector2 PmtPos = PMTpos[ip];
         TVector2 ParticlePos = pmt_info[ip].position.XYvector();
         float distance = VectorXYDist (PmtPos, ParticlePos);
-        float attcor = PMTAttCorr (distance);
+        float attcor = 1;// PMTAttCorr (distance);
         correctedPMTs[ip] *= attcor;
     }
 }
@@ -94,7 +100,8 @@ void EcalADC::NormalizePMTlg ( ushort* pmt_low)
 
 void EcalADC::NormalizePMT ( ushort* pmt_out, calomev2adcmethod* method) {
     for (uint ip = 0; ip < NPMT; ip++) {
-	pmt_out[ip] = method->adcFromMev( correctedPMTs[ip], ip );
+        ushort adc=method->adcFromMev( correctedPMTs[ip], ip );
+        pmt_out[ip] = adc;
     }
     return;
 }
