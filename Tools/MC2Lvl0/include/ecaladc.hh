@@ -17,11 +17,13 @@
 #include "Edep_Pos.h"
 #include "detector_const.hh"
 #include "MCcoorPhysicalFrame.hh"
+#include "pmtenum.hh"
+
 #include "laurentmethod.hh"
 #include "francescomethod.hh"
 #include "matteomethod.hh"
 #include "rawedepmethod.hh"
-#include "pmtenum.hh"
+#include "synthesismethod.hh"
 
 
 #include "TVector3.h"
@@ -30,7 +32,7 @@
 
 class EcalADC {
   public:
-    enum method {Laurent, Francesco, Matteo, RawEdep};
+    enum method {Laurent, Francesco, Matteo, RawEdep, Synthesis};
     EcalADC(method ecalmethod);
     void SetPositions (std::vector<Edep_Pos> pmt_info );
     void NormalizePMThg ( ushort* pmt_high);
