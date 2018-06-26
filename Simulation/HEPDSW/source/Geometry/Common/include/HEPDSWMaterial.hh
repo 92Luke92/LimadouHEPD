@@ -28,7 +28,7 @@
 //
 //    **********************************
 //    *                                *
-//    *      BrachyMaterial.hh          *
+//    *      BrachyMaterial.hh         *
 //    *                                *
 //    **********************************
 //
@@ -54,11 +54,13 @@ public:
 
 private:
   G4Material* matAir;
-  G4Material* matAl; 
+  G4Material* matAl;
+  G4Material* AluminiumOpt;
   G4Material* matTi; 
   G4Material* matGraphite; 
   G4Material* matCarbonFiber; 
   G4Material* matH2O;
+  G4Material* matH2O_solid;
   G4Material* matMgB2;
   G4Material* matGlass;
   G4Material* matCu;
@@ -109,6 +111,7 @@ private:
   G4MaterialPropertiesTable* MPTEJ200;
   G4MaterialPropertiesTable* MPTScintillator;
   G4MaterialPropertiesTable* MPTLyso;
+  G4MaterialPropertiesTable* MPTAluminiumOpt;
 
 };
 #endif

@@ -12,5 +12,7 @@
 #pragma link C++ class std::vector<RootVertex>+;
 #pragma link C++ class RootTrackerHit+;
 #pragma link C++ class std::vector<RootTrackerHit>+;
+#pragma link C++ class RootDegraderHit+;
+#pragma link C++ class std::vector<RootDegraderHit>+;
 #pragma link C++ class RootEvent+;
 #endif 

@@ -4,7 +4,7 @@
 set(headers "")
 set(sources "")
 
-foreach(subdir Common Calorimeter Tracker HEPDBox Satellite)
+foreach(subdir Common Calorimeter Tracker HEPDBox Satellite Degrader)
   message(STATUS "process subdir :" ${subdir})
   add_subdirectory(${subdir})
   get_directory_property(sub_headers DIRECTORY ${subdir} DEFINITION headers)

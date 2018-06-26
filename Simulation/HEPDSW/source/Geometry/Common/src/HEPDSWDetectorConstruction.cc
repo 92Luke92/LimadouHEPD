@@ -43,6 +43,7 @@
 #include "CalorimeterConstruction.hh"
 #include "HEPDBoxConstruction.hh"
 #include "SatelliteConstruction.hh"
+#include "DegraderConstruction.hh"
 
 
 #include "G4GeometryManager.hh"
@@ -63,7 +64,7 @@
 
 HEPDSWDetectorConstruction::HEPDSWDetectorConstruction()
   :fSolidWorld(0),fLogicWorld(0),fPhysiWorld(0),
-   fSatelliteBuilder(0),fHEPDBoxBuilder(0),fCaloBuilder(0),fTrackerBuilder(0)
+   fSatelliteBuilder(0),fHEPDBoxBuilder(0),fCaloBuilder(0),fTrackerBuilder(0),fDegraderBuilder(0)
 
 {
 
@@ -84,12 +85,14 @@ HEPDSWDetectorConstruction::HEPDSWDetectorConstruction()
   fCaloBuilder      = new CalorimeterConstruction();
   //  fScintBuilder     = new ScintillatorConstruction();
   fTrackerBuilder   = new TrackerConstruction(proton_tb_offset_Z,useProtonTB);
-
+  fDegraderBuilder  = new DegraderConstruction();
+  
   fDetectorMessenger = new HEPDSWDetectorMessenger(this);
   
   useSatellite=true;
   useHEPDBox=true;
   useCalorimeter=true;
+  useDegrader=false;
   //  useScintillator=true;
   useTracker=true;
   theSatelliteConfig="Config2";
@@ -97,6 +100,7 @@ HEPDSWDetectorConstruction::HEPDSWDetectorConstruction()
   theCaloConfig="Config6";
   //theScintConfig="Config4";
   theTrackerConfig="Config2";
+  degrader_dz = 25; // two alternatives: 16 (51 MeV), 25 (37 MeV)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -128,9 +132,17 @@ G4VPhysicalVolume* HEPDSWDetectorConstruction::Construct()
 
   pMaterial -> DefineMaterials();
   G4Material* vacuum = pMaterial->GetMaterial("Galactic");
+  G4Material* air = pMaterial->GetMaterial("G4_AIR"); 
 
+  if (useProtonTB) fworldHalfZ = 376.37 + fISOcenterZ + HEPD_offset_Z + 1*cm;
+
+  G4cout << "monde dx " << fworldHalfX << " dy " << fworldHalfY << " dz " << fworldHalfZ << G4endl;
 
   fSolidWorld = new G4Box("world",fworldHalfX,fworldHalfY,fworldHalfZ);
+  
+  if (useProtonTB)
+  fLogicWorld = new G4LogicalVolume(fSolidWorld,air,"world");
+  else
   fLogicWorld = new G4LogicalVolume(fSolidWorld,vacuum,"world");
 
   fLogicWorld->SetSensitiveDetector(mcSD);
@@ -152,6 +164,9 @@ G4VPhysicalVolume* HEPDSWDetectorConstruction::Construct()
 //     fScintBuilder->Builder(theScintConfig,fPhysiWorld);
   if(useTracker)
     fTrackerBuilder->Builder(theTrackerConfig,fPhysiWorld);
+
+  if (useProtonTB && useDegrader) fDegraderBuilder->Builder(fPhysiWorld,fworldHalfZ,degrader_dz);
+  
   return fPhysiWorld;
 }
 

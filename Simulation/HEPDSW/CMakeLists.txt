@@ -36,12 +36,14 @@ set(hepdsw_include_dirs
 	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/Core/include
 	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/MCTruth/include
 	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/Tracker/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/Degrader/include 
 	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Simulation/Calorimeter/include
             ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Common/include
             ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Tracker/include
             ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Calorimeter/include
             ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Satellite/include
             ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/HEPDBox/include
+	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Degrader/include
             ${CMAKE_CURRENT_SOURCE_DIR}/source/Dataformats/include
 	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Producer/include
 	    ${Geant4_INCLUDE_DIR})

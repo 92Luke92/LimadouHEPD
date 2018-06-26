@@ -26,6 +26,7 @@
 #include "RootVertex.hh"
 #include "CaloHit.hh"
 #include "TrackerHit.hh"
+#include "DegraderHit.hh"
 #include "Track.hh"
 #include "Vertex.hh"
 #include <string>
@@ -49,6 +50,7 @@ public:
   void StoreRootFile();
   
   inline void SaveTrackerInfo(G4bool aVal){saveTracker=aVal;}
+  inline void SaveDegraderInfo(G4bool aVal){saveDegrader=aVal;}
   inline void SaveMCTruthInfo(G4bool aVal){saveMCTruth=aVal;}
   inline void SaveCalorimeterInfo(G4bool aVal){saveCalo=aVal;}
 
@@ -66,12 +68,14 @@ private:
   G4int verboseLevel;
   
   G4bool saveTracker;
+  G4bool saveDegrader;
   G4bool saveMCTruth;
   G4bool saveCalo;
 
   G4int caloHitCollID;
   G4int vetoHitCollID;
   G4int trackerHitCollID;
+  G4int degraderHitCollID;
   G4int trackCollID;
   G4int vertexCollID;
 
@@ -82,6 +86,7 @@ private:
   std::vector<RootCaloHit> theCaloHitContainer;
   std::vector<RootCaloHit> theVetoHitContainer;
   std::vector<RootTrackerHit> theTrackerHitContainer;
+   std::vector<RootDegraderHit> theDegraderHitContainer;
   std::vector<RootTrack> theTrackContainer;
   std::vector<RootVertex> theVertexContainer;
 

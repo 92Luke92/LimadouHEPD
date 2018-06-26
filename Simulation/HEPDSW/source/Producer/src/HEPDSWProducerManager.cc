@@ -24,6 +24,7 @@
 #include "G4VTrajectoryPoint.hh"
 #include "G4TrajectoryContainer.hh"
 #include <iterator>
+#include "G4SIunits.hh"
 
 HEPDSWProducerManager* HEPDSWProducerManager::instance = 0;
 
@@ -42,6 +43,7 @@ HEPDSWProducerManager::HEPDSWProducerManager():theEvent(0),theRootFile(0),theEve
   saveTracker=true;
   saveMCTruth=true;
   saveCalo=true;
+  saveDegrader=true;
   theEvent = new RootEvent();
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,6 +90,9 @@ void HEPDSWProducerManager::BeginOfEventAction(const G4Event*)
     }
     if(saveTracker)
       trackerHitCollID = SDman->GetCollectionID("trackerHitCollection");
+    if(saveDegrader)
+      degraderHitCollID = SDman->GetCollectionID("degraderHitCollection");
+    
     if(saveMCTruth){
       trackCollID = SDman->GetCollectionID("trackCollection");
       vertexCollID = SDman->GetCollectionID("vertexCollection");
@@ -121,6 +126,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
   CaloHitsCollection * caloHC  = 0;
   CaloHitsCollection * vetoHC  = 0;
   TrackerHitsCollection * trackerHC   = 0;
+  DegraderHitsCollection * degraderHC   = 0;
   TracksCollection * trackHC   = 0;
   VertexsCollection * vertexHC   = 0;
 
@@ -130,6 +136,8 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
     theVetoHitContainer.clear();
   if(theTrackerHitContainer.size())
     theTrackerHitContainer.clear();
+  if(theDegraderHitContainer.size())
+    theDegraderHitContainer.clear();
   if(theTrackContainer.size())
     theTrackContainer.clear();
   if(theVertexContainer.size())
@@ -138,6 +146,27 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
   if(HCE){
     if(verboseLevel>0)
       std::cout<<"Evento # "<<eventID<<std::endl;
+    if(!(degraderHitCollID<0)){
+      degraderHC = (DegraderHitsCollection*)(HCE->GetHC(degraderHitCollID));
+      for(int i=0;i<degraderHC->entries();i++){
+         TVector3 SPosHit((*degraderHC)[i]->GetStartPosition().getX(),(*degraderHC)[i]->GetStartPosition().getY(),(*degraderHC)[i]->GetStartPosition().getZ());
+         TVector3 EPosHit((*degraderHC)[i]->GetEndPosition().getX(),(*degraderHC)[i]->GetEndPosition().getY(),(*degraderHC)[i]->GetEndPosition().getZ());
+         TVector3 MomDirStartHit((*degraderHC)[i]->GetMomDirStart().getX(),(*degraderHC)[i]->GetMomDirStart().getY(),(*degraderHC)[i]->GetMomDirStart().getZ());
+         TVector3 MomDirEndHit((*degraderHC)[i]->GetMomDirEnd().getX(),(*degraderHC)[i]->GetMomDirEnd().getY(),(*degraderHC)[i]->GetMomDirEnd().getZ());
+         theDegraderHitContainer.push_back(RootDegraderHit((*degraderHC)[i]->GetKineticEnergy(),
+		 													MomDirStartHit,
+		 													MomDirEndHit,
+		 													(*degraderHC)[i]->GetELoss(),
+		 													SPosHit,
+		 													EPosHit,
+		 													(*degraderHC)[i]->GetStepLength(),
+		 													(*degraderHC)[i]->GetdEdx(),
+         											(*degraderHC)[i]->GetTrackId(),
+         											(*degraderHC)[i]->GetParticleType()));
+	 if(verboseLevel>0)
+	  std::cout<<"DegraderHit  # "<<i<<" ; Edep = "<<(*degraderHC)[i]->GetELoss()<<" MeV"<<std::endl;
+      }
+    }
     if(!(trackerHitCollID<0)){
       trackerHC = (TrackerHitsCollection*)(HCE->GetHC(trackerHitCollID));
       for(int i=0;i<trackerHC->entries();i++){
@@ -218,6 +247,8 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
   }
   if(saveTracker)
     theEvent->SetTrackerHit(theTrackerHitContainer);
+  if(saveDegrader)
+    theEvent->SetDegraderHit(theDegraderHitContainer);
   if(saveMCTruth){
     theEvent->SetTracks(theTrackContainer);
     theEvent->SetVertex(theVertexContainer);
