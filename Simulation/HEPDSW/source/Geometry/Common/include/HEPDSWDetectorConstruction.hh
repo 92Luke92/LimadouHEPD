@@ -105,11 +105,16 @@ private:
   G4bool             useCalorimeter;
   G4bool             useTracker;
 
+  G4bool             useProtonTB; 
+
   HEPDSWMaterial*      pMaterial;
   
   G4double           fworldHalfZ;
   G4double           fworldHalfY;
   G4double           fworldHalfX;
+
+  G4double           fISOcenterZ; // proton test beam
+  G4double           HEPD_offset_Z; // from ISO center
   
   G4Box*             fSolidWorld;
   G4LogicalVolume*   fLogicWorld;

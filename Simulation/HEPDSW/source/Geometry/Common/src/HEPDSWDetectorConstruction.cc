@@ -68,7 +68,12 @@ HEPDSWDetectorConstruction::HEPDSWDetectorConstruction()
 {
 
   pMaterial = new HEPDSWMaterial();
-  fDetectorMessenger = new HEPDSWDetectorMessenger(this);
+
+  fISOcenterZ = 125*cm;
+  HEPD_offset_Z = 186*cm - fISOcenterZ;
+  G4double proton_tb_offset_Z = fISOcenterZ + HEPD_offset_Z;
+  useProtonTB=false;
+  G4cout << " useProtonTB " << useProtonTB << G4endl;
   
   fworldHalfX=20.0*cm;
   fworldHalfY=20.0*cm;
@@ -78,8 +83,10 @@ HEPDSWDetectorConstruction::HEPDSWDetectorConstruction()
   fHEPDBoxBuilder   = new HEPDBoxConstruction();
   fCaloBuilder      = new CalorimeterConstruction();
   //  fScintBuilder     = new ScintillatorConstruction();
-  fTrackerBuilder   = new TrackerConstruction();
+  fTrackerBuilder   = new TrackerConstruction(proton_tb_offset_Z,useProtonTB);
 
+  fDetectorMessenger = new HEPDSWDetectorMessenger(this);
+  
   useSatellite=true;
   useHEPDBox=true;
   useCalorimeter=true;

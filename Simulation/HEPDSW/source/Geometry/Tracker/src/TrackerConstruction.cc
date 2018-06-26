@@ -34,12 +34,12 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TrackerConstruction::TrackerConstruction()
+TrackerConstruction::TrackerConstruction(G4double ISOcenterZ, bool useProtonTB)
 {
   theConfig1 = new TrackerConstructionConfig1();
   theConfig2 = new TrackerConstructionConfig2();
   theConfig3 = new TrackerConstructionConfig3();
-  theConfig4 = new TrackerConstructionConfig4();
+  theConfig4 = new TrackerConstructionConfig4(ISOcenterZ,useProtonTB);
   theDummy   = new TrackerConstructionDummy();
 }
 
