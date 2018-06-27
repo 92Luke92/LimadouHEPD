@@ -35,6 +35,9 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ParticleGun.hh"
 #include "globals.hh"
+#include "Rtypes.h"
+#include "TF1.h"
+#include "TMath.h"
 
 class G4Event;
 class HEPDSWDetectorConstruction;
@@ -52,8 +55,10 @@ public:
   void SetDefaultKinematic();
   void SetParticle(G4String part);
   void SetEnergy(G4double ene);
-  void SetDummy(G4double Xpos,G4double Ypos,G4double theta);
+  void SetBeam(G4double Xpos,G4double Ypos,G4double theta);
+  void SetBeamEReso(G4double ereso);
   void SetPowerLaw(G4double aEmin,G4double aEmax,G4double aGamma);
+  void SetFlat(G4double aEmin,G4double aEmax);
 
   inline void SetRandomPosition() { random = true;}
   inline void SetDirectionToCenter() { centerpointing = true;}
@@ -64,6 +69,7 @@ public:
 
 private:
   G4double SpectrumPowerLaw(G4double Emin,G4double Emax, G4double gamma);
+  G4double FlatSpectrum(G4double Emin,G4double Emax);
 
   G4ThreeVector          position;
   G4ThreeVector          direction;
@@ -71,11 +77,16 @@ private:
   HEPDSWDetectorConstruction*  fDetector;
   G4bool                 random;
   G4bool                 centerpointing;
-  G4bool                 dummy;
+  G4bool                 beam;
+  G4bool                 beam_reso;
   G4bool                 powerlaw;
+  G4bool                 flat;
 
   G4double eminPL,emaxPL,gammaPL;
+  G4double eminFlat,emaxFlat;
 
+  G4double               beam_energy;
+  G4double               beam_ereso;
 
   HEPDSWPrimaryGeneratorMessenger* fGunMessenger;
 };
