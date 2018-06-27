@@ -40,6 +40,7 @@
 #include "G4PVPlacement.hh"
 #include "G4PVReplica.hh"
 #include "G4IntersectionSolid.hh"
+#include "G4UserLimits.hh"
 #include "G4Trap.hh"
 #include "G4Cons.hh"
 
@@ -58,7 +59,7 @@
 #include <iomanip>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-CalorimeterConstructionConfig6::CalorimeterConstructionConfig6()
+CalorimeterConstructionConfig6::CalorimeterConstructionConfig6(G4double tb_offset_Z, G4bool useProtonTB)
   :fSolidS1(0),
    fSolidS1SuppHoleBar(0),  
    fSolidS1SuppBack(0),
@@ -118,6 +119,8 @@ CalorimeterConstructionConfig6::CalorimeterConstructionConfig6()
 
   pMaterial           = new HEPDSWMaterial();
 
+  proton_tb_offset_Z = tb_offset_Z;
+  use_ProtonTB = useProtonTB;
 
   // S1 Scintillator
   fS1ScintNumber     = 6;
@@ -548,6 +551,8 @@ void CalorimeterConstructionConfig6::ComputeObjectsPositioning(){
   suppLYSO_offset = 5.*mm;
  
   ShiftOrigin = fCalo_Z/2. + 36.16*mm + 0.7*mm;
+  G4cout << "ShiftOrigin " << ShiftOrigin << " use_ProtonTB " << use_ProtonTB << G4endl;
+  if (use_ProtonTB) ShiftOrigin -= (proton_tb_offset_Z);
   
   fPhysiS1SuppBack_Y = 0;//fS1SuppBottom_X/2.-18.860*mm-fS1SuppBottomHole_X/2.;
   fPhysiS1SuppBack_X = 0;
@@ -1533,7 +1538,9 @@ fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offse
 
   fLogicSuppLYSO = new G4LogicalVolume(fSolidSuppLYSOsub, suppLYSOMat, "LogicSuppLYSO");
 
-
+  G4double maxStep = 0.25*fActiveTrapLayerZ;
+  fStepLimit = new G4UserLimits(maxStep);
+  fLogicScintActiveLayer->SetUserLimits(fStepLimit);
   fLogicScintActiveLayer->SetSensitiveDetector(caloSD);
   fLogicCrystalActiveBlock->SetSensitiveDetector(caloSD);
   fLogicS1Scint->SetSensitiveDetector(caloSD);

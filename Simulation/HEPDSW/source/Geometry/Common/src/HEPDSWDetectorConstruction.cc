@@ -82,7 +82,7 @@ HEPDSWDetectorConstruction::HEPDSWDetectorConstruction()
   
   fSatelliteBuilder = new SatelliteConstruction();
   fHEPDBoxBuilder   = new HEPDBoxConstruction();
-  fCaloBuilder      = new CalorimeterConstruction();
+  fCaloBuilder      = new CalorimeterConstruction(proton_tb_offset_Z,useProtonTB);
   //  fScintBuilder     = new ScintillatorConstruction();
   fTrackerBuilder   = new TrackerConstruction(proton_tb_offset_Z,useProtonTB);
   fDegraderBuilder  = new DegraderConstruction();
