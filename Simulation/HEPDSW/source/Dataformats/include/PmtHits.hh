@@ -23,56 +23,72 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+//   wjb added for optical photon simulation
 
-#ifndef CalorimeterSD_h
-#define CalorimeterSD_h 1
+#ifndef PmtHits_h
+#define PmtHits_h 1
 
-#include "G4VSensitiveDetector.hh"
-#include "CaloHit.hh"
-#include "CalorimeterSDMessenger.hh"
+#include "G4VHit.hh"
+#include "G4THitsCollection.hh"
+#include "G4Allocator.hh"
+#include "G4RunManager.hh"
+#include "G4Event.hh"
+#include "G4HCofThisEvent.hh"
+#include <vector>
+#include <iostream>
+#include <cstring>
+#include "G4ios.hh"
 
-class G4Step;
-class G4HCofThisEvent;
-class G4TouchableHistory;
-
-class CalorimeterSD : public G4VSensitiveDetector
+class PmtHits : public G4VHit
 {
-  
 public:
-  CalorimeterSD(G4String name);
-  ~CalorimeterSD();
-  
-  void Initialize(G4HCofThisEvent*HCE);
-  G4int GetDetID(G4Step*aStep);
-  G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
-  void EndOfEvent(G4HCofThisEvent*HCE);
-  void clear();
-  void DrawAll();
-  void PrintAll();
 
-  inline void SetUseBirksLaw(G4bool aVal){useBirks=aVal;}
+  PmtHits();
+  PmtHits(G4int aTotalPhot[], size_t aNPmt);
+  //  CaloHit(G4String volume);
+  //  PmtHits(G4int DetID);
+  ~PmtHits();
+  PmtHits(const PmtHits &right);
+  const PmtHits& operator=(const PmtHits &right);
+  G4int operator==(const PmtHits &) const;
+
+  inline void *operator new(size_t);
+  inline void operator delete(void *aHit);
+
+  void Draw();
+  void Print();
 
 private:
-  G4double BirksAttenuation(const G4Step*);
+  size_t theNPmt;
+  G4int theTotalPhot[53]; 
 
-  CalorimeterSDMessenger* fMessenger;
-  CaloHitsCollection* CaloCollection;
-  G4int verboseLevel;
-  std::map<int,int> LayerID;
-  std::map<int,int> LayerTrkID;
-  G4bool useBirks;
-
-  G4double birk1scint;
-  G4double birk2scint;
-  G4double birk3scint;
-
-  G4double birk1crystal;
-  G4double birk2crystal;
-  G4double birk3crystal;
+public:
+  inline G4int GetNPmt(){return theNPmt;}
+  inline G4int* GetTotalPhotpt(){return theTotalPhot;}
+  inline G4int GetNPhot(G4int npmt) {
+    //    G4cout << "npmt " << npmt << G4endl;
+    G4int val = theTotalPhot[npmt];
+    //    G4cout << "val " << val << G4endl;
+    return val;}  //OP
+  
 };
 
+typedef G4THitsCollection<PmtHits> PmtHitsCollection;
 
+extern G4Allocator<PmtHits> PmtHitsAllocator;
 
+inline void* PmtHits::operator new(size_t)
+{
+  void *aHit;
+  aHit = (void *) PmtHitsAllocator.MallocSingle();
+  return aHit;
+}
+
+inline void PmtHits::operator delete(void *aHit)
+{
+  PmtHitsAllocator.FreeSingle((PmtHits*) aHit);
+}
 
 #endif
+
 

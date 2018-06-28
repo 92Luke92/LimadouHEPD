@@ -23,56 +23,60 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+//  wjb added for optical photon simulation
 
-#ifndef CalorimeterSD_h
-#define CalorimeterSD_h 1
+#include "PmtHits.hh"
+#include "G4ios.hh"
+#include "G4UnitsTable.hh"
 
-#include "G4VSensitiveDetector.hh"
-#include "CaloHit.hh"
-#include "CalorimeterSDMessenger.hh"
+G4Allocator<PmtHits> PmtHitsAllocator;
 
-class G4Step;
-class G4HCofThisEvent;
-class G4TouchableHistory;
+PmtHits::PmtHits(){
+  theNPmt = 53;
+  for (int i=0; i<53; i++) theTotalPhot[i] = 0;
+}
 
-class CalorimeterSD : public G4VSensitiveDetector
+PmtHits::~PmtHits()
+{;}
+
+//PmtHits::PmtHits(std::vector<G4int> aTotalPhot, size_t aNPmt) {
+PmtHits::PmtHits(int aTotalPhot[], size_t aNPmt) {
+  theNPmt = aNPmt;
+  for (int i=0; i<((int)theNPmt); i++) {
+    theTotalPhot[i] = aTotalPhot[i];
+  }  
+}
+
+PmtHits::PmtHits(const PmtHits &right)
+  : G4VHit()
 {
-  
-public:
-  CalorimeterSD(G4String name);
-  ~CalorimeterSD();
-  
-  void Initialize(G4HCofThisEvent*HCE);
-  G4int GetDetID(G4Step*aStep);
-  G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
-  void EndOfEvent(G4HCofThisEvent*HCE);
-  void clear();
-  void DrawAll();
-  void PrintAll();
+  theNPmt = right.theNPmt;
+  for (int i=0; i<((int) theNPmt); i++) theTotalPhot[i] = right.theTotalPhot[i];  //OP
+}
 
-  inline void SetUseBirksLaw(G4bool aVal){useBirks=aVal;}
+const PmtHits& PmtHits::operator=(const PmtHits &right)
+{
+  theNPmt = right.theNPmt;
+  for (int i=0; i<((int) theNPmt); i++) theTotalPhot[i] = right.theTotalPhot[i];  //OP
+  return *this;
+}
 
-private:
-  G4double BirksAttenuation(const G4Step*);
+// void PmtHits::AddPhot(G4int detID){  //OP
+//  totalPhot[detID]+=1;
+//  G4cout << " AddPhot detID " << detID << " total " << totalPhot[detID] << G4endl;
+//}
 
-  CalorimeterSDMessenger* fMessenger;
-  CaloHitsCollection* CaloCollection;
-  G4int verboseLevel;
-  std::map<int,int> LayerID;
-  std::map<int,int> LayerTrkID;
-  G4bool useBirks;
-
-  G4double birk1scint;
-  G4double birk2scint;
-  G4double birk3scint;
-
-  G4double birk1crystal;
-  G4double birk2crystal;
-  G4double birk3crystal;
-};
+G4int PmtHits::operator==(const PmtHits &) const
+{
+  return 0;
+}
 
 
+void PmtHits::Draw()
+{;}
 
 
-#endif
+void PmtHits::Print()
+{;}
+
 

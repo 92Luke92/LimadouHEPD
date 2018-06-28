@@ -16,6 +16,7 @@
 #include "RootCaloHit.hh"
 #include "CalorimeterSD.hh"
 #include "VetoSD.hh"
+#include "PmtSD.hh"
 #include <map>
 #include "G4PhysicalVolumeStore.hh"
 #include "G4VPhysicalVolume.hh"
@@ -33,6 +34,7 @@ HEPDSWProducerManager* HEPDSWProducerManager::instance = 0;
 HEPDSWProducerManager::HEPDSWProducerManager():theEvent(0),theRootFile(0),theEventTree(0),thePathDir(0)
 {
   theMessenger = new HEPDSWProducerMessenger(this);
+  pmtHitsCollID=-1;
   vetoHitCollID=-1;
   trackerHitCollID=-1;
   trackCollID=-1;
@@ -87,6 +89,7 @@ void HEPDSWProducerManager::BeginOfEventAction(const G4Event*)
     if(saveCalo){
       caloHitCollID = SDman->GetCollectionID("caloCollection");
       vetoHitCollID = SDman->GetCollectionID("vetoCollection");
+      pmtHitsCollID = SDman->GetCollectionID("pmtCollection");
     }
     if(saveTracker)
       trackerHitCollID = SDman->GetCollectionID("trackerHitCollection");
@@ -123,6 +126,18 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 
   G4HCofThisEvent * HCE = evt->GetHCofThisEvent();
 
+  if(verboseLevel>0) {
+  G4cout << " prod fin eventID " << eventID << " HCE " << HCE << G4endl;
+  G4cout << " degraderHitCollID " << degraderHitCollID << G4endl;  
+  G4cout << " trackerHitCollID " << trackerHitCollID << G4endl;  
+  G4cout << " pmtHitsCollID " << pmtHitsCollID << G4endl;
+  G4cout << " caloHitCollID " << caloHitCollID << G4endl;  
+  G4cout << " vetoHitCollID " << vetoHitCollID << G4endl;  
+  G4cout << " trackCollID " << trackCollID << G4endl;  
+  G4cout << " vertexCollID " << vertexCollID << G4endl;  
+  }
+
+  PmtHitsCollection * pmtHC  = 0;
   CaloHitsCollection * caloHC  = 0;
   CaloHitsCollection * vetoHC  = 0;
   TrackerHitsCollection * trackerHC   = 0;
@@ -132,6 +147,8 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 
   if(theCaloHitContainer.size())
     theCaloHitContainer.clear();
+  if(thePmtHitsContainer.size())
+    thePmtHitsContainer.clear();
   if(theVetoHitContainer.size())
     theVetoHitContainer.clear();
   if(theTrackerHitContainer.size())
@@ -172,37 +189,119 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
       for(int i=0;i<trackerHC->entries();i++){
 	TVector3 Entry((*trackerHC)[i]->GetEntryPoint().getX(),(*trackerHC)[i]->GetEntryPoint().getY(),(*trackerHC)[i]->GetEntryPoint().getZ());
 	TVector3 Exit((*trackerHC)[i]->GetExitPoint().getX(),(*trackerHC)[i]->GetExitPoint().getY(),(*trackerHC)[i]->GetExitPoint().getZ());
+	TVector3 MomDir((*trackerHC)[i]->GetMomentumDirection().getX(),(*trackerHC)[i]->GetMomentumDirection().getY(),(*trackerHC)[i]->GetMomentumDirection().getZ());            
 	theTrackerHitContainer.push_back(RootTrackerHit(Entry,Exit,
-							(*trackerHC)[i]->GetMomentum(),
+							(*trackerHC)[i]->GetKinEnergy(),
 							(*trackerHC)[i]->GetToF(),
 							(*trackerHC)[i]->GetELoss(),
 							(*trackerHC)[i]->GetParticleType(),
 							(*trackerHC)[i]->GetDetectorId(),
 							(*trackerHC)[i]->GetTrackId(),
 							(*trackerHC)[i]->GetThetaAtEntry(),
-							(*trackerHC)[i]->GetPhiAtEntry()));
+							(*trackerHC)[i]->GetPhiAtEntry(),MomDir));
 	if(verboseLevel>0)
 	  std::cout<<"TrackerHit  # "<<i<<" ; Edep = "<<(*trackerHC)[i]->GetELoss()<<" MeV"<<std::endl;
       }
     }
-    if(!(caloHitCollID<0)){
+    /*if(!(caloHitCollID<0)){
       caloHC = (CaloHitsCollection*)(HCE->GetHC(caloHitCollID));
       for(int i=0;i<caloHC->entries();i++){
 	theCaloHitContainer.push_back(RootCaloHit((*caloHC)[i]->GetVolume(),(*caloHC)[i]->GetTotalEdep()/CLHEP::MeV,(*caloHC)[i]->GetEdepMap()));
 	if(verboseLevel>0)
 	  std::cout<<"CaloHit  # "<<i<<" ; Volume = "<<(*caloHC)[i]->GetVolume()<<" ; Edep = "<<(*caloHC)[i]->GetTotalEdep()/CLHEP::MeV<<" MeV"<<std::endl;
       }
+      }*/
+    if(!(caloHitCollID<0)){
+      caloHC = (CaloHitsCollection*)(HCE->GetHC(caloHitCollID));
+      G4cout << " caloHC entries " << caloHC->entries() << G4endl; 
+      std::map<int,TVector3> aStepPosMap;
+      for(int i=0;i<caloHC->entries();i++){
+	//        G4cout << "---> caloHC entree " << i << G4endl; 
+        aStepPosMap.clear();
+        TVector3 Entry((*caloHC)[i]->GetEntryPoint().getX(),(*caloHC)[i]->GetEntryPoint().getY(),(*caloHC)[i]->GetEntryPoint().getZ());	
+		TVector3 Exit((*caloHC)[i]->GetExitPoint().getX(),(*caloHC)[i]->GetExitPoint().getY(),(*caloHC)[i]->GetExitPoint().getZ());
+		aStepPosMap.empty();
+	// int no_step_pos = 0;
+	/*	for(std::map<int,G4ThreeVector>::iterator j=(*caloHC)[i]->GetStepPosMap().begin();j!=(*caloHC)[i]->GetStepPosMap().end();j++){
+	  no_step_pos++;
+          G4cout << "no step pos " << no_step_pos << G4endl;
+          if (no_step_pos > 20) break;
+	  } */
+	//        G4cout << " size StepPosMap " << (*caloHC)[i]->GetStepPosMap().size() << "max size StepPosMap " <<  (*caloHC)[i]->GetStepPosMap().max_size() << G4endl;
+        int mapsize = 0;
+        bool arret = false;
+		for(std::map<int,G4ThreeVector>::iterator j=(*caloHC)[i]->GetStepPosMap().begin();j!=(*caloHC)[i]->GetStepPosMap().end();j++){
+          mapsize++;
+          if ((*caloHC)[i]->GetStepPosMap().size()<mapsize) {
+	    //            arret = true;
+            break;
+          }
+          int itkid = j->first;
+          G4ThreeVector g4tv = j->second;
+	  //	  G4cout << "jtkid " << itkid << " x " << g4tv.getX() <<  " y " << g4tv.getY() << " z " << g4tv.getZ() << " id " << (*caloHC)[i]->GetVolume() << G4endl;
+          TVector3 tv(g4tv.getX(),g4tv.getY(),g4tv.getZ());
+	  	  aStepPosMap[itkid]=tv;  
+	  /*          for(std::map<int,TVector3>::iterator jj = aStepPosMap.begin();jj!=aStepPosMap.end();jj++){
+	     G4cout << "itkid " << jj->first << " x " << (jj->second).X() <<  " y " << (jj->second).Y() << " z " << (jj->second).Z() << " id " << (*caloHC)[i]->GetVolume() << G4endl;
+	     } */
+		}
+        if (arret) break;
+		theCaloHitContainer.push_back( RootCaloHit((*caloHC)[i]->GetVolume(),
+                                                   Entry,
+                                                   Exit,
+                                                   (*caloHC)[i]->GetKinEnergy(),                                                        
+                                                   (*caloHC)[i]->GetTotalEdep()/CLHEP::MeV,
+						        				                       (*caloHC)[i]->GetEdepMap(),
+                                                   aStepPosMap,
+						        				                       (*caloHC)[i]->GetNPhot((*caloHC)[i]->GetVolume())) ); // OP
+		if(verboseLevel>0)
+		   std::cout <<"CaloHit  # "<<i<<" ; Volume = "<<(*caloHC)[i]->GetVolume()<<" ; Edep = "<<(*caloHC)[i]->GetTotalEdep()/CLHEP::MeV<<" MeV"<< std::endl;;
+      }
     }
-    if(!(vetoHitCollID<0)){
+    
+    /*if(!(vetoHitCollID<0)){
       vetoHC = (CaloHitsCollection*)(HCE->GetHC(vetoHitCollID));
       for(int i=0;i<vetoHC->entries();i++){
 	theVetoHitContainer.push_back(RootCaloHit((*vetoHC)[i]->GetVolume(),(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV,(*vetoHC)[i]->GetEdepMap()));
 	if(verboseLevel>0)
 	  std::cout<<"VetoHit  # "<<i<<" ; Volume = "<<(*vetoHC)[i]->GetVolume()<<" ; Edep = "<<(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV<<" MeV"<<std::endl;
       }
+      }*/
+
+    if(!(vetoHitCollID<0)){
+      vetoHC = (CaloHitsCollection*)(HCE->GetHC(vetoHitCollID));
+      G4cout << " vetoHC entries " << vetoHC->entries() << G4endl; 
+      std::map<int,TVector3> aStepPosMap;
+      for(int i=0;i<vetoHC->entries();i++){
+        aStepPosMap.clear();
+        TVector3 Entry((*vetoHC)[i]->GetEntryPoint().getX(),(*vetoHC)[i]->GetEntryPoint().getY(),(*vetoHC)[i]->GetEntryPoint().getZ());	
+        TVector3 Exit((*vetoHC)[i]->GetExitPoint().getX(),(*vetoHC)[i]->GetExitPoint().getY(),(*vetoHC)[i]->GetExitPoint().getZ());
+        int mapsize = 0;
+        bool arret = false;
+		for(std::map<int,G4ThreeVector>::iterator j=(*vetoHC)[i]->GetStepPosMap().begin();j!=(*vetoHC)[i]->GetStepPosMap().end();j++){
+          mapsize++;
+          if ((*vetoHC)[i]->GetStepPosMap().size()<mapsize) {
+	    //            arret = true;
+            break;
+          }
+          int itkid = j->first;
+          G4ThreeVector g4tv = j->second;
+          TVector3 tv(g4tv.getX(),g4tv.getY(),g4tv.getZ());
+	  	  aStepPosMap[itkid]=tv;  
+		}
+
+		theVetoHitContainer.push_back(RootCaloHit((*vetoHC)[i]->GetVolume(),Entry,Exit,
+                                                  (*vetoHC)[i]->GetKinEnergy(),                                                        
+                                                  (*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV,
+						        				                      (*vetoHC)[i]->GetEdepMap(),
+                                                  aStepPosMap,
+						        				                      (*caloHC)[i]->GetNPhot((*vetoHC)[i]->GetVolume())) ); // OP
+		if(verboseLevel>0)
+		  std::cout<<"VetoHit  # "<<i<<" ; Volume = "<<(*vetoHC)[i]->GetVolume()<<" ; Edep = "<<(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV<<" MeV"<<std::endl;
+      }
     }
 
-    if(!(trackCollID<0)){
+    /*if(!(trackCollID<0)){
       trackHC = (TracksCollection*)(HCE->GetHC(trackCollID));
       for(int i=0;i<trackHC->entries();i++){
 	TVector3 Pos((*trackHC)[i]->GetPosition().getX(),(*trackHC)[i]->GetPosition().getY(),(*trackHC)[i]->GetPosition().getZ());
@@ -213,7 +312,23 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 					      (*trackHC)[i]->GetKinEnergy(),
 					      (*trackHC)[i]->GetMotherTrackId()));
       }
+      }*/
+    if(!(trackCollID<0)){
+      trackHC = (TracksCollection*)(HCE->GetHC(trackCollID));
+      for(int i=0;i<trackHC->entries();i++){
+		TVector3 Pos((*trackHC)[i]->GetPosition().getX(),(*trackHC)[i]->GetPosition().getY(),(*trackHC)[i]->GetPosition().getZ());
+		TVector3 Dir((*trackHC)[i]->GetMomentumDirection().getX(),(*trackHC)[i]->GetMomentumDirection().getY(),(*trackHC)[i]->GetMomentumDirection().getZ());
+		theTrackContainer.push_back(RootTrack((*trackHC)[i]->GetTrackId(),
+					      					  (*trackHC)[i]->GetPDGCode(),
+					      					  (*trackHC)[i]->GetName(),
+					      					  Pos,Dir,
+					      					  (*trackHC)[i]->GetKinEnergy(),
+					      					  (*trackHC)[i]->GetMotherTrackId(),
+                                              (*trackHC)[i]->GetVertexVolumeName(),
+						      (*trackHC)[i]->GetCreatorProcessName()));
+      }
     }
+    
     if(!(vertexCollID<0)){
       vertexHC = (VertexsCollection*)(HCE->GetHC(vertexCollID));
       if(vertexHC->entries()){
@@ -230,6 +345,24 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
       }
     }
 
+    
+    //    G4cout << "pmtHitsCollID " << pmtHitsCollID << G4endl;
+    if(!(pmtHitsCollID<0)){
+      pmtHC = (PmtHitsCollection*)(HCE->GetHC(pmtHitsCollID));
+      //      G4cout << " pmtHC entrees " << pmtHC->entries() << G4endl;
+      for(int i=0;i<pmtHC->entries();i++){
+        int TotalNPhot[53];
+	//	G4cout << " entree " << i << " NPmt " << (*pmtHC)[i]->GetNPmt() << G4endl;
+        for (int j=0; j<53; j++) {
+	  		TotalNPhot[j] = (*pmtHC)[i]->GetNPhot(j);
+	  //	  G4cout << " pmt " << j << " TotalNPhot " << TotalNPhot[j] << G4endl;
+        }	
+		thePmtHitsContainer.push_back(RootPmtHits(TotalNPhot,
+						  						  (*pmtHC)[i]->GetNPmt()));
+      }
+    }
+
+    
 
     if(verboseLevel>0)
       std::cout<<"=============================================================================================="<<std::endl;
@@ -240,10 +373,11 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
     G4cout << "theEvent: " << theEvent << G4endl;
   theEvent->SetEventID(eventID);
   if(verboseLevel>0)
-    G4cout << "saveCalo: " << saveCalo <<  "\tsaveTracker: " << saveTracker <<"\tsaveMCTruth: " << saveMCTruth << G4endl;
+    G4cout << "saveCalo: " << saveCalo <<  "\tsaveTracker: " << saveTracker << "\tsaveDegrader: " << saveDegrader <<"\tsaveMCTruth: " << saveMCTruth << G4endl;
   if(saveCalo){
     theEvent->SetCaloHit(theCaloHitContainer);
     theEvent->SetVetoHit(theVetoHitContainer);
+    theEvent->SetPmtHits(thePmtHitsContainer);
   }
   if(saveTracker)
     theEvent->SetTrackerHit(theTrackerHitContainer);
@@ -253,7 +387,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
     theEvent->SetTracks(theTrackContainer);
     theEvent->SetVertex(theVertexContainer);
   }
- if(verboseLevel>0)
+  //if(verboseLevel>0)
    G4cout << "theEventTree: 0x" << theEventTree << G4endl;
   theEventTree->Fill();
   if(verboseLevel>0)

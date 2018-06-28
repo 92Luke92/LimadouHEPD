@@ -37,7 +37,7 @@ class TrackerHit : public G4VHit
 public:
 
   TrackerHit();
-  TrackerHit(G4ThreeVector,G4ThreeVector,G4double,G4double,G4double,G4int,unsigned int,unsigned int,G4double,G4double);
+  TrackerHit(G4ThreeVector,G4ThreeVector,G4double,G4double,G4double,G4int,unsigned int,unsigned int,G4double,G4double,G4ThreeVector);
   ~TrackerHit();
   TrackerHit(const TrackerHit &right);
   const TrackerHit& operator=(const TrackerHit &right);
@@ -53,7 +53,7 @@ public:
   void AddEnergyLoss(G4double aEloss);
   inline G4ThreeVector GetEntryPoint(){return theEntryPoint;}
   inline G4ThreeVector GetExitPoint(){return theExitPoint;}
-  inline G4double GetMomentum(){return theMomentum;}
+  inline G4double GetKinEnergy(){return theKinEnergy;}
   inline G4double GetToF(){return theTimeOfFlight;}
   inline G4double GetELoss(){return theEnergyLoss;}
   inline G4int GetParticleType(){return theParticleType;}
@@ -61,11 +61,12 @@ public:
   inline unsigned int GetTrackId(){return theTrackIdInHit;}
   inline G4double GetThetaAtEntry(){return theThetaAtEntry;}
   inline G4double GetPhiAtEntry(){return thePhiAtEntry;}
+  inline G4ThreeVector GetMomentumDirection(){return theMomentumDirection;}
 
 private:
   G4ThreeVector theEntryPoint;
   G4ThreeVector theExitPoint;
-  G4double theMomentum;
+  G4double theKinEnergy;
   G4double theTimeOfFlight;
   G4double theEnergyLoss;
   G4int    theParticleType;
@@ -73,6 +74,7 @@ private:
   unsigned int theTrackIdInHit;
   G4double theThetaAtEntry;
   G4double thePhiAtEntry;
+  G4ThreeVector theMomentumDirection;
 
 };
 

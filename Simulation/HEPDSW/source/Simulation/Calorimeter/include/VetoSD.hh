@@ -59,6 +59,7 @@ private:
   CaloHitsCollection *VetoCollection;
   G4int verboseLevel;
   std::map<int,int> VetoID;
+  std::map<int,int> VetoTrkID;
   G4bool useBirks;
 
   G4double birk1scint;

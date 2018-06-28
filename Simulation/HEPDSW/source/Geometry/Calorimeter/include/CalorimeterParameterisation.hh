@@ -23,81 +23,53 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm3/include/CalorimeterConstruction.hh
-/// \brief Definition of the CalorimeterConstruction class
+/// \file parallel/ParN02/include/ExN02ChamberParameterisation.hh
+/// \brief Definition of the ExN02ChamberParameterisation class
 //
-// $Id$
+//
+// $Id: ExN02ChamberParameterisation.hh 73400 2013-08-27 09:52:57Z gcosmo $
+//
+//
+//  A parameterisation that describes a series of boxes along Z
+//    The boxes have equal width, & their lengths are a linear equation.
+//    They are spaced an equal distance apart, starting from given location.
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-#ifndef CalorimeterConstruction_h
-#define CalorimeterConstruction_h 1
-
-#include "globals.hh"
-#include "CalorimeterConstructionConfig1.hh"
-#include "CalorimeterConstructionConfig2.hh"
-#include "CalorimeterConstructionConfig3.hh"
-#include "CalorimeterConstructionConfig4.hh"
-#include "CalorimeterConstructionConfig5.hh"
-#include "CalorimeterConstructionConfig6.hh"
-#include "CalorimeterConstructionOptical.hh"
-#include "CalorimeterConstructionDummy.hh"
-#include "CalorimeterConstructionDummyOptical.hh"
-
-class G4IntersectionSolid;
-class G4Box;
-class G4LogicalVolume;
-class G4VPhysicalVolume;
-
+ 
+#ifndef CalorimeterParameterisation_H
+#define CalorimeterParameterisation_H 1
+ 
+   #include "globals.hh"
+   #include "G4VPVParameterisation.hh"
+   
+   class G4VPhysicalVolume;
+ 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+   
+   class CalorimeterParameterisation : public G4VPVParameterisation
+   { 
+     public:
+     
+       CalorimeterParameterisation(G4int    NoScinPlanes, 
+                                    G4double startZ, 
+                                    G4double spacing,
+                                    G4double widthScinPlane);
+   
+       virtual 
+      ~CalorimeterParameterisation();
+      
+       void ComputeTransformation (const G4int copyNo,
+                                   G4VPhysicalVolume* physVol) const;
 
-class CalorimeterConstruction 
-{
-public:
-  
-  CalorimeterConstruction(G4double ISOcenterZ, G4bool useProtonTB);
-  ~CalorimeterConstruction();
-  
-  void SetVetoMaterial(G4String aMat);
-  //  void SetCaloMaterial(G4String aMat);
-  void SetCaloMaterial(G4String aMat1,G4String aMat2);
-  void SetPoronMaterial(G4String aMat);
-  void SetCarbonFiberMaterial(G4String aMat);
-  void SetHoneyCombMaterial(G4String aMat);
-  void SetNumberOfCrystalLayer(G4int aVal);
-  void Builder(G4String config,G4VPhysicalVolume* motherVolume);
-  
-private:
-  CalorimeterConstructionConfig1* theConfig1;
-  CalorimeterConstructionConfig2* theConfig2;
-  CalorimeterConstructionConfig3* theConfig3;
-  CalorimeterConstructionConfig4* theConfig4;
-  CalorimeterConstructionConfig5* theConfig5;
-  CalorimeterConstructionConfig6* theConfig6;
-  CalorimeterConstructionOptical* theOptical;
-  CalorimeterConstructionDummy* theDummy;
-  CalorimeterConstructionDummyOptical* theDummyOptical;
-
-};
-
+   private:
+ 
+      G4int    fNoScinPlanes;   
+      G4double fStartZ;
+      G4double fHalfWidth;    //  The half-width of each tracker chamber
+      G4double fSpacing;      //  The distance between the chambers' center
+ };
+ 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+ 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-				
-				
-				

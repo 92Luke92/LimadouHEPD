@@ -7,6 +7,7 @@
 #include "RootTrack.hh"
 #include "RootVertex.hh"
 #include "RootCaloHit.hh"
+#include "RootPmtHits.hh"
 #include "RootTrackerHit.hh"
 #include "RootDegraderHit.hh"
 
@@ -22,6 +23,7 @@ public:
 		 std::vector<RootVertex> aVertex,
 		 std::vector<RootCaloHit> aCaloHit,
 		 std::vector<RootCaloHit> aVetoHit,
+	         std::vector<RootPmtHits> aPmtHits,
     	         std::vector<RootTrackerHit> aTkHit,
 	         std::vector<RootDegraderHit> aDgHit);
   
@@ -33,6 +35,7 @@ public:
   inline std::vector<RootVertex>    GetVertex(){return theVertexCollection;}
   inline std::vector<RootCaloHit>  GetCaloHit(){return theCaloHitCollection;}
   inline std::vector<RootCaloHit>  GetVetoHit(){return theVetoHitCollection;}
+  inline std::vector<RootPmtHits>  GetPmtHits(){return thePmtHitsCollection;} //OP
   inline std::vector<RootTrackerHit>  GetTrackerHit(){return theTrackerHitCollection;}
   inline std::vector<RootDegraderHit>  GetDegraderHit(){return theDegraderHitCollection;}
 
@@ -41,6 +44,7 @@ public:
   inline void SetVertex(std::vector<RootVertex> aVertex) {theVertexCollection=aVertex;}
   inline void SetCaloHit(std::vector<RootCaloHit> aCaloHit) {theCaloHitCollection=aCaloHit;}
   inline void SetVetoHit(std::vector<RootCaloHit> aVetoHit) {theVetoHitCollection=aVetoHit;}
+  inline void SetPmtHits(std::vector<RootPmtHits> aPmtHits) {thePmtHitsCollection=aPmtHits;} // OP
   inline void SetTrackerHit(std::vector<RootTrackerHit> aTrackerHit) {theTrackerHitCollection=aTrackerHit;}
   inline void SetDegraderHit(std::vector<RootDegraderHit> aDegraderHit) {theDegraderHitCollection=aDegraderHit;}
 
@@ -53,6 +57,7 @@ private:
   std::vector<RootVertex>  theVertexCollection;
   std::vector<RootCaloHit> theCaloHitCollection;
   std::vector<RootCaloHit> theVetoHitCollection;
+  std::vector<RootPmtHits> thePmtHitsCollection; // OP
   std::vector<RootTrackerHit> theTrackerHitCollection;
   std::vector<RootDegraderHit> theDegraderHitCollection;
 

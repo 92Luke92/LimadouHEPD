@@ -31,8 +31,8 @@
 
 G4Allocator<TrackerHit> TrackerHitAllocator;
 
-TrackerHit::TrackerHit():theEntryPoint(0),theExitPoint(0){
-  theMomentum = 0;
+TrackerHit::TrackerHit():theEntryPoint(0),theExitPoint(0),theMomentumDirection(0){
+  theKinEnergy = 0;
   theTimeOfFlight = 0;
   theEnergyLoss = 0;
   theParticleType = 0;
@@ -42,12 +42,12 @@ TrackerHit::TrackerHit():theEntryPoint(0),theExitPoint(0){
   thePhiAtEntry = 0;
 }
 
-TrackerHit::TrackerHit(G4ThreeVector aEntry,G4ThreeVector aExit,G4double aMom,G4double aToF,G4double aEloss,
-		       G4int aPDG ,unsigned int aID,unsigned int aTkID,G4double aTheta,G4double aPhi)
+TrackerHit::TrackerHit(G4ThreeVector aEntry,G4ThreeVector aExit,G4double aKE,G4double aToF,G4double aEloss,
+		       G4int aPDG ,unsigned int aID,unsigned int aTkID,G4double aTheta,G4double aPhi, G4ThreeVector aMomDir)
 {
   theEntryPoint = aEntry;
   theExitPoint = aExit;
-  theMomentum = aMom;
+  theKinEnergy = aKE;
   theTimeOfFlight = aToF;
   theEnergyLoss = aEloss;
   theParticleType = aPDG;
@@ -55,6 +55,7 @@ TrackerHit::TrackerHit(G4ThreeVector aEntry,G4ThreeVector aExit,G4double aMom,G4
   theTrackIdInHit = aTkID;
   theThetaAtEntry = aTheta;
   thePhiAtEntry = aPhi;
+  theMomentumDirection = aMomDir;
 }
 
 TrackerHit::~TrackerHit()
@@ -66,7 +67,7 @@ TrackerHit::TrackerHit(const TrackerHit &right)
 {
   theEntryPoint = right.theEntryPoint;
   theExitPoint = right.theExitPoint;
-  theMomentum = right.theMomentum;
+  theKinEnergy = right.theKinEnergy;
   theTimeOfFlight = right.theTimeOfFlight;
   theEnergyLoss = right.theEnergyLoss;
   theParticleType = right.theParticleType;
@@ -74,13 +75,14 @@ TrackerHit::TrackerHit(const TrackerHit &right)
   theTrackIdInHit = right.theTrackIdInHit;
   theThetaAtEntry = right.theThetaAtEntry;
   thePhiAtEntry = right.thePhiAtEntry;
+  theMomentumDirection = right.theMomentumDirection;
 }
 
 const TrackerHit& TrackerHit::operator=(const TrackerHit &right)
 {
   theEntryPoint = right.theEntryPoint;
   theExitPoint = right.theExitPoint;
-  theMomentum = right.theMomentum;
+  theKinEnergy = right.theKinEnergy;
   theTimeOfFlight = right.theTimeOfFlight;
   theEnergyLoss = right.theEnergyLoss;
   theParticleType = right.theParticleType;
@@ -88,6 +90,7 @@ const TrackerHit& TrackerHit::operator=(const TrackerHit &right)
   theTrackIdInHit = right.theTrackIdInHit;
   theThetaAtEntry = right.theThetaAtEntry;
   thePhiAtEntry = right.thePhiAtEntry;
+  theMomentumDirection = right.theMomentumDirection;
   return *this;
 }
 
@@ -95,14 +98,15 @@ G4int TrackerHit::operator==(const TrackerHit &right) const
 {
   return (theEntryPoint == right.theEntryPoint &&
 	  theExitPoint == right.theExitPoint &&
-	  theMomentum == right.theMomentum &&
+	  theKinEnergy == right.theKinEnergy &&
 	  theTimeOfFlight == right.theTimeOfFlight &&
 	  theEnergyLoss == right.theEnergyLoss &&
 	  theParticleType == right.theParticleType &&
 	  theDetectorId == right.theDetectorId &&
 	  theTrackIdInHit == right.theTrackIdInHit &&
 	  theThetaAtEntry == right.theThetaAtEntry &&
-	  thePhiAtEntry == right.thePhiAtEntry);
+	  thePhiAtEntry == right.thePhiAtEntry &&
+	  theMomentumDirection == right.theMomentumDirection);
 }
 
 
@@ -115,7 +119,7 @@ void TrackerHit::Print()
   std::cout<<"TrackerHit = "<<std::endl;
   std::cout<<"EntryPoint = "<<theEntryPoint<<"; "<<std::endl;
   std::cout<<"ExitPoint = "<<theExitPoint<<"; "<<std::endl;
-  std::cout<<"Momentum = "<<theMomentum<<"; "<<std::endl;
+  std::cout<<"KinEnergy " <<theKinEnergy<<"; "<<std::endl;
   std::cout<<"Time Of Flight = "<<theTimeOfFlight<<"; "<<std::endl;
   std::cout<<"Energy Loss= "<<theEnergyLoss<<"; "<<std::endl;
   std::cout<<"Particle Type = "<<theParticleType<<"; "<<std::endl;

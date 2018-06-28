@@ -59,6 +59,7 @@ void CalorimeterSD::Initialize(G4HCofThisEvent*){
   CaloCollection = new CaloHitsCollection(SensitiveDetectorName,collectionName[0]); 
   
   LayerID.clear();
+  LayerTrkID.clear();
   verboseLevel = 0;
 }
 
@@ -87,6 +88,10 @@ G4int CalorimeterSD::GetDetID(G4Step*aStep){
 G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   G4double edep = aStep->GetTotalEnergyDeposit();
   G4int tkID = aStep->GetTrack()->GetTrackID();
+  G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition(); 
+  G4ThreeVector theEntryPoint = aStep->GetPreStepPoint()->GetPosition();
+  G4double theKE      = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
+  //  G4cout << "Calo step edep(MeV) = " << edep/MeV <<" ; given by Track = "<<tkID<< G4endl;
   // if(verboseLevel>1) G4cout << "Calo step edep(MeV) = " << edep/MeV <<" ; given by Track = "<<tkID<< G4endl;
   if(edep==0.) return false;
   if(useBirks)
@@ -109,20 +114,21 @@ G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
    //  if(verboseLevel>1) G4cout << "Calo step on Volume = " << volumeID << G4endl;
    if(verboseLevel>1) G4cout << "Calo step on Volume = "<< detID << G4endl;
   
-   if(LayerID.find(detID)==LayerID.end()){
+   if(LayerID.find(detID)==LayerID.end() || LayerTrkID.find(detID)->second!=tkID){
     //    CaloHit* calHit = new CaloHit(volumeID);
-    CaloHit* calHit = new CaloHit(detID);
+     CaloHit* calHit = new CaloHit(detID,theEntryPoint,theExitPoint,theKE);
     calHit->SetEdep(edep/MeV,tkID);
+    calHit->SetStepPos(theExitPoint,tkID);
     G4int icell = CaloCollection->insert(calHit);
     LayerID[detID] = icell - 1;
-
+    LayerTrkID[detID] = tkID;
      if(verboseLevel>1){ 
        G4cout << " New  Hit on Calo Layer " 
           << detID <<" with deposited energy = "<<edep/MeV<< G4endl; 
      }
      }else{ 
      (*CaloCollection)[LayerID[detID]]->AddEdep(edep/MeV,tkID);
-
+     (*CaloCollection)[LayerID[detID]]->SetStepPos(theExitPoint,tkID);
 
     if(verboseLevel>1){ 
       G4cout << " Energy added to Calo Layer " 

@@ -130,7 +130,7 @@ void TrackerSD::CreateHit(G4Step * aStep){
   G4double theEnergyLoss     = aStep->GetTotalEnergyDeposit()/MeV;
   G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition();
   G4ThreeVector theEntryPoint = aStep->GetPreStepPoint()->GetPosition();
-  G4double thePabs      = aStep->GetPreStepPoint()->GetMomentum().mag()/MeV;
+  G4double theKE      = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
   G4double theTof       = aStep->GetPreStepPoint()->GetGlobalTime()/nanosecond;
   G4int theParticleType = theTrack->GetParticleDefinition()->GetPDGEncoding();
 
@@ -139,16 +139,17 @@ void TrackerSD::CreateHit(G4Step * aStep){
   G4ThreeVector lmd = ((G4TouchableHistory *)(aStep->GetPreStepPoint()->GetTouchable()))->GetHistory()->GetTopTransform().TransformAxis(gmd);
   G4double theThetaAtEntry = lmd.theta();
   G4double thePhiAtEntry = lmd.phi();
+  G4ThreeVector theMomentumDirection =  aStep->GetPreStepPoint()->GetMomentumDirection();
 
   if(verboseLevel>1)
     std::cout<<"TrackerSD::CreateHit I'm creating the new Hit on DetId "<<theDetectorId<<std::endl;
 
   detId=theDetectorId;
   trackID=theTrackID;
-  TrackerHit* trackerHit = new TrackerHit(theEntryPoint,theExitPoint,thePabs,theTof,
+  TrackerHit* trackerHit = new TrackerHit(theEntryPoint,theExitPoint,theKE,theTof,
 					  theEnergyLoss,theParticleType,theDetectorId,
 					  theTrackID,theThetaAtEntry,
-					  thePhiAtEntry);
+					  thePhiAtEntry,theMomentumDirection);
 
   G4int cell = TkHitCollection->insert(trackerHit);
   int mapKey = ((trackID&tkIdMask)<<tkIdOffset)|(detId&detIdMask);

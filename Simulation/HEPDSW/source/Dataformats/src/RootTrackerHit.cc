@@ -6,9 +6,9 @@ ClassImp(RootTrackerHit)
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-RootTrackerHit::RootTrackerHit ():theEntryPoint(0,0,0),theExitPoint(0,0,0)
+RootTrackerHit::RootTrackerHit ():theEntryPoint(0,0,0),theExitPoint(0,0,0),theMomDir(0,0,0)
 {
-  theMomentum = 0;
+  theKinEnergy = 0;
   theTimeOfFlight = 0;
   theEnergyLoss = 0;
   theParticeType = 0;
@@ -19,13 +19,13 @@ RootTrackerHit::RootTrackerHit ():theEntryPoint(0,0,0),theExitPoint(0,0,0)
 }
 ////////////////////////////////////////////////////////////////////////////////
 //
-RootTrackerHit::RootTrackerHit(TVector3 aEntry,TVector3 aExit,float aMom,float aToF,float aEloss,
-			       int aPDG ,unsigned int aID,unsigned int aTkID,float aTheta,float aPhi)
+RootTrackerHit::RootTrackerHit(TVector3 aEntry,TVector3 aExit,float aKE,float aToF,float aEloss,
+			       int aPDG ,unsigned int aID,unsigned int aTkID,float aTheta,float aPhi,TVector3 aMomDir)
   
 { 
   theEntryPoint = aEntry;
   theExitPoint = aExit;
-  theMomentum = aMom;
+  theKinEnergy = aKE;
   theTimeOfFlight = aToF;
   theEnergyLoss = aEloss;
   theParticeType = aPDG;
@@ -33,6 +33,7 @@ RootTrackerHit::RootTrackerHit(TVector3 aEntry,TVector3 aExit,float aMom,float a
   theTrackIdInHit = aTkID;
   theThetaAtEntry = aTheta;
   thePhiAtEntry = aPhi;
+  theMomDir = aMomDir;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -44,7 +45,7 @@ RootTrackerHit::RootTrackerHit (const RootTrackerHit& right) : TObject()
 {
   theEntryPoint = right.theEntryPoint;
   theExitPoint = right.theExitPoint;
-  theMomentum = right.theMomentum;
+  theKinEnergy = right.theKinEnergy;
   theTimeOfFlight = right.theTimeOfFlight;
   theEnergyLoss = right.theEnergyLoss;
   theParticeType = right.theParticeType;
@@ -52,6 +53,7 @@ RootTrackerHit::RootTrackerHit (const RootTrackerHit& right) : TObject()
   theTrackIdInHit = right.theTrackIdInHit;
   theThetaAtEntry = right.theThetaAtEntry;
   thePhiAtEntry = right.thePhiAtEntry;
+  theMomDir = right.theMomDir;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //

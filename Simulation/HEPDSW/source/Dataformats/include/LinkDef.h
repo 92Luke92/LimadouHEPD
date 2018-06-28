@@ -6,6 +6,8 @@
 
 #pragma link C++ class RootCaloHit+;
 #pragma link C++ class std::vector<RootCaloHit>+;
+#pragma link C++ class RootPmtHits+;
+#pragma link C++ class std::vector<RootPmtHits>+;
 #pragma link C++ class RootTrack+;
 #pragma link C++ class std::vector<RootTrack>+;
 #pragma link C++ class RootVertex+;

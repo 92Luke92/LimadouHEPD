@@ -37,9 +37,11 @@ CaloHit::CaloHit()
 // CaloHit::CaloHit(G4String volume)
 //   : VolumeID(volume)
 // {;}
-CaloHit::CaloHit(G4int det)
+CaloHit::CaloHit(G4int det,G4ThreeVector aEntry, G4ThreeVector aExit, G4double aKE)
   : DetID(det)
-{;}
+{theEntryPoint = aEntry;
+  theExitPoint = aExit;
+  theKinEnergy = aKE;}
 
 
 CaloHit::~CaloHit()
@@ -50,16 +52,24 @@ CaloHit::CaloHit(const CaloHit &right)
 {
   //  VolumeID = right.VolumeID;
   DetID = right.DetID;
+  theEntryPoint = right.theEntryPoint;
+  theExitPoint = right.theExitPoint;
+  theKinEnergy = right.theKinEnergy;
   edep = right.edep;
   totalEdep = right.totalEdep;
+  for (int i=0; i<53; i++) totalPhot[i] = right.totalPhot[i];  //OP
 }
 
 const CaloHit& CaloHit::operator=(const CaloHit &right)
 {
   //  VolumeID = right.VolumeID;
   DetID = right.DetID;
+  theEntryPoint = right.theEntryPoint;
+  theExitPoint = right.theExitPoint;
+  theKinEnergy = right.theKinEnergy;
   edep = right.edep;
   totalEdep = right.totalEdep;
+  for (int i=0; i<53; i++) totalPhot[i] = right.totalPhot[i];  //OP
   return *this;
 }
 
@@ -72,12 +82,22 @@ void CaloHit::SetEdep(G4double aEdep,G4int aTkID){
     edep[aTkID]=aEdep;
 }
 
+void CaloHit::SetStepPos(G4ThreeVector StepPos,G4int aTkID){
+  //  G4cout << "SetStepPos aTkID " << aTkID << " x " << StepPos.getX() << " y " << StepPos.getY() << " z " << StepPos.getZ() << G4endl;
+  steppos[aTkID]=StepPos;
+}
+
 void CaloHit::AddEdep(G4double aEdep,G4int aTkID){
   totalEdep+=aEdep;
   if(edep.find(aTkID)!=edep.end())
     edep[aTkID]+=aEdep;
   else
     edep[aTkID]=aEdep;
+}
+
+void CaloHit::AddPhot(G4int detID){  //OP
+  totalPhot[detID]+=1;
+  G4cout << " AddPhot detID " << detID << " total " << totalPhot[detID] << G4endl;
 }
 
 G4int CaloHit::operator==(const CaloHit &right) const

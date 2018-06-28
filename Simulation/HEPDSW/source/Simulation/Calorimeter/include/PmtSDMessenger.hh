@@ -23,81 +23,40 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm3/include/CalorimeterConstruction.hh
-/// \brief Definition of the CalorimeterConstruction class
+/// \file electromagnetic/TestEm5/include/CalorimeterSDMessenger.hh
+/// \brief Definition of the CalorimeterSDMessenger class
 //
 // $Id$
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef CalorimeterConstruction_h
-#define CalorimeterConstruction_h 1
+#ifndef PmtSDMessenger_h
+#define PmtSDMessenger_h 1
 
+#include "G4UImessenger.hh"
 #include "globals.hh"
-#include "CalorimeterConstructionConfig1.hh"
-#include "CalorimeterConstructionConfig2.hh"
-#include "CalorimeterConstructionConfig3.hh"
-#include "CalorimeterConstructionConfig4.hh"
-#include "CalorimeterConstructionConfig5.hh"
-#include "CalorimeterConstructionConfig6.hh"
-#include "CalorimeterConstructionOptical.hh"
-#include "CalorimeterConstructionDummy.hh"
-#include "CalorimeterConstructionDummyOptical.hh"
 
-class G4IntersectionSolid;
-class G4Box;
-class G4LogicalVolume;
-class G4VPhysicalVolume;
+class PmtSD;
+class G4UIcmdWithABool;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class CalorimeterConstruction 
+class PmtSDMessenger: public G4UImessenger
 {
-public:
+  public:
+    PmtSDMessenger(PmtSD*);
+   ~PmtSDMessenger();
+    
+    virtual void SetNewValue(G4UIcommand*, G4String);
+    
+  private:
+  G4UIdirectory* fPmtSDDir;    
   
-  CalorimeterConstruction(G4double ISOcenterZ, G4bool useProtonTB);
-  ~CalorimeterConstruction();
-  
-  void SetVetoMaterial(G4String aMat);
-  //  void SetCaloMaterial(G4String aMat);
-  void SetCaloMaterial(G4String aMat1,G4String aMat2);
-  void SetPoronMaterial(G4String aMat);
-  void SetCarbonFiberMaterial(G4String aMat);
-  void SetHoneyCombMaterial(G4String aMat);
-  void SetNumberOfCrystalLayer(G4int aVal);
-  void Builder(G4String config,G4VPhysicalVolume* motherVolume);
-  
-private:
-  CalorimeterConstructionConfig1* theConfig1;
-  CalorimeterConstructionConfig2* theConfig2;
-  CalorimeterConstructionConfig3* theConfig3;
-  CalorimeterConstructionConfig4* theConfig4;
-  CalorimeterConstructionConfig5* theConfig5;
-  CalorimeterConstructionConfig6* theConfig6;
-  CalorimeterConstructionOptical* theOptical;
-  CalorimeterConstructionDummy* theDummy;
-  CalorimeterConstructionDummyOptical* theDummyOptical;
-
+  PmtSD* fPmtSD;
+  //  G4UIcmdWithABool* fSetUseBirksLawCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-				
-				
-				

@@ -32,6 +32,7 @@ public:
   
   inline G4int          GetTrackId(){return theTrackId;}
   inline G4int          GetPDGCode(){return thePDG;}
+  inline G4String       GetName(){return theName;}
   inline G4ThreeVector  GetPosition(){return thePosition;}
   inline G4double       GetKinEnergy(){return theKinEnergy;}
   inline G4ThreeVector  GetMomentumDirection(){return theMomentumDirection;}
@@ -48,7 +49,8 @@ public:
 private:
   G4int          theTrackId;	 
   G4int          thePDG;              //Using this code we can in ROOT to the built in table and create a 
-                                      //TParticlePDG that contain particleMass particleCharge 	 
+                                      //TParticlePDG that contain particleMass particleCharge
+  G4String       theName;
   G4ThreeVector  thePosition;	 
   G4ThreeVector  theMomentumDirection;	 
   G4double       theKinEnergy;	 

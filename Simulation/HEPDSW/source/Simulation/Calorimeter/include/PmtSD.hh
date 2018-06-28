@@ -23,52 +23,42 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+//    add PmtSD for optical photon simulation
 
-#ifndef CalorimeterSD_h
-#define CalorimeterSD_h 1
+#ifndef PmtSD_h
+#define PmtSD_h 1
 
 #include "G4VSensitiveDetector.hh"
-#include "CaloHit.hh"
-#include "CalorimeterSDMessenger.hh"
+#include "PmtHits.hh"
+#include "PmtSDMessenger.hh"
 
 class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
 
-class CalorimeterSD : public G4VSensitiveDetector
+class PmtSD : public G4VSensitiveDetector
 {
   
 public:
-  CalorimeterSD(G4String name);
-  ~CalorimeterSD();
+  PmtSD(G4String name);
+  ~PmtSD();
   
   void Initialize(G4HCofThisEvent*HCE);
   G4int GetDetID(G4Step*aStep);
   G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
+  void PmtAnalysis(G4String detname, G4double energy);
   void EndOfEvent(G4HCofThisEvent*HCE);
   void clear();
   void DrawAll();
   void PrintAll();
-
-  inline void SetUseBirksLaw(G4bool aVal){useBirks=aVal;}
+  inline PmtHitsCollection* GetPmtHitsCollection(){return PmtCollection;}
 
 private:
-  G4double BirksAttenuation(const G4Step*);
-
-  CalorimeterSDMessenger* fMessenger;
-  CaloHitsCollection* CaloCollection;
+  const G4int nPmt = 53;
+  PmtSDMessenger* fMessenger;
+  PmtHitsCollection* PmtCollection;
   G4int verboseLevel;
-  std::map<int,int> LayerID;
-  std::map<int,int> LayerTrkID;
-  G4bool useBirks;
-
-  G4double birk1scint;
-  G4double birk2scint;
-  G4double birk3scint;
-
-  G4double birk1crystal;
-  G4double birk2crystal;
-  G4double birk3crystal;
+  G4int totalPhotEvent[53];
 };
 
 

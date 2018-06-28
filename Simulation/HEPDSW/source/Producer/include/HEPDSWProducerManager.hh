@@ -22,8 +22,10 @@
 #include "RootEvent.hh"
 #include "RootCaloHit.hh"
 #include "RootTrackerHit.hh"
+#include "RootDegraderHit.hh"
 #include "RootTrack.hh"
 #include "RootVertex.hh"
+#include "PmtHits.hh"
 #include "CaloHit.hh"
 #include "TrackerHit.hh"
 #include "DegraderHit.hh"
@@ -73,6 +75,7 @@ private:
   G4bool saveCalo;
 
   G4int caloHitCollID;
+  G4int pmtHitsCollID;
   G4int vetoHitCollID;
   G4int trackerHitCollID;
   G4int degraderHitCollID;
@@ -83,6 +86,7 @@ private:
 
   G4int eventID;
 
+  std::vector<RootPmtHits> thePmtHitsContainer;
   std::vector<RootCaloHit> theCaloHitContainer;
   std::vector<RootCaloHit> theVetoHitContainer;
   std::vector<RootTrackerHit> theTrackerHitContainer;
