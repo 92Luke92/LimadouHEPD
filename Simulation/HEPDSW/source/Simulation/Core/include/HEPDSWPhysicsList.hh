@@ -70,12 +70,24 @@ private:
   StepMax* stepMaxProcess;
   G4String fEmName;
   G4VPhysicsConstructor*  fEmHEPDSWPhysicsList;
+  std::vector<G4VPhysicsConstructor*>  hadronPhys;
     
   G4double fCutForGamma;
   G4double fCutForElectron;
   G4double fCutForPositron;    
   G4bool   fUseOpticalProcesses;
 
+  G4bool helIsRegistered;
+  G4bool hinIsRegistered;
+  G4bool bicIsRegistered;
+  G4bool biciIsRegistered;
+  G4bool locIonIonInelasticIsRegistered;
+  G4bool shieldIsRegistered;
+  G4bool qmdiIsRegistered;
+  G4bool inclxxIsRegistered;
+  G4bool inclxxiIsRegistered;
+  G4bool radioactiveDecayIsRegistered;
+  G4bool ionElasticIsRegistered;
 
 };
 

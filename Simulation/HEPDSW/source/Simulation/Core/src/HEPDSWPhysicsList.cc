@@ -87,6 +87,32 @@
 #include "G4BaryonConstructor.hh"
 #include "G4IonConstructor.hh"
 
+// hadron physics
+
+#include "G4HadronElasticPhysics.hh"
+#include "G4HadronDElasticPhysics.hh"
+#include "G4HadronElasticPhysicsHP.hh"
+#include "G4HadronPhysicsShielding.hh"
+#include "G4HadronPhysicsINCLXX.hh"
+#include "G4HadronPhysicsQGSP_BIC.hh"
+#include "G4HadronPhysicsQGSP_BIC_HP.hh"
+#include "G4HadronPhysicsQGSP_BIC_AllHP.hh"
+#include "G4HadronPhysicsQGSP_BERT.hh"
+#include "G4HadronPhysicsQGSP_BERT_HP.hh"
+#include "G4HadronPhysicsQGSP_FTFP_BERT.hh"
+#include "G4HadronPhysicsFTFP_BERT.hh"
+#include "G4HadronPhysicsFTFP_BERT_HP.hh"
+#include "G4HadronPhysicsFTFP_BERT_TRV.hh"
+#include "G4HadronInelasticQBBC.hh"
+
+#include "G4IonElasticPhysics.hh"
+#include "G4IonBinaryCascadePhysics.hh"
+#include "G4IonINCLXXPhysics.hh"
+#include "G4IonQMDPhysics.hh"
+#include "G4LossTableManager.hh"
+#include "G4IonFluctuations.hh"
+#include "G4IonParametrisedLossModel.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HEPDSWPhysicsList::HEPDSWPhysicsList() : G4VModularPhysicsList()
@@ -107,6 +133,17 @@ HEPDSWPhysicsList::HEPDSWPhysicsList() : G4VModularPhysicsList()
   fCutForElectron  = defaultCutValue;
   fCutForPositron  = defaultCutValue;
   fUseOpticalProcesses = true;
+
+  helIsRegistered  = false;
+  hinIsRegistered  = false;
+  bicIsRegistered  = false;
+  biciIsRegistered = false;
+  shieldIsRegistered = false;
+  qmdiIsRegistered = false;
+  inclxxIsRegistered = false;
+  inclxxiIsRegistered = false;
+  locIonIonInelasticIsRegistered = false;
+  radioactiveDecayIsRegistered = false;
 
   SetVerboseLevel(1);
 }
@@ -341,6 +378,99 @@ void HEPDSWPhysicsList::AddPhysicsList(const G4String& name)
     fEmName = name;
     delete fEmHEPDSWPhysicsList;
     fEmHEPDSWPhysicsList = new G4EmLivermorePhysics();
+    
+  } else if (name == "elastic" && !helIsRegistered) {
+    G4cout << "THE FOLLOWING HADRONIC ELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronElasticPhysics()" << G4endl;
+    hadronPhys.push_back( new G4HadronElasticPhysics());
+    helIsRegistered = true;
+
+  } else if (name == "DElastic" && !helIsRegistered) {
+    hadronPhys.push_back( new G4HadronDElasticPhysics());
+    helIsRegistered = true;
+
+  } else if (name == "HPElastic" && !helIsRegistered) {
+    hadronPhys.push_back( new G4HadronElasticPhysicsHP());
+    helIsRegistered = true;
+
+  } else if (name == "QGSP_BIC" && !hinIsRegistered) {
+    hadronPhys.push_back(new G4HadronPhysicsQGSP_BIC());
+    hinIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronPhysicsQGSP_BIC()" << G4endl;
+
+  } else if (name == "QGSP_BIC_HP" && !hinIsRegistered) {
+    hadronPhys.push_back(new G4HadronPhysicsQGSP_BIC_HP());
+    hinIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronPhysicsQGSP_BIC_HP()" << G4endl;
+
+  } else if (name == "QGSP_BIC_AllHP" && !hinIsRegistered) {
+    hadronPhys.push_back(new G4HadronPhysicsQGSP_BIC_AllHP());
+    hinIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronPhysicsQGSP_BIC_AllHP()" << G4endl;
+
+  } else if (name == "QGSP_BERT" && !hinIsRegistered) {
+    hadronPhys.push_back(new G4HadronPhysicsQGSP_BERT());
+    hinIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronPhysicsQGSP_BERT()" << G4endl;
+
+  } else if (name == "QGSP_BERT_HP" && !hinIsRegistered) {
+    hadronPhys.push_back(new G4HadronPhysicsQGSP_BERT_HP());
+    hinIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronPhysicsQGSP_BERT_HP()" << G4endl;
+
+  } else if (name == "QGSP_FTFP_BERT" && !hinIsRegistered) {
+    hadronPhys.push_back(new G4HadronPhysicsQGSP_FTFP_BERT());
+    hinIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronPhysicsQGSP_FTFP_BERT()" << G4endl;
+
+  } else if (name == "binary_ion" && !biciIsRegistered) {
+    hadronPhys.push_back(new G4IonBinaryCascadePhysics());
+    biciIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4IonBinaryCascadePhysics()" << G4endl;
+
+  } else if (name == "qmd_ion" && !qmdiIsRegistered) {
+    hadronPhys.push_back(new G4IonQMDPhysics());
+    qmdiIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4IonQMDPhysics()" << G4endl;
+
+  } else if (name == "inclxx_ion" && !inclxxiIsRegistered) {
+    hadronPhys.push_back(new G4IonINCLXXPhysics());
+    inclxxiIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4IonINCLXXPhysics()" << G4endl;
+
+  } else if (name == "FTFP_BERT" && !hinIsRegistered) {
+    hadronPhys.push_back(new G4HadronPhysicsFTFP_BERT());
+    hinIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronPhysicsFTFP_BERT()" << G4endl;
+
+  } else if (name == "FTFP_BERT_HP" && !hinIsRegistered) {
+    hadronPhys.push_back(new G4HadronPhysicsFTFP_BERT_HP());
+    hinIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronPhysicsFTFP_BERT_HP()" << G4endl;
+
+  } else if (name == "IonElastic" && !ionElasticIsRegistered) {
+    hadronPhys.push_back(new G4IonElasticPhysics());
+    ionElasticIsRegistered = true;
+    G4cout << "THE FOLLOWING ION ELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4IonElastic()" << G4endl;
+
+  } else if (name == "FTFP_BERT_TRV" && !hinIsRegistered) {
+    hadronPhys.push_back(new G4HadronPhysicsFTFP_BERT_TRV());
+    hinIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronPhysicsFTFP_BERT_TRV()" << G4endl;
+
+  } else if (name == "QBBC" && !hinIsRegistered) {
+    hadronPhys.push_back(new G4HadronInelasticQBBC());
+    hinIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronInelasticQBBC()" << G4endl;
+
+  } else if (name == "INCLXX" && !inclxxIsRegistered) {
+    hadronPhys.push_back(new G4HadronPhysicsINCLXX());
+    inclxxIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronPhysicsINCLXX()" << G4endl;
+
+  } else if (name == "Shielding" && !shieldIsRegistered) {
+    hadronPhys.push_back(new G4HadronPhysicsShielding());
+    shieldIsRegistered = true;
+    G4cout << "THE FOLLOWING HADRONIC INELASTIC PHYSICS LIST HAS BEEN ACTIVATED: G4HadronPhysicsShielding()" << G4endl;
                         
   } else {
 
