@@ -85,8 +85,8 @@ public:
   //  inline const G4String GetVolume()
   inline G4int GetVolume()
   { return DetID; }
-  inline G4int GetNPhot(G4int npmt) {return totalPhot[npmt];}  //OP
   //  { return VolumeID; }
+  inline G4int GetNPhot(G4int npmt) {return totalPhot[npmt];}  //OP
   
 };
 

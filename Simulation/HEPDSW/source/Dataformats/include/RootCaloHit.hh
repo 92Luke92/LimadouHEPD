@@ -17,7 +17,7 @@ public:
   RootCaloHit ();
   //  RootCaloHit (TString aVolume,double aTotalEdep,std::map<int,double> aEdep);
   RootCaloHit (int aDetID,TVector3 aEntry,TVector3 aExit,float aKE,double aTotalEdep,std::map<int,double> aEdep,std::map<int,TVector3> aStepPos,int aTotalNphot); // OP
-  
+  // RootCaloHit (int aDetID,TVector3 aEntry,TVector3 aExit,float aKE,double aTotalEdep,std::map<int,double> aEdep);
   ~RootCaloHit ();
   RootCaloHit (const RootCaloHit&);
   

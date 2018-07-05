@@ -37,6 +37,7 @@ HEPDSWProducerManager::HEPDSWProducerManager():theEvent(0),theRootFile(0),theEve
   pmtHitsCollID=-1;
   vetoHitCollID=-1;
   trackerHitCollID=-1;
+  degraderHitCollID=-1;	
   trackCollID=-1;
   vertexCollID=-1;
   theAutoSaveLimit = 1000;
@@ -181,7 +182,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 	TVector3 Exit((*trackerHC)[i]->GetExitPoint().getX(),(*trackerHC)[i]->GetExitPoint().getY(),(*trackerHC)[i]->GetExitPoint().getZ());
 	TVector3 MomDir((*trackerHC)[i]->GetMomentumDirection().getX(),(*trackerHC)[i]->GetMomentumDirection().getY(),(*trackerHC)[i]->GetMomentumDirection().getZ());            
 	theTrackerHitContainer.push_back(RootTrackerHit(Entry,Exit,(*trackerHC)[i]->GetKinEnergy(),(*trackerHC)[i]->GetToF(),(*trackerHC)[i]->GetELoss(),(*trackerHC)[i]->GetParticleType(),(*trackerHC)[i]->GetDetectorId(),(*trackerHC)[i]->GetTrackId(),(*trackerHC)[i]->GetThetaAtEntry(),(*trackerHC)[i]->GetPhiAtEntry(),MomDir));
-	if(verboseLevel>0)
+	//if(verboseLevel>0)
 	  std::cout<<"TrackerHit  # "<<i<<" ; Edep = "<<(*trackerHC)[i]->GetELoss()<<" MeV"<<std::endl;
       }
     }
@@ -220,6 +221,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
         TVector3 Entry((*vetoHC)[i]->GetEntryPoint().getX(),(*vetoHC)[i]->GetEntryPoint().getY(),(*vetoHC)[i]->GetEntryPoint().getZ());	
         TVector3 Exit((*vetoHC)[i]->GetExitPoint().getX(),(*vetoHC)[i]->GetExitPoint().getY(),(*vetoHC)[i]->GetExitPoint().getZ());
         unsigned int mapsize = 0;
+	//bool arret = false;
 	  for(std::map<int,G4ThreeVector>::iterator j=(*vetoHC)[i]->GetStepPosMap().begin();j!=(*vetoHC)[i]->GetStepPosMap().end();j++){
             mapsize++;
             if ((*vetoHC)[i]->GetStepPosMap().size()<mapsize) break;

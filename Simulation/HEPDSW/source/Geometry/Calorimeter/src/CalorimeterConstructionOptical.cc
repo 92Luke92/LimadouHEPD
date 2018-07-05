@@ -2203,7 +2203,7 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
   G4double StartZ = fScint_Z/2. - fCaloLayer_Z/2.;
   G4int NoScinPlanes = 8;
   G4double CenterSpacing_Z = 2.*fCaloLayer_Z;
-  G4double WidthScinPlane = fCaloLayer_Z;
+  //G4double WidthScinPlane = fCaloLayer_Z;
   for (int layer=0; layer<NoScinPlanes; layer++) {
     G4double zpos = StartZ - layer*CenterSpacing_Z;
     fPhysiScintLayer_Odd = new G4PVPlacement(0,                        

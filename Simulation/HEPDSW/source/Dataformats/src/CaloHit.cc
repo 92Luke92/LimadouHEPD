@@ -89,6 +89,8 @@ void CaloHit::SetStepPos(G4ThreeVector StepPos,G4int aTkID){
 
 void CaloHit::AddEdep(G4double aEdep,G4int aTkID){
   totalEdep+=aEdep;
+  //      G4cout << " Energy added to TkID " 
+  //	     << aTkID <<" total energy deposit = "<<totalEdep << G4endl; 
   if(edep.find(aTkID)!=edep.end())
     edep[aTkID]+=aEdep;
   else
