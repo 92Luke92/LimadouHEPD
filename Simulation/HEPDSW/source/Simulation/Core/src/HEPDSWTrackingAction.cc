@@ -70,6 +70,7 @@ void HEPDSWTrackingAction::PreUserTrackingAction (const G4Track* aTrack)
   if(saveTrack){
     G4int         TrackId = aTrack->GetTrackID();
     G4int         PDG = aTrack->GetDefinition()->GetPDGEncoding();
+    G4String      name = aTrack->GetDefinition()->GetParticleName();
     G4ThreeVector position = aTrack->GetVertexPosition();
     G4ThreeVector dir = aTrack->GetVertexMomentumDirection();
     G4double      kinE = aTrack->GetVertexKineticEnergy();
@@ -79,7 +80,7 @@ void HEPDSWTrackingAction::PreUserTrackingAction (const G4Track* aTrack)
     if (aTrack->GetCreatorProcess() != 0){
       creatorProcessName = aTrack->GetCreatorProcess()->GetProcessName();
     }
-    Track* storeTrack = new Track(TrackId,PDG,position,dir,kinE,motherTrackId,vertexVolumeName,creatorProcessName);
+    Track* storeTrack = new Track(TrackId,PDG,name,position,dir,kinE,motherTrackId,vertexVolumeName,creatorProcessName);
     
     MCTruthSD* sd = dynamic_cast<MCTruthSD*>(G4SDManager::GetSDMpointer()->FindSensitiveDetector("/hepd/mctruth"));
     sd->GetTrackCollection()->insert(storeTrack);

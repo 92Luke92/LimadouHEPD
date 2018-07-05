@@ -18,7 +18,7 @@ class Track : public G4VHit
 {
 public:
   Track ();
-  Track (G4int aTrackId, G4int aPDG,
+  Track (G4int aTrackId, G4int aPDG, G4String aName,
 	 G4ThreeVector aPosition, G4ThreeVector aMomentumDirection, G4double theKinEnergy,
 	 G4int aMotherTrackId,G4String aVertexVolumeName,G4String aCreatorProcessName);
   
@@ -39,7 +39,10 @@ public:
   inline G4int          GetMotherTrackId(){return theMotherTrackId;}
   inline G4String       GetVertexVolumeName(){return theVertexVolumeName;} 
   inline G4String       GetCreatorProcessName(){return theCreatorProcessName;} 
-
+  inline void           AddPhot(G4int detID){
+  totalPhot[detID]+=1;
+  G4cout << " AddPhot detID " << detID << " total " << totalPhot[detID] << G4endl;} //OP 
+  
   void Draw () {};
   void Print () {};
   void clear () {};
@@ -57,6 +60,7 @@ private:
   G4int          theMotherTrackId;
   G4String       theVertexVolumeName;
   G4String       theCreatorProcessName;
+  G4int          totalPhot[53];  //OP
 };
 
 typedef G4THitsCollection<Track> TracksCollection;
@@ -69,6 +73,11 @@ inline void* Track::operator new(size_t)
 {
   void *aHit;
   aHit = (void *) TrackAllocator.MallocSingle();
+  //  G4cout << " Track aHit " << aHit << G4endl;
+////  const G4Event* evt = G4RunManager::GetRunManager()->GetCurrentEvent();
+////  G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
+////  TracksCollection* trackHC = (TracksCollection*)(HCE->GetHC(0));
+  //  G4cout << " trackHC " << trackHC << G4endl;
   return aHit;
 }
 

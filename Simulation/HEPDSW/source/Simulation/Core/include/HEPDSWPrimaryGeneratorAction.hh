@@ -59,6 +59,7 @@ public:
   void SetBeamEReso(G4double ereso);
   void SetPowerLaw(G4double aEmin,G4double aEmax,G4double aGamma);
   void SetFlat(G4double aEmin,G4double aEmax);
+  void SetMuonGeneration(G4double adX, G4double adY, G4double aEmin, G4double aEmax);
 
   inline void SetRandomPosition() { random = true;}
   inline void SetDirectionToCenter() { centerpointing = true;}
@@ -75,6 +76,7 @@ private:
   G4ThreeVector          direction;
   G4ParticleGun*         fParticleGun;
   HEPDSWDetectorConstruction*  fDetector;
+  G4bool                 muon;
   G4bool                 random;
   G4bool                 centerpointing;
   G4bool                 beam;
@@ -84,6 +86,12 @@ private:
 
   G4double eminPL,emaxPL,gammaPL;
   G4double eminFlat,emaxFlat;
+
+  G4double xrange_Muon_gen,yrange_Muon_gen,emin_Muon,emax_Muon;
+
+  Double_t costhe_par[3];
+  TF1 *fun_mu_costhe;
+  TF1 *fun_mu_ke;
 
   G4double               beam_energy;
   G4double               beam_ereso;

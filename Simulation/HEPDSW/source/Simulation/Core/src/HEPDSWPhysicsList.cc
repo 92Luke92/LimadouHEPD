@@ -38,6 +38,8 @@
 #include "PhysListEmStandardGS.hh"
 #include "PhysListEmStandardWVI.hh"
 
+#include "G4StepLimiterPhysics.hh"
+
 #include "G4EmStandardPhysics.hh"
 #include "G4EmStandardPhysics_option1.hh"
 #include "G4EmStandardPhysics_option2.hh"
@@ -200,7 +202,10 @@ void HEPDSWPhysicsList::ConstructProcess()
 {
   AddTransportation();
   fEmHEPDSWPhysicsList->ConstructProcess();
-  AddDecay();  
+  AddDecay();
+  for(size_t i=0; i<hadronPhys.size(); i++) {
+    hadronPhys[i]->ConstructProcess();
+  }
   G4cout << "---------> CHECKPOINT: fUseOpticalProcesses: "  << fUseOpticalProcesses << std::endl;
   if (fUseOpticalProcesses)
     AddOpticalProcesses();

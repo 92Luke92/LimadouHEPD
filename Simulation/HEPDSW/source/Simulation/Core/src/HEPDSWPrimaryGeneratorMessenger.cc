@@ -113,7 +113,29 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
   fBeamEResoCmd->SetGuidance("Set energy resolution DeltaE (MeV)");
   fBeamEResoCmd->SetParameterName("Energy",false);
   fBeamEResoCmd->SetUnitCategory("Energy");
-  fBeamEResoCmd->AvailableForStates(G4State_Idle); 
+  fBeamEResoCmd->AvailableForStates(G4State_Idle);
+
+
+  fMuonCmd = new G4UIcommand("/hepd/gun/muon",this);
+  fMuonCmd->AvailableForStates(G4State_Idle);  
+  param = new G4UIparameter("dX",'d',false);
+  param->SetGuidance("dX half-range for X gen");
+  fMuonCmd->SetParameter(param);
+  param = new G4UIparameter("dY",'d',false);
+  param->SetGuidance("dY half-range for Y gen");
+  fMuonCmd->SetParameter(param);
+  param = new G4UIparameter("unit",'s',false);
+  param->SetGuidance("length unit");
+  fMuonCmd->SetParameter(param);
+  param = new G4UIparameter("keMin",'d',false);
+  param->SetGuidance("min ke generated");
+  fMuonCmd->SetParameter(param);
+  param = new G4UIparameter("keMax",'d',false);
+  param->SetGuidance("max ke generated");
+  fMuonCmd->SetParameter(param);
+  param = new G4UIparameter("unit",'s',false);
+  param->SetGuidance("energy unit");
+  fMuonCmd->SetParameter(param);
 
 
   fPowerLawCmd = new G4UIcommand("/hepd/gun/powerlaw",this);
@@ -152,6 +174,7 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
 HEPDSWPrimaryGeneratorMessenger::~HEPDSWPrimaryGeneratorMessenger()
 {
   delete fDefaultCmd;
+  delete fMuonCmd;
   delete fRndmCmd;
   delete fEnrgCmd;
   delete fPntngCmd;
@@ -175,6 +198,19 @@ void HEPDSWPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String 
     { fAction->SetEnergy(fEnrgCmd->GetNewDoubleValue(newValue));}  
   if( command == fPartCmd )
     { fAction->SetParticle(newValue);}
+  if( command == fMuonCmd )
+    {
+      G4double dX,dY,Emin,Emax;
+      G4String unit_l,unit_e;
+      std::istringstream is(newValue);
+      is >> dX >> dY  >> unit_l >> Emin >> Emax >> unit_e;
+      dX*= G4UIcommand::ValueOf(unit_l);
+      dY*= G4UIcommand::ValueOf(unit_l);
+      Emin*= G4UIcommand::ValueOf(unit_e);
+      Emax*= G4UIcommand::ValueOf(unit_e);
+      fAction->SetMuonGeneration(dX,dY,Emin,Emax);
+      G4cout << "fMuonCmd: dx dy (mm) " << dX << " " << dY << " emin emax (MeV) " << Emin << " " << Emax << G4endl;
+    }
   if( command == fBeamCmd )
     {
       G4double Xpos,Ypos,theta;

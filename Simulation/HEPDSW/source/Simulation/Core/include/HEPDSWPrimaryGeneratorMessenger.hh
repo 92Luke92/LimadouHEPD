@@ -61,6 +61,7 @@ private:
   G4UIcmdWithoutParameter*   fPntngCmd;
   G4UIcmdWithADoubleAndUnit* fEnrgCmd;
   G4UIcmdWithAString*        fPartCmd;
+  G4UIcommand*               fMuonCmd;
   G4UIcommand*               fBeamCmd;
   G4UIcommand*               fTBeamCmd;
   //G4UIcommand*               fBeamEResoCmd;
