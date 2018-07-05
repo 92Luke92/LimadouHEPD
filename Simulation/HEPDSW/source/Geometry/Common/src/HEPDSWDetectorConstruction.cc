@@ -74,7 +74,9 @@ HEPDSWDetectorConstruction::HEPDSWDetectorConstruction()
   HEPD_offset_Z = 186*cm - fISOcenterZ;
   G4double proton_tb_offset_Z = fISOcenterZ + HEPD_offset_Z;
   useProtonTB=false;
+  useNucleiTB=false;
   G4cout << " useProtonTB " << useProtonTB << G4endl;
+  G4cout << " useNucleiTB " << useNucleiTB << G4endl;
   
   fworldHalfX=20.0*cm;
   fworldHalfY=20.0*cm;
@@ -82,9 +84,9 @@ HEPDSWDetectorConstruction::HEPDSWDetectorConstruction()
   
   fSatelliteBuilder = new SatelliteConstruction();
   fHEPDBoxBuilder   = new HEPDBoxConstruction();
-  fCaloBuilder      = new CalorimeterConstruction(proton_tb_offset_Z,useProtonTB);
+  fCaloBuilder      = new CalorimeterConstruction(proton_tb_offset_Z,useProtonTB,useNucleiTB);
   //  fScintBuilder     = new ScintillatorConstruction();
-  fTrackerBuilder   = new TrackerConstruction(proton_tb_offset_Z,useProtonTB);
+  fTrackerBuilder   = new TrackerConstruction(proton_tb_offset_Z,useProtonTB,useNucleiTB);
   fDegraderBuilder  = new DegraderConstruction();
   
   fDetectorMessenger = new HEPDSWDetectorMessenger(this);
@@ -140,7 +142,7 @@ G4VPhysicalVolume* HEPDSWDetectorConstruction::Construct()
 
   fSolidWorld = new G4Box("world",fworldHalfX,fworldHalfY,fworldHalfZ);
   
-  if (useProtonTB)
+  if (useProtonTB || useNucleiTB)
   fLogicWorld = new G4LogicalVolume(fSolidWorld,air,"world");
   else
   fLogicWorld = new G4LogicalVolume(fSolidWorld,vacuum,"world");

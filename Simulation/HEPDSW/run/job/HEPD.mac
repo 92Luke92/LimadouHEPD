@@ -29,9 +29,9 @@
 
 /hepd/ActivateCalo true
 #/hepd/CaloConfiguration Config6
-/hepd/CaloConfiguration Optical ##--> OP
-#/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration Scintillator LYSO
-/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration ScintillatorEJ200 LYSO ##--> OP
+#/hepd/CaloConfiguration Optical ##--> OP
+/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration Scintillator LYSO
+#/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration ScintillatorEJ200 LYSO ##--> OP
 /hepd/Calorimeter/VetoMaterialConfiguration Scintillator
 /hepd/Calorimeter/PoronMaterialConfiguration Poron
 /hepd/Calorimeter/CarbonFiberMaterialConfiguration CarbonFiber
@@ -39,6 +39,9 @@
 # HEPD proton test beam configuration 
 #/hepd/ActivateHEPDProtonTB true
 #/hepd/ActivateHEPDDegrader true
+
+# HEPD proton test beam configuration
+#/hepd/ActivateHEPDNucleiTB true
 
 ## ELECTROMAGNETIC model
 /hepd/phys/addPhysics  emstandard_opt4
@@ -48,8 +51,8 @@
 /hepd/phys/addPhysics  IonElastic
 
 ## MODEL 1: HADRONIC INELASTIC model (qmd) (primary + secondary)
-#/hepd/phys/addPhysics  Shielding
-#/hepd/phys/addPhysics  qmd_ion
+/hepd/phys/addPhysics  Shielding
+/hepd/phys/addPhysics  qmd_ion
 
 ## MODEL 2: HADRONIC INELASTIC model (Incl) (primary + secondary)
 #/hepd/phys/addPhysics  INCLXX
@@ -62,13 +65,11 @@
 
 /run/initialize
 
-# degrader thickness
-#/hepd/ProtonDegrader 16 mm
 
 ## Remove comments in the following three lines when Optical physics is activated!!!
-/hepd/CalorimeterSD/useBirksLaw false ##--> OP
-/hepd/VetoSD/useBirksLaw false ##--> OP
-/hepd/gun/setDefault ##--> OP
+#/hepd/CalorimeterSD/useBirksLaw false ##--> OP
+#/hepd/VetoSD/useBirksLaw false ##--> OP
+#/hepd/gun/setDefault ##--> OP
 
 #
 # Use this open statement to create an OpenGL view:
@@ -87,17 +88,17 @@
 # Draw coordinate axes:
 /vis/scene/add/axes 0 0 0 20 cm
 /vis/viewer/set/background white
+#/vis/viewer/set/viewpoint/ThetaPhi 90. 0.
 #
 # Draw smooth trajectories at end of event, showing trajectory points
 # as markers 2 pixels wide:
 /vis/scene/add/trajectories smooth
 #/vis/modeling/trajectories/create/drawByCharge
 /vis/modeling/trajectories/create/drawByParticleID
-/vis/modeling/trajectories/drawByParticleID-0/set proton red
+/vis/modeling/trajectories/drawByParticleID-0/set proton blue
 /vis/modeling/trajectories/drawByParticleID-0/set e+ blue
-/vis/modeling/trajectories/drawByParticleID-0/set e- blue
+/vis/modeling/trajectories/drawByParticleID-0/set e- red
 /vis/modeling/trajectories/drawByParticleID-0/set alpha magenta
-/vis/modeling/trajectories/drawByParticleID-0/set O16 magenta
 /vis/modeling/trajectories/drawByParticleID-0/set C12 magenta
 /vis/modeling/trajectories/drawByParticleID-0/set He3 magenta
 /vis/modeling/trajectories/drawByParticleID-0/set mu+ green
@@ -116,7 +117,7 @@
 /vis/verbose warnings
 #
 
-#/hepd/gun/setDefault
+/hepd/gun/setDefault
 #/hepd/gun/muon 30 30 cm 0.05 1000 GeV
 #/hepd/gun/random
 
@@ -125,8 +126,9 @@
 #/hepd/gun/tbeam c3 0 deg
 
 #/hepd/gun/toCenter
-/hepd/gun/particle e-
-/hepd/gun/energy 15 MeV
+/hepd/gun/particle proton
+#/hepd/gun/energy 70 MeV
+/hepd/gun/energy 25 MeV
 #/hepd/gun/powerlaw 1 100 MeV -3
 #
 
@@ -135,6 +137,6 @@
 
 /hepd/producer/SetRootFile Test.root HEPD
 
-/run/beamOn 1
+#/run/beamOn 1
 
 /hepd/producer/StoreRootFile

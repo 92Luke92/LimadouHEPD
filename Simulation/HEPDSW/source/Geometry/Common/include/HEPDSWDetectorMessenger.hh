@@ -72,6 +72,8 @@ private:
   G4UIcmdWithABool* fHEPDDegraderActivateCmd;
   G4UIcmdWithADoubleAndUnit* fProtonDegraderCmd;
 
+  G4UIcmdWithABool* fHEPDNucleiTBCmd;
+
   G4UIcmdWithAString* fCaloConfigCmd;
   //G4UIcmdWithAString* fScintConfigCmd;
   G4UIcmdWithAString* fTrackerConfigCmd;

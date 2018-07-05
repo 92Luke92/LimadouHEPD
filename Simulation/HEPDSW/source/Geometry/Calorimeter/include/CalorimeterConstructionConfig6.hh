@@ -56,7 +56,7 @@ class CalorimeterConstructionConfig6
 {
 public:
   
-  CalorimeterConstructionConfig6(G4double tb_offset_Z,G4bool useProtonTB);
+  CalorimeterConstructionConfig6(G4double tb_offset_Z,G4bool useProtonTB,G4bool useNucleiTB);
   ~CalorimeterConstructionConfig6();
 
   inline void SetVetoMaterial(G4String aMat){vetoMaterial=aMat;}
@@ -82,6 +82,7 @@ private:
 
   G4double proton_tb_offset_Z;
   G4bool use_ProtonTB;
+  G4bool use_NucleiTB;
   
   G4double fS1_X;
   G4double fS1_Y;

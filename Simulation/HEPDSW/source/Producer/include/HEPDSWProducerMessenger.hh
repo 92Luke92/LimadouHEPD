@@ -37,6 +37,7 @@ private:
   
   G4UIcmdWithABool* fCaloActivateCmd;
   G4UIcmdWithABool* fTrackerActivateCmd;
+  G4UIcmdWithABool* fDegraderActivateCmd;
   //  G4UIcmdWithABool* fScintillatorActivateCmd;
   G4UIcmdWithABool* fMCTruthActivateCmd;
 };

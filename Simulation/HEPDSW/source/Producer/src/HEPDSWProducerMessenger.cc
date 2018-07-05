@@ -50,12 +50,16 @@ HEPDSWProducerMessenger::HEPDSWProducerMessenger
   SetAutoSaveLimitCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   fCaloActivateCmd = new G4UIcmdWithABool("/hepd/producer/StoreCalorimeterInfo",this);
-  fCaloActivateCmd->SetGuidance("Enable or disable the calorimeter");
+  fCaloActivateCmd->SetGuidance("Enable or disable the calorimeter hits");
   fCaloActivateCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   fTrackerActivateCmd = new G4UIcmdWithABool("/hepd/producer/StoreTrackerInfo",this);
-  fTrackerActivateCmd->SetGuidance("Enable or disable the tracker");
+  fTrackerActivateCmd->SetGuidance("Enable or disable the tracker hits");
   fTrackerActivateCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  fDegraderActivateCmd = new G4UIcmdWithABool("/hepd/producer/StoreDegraderInfo",this);
+  fDegraderActivateCmd->SetGuidance("Enable or disable the degrader hits");
+  fDegraderActivateCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 //   fScintillatorActivateCmd = new G4UIcmdWithABool("/hepd/producer/StoreScintillatorInfo",this);
 //   fScintillatorActivateCmd->SetGuidance("Enable or disable the scintillator");
@@ -72,6 +76,7 @@ HEPDSWProducerMessenger::~HEPDSWProducerMessenger()
   delete producerDir;
   delete fCaloActivateCmd;
   delete fTrackerActivateCmd;
+  delete fDegraderActivateCmd;
   //  delete fScintillatorActivateCmd;
   delete fMCTruthActivateCmd;
   delete SetAutoSaveLimitCmd;
@@ -110,6 +115,8 @@ void HEPDSWProducerMessenger::SetNewValue(G4UIcommand * command,G4String newValu
     pProducerManager->SaveCalorimeterInfo(fCaloActivateCmd->GetNewBoolValue(newValues));
   if (command == fTrackerActivateCmd)
     pProducerManager->SaveTrackerInfo(fTrackerActivateCmd->GetNewBoolValue(newValues));
+  if (command == fDegraderActivateCmd)
+    pProducerManager->SaveDegraderInfo(fDegraderActivateCmd->GetNewBoolValue(newValues));
   //  if (command == fScintillatorActivateCmd)
   //   pProducerManager->SaveScintillatorInfo(fScintillatorActivateCmd->GetNewBoolValue(newValues));
   if (command == fMCTruthActivateCmd)

@@ -103,7 +103,11 @@ HEPDSWDetectorMessenger::HEPDSWDetectorMessenger(HEPDSWDetectorConstruction * De
   fProtonDegraderCmd->SetGuidance("Set the thickness of the degrader");
   fProtonDegraderCmd->SetParameterName("Thickness",false);
   fProtonDegraderCmd->SetUnitCategory("Length");
-  fProtonDegraderCmd->AvailableForStates(G4State_Idle);  
+  fProtonDegraderCmd->AvailableForStates(G4State_Idle);
+
+  fHEPDNucleiTBCmd = new G4UIcmdWithABool("/hepd/ActivateHEPDNucleiTB",this);
+  fHEPDNucleiTBCmd->SetGuidance("Enable or disable the Nuclei Test Beam configuration");
+  fHEPDNucleiTBCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   fCaloConfigCmd = new G4UIcmdWithAString("/hepd/CaloConfiguration",this);
   fCaloConfigCmd->SetGuidance("Select the calorimeter configuration");
@@ -265,6 +269,7 @@ HEPDSWDetectorMessenger::~HEPDSWDetectorMessenger()
   delete fSatelliteConfigCmd;
   delete fHEPDBoxConfigCmd;
   delete fHEPDProtonTBCmd;
+  delete fHEPDNucleiTBCmd;
   delete fProtonDegraderCmd;
   delete fHepdDir;
   //  delete fCaloCaloMatConfigCmd;	
@@ -334,6 +339,9 @@ void HEPDSWDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue
   if (command == fHEPDProtonTBCmd)
     Detector->SetProtonTBDetector(fHEPDProtonTBCmd->GetNewBoolValue(newValue));
 
+  if (command == fHEPDNucleiTBCmd) {
+    Detector->SetNucleiTBDetector(fHEPDNucleiTBCmd->GetNewBoolValue(newValue));
+  }
   
 //   if(command == fCaloCaloMatConfigCmd)
 //     Detector->CaloSetCaloMaterial(newValue);

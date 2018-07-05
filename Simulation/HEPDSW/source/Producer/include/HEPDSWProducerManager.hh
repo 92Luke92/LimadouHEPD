@@ -20,6 +20,7 @@
 #include "TVector3.h"
 
 #include "RootEvent.hh"
+#include "RootPmtHits.hh"
 #include "RootCaloHit.hh"
 #include "RootTrackerHit.hh"
 #include "RootDegraderHit.hh"
@@ -55,6 +56,7 @@ public:
   inline void SaveDegraderInfo(G4bool aVal){saveDegrader=aVal;}
   inline void SaveMCTruthInfo(G4bool aVal){saveMCTruth=aVal;}
   inline void SaveCalorimeterInfo(G4bool aVal){saveCalo=aVal;}
+  inline G4int GetTRackCollID(){return trackCollID;}
 
   inline void SetAutoSaveLimit(G4int aAutoSave){theAutoSaveLimit=aAutoSave;}
 

@@ -56,7 +56,7 @@ class CalorimeterConstruction
 {
 public:
   
-  CalorimeterConstruction(G4double ISOcenterZ, G4bool useProtonTB);
+  CalorimeterConstruction(G4double ISOcenterZ, G4bool useProtonTB, G4bool useNucleiTB);
   ~CalorimeterConstruction();
   
   void SetVetoMaterial(G4String aMat);
