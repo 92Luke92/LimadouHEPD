@@ -50,7 +50,7 @@ class TrackerConstructionConfig4
 {
 public:
   
-  TrackerConstructionConfig4(G4double tb_offset_Z, G4bool useProtonTB, G4bool useNucleiTB);
+  TrackerConstructionConfig4(G4double tb_offset_Z, G4bool useProtonTB);
   ~TrackerConstructionConfig4();
 
   inline void SetSiliconMaterial(G4String aMat){siliconMaterial=aMat;}
@@ -276,8 +276,7 @@ private:
 
   G4double  proton_tb_offset_Z;
   G4bool    use_ProtonTB;
-  G4bool    use_NucleiTB;
-
+  
   HEPDSWMaterial* pMaterial;
 
   G4Box* fSolidTracker;

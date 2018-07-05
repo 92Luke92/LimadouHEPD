@@ -42,6 +42,7 @@
 #include "CalorimeterConstruction.hh"
 #include "TrackerConstruction.hh"
 #include "DegraderConstruction.hh"
+#include "CollimatorConstruction.hh"
 
 
 class G4Box;
@@ -133,6 +134,7 @@ private:
   CalorimeterConstruction*  fCaloBuilder;
   TrackerConstruction*      fTrackerBuilder;
   DegraderConstruction*     fDegraderBuilder;
+  CollimatorConstruction*   fCollimatorBuilder;
 
   G4String theSatelliteConfig;
   G4String theHEPDBoxConfig;

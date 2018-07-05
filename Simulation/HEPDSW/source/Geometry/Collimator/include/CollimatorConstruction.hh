@@ -23,61 +23,82 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm3/include/CalorimeterConstruction.hh
-/// \brief Definition of the CalorimeterConstruction class
 //
-// $Id$
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef CalorimeterConstruction_h
-#define CalorimeterConstruction_h 1
+#ifndef CollimatorConstruction_h
+#define CollimatorConstruction_h 1
 
 #include "globals.hh"
-#include "CalorimeterConstructionConfig1.hh"
-#include "CalorimeterConstructionConfig2.hh"
-#include "CalorimeterConstructionConfig3.hh"
-#include "CalorimeterConstructionConfig4.hh"
-#include "CalorimeterConstructionConfig5.hh"
-#include "CalorimeterConstructionConfig6.hh"
-#include "CalorimeterConstructionOptical.hh"
-#include "CalorimeterConstructionDummy.hh"
-#include "CalorimeterConstructionDummyOptical.hh"
+#include "G4Tubs.hh"
+#include "G4SubtractionSolid.hh"
+
+
 
 class G4IntersectionSolid;
 class G4Box;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
+class HEPDSWMaterial;
+class G4UniformMagField;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class CalorimeterConstruction 
+class CollimatorConstruction 
 {
 public:
   
-  CalorimeterConstruction(G4double ISOcenterZ, G4bool useProtonTB);
-  ~CalorimeterConstruction();
+  CollimatorConstruction();
+  ~CollimatorConstruction();
   
-  void SetVetoMaterial(G4String aMat);
-  //  void SetCaloMaterial(G4String aMat);
-  void SetCaloMaterial(G4String aMat1,G4String aMat2);
-  void SetPoronMaterial(G4String aMat);
-  void SetCarbonFiberMaterial(G4String aMat);
-  void SetHoneyCombMaterial(G4String aMat);
-  void SetNumberOfCrystalLayer(G4int aVal);
-  void Builder(G4String config,G4VPhysicalVolume* motherVolume);
+  void SetCollimatorMaterial(G4String aMat);
+
+  void Builder(G4VPhysicalVolume* motherVolume);
   
 private:
-  CalorimeterConstructionConfig1* theConfig1;
-  CalorimeterConstructionConfig2* theConfig2;
-  CalorimeterConstructionConfig3* theConfig3;
-  CalorimeterConstructionConfig4* theConfig4;
-  CalorimeterConstructionConfig5* theConfig5;
-  CalorimeterConstructionConfig6* theConfig6;
-  CalorimeterConstructionOptical* theOptical;
-  CalorimeterConstructionDummy* theDummy;
-  CalorimeterConstructionDummyOptical* theDummyOptical;
+
+  void ComputeObjectsPositioning();
+
+  G4String boxMaterial;
+  G4String collimatorMaterial;
+
+  G4double fBox_X;
+  G4double fBox_Y;
+  G4double fBox_Z;
+
+  G4double fRmin1Coll;
+  G4double fRmaxColl;
+  G4double fRmin2Coll;
+  G4double fHeigth1Coll;
+  G4double fHeigth2Coll;
+  G4double fStartColl;
+  G4double fStopColl;
+
+  G4double fPlane_X;
+  G4double fPlane_Y;
+  G4double fPlane_Z;
+  G4double fStartPlane_hol;
+  G4double fStopPlane_hol;
+
+  G4double fPhysiCollimator_Z;
+
+  HEPDSWMaterial*  pMaterial;
+
+  G4Tubs* fSolidColl1;
+  G4Tubs* fSolidColl2;
+  G4Box*  fSolidPlane_tot;
+  G4Tubs* fSolidPlane_hol;
+  G4SubtractionSolid*  fSolidPlane;
+
+  G4LogicalVolume* fLogicColl1;
+  G4LogicalVolume* fLogicColl2;
+  G4LogicalVolume* fLogicPlane;
+
+  G4VPhysicalVolume* fPhysiColl1;
+  G4VPhysicalVolume* fPhysiColl2;
+  G4VPhysicalVolume* fPhysiPlane;
 
 };
 

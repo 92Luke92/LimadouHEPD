@@ -34,14 +34,14 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-CalorimeterConstruction::CalorimeterConstruction(G4double ISOcenterZ, G4bool useProtonTB,G4bool useNucleiTB)
+CalorimeterConstruction::CalorimeterConstruction(G4double ISOcenterZ, G4bool useProtonTB)//,G4bool useNucleiTB)
 {
   theConfig1 = new CalorimeterConstructionConfig1();
   theConfig2 = new CalorimeterConstructionConfig2();
   theConfig3 = new CalorimeterConstructionConfig3();
   theConfig4 = new CalorimeterConstructionConfig4();
   theConfig5 = new CalorimeterConstructionConfig5();
-  theConfig6 = new CalorimeterConstructionConfig6(ISOcenterZ,useProtonTB,useNucleiTB);
+  theConfig6 = new CalorimeterConstructionConfig6(ISOcenterZ,useProtonTB);
   theOptical = new CalorimeterConstructionOptical(); //OP
   theDummy   = new CalorimeterConstructionDummy();
   theDummyOptical   = new CalorimeterConstructionDummyOptical();

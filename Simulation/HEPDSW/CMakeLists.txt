@@ -44,6 +44,7 @@ set(hepdsw_include_dirs
             ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Satellite/include
             ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/HEPDBox/include
 	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Degrader/include
+	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Geometry/Collimator/include
             ${CMAKE_CURRENT_SOURCE_DIR}/source/Dataformats/include
 	    ${CMAKE_CURRENT_SOURCE_DIR}/source/Producer/include
 	    ${Geant4_INCLUDE_DIR})

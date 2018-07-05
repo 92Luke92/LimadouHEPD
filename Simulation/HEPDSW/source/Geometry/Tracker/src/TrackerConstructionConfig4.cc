@@ -56,7 +56,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TrackerConstructionConfig4::TrackerConstructionConfig4(G4double tb_offset_Z,bool useProtonTB,bool useNucleiTB)
+TrackerConstructionConfig4::TrackerConstructionConfig4(G4double tb_offset_Z,bool useProtonTB)
   :fSolidTracker(0),fSolidLayer(0),fSolidCFFrameHole(0),fSolidCFFrame(0),
    fSolidPoronFrameHole(0),fSolidPoronFrame(0),fSolidSiliconPlate(0),fSolidSiliconSensor(0),
    fSolidLadderBox(0),fSolidLadder(0),fSolidKaptonS(0),fSolidKaptonK(0),fSolidHybrid(0),
@@ -79,7 +79,6 @@ TrackerConstructionConfig4::TrackerConstructionConfig4(G4double tb_offset_Z,bool
 
   proton_tb_offset_Z = tb_offset_Z;
   use_ProtonTB = useProtonTB;
-  use_NucleiTB = useNucleiTB;
 
   fLayer_X = 267.3*mm;
   fLayer_Y = 305.5*mm;

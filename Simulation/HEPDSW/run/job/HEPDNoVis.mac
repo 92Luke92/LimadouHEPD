@@ -30,9 +30,12 @@
 /hepd/Calorimeter/PoronMaterialConfiguration Poron
 /hepd/Calorimeter/CarbonFiberMaterialConfiguration CarbonFiber
 
-# HEPD proton test beam configuration 
+# HEPD proton test beam configuration
 /hepd/ActivateHEPDProtonTB true
-/hepd/ActivateHEPDDegrader true
+#/hepd/ActivateHEPDDegrader true
+
+# HEPD nuclei test beam configuration
+/hepd/ActivateHEPDNucleiTB true
 
 #
 ## ELECTROMAGNETIC model
@@ -85,6 +88,6 @@
 
 /hepd/producer/SetRootFile Test.root HEPD
 
-/run/beamOn 10
+/run/beamOn 1
 
 /hepd/producer/StoreRootFile

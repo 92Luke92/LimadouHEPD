@@ -59,7 +59,7 @@
 #include <iomanip>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-CalorimeterConstructionConfig6::CalorimeterConstructionConfig6(G4double tb_offset_Z, G4bool useProtonTB, G4bool useNucleiTB)
+CalorimeterConstructionConfig6::CalorimeterConstructionConfig6(G4double tb_offset_Z, G4bool useProtonTB)
   :fSolidS1(0),
    fSolidS1SuppHoleBar(0),
    fSolidS1SuppBack(0),
@@ -121,7 +121,6 @@ CalorimeterConstructionConfig6::CalorimeterConstructionConfig6(G4double tb_offse
 
   proton_tb_offset_Z = tb_offset_Z;
   use_ProtonTB = useProtonTB;
-  use_NucleiTB = useNucleiTB;
 
   // S1 Scintillator
   fS1ScintNumber     = 6;
@@ -553,7 +552,6 @@ void CalorimeterConstructionConfig6::ComputeObjectsPositioning(){
  
   ShiftOrigin = fCalo_Z/2. + 36.16*mm + 0.7*mm;
   G4cout << "ShiftOrigin " << ShiftOrigin << " use_ProtonTB " << use_ProtonTB << G4endl;
-  G4cout << "ShiftOrigin " << ShiftOrigin << " use_NucleiTB " << use_NucleiTB << G4endl;
   if (use_ProtonTB) ShiftOrigin -= (proton_tb_offset_Z);
   
   fPhysiS1SuppBack_Y = 0;//fS1SuppBottom_X/2.-18.860*mm-fS1SuppBottomHole_X/2.;

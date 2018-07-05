@@ -44,6 +44,7 @@
 #include "HEPDBoxConstruction.hh"
 #include "SatelliteConstruction.hh"
 #include "DegraderConstruction.hh"
+#include "CollimatorConstruction.hh"
 
 
 #include "G4GeometryManager.hh"
@@ -64,7 +65,7 @@
 
 HEPDSWDetectorConstruction::HEPDSWDetectorConstruction()
   :fSolidWorld(0),fLogicWorld(0),fPhysiWorld(0),
-   fSatelliteBuilder(0),fHEPDBoxBuilder(0),fCaloBuilder(0),fTrackerBuilder(0),fDegraderBuilder(0)
+   fSatelliteBuilder(0),fHEPDBoxBuilder(0),fCaloBuilder(0),fTrackerBuilder(0),fDegraderBuilder(0),fCollimatorBuilder(0)
 
 {
 
@@ -84,10 +85,11 @@ HEPDSWDetectorConstruction::HEPDSWDetectorConstruction()
   
   fSatelliteBuilder = new SatelliteConstruction();
   fHEPDBoxBuilder   = new HEPDBoxConstruction();
-  fCaloBuilder      = new CalorimeterConstruction(proton_tb_offset_Z,useProtonTB,useNucleiTB);
+  fCaloBuilder      = new CalorimeterConstruction(proton_tb_offset_Z,useProtonTB);
   //  fScintBuilder     = new ScintillatorConstruction();
-  fTrackerBuilder   = new TrackerConstruction(proton_tb_offset_Z,useProtonTB,useNucleiTB);
+  fTrackerBuilder   = new TrackerConstruction(proton_tb_offset_Z,useProtonTB);
   fDegraderBuilder  = new DegraderConstruction();
+  fCollimatorBuilder = new CollimatorConstruction();
   
   fDetectorMessenger = new HEPDSWDetectorMessenger(this);
   
@@ -168,6 +170,7 @@ G4VPhysicalVolume* HEPDSWDetectorConstruction::Construct()
     fTrackerBuilder->Builder(theTrackerConfig,fPhysiWorld);
 
   if (useProtonTB && useDegrader) fDegraderBuilder->Builder(fPhysiWorld,fworldHalfZ,degrader_dz);
+  if (useNucleiTB) fCollimatorBuilder->Builder(fPhysiWorld);
   
   return fPhysiWorld;
 }

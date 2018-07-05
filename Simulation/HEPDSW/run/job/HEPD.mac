@@ -2,8 +2,8 @@
 /control/verbose 2
 /run/verbose 1
 #
-/hepd/setWorldSize 55 75 80 cm
-#/hepd/setWorldSize 55 75 330 cm
+#/hepd/setWorldSize 55 75 80 cm
+/hepd/setWorldSize 55 75 330 cm
 
 /hepd/ActivateSatellite false
 /hepd/SatelliteConfiguration Config1
@@ -28,7 +28,7 @@
 #/hepd/Scintillator/CarbonFiberMaterialConfiguration CarbonFiber
 
 /hepd/ActivateCalo true
-#/hepd/CaloConfiguration Config6
+/hepd/CaloConfiguration Config6
 #/hepd/CaloConfiguration Optical ##--> OP
 /hepd/Calorimeter/CalorimeterTwoMaterialConfiguration Scintillator LYSO
 #/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration ScintillatorEJ200 LYSO ##--> OP
@@ -41,7 +41,7 @@
 #/hepd/ActivateHEPDDegrader true
 
 # HEPD proton test beam configuration
-#/hepd/ActivateHEPDNucleiTB true
+/hepd/ActivateHEPDNucleiTB true
 
 ## ELECTROMAGNETIC model
 /hepd/phys/addPhysics  emstandard_opt4
@@ -86,7 +86,7 @@
 #/vis/viewer/set/style surface
 #
 # Draw coordinate axes:
-/vis/scene/add/axes 0 0 0 20 cm
+/vis/scene/add/axes 0 0 0 38.2 cm
 /vis/viewer/set/background white
 #/vis/viewer/set/viewpoint/ThetaPhi 90. 0.
 #
@@ -127,8 +127,7 @@
 
 #/hepd/gun/toCenter
 /hepd/gun/particle proton
-#/hepd/gun/energy 70 MeV
-/hepd/gun/energy 25 MeV
+/hepd/gun/energy 50 MeV
 #/hepd/gun/powerlaw 1 100 MeV -3
 #
 
@@ -139,4 +138,4 @@
 
 #/run/beamOn 1
 
-/hepd/producer/StoreRootFile
+#/hepd/producer/StoreRootFile
