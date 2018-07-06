@@ -56,17 +56,17 @@ CollimatorConstruction::CollimatorConstruction()
 {
   pMaterial     = new HEPDSWMaterial();
 
-  fRmin1Coll=15.*mm; //check correct number
-  fRmaxColl=20.*mm; //check correct number
-  fRmin2Coll=2.*mm; //check correct number
+  fRmin1Coll=16.4*mm;
+  fRmaxColl=23.*mm;
+  fRmin2Coll=3.*mm;
   fHeigth1Coll=280.*mm;
   fHeigth2Coll=5.*mm;
   fStartColl=0.*deg;
   fStopColl=360.*deg;
   
 
-  fPlane_X = 20.*cm; //check correct number
-  fPlane_Y = 20.*cm; //check correct number
+  fPlane_X = 40.*cm; //check correct number
+  fPlane_Y = 40.*cm; //check correct number
   fPlane_Z = 5.1*cm;
   fStartPlane_hol = 0.*deg;
   fStopPlane_hol = 360.*deg;
@@ -105,6 +105,8 @@ void CollimatorConstruction::Builder(G4VPhysicalVolume* motherVolume)
   G4Material* brass= new G4Material("brass",8.5*g/cm3, 2);
   brass->AddMaterial(Cu,70*perCent);
   brass->AddMaterial(Zn,30*perCent);
+
+  G4Material* C = new G4Material("Carbon",6.,12.01*g/mole,2.267*g/cm3);
   
   fSolidColl1 = new G4Tubs("fSolidColl1",fRmin1Coll,fRmaxColl,fHeigth1Coll/2.,fStartColl,fStopColl);
   fSolidColl2 = new G4Tubs("fSolidColl2",fRmin2Coll,fRmaxColl,fHeigth2Coll/2.,fStartColl,fStopColl);
@@ -116,7 +118,7 @@ void CollimatorConstruction::Builder(G4VPhysicalVolume* motherVolume)
   fSolidPlane_tot = new G4Box("fSolidPlane_tot",fPlane_X/2.,fPlane_Y/2.,fPlane_Z/2.);
   fSolidPlane_hol = new G4Tubs("fSolidPlane_hol",0.,fRmaxColl,fPlane_Z/2.,fStartPlane_hol,fStopPlane_hol);
   fSolidPlane = new G4SubtractionSolid("fSolidPlane",fSolidPlane_tot,fSolidPlane_hol,0,G4ThreeVector(0,0,0));
-  fLogicPlane = new G4LogicalVolume(fSolidPlane,Cu,"fLogicPlane"); //check correct material - NO Cu!
+  fLogicPlane = new G4LogicalVolume(fSolidPlane,C,"fLogicPlane"); //check correct material - NO Cu!
   fPhysiPlane = new G4PVPlacement(0,G4ThreeVector(-1.75*cm,-1.8*cm,86.15*cm),"fPhysiPlane",fLogicPlane,motherVolume,false,0,true);
 
   
@@ -126,7 +128,11 @@ void CollimatorConstruction::Builder(G4VPhysicalVolume* motherVolume)
   attBrown->SetForceAuxEdgeVisible(true);
   fLogicColl1->SetVisAttributes(attBrown);
   fLogicColl2->SetVisAttributes(attBrown);
-  fLogicPlane->SetVisAttributes(attBrown);
+
+  G4VisAttributes * attGrey = new G4VisAttributes(G4Colour::Grey());
+  attGrey->SetVisibility(true);
+  attGrey->SetForceAuxEdgeVisible(true);
+  fLogicPlane->SetVisAttributes(attGrey);
   
 
 

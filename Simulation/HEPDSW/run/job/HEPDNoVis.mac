@@ -2,8 +2,8 @@
 /control/verbose 2
 /run/verbose 1
 #
-#/hepd/setWorldSize 55 75 330 cm
-/hepd/setWorldSize 55 75 80 cm
+#/hepd/setWorldSize 55 75 80 cm
+/hepd/setWorldSize 55 75 400 cm
 
 /hepd/ActivateSatellite false
 /hepd/SatelliteConfiguration Config1
@@ -22,16 +22,16 @@
 /hepd/Tracker/CarbonFiberMaterialConfiguration CarbonFiber
 
 /hepd/ActivateCalo true
-#/hepd/CaloConfiguration Config6
-/hepd/CaloConfiguration Optical ##--> OP
-#/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration Scintillator LYSO
-/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration ScintillatorEJ200 LYSO ##--> OP
+/hepd/CaloConfiguration Config6
+#/hepd/CaloConfiguration Optical ##--> OP
+/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration Scintillator LYSO
+#/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration ScintillatorEJ200 LYSO ##--> OP
 /hepd/Calorimeter/VetoMaterialConfiguration Scintillator
 /hepd/Calorimeter/PoronMaterialConfiguration Poron
 /hepd/Calorimeter/CarbonFiberMaterialConfiguration CarbonFiber
 
 # HEPD proton test beam configuration
-/hepd/ActivateHEPDProtonTB true
+#/hepd/ActivateHEPDProtonTB true
 #/hepd/ActivateHEPDDegrader true
 
 # HEPD nuclei test beam configuration
@@ -66,9 +66,15 @@
 #/hepd/ProtonDegrader 16 mm
 
 ## Remove comments in the following three lines when Optical physics is activated!!!
-/hepd/CalorimeterSD/useBirksLaw false ##--> OP
-/hepd/VetoSD/useBirksLaw false ##--> OP
-/hepd/gun/setDefault ##--> OP
+#/hepd/CalorimeterSD/useBirksLaw false ##--> OP
+#/hepd/VetoSD/useBirksLaw false ##--> OP
+#/hepd/gun/setDefault ##--> OP
+
+/hepd/gun/setDefault
+/hepd/gun/tbeam c3 0 deg
+/hepd/gun particle He   #for nuclei: He, C, O
+/hepd/gun/energy 248 MeV
+
 
 #/hepd/gun/setDefault
 #/hepd/gun/muon 30 30 cm 0.05 1000 GeV
@@ -76,10 +82,10 @@
 
 ## position c3 trento tb
 #/hepd/gun/beam -1.75 -1.80 cm 0 deg     # 3C0
-/hepd/gun/tbeam c3 0 deg
+#/hepd/gun/tbeam c3 0 deg
 
-/hepd/gun/particle proton
-/hepd/gun/energy 25 MeV
+#/hepd/gun/particle proton
+#/hepd/gun/energy 25 MeV
 #/hepd/gun/powerlaw 1 100 MeV -3
 #
 

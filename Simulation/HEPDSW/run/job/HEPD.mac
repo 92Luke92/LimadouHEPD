@@ -3,7 +3,7 @@
 /run/verbose 1
 #
 #/hepd/setWorldSize 55 75 80 cm
-/hepd/setWorldSize 55 75 330 cm
+/hepd/setWorldSize 55 75 400 cm
 
 /hepd/ActivateSatellite false
 /hepd/SatelliteConfiguration Config1
@@ -117,17 +117,26 @@
 /vis/verbose warnings
 #
 
+
+############ Nuclei TB - LNS
 /hepd/gun/setDefault
+/hepd/gun/particle proton     #for nuclei: He, C, O
+/hepd/gun/energy 62 MeV
+/hepd/gun/spot
+############ Nuclei TB - LNS
+
+
 #/hepd/gun/muon 30 30 cm 0.05 1000 GeV
 #/hepd/gun/random
+
 
 ## position c3 trento tb
 #/hepd/gun/beam 1.75 1.80 cm 0 deg
 #/hepd/gun/tbeam c3 0 deg
 
 #/hepd/gun/toCenter
-/hepd/gun/particle proton
-/hepd/gun/energy 50 MeV
+#/hepd/gun/particle proton
+#/hepd/gun/energy 50 MeV
 #/hepd/gun/powerlaw 1 100 MeV -3
 #
 

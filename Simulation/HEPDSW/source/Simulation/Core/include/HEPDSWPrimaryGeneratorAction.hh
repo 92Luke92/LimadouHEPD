@@ -55,6 +55,7 @@ public:
   void SetDefaultKinematic();
   void SetParticle(G4String part);
   void SetEnergy(G4double ene);
+  void SetSpot();
   void SetBeam(G4double Xpos,G4double Ypos,G4double theta);
   void SetBeamEReso(G4double ereso);
   void SetPowerLaw(G4double aEmin,G4double aEmax,G4double aGamma);
@@ -78,6 +79,7 @@ private:
   HEPDSWDetectorConstruction*  fDetector;
   G4bool                 muon;
   G4bool                 random;
+  G4bool                 nuclei_beam;
   G4bool                 centerpointing;
   G4bool                 beam;
   G4bool                 beam_reso;

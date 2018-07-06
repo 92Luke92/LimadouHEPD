@@ -40,6 +40,8 @@
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4IonTable.hh"
+#include "G4ParticleDefinition.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -59,6 +61,11 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
   fPntngCmd = new G4UIcmdWithoutParameter("/hepd/gun/toCenter",this);
   fPntngCmd->SetGuidance("direction of particle always pointing to center");
   fPntngCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  //for nuclei test beam
+  fSpotCmd = new G4UIcmdWithoutParameter("/hepd/gun/spot",this);
+  fSpotCmd->SetGuidance("enable or disable the beam spot");
+  fSpotCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
   
   fEnrgCmd = new G4UIcmdWithADoubleAndUnit("/hepd/gun/energy",this);
   fEnrgCmd->SetGuidance("Set the energy of the particle");
@@ -73,7 +80,7 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
 
   G4UIparameter* param;
 
- fBeamCmd = new G4UIcommand("/hepd/gun/beam",this);
+  fBeamCmd = new G4UIcommand("/hepd/gun/beam",this);
   fBeamCmd->AvailableForStates(G4State_Idle);  
   param = new G4UIparameter("X",'d',false);
   param->SetGuidance("X position");
@@ -114,7 +121,7 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
   fBeamEResoCmd->SetParameterName("Energy",false);
   fBeamEResoCmd->SetUnitCategory("Energy");
   fBeamEResoCmd->AvailableForStates(G4State_Idle);
-
+  
 
   fMuonCmd = new G4UIcommand("/hepd/gun/muon",this);
   fMuonCmd->AvailableForStates(G4State_Idle);  
@@ -177,6 +184,7 @@ HEPDSWPrimaryGeneratorMessenger::~HEPDSWPrimaryGeneratorMessenger()
   delete fMuonCmd;
   delete fRndmCmd;
   delete fEnrgCmd;
+  delete fSpotCmd;
   delete fPntngCmd;
   delete fBeamCmd;
   delete fPowerLawCmd;
@@ -195,9 +203,23 @@ void HEPDSWPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String 
   if( command == fPntngCmd )
     { fAction->SetDirectionToCenter();}
   if( command == fEnrgCmd )
-    { fAction->SetEnergy(fEnrgCmd->GetNewDoubleValue(newValue));}  
+    { fAction->SetEnergy(fEnrgCmd->GetNewDoubleValue(newValue));}
+  if( command == fSpotCmd )
+    { fAction->SetSpot();}
   if( command == fPartCmd )
-    { fAction->SetParticle(newValue);}
+    {
+      if(newValue=="proton") fAction->SetParticle(newValue);
+      else{
+        G4IonTable* ionTable = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
+        G4int Z,A;
+        if(newValue=="He"){Z=2; A=4;}
+        if(newValue=="C"){Z=6;A=12;}
+        if(newValue=="O"){Z=8;A=16;}
+        G4ParticleDefinition* ion = ionTable->GetIon(Z,A,0.);
+        fAction->SetParticle(ion->GetParticleName());
+      }
+    }
+  
   if( command == fMuonCmd )
     {
       G4double dX,dY,Emin,Emax;
