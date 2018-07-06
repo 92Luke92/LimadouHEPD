@@ -21,12 +21,6 @@
 /hepd/Tracker/KaptonMaterialConfiguration Kapton
 /hepd/Tracker/CarbonFiberMaterialConfiguration CarbonFiber
 
-#/hepd/ActivateScintillator false
-#/hepd/ScintillatorConfiguration Config4
-#/hepd/Scintillator/ScintillatorMaterialConfiguration Scintillator
-#/hepd/Scintillator/PoronMaterialConfiguration Poron 
-#/hepd/Scintillator/CarbonFiberMaterialConfiguration CarbonFiber
-
 /hepd/ActivateCalo true
 /hepd/CaloConfiguration Config6
 #/hepd/CaloConfiguration Optical ##--> OP
@@ -120,8 +114,12 @@
 
 ############ Nuclei TB - LNS
 /hepd/gun/setDefault
-/hepd/gun/particle proton     #for nuclei: He, C, O
-/hepd/gun/energy 62 MeV
+/hepd/gun/particle He     #for nuclei: He, C, O
+#protons:  62 MeV
+#He:	   248 MeV
+#C:	   744 MeV
+#O:	   992 MeV
+/hepd/gun/energy 248 MeV
 /hepd/gun/spot
 ############ Nuclei TB - LNS
 

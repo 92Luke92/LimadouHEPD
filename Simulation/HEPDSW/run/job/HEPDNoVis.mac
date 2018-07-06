@@ -70,10 +70,16 @@
 #/hepd/VetoSD/useBirksLaw false ##--> OP
 #/hepd/gun/setDefault ##--> OP
 
+############ Nuclei TB - LNS
 /hepd/gun/setDefault
-/hepd/gun/tbeam c3 0 deg
-/hepd/gun particle He   #for nuclei: He, C, O
+/hepd/gun/particle He     #for nuclei: He, C, O
+#protons:  62 MeV
+#He:	   248 MeV
+#C:	   744 MeV
+#O:	   992 MeV
 /hepd/gun/energy 248 MeV
+/hepd/gun/spot
+############ Nuclei TB - LNS
 
 
 #/hepd/gun/setDefault
@@ -94,6 +100,6 @@
 
 /hepd/producer/SetRootFile Test.root HEPD
 
-/run/beamOn 1
+/run/beamOn 100000
 
 /hepd/producer/StoreRootFile

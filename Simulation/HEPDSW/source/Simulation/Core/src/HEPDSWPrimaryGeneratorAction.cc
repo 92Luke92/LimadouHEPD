@@ -255,7 +255,6 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     Xpos = -Xmax+2.*Xmax*G4RandFlat::shoot();
     Ypos = -Ymax+2.*Ymax*G4RandFlat::shoot();
     while (sqrt(pow(Xpos,2)+pow(Ypos,2))>2.*cm){
-      G4cout << "Xpos = " << Xpos << " Ypos = " << Ypos << "and sqrt is " << sqrt(pow(Xpos,2)+pow(Ypos,2)) << G4endl;
       Xpos = -Xmax+2.*Xmax*G4RandFlat::shoot();
       Ypos = -Ymax+2.*Ymax*G4RandFlat::shoot();
     }
