@@ -82,6 +82,7 @@ private:
   G4double fStartPlane_hol;
   G4double fStopPlane_hol;
 
+  
   G4double fPhysiCollimator_Z;
 
   HEPDSWMaterial*  pMaterial;
