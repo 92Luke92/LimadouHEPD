@@ -63,6 +63,7 @@ CollimatorConstruction::CollimatorConstruction()
   fHeigth2Coll=5.*mm;
   fStartColl=0.*deg;
   fStopColl=360.*deg;
+  
 
   fPlane_X = 20.*cm; //check correct number
   fPlane_Y = 20.*cm; //check correct number
