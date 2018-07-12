@@ -323,7 +323,8 @@ void HEPDSWDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue
 //   if (command == fScintConfigCmd)
 //     Detector->SetScintConfiguration(newValue);
   if (command == fTrackerConfigCmd)
-    Detector->SetTrackerConfiguration(newValue);  
+    Detector->SetTrackerConfiguration(newValue);
+  if (command == fHEPDDegraderActivateCmd) Detector->SetDegrader(fHEPDDegraderActivateCmd->GetNewBoolValue);
   if (command == fSatelliteConfigCmd)
     Detector->SetSatelliteConfiguration(newValue);  
   if (command == fHEPDBoxConfigCmd)

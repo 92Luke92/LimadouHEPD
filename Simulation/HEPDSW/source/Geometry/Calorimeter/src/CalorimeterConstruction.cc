@@ -116,6 +116,7 @@ void CalorimeterConstruction::SetCaloMaterial(G4String aMat1,G4String aMat2){
   theConfig4->SetCaloMaterial(aMat1,aMat2);
   theConfig5->SetCaloMaterial(aMat1,aMat2);
   theConfig6->SetCaloMaterial(aMat1,aMat2);
+  theOptical->SetCaloMaterial(aMat1,aMat2); //OP
   theDummy->SetCaloMaterial(aMat1,aMat2);
 }
 

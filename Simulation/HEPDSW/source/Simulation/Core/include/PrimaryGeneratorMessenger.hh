@@ -61,6 +61,7 @@ private:
   G4UIcmdWithoutParameter*   fDefaultCmd;
   G4UIcmdWithoutParameter*   fRndmCmd;
   G4UIcmdWithoutParameter*   fPntngCmd;
+  G4UIcmdWithoutParameter*   fMuonCmd;
   G4UIcmdWithADoubleAndUnit* fEnrgCmd;
   G4UIcmdWithAString*        fPartCmd;
   G4UIcommand*               fDummyCmd;

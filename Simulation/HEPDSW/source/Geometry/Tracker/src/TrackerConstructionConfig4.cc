@@ -243,6 +243,7 @@ void TrackerConstructionConfig4::ComputeObjectsPositioning(){
   fPhysiTracker_X = 0;
   fPhysiTracker_Y = -23.55;
   fPhysiTracker_Z = 353.2*mm;
+  if(use_ProtonTB) fPhysiTracker_Z -= proton_tb_offset_Z;
   
   fPhysiPoronFrame_X = 0;
   fPhysiPoronFrame_Y = -(fCFFrame_Y/2.-fPoronFrame_Y/2.);

@@ -81,6 +81,7 @@ HEPDSWMaterial::~HEPDSWMaterial()
   delete matH2O_solid;
   delete matAir;
   delete matAl;
+  delete AluminiumOpt;
   delete matTi;
   delete matGraphite;
   delete matGlass;

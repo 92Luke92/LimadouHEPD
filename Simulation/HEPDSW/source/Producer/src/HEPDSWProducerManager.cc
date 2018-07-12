@@ -37,7 +37,8 @@ HEPDSWProducerManager::HEPDSWProducerManager():theEvent(0),theRootFile(0),theEve
   pmtHitsCollID=-1;
   vetoHitCollID=-1;
   trackerHitCollID=-1;
-  degraderHitCollID=-1;	
+  degraderHitCollID=-1;
+  caloHitCollID=-1;
   trackCollID=-1;
   vertexCollID=-1;
   theAutoSaveLimit = 1000;
@@ -183,13 +184,13 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 	TVector3 MomDir((*trackerHC)[i]->GetMomentumDirection().getX(),(*trackerHC)[i]->GetMomentumDirection().getY(),(*trackerHC)[i]->GetMomentumDirection().getZ());            
 	theTrackerHitContainer.push_back(RootTrackerHit(Entry,Exit,(*trackerHC)[i]->GetKinEnergy(),(*trackerHC)[i]->GetToF(),(*trackerHC)[i]->GetELoss(),(*trackerHC)[i]->GetParticleType(),(*trackerHC)[i]->GetDetectorId(),(*trackerHC)[i]->GetTrackId(),(*trackerHC)[i]->GetThetaAtEntry(),(*trackerHC)[i]->GetPhiAtEntry(),MomDir));
 	//if(verboseLevel>0)
-	  std::cout<<"TrackerHit  # "<<i<<" ; Edep = "<<(*trackerHC)[i]->GetELoss()<<" MeV"<<std::endl;
+	//std::cout<<"TrackerHit  # "<<i<<" ; Edep = "<<(*trackerHC)[i]->GetELoss()<<" MeV"<<std::endl;
       }
     }
 
     if(!(caloHitCollID<0)){
       caloHC = (CaloHitsCollection*)(HCE->GetHC(caloHitCollID));
-      G4cout << " caloHC entries " << caloHC->entries() << G4endl; 
+      //G4cout << " caloHC entries " << caloHC->entries() << G4endl; 
       std::map<int,TVector3> aStepPosMap;
       for(int i=0;i<caloHC->entries();i++){
         aStepPosMap.clear();
@@ -214,7 +215,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 
     if(!(vetoHitCollID<0)){
       vetoHC = (CaloHitsCollection*)(HCE->GetHC(vetoHitCollID));
-      G4cout << " vetoHC entries " << vetoHC->entries() << G4endl; 
+      //G4cout << " vetoHC entries " << vetoHC->entries() << G4endl; 
       std::map<int,TVector3> aStepPosMap;
       for(int i=0;i<vetoHC->entries();i++){
         aStepPosMap.clear();
@@ -290,7 +291,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
     theEvent->SetVertex(theVertexContainer);
   }
   //if(verboseLevel>0)
-   G4cout << "theEventTree: 0x" << theEventTree << G4endl;
+  //G4cout << "theEventTree: 0x" << theEventTree << G4endl;
   theEventTree->Fill();
   if(verboseLevel>0)
     G4cout << "leaving in EndOfEventAction..." << G4endl;

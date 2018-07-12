@@ -228,7 +228,7 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     const G4String& nome = particle->GetParticleName();
     G4double masse = particle->GetPDGMass(); 
     G4double charge = particle->GetPDGCharge();
-    G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
+    //G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
     fParticleGun->SetParticlePosition(position);
     if(flat)
       fParticleGun->SetParticleEnergy(FlatSpectrum(eminFlat,emaxFlat));
@@ -247,7 +247,7 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     const G4String& nome = particle->GetParticleName();
     G4double masse = particle->GetPDGMass(); 
     G4double charge = particle->GetPDGCharge();
-    G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
+    //G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
     G4double Xmax = 2.*cm;
     G4double Ymax = 2.*cm;
     G4double Xpos = 999.*cm;

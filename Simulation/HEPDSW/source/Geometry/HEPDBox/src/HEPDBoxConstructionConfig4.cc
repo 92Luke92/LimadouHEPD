@@ -54,7 +54,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HEPDBoxConstructionConfig4::HEPDBoxConstructionConfig4()
-  :fSolidWallExternal(0),fSolidWallHoneyComb(0),
+  :fSolidWallExternal(0),fSolidWallHoneyComb(0),fSolidBlanket1(0),fSolidBlanket2(0),
    fLogicBlanket1(0),fLogicBlanket2(0),fLogicWallExternal(0),fLogicWallHoneyComb(0),
    fPhysiBlanket1(0),fPhysiBlanket2(0),fPhysiWallExternalIn(0),fPhysiWallHoneyComb(0),fPhysiWallExternalOut(0)
 {
