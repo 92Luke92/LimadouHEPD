@@ -136,9 +136,10 @@ G4VPhysicalVolume* HEPDSWDetectorConstruction::Construct()
 
   pMaterial -> DefineMaterials();
   G4Material* vacuum = pMaterial->GetMaterial("Galactic");
-  G4Material* air = pMaterial->GetMaterial("G4_AIR"); 
+  G4Material* air = pMaterial->GetMaterial("G4_AIR");
 
   if (useProtonTB) fworldHalfZ = 376.37 + fISOcenterZ + HEPD_offset_Z + 1*cm;
+  if (useNucleiTB) fworldHalfZ = 200.*cm;
 
   G4cout << "monde dx " << fworldHalfX << " dy " << fworldHalfY << " dz " << fworldHalfZ << G4endl;
 
@@ -150,13 +151,13 @@ G4VPhysicalVolume* HEPDSWDetectorConstruction::Construct()
   fLogicWorld = new G4LogicalVolume(fSolidWorld,vacuum,"world");
 
   fLogicWorld->SetSensitiveDetector(mcSD);
-
+  
   fPhysiWorld = new G4PVPlacement(0,G4ThreeVector(),"world",fLogicWorld,0,false,0);
   
   G4VisAttributes * attInvisible = new G4VisAttributes(G4Colour::Green());
   attInvisible->SetVisibility(true);
   attInvisible->SetForceAuxEdgeVisible(true);
-  fLogicWorld->SetVisAttributes(attInvisible); 
+  fLogicWorld->SetVisAttributes(attInvisible);
   
   if(useSatellite)
     fSatelliteBuilder->Builder(theSatelliteConfig,fPhysiWorld);
