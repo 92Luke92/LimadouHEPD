@@ -100,6 +100,6 @@
 
 /hepd/producer/SetRootFile Test.root HEPD
 
-/run/beamOn 100000
+/run/beamOn 1000
 
 /hepd/producer/StoreRootFile

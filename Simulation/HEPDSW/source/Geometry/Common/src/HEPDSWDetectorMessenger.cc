@@ -221,11 +221,17 @@ HEPDSWDetectorMessenger::HEPDSWDetectorMessenger(HEPDSWDetectorConstruction * De
   fHEPDBoxMLBlanketMatConfigCmd->SetParameter(param);
   fHEPDBoxMLBlanketMatConfigCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  fHEPDBoxBlanketMatConfigCmd = new G4UIcmdWithAString("/hepd/HEPDBox/BlanketMaterialConfiguration",this);
-  fHEPDBoxBlanketMatConfigCmd->SetGuidance("Set the hepd blanket material");
-  fHEPDBoxBlanketMatConfigCmd->SetParameterName("Blanket Material",false);
-  fHEPDBoxBlanketMatConfigCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  fHEPDBoxBlanketOutMatConfigCmd = new G4UIcmdWithAString("/hepd/HEPDBox/BlanketMaterialOutConfiguration",this);
+  fHEPDBoxBlanketOutMatConfigCmd->SetGuidance("Set the hepd blanket material out");
+  fHEPDBoxBlanketOutMatConfigCmd->SetParameterName("Blanket Material Out",false);
+  fHEPDBoxBlanketOutMatConfigCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  
+  fHEPDBoxBlanketInMatConfigCmd = new G4UIcmdWithAString("/hepd/HEPDBox/BlanketMaterialInConfiguration",this);
+  fHEPDBoxBlanketInMatConfigCmd->SetGuidance("Set the hepd blanket material in");
+  fHEPDBoxBlanketInMatConfigCmd->SetParameterName("Blanket Material In",false);
+  fHEPDBoxBlanketInMatConfigCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
   fHEPDBoxWallMatConfigCmd = new G4UIcmdWithAString("/hepd/HEPDBox/WallMaterialConfiguration",this);
   fHEPDBoxWallMatConfigCmd->SetGuidance("Set the hepd box wall material");
   fHEPDBoxWallMatConfigCmd->SetParameterName("Wall Material",false);
@@ -286,7 +292,8 @@ HEPDSWDetectorMessenger::~HEPDSWDetectorMessenger()
   delete fTrackerKaptonMatConfigCmd;     
   delete fTrackerCarbonFiberMatConfigCmd;
   delete fHEPDBoxMLBlanketMatConfigCmd;    
-  delete fHEPDBoxBlanketMatConfigCmd;    
+  delete fHEPDBoxBlanketOutMatConfigCmd;
+  delete fHEPDBoxBlanketInMatConfigCmd;
   delete fHEPDBoxWallMatConfigCmd;    
   delete fHEPDBoxWallTwoMatConfigCmd;    
   delete fSatelliteBlanketMatConfigCmd;    
@@ -386,8 +393,10 @@ void HEPDSWDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue
   }   
   if(command == fHEPDBoxWallMatConfigCmd)    
     Detector->HEPDBoxSetWallMaterial(newValue);    
-  if(command == fHEPDBoxBlanketMatConfigCmd)    
-    Detector->HEPDBoxSetBlanketMaterial(newValue); 
+  if(command == fHEPDBoxBlanketOutMatConfigCmd)    
+    Detector->HEPDBoxSetBlanketOutMaterial(newValue);
+  if(command == fHEPDBoxBlanketInMatConfigCmd)    
+    Detector->HEPDBoxSetBlanketInMaterial(newValue);
   if(command == fHEPDBoxWallTwoMatConfigCmd){
     G4String mat1,mat2;
     std::istringstream is(newValue);

@@ -228,8 +228,12 @@ void HEPDSWDetectorConstruction::TrackerSetCarbonFiberMaterial(G4String aMat){
   fTrackerBuilder->SetCarbonFiberMaterial(aMat);
 }
 
-void HEPDSWDetectorConstruction::HEPDBoxSetBlanketMaterial(G4String aMat){
-  fHEPDBoxBuilder->SetBlanketMaterial(aMat);
+void HEPDSWDetectorConstruction::HEPDBoxSetBlanketOutMaterial(G4String aMat){
+  fHEPDBoxBuilder->SetBlanketOutMaterial(aMat);
+}
+
+void HEPDSWDetectorConstruction::HEPDBoxSetBlanketInMaterial(G4String aMat){
+  fHEPDBoxBuilder->SetBlanketInMaterial(aMat);
 }
 
 void HEPDSWDetectorConstruction::HEPDBoxSetBlanketMaterial(G4String aMat1,G4String aMat2,G4String aMat3,G4String aMat4){

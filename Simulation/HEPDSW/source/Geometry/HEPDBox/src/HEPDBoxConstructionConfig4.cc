@@ -54,15 +54,15 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HEPDBoxConstructionConfig4::HEPDBoxConstructionConfig4()
-  :fSolidWallExternal(0),fSolidWallHoneyComb(0),fSolidBlanket1(0),fSolidBlanket2(0),
-   fLogicBlanket1(0),fLogicBlanket2(0),fLogicWallExternal(0),fLogicWallHoneyComb(0),
-   fPhysiBlanket1(0),fPhysiBlanket2(0),fPhysiWallExternalIn(0),fPhysiWallHoneyComb(0),fPhysiWallExternalOut(0)
+  :fSolidWallExternal(0),fSolidWallHoneyComb(0),fSolidBlanketOut(0),fSolidBlanketIn(0),
+   fLogicBlanketOut(0),fLogicBlanketIn(0),fLogicWallExternal(0),fLogicWallHoneyComb(0),
+   fPhysiBlanketOut(0),fPhysiBlanketIn(0),fPhysiWallExternalIn(0),fPhysiWallHoneyComb(0),fPhysiWallExternalOut(0)
 {
   pMaterial     = new HEPDSWMaterial();
   fBlanket_X  = 254*mm;
   fBlanket_Y  = 238*mm;
-  fBlanket1_Z  = 0.045*mm;
-  fBlanket2_Z  = 0.035*mm;
+  fBlanketOut_Z  = 0.045*mm;
+  fBlanketIn_Z  = 0.035*mm;
 
   fWallExternal_X = 345*mm;
   fWallExternal_Y = 490*mm;
@@ -80,8 +80,8 @@ HEPDBoxConstructionConfig4::HEPDBoxConstructionConfig4()
   ComputeObjectsPositioning();
   
   // materials
-  blanket1Material       = "Kapton";
-  blanket2Material       = "Copper";
+  blanketOutMaterial       = "Kapton";
+  blanketInMaterial       = "Copper";
   wallMaterial           = "Aluminium";
   wallHoneyCombMaterial  = "HCAluminium";
 }
@@ -101,7 +101,7 @@ void HEPDBoxConstructionConfig4::ComputeObjectsPositioning(){
 
   fPhysiWallExternalIn_X = +14.5*mm;
   fPhysiWallExternalIn_Y = -92*mm;
-  fPhysiWallExternalIn_Z = fPhysiBlanket_Z+fBlanket1_Z/2.+fBlanket2_Z/2.+fWallExternal_Z/2.;
+  fPhysiWallExternalIn_Z = fPhysiBlanket_Z+fBlanketOut_Z/2.+fBlanketIn_Z/2.+fWallExternal_Z/2.;
 
   fPhysiWallHoneyComb_X = +14.5*mm;
   fPhysiWallHoneyComb_Y = -92*mm;
@@ -113,9 +113,14 @@ void HEPDBoxConstructionConfig4::ComputeObjectsPositioning(){
 }
 
 
-void HEPDBoxConstructionConfig4::SetBlanketMaterial(G4String aMat){
-  blanket1Material=aMat; 
-}    
+void HEPDBoxConstructionConfig4::SetBlanketOutMaterial(G4String aMat){
+  blanketOutMaterial=aMat; 
+}
+
+void HEPDBoxConstructionConfig4::SetBlanketInMaterial(G4String aMat){
+  blanketInMaterial=aMat; 
+}
+
 void HEPDBoxConstructionConfig4::SetWallMaterial(G4String aMat1,G4String aMat2){
   wallMaterial=aMat1; 
   wallHoneyCombMaterial=aMat2;
@@ -128,16 +133,16 @@ void HEPDBoxConstructionConfig4::Builder(G4VPhysicalVolume* motherVolume)
   G4cout << "HEPD Box ConstructionConfig4" << G4endl;
 
   pMaterial->DefineMaterials();
-  G4Material* blanket1Mat = pMaterial->GetMaterial(blanket1Material);
-  G4Material* blanket2Mat = pMaterial->GetMaterial(blanket2Material);
+  G4Material* blanketOutMat = pMaterial->GetMaterial(blanketOutMaterial);
+  G4Material* blanketInMat = pMaterial->GetMaterial(blanketInMaterial);
   G4Material* wallMat = pMaterial->GetMaterial(wallMaterial);
   //G4Material* wallHCMat = pMaterial->GetMaterial(wallHoneyCombMaterial);
   
 
   G4RotationMatrix* myRot = new G4RotationMatrix;
 
-  fSolidBlanket1 = new G4Box("fSolidThermalBlanket1",fWallHole_X/2.,fWallHole_Y/2.,fBlanket1_Z/2);
-  fSolidBlanket2 = new G4Box("fSolidThermalBlanket2",fWallHole_X/2.,fWallHole_Y/2.,fBlanket2_Z/2);
+  fSolidBlanketOut = new G4Box("fSolidThermalBlanketOut",fWallHole_X/2.,fWallHole_Y/2.,fBlanketOut_Z/2);
+  fSolidBlanketIn = new G4Box("fSolidThermalBlanketIn",fWallHole_X/2.,fWallHole_Y/2.,fBlanketIn_Z/2);
 
   G4ThreeVector transWallHole(transWallHole_X,transWallHole_Y,0);
   fSolidWallExternal = new G4SubtractionSolid("fSolidWallExternal",
@@ -153,24 +158,24 @@ void HEPDBoxConstructionConfig4::Builder(G4VPhysicalVolume* motherVolume)
 
   
 
-  fLogicBlanket1 = new G4LogicalVolume(fSolidBlanket1,blanket1Mat,"fLogicThermalBlanket1");
-  fLogicBlanket2 = new G4LogicalVolume(fSolidBlanket2,blanket2Mat,"fLogicThermalBlanket2");
+  fLogicBlanketOut = new G4LogicalVolume(fSolidBlanketOut,blanketOutMat,"fLogicThermalBlanketOut");
+  fLogicBlanketIn = new G4LogicalVolume(fSolidBlanketIn,blanketInMat,"fLogicThermalBlanketIn");
   fLogicWallExternal = new G4LogicalVolume(fSolidWallExternal,wallMat,"fLogicWallExternal");
   fLogicWallHoneyComb = new G4LogicalVolume(fSolidWallHoneyComb,wallMat,"fLogicWallHoneyComb");
 
   G4double suppLYSO_offset = 5.*mm;
 
-  fPhysiBlanket1 = new G4PVPlacement(0,
-				    G4ThreeVector(0,0,fPhysiBlanket_Z + fWallHoneyComb_Z/2. + fWallExternal_Z/2. + fBlanket2_Z + 0.005*mm + suppLYSO_offset),
-				    "HEPDBoxThermalBlanket1",
-				    fLogicBlanket1,
+  fPhysiBlanketOut = new G4PVPlacement(0,
+				    G4ThreeVector(0,0,fPhysiBlanket_Z + fWallHoneyComb_Z/2. + fWallExternal_Z/2. + fBlanketIn_Z + 0.005*mm + suppLYSO_offset),
+				    "HEPDBoxThermalBlanketOut",
+				    fLogicBlanketOut,
 				    motherVolume,
 				    false,0,true);
 
-  fPhysiBlanket2 = new G4PVPlacement(0,
+  fPhysiBlanketIn = new G4PVPlacement(0,
 				    G4ThreeVector(0,0,fPhysiBlanket_Z + fWallHoneyComb_Z/2. + fWallExternal_Z/2.+suppLYSO_offset),
-				    "HEPDBoxThermalBlanket2",
-				    fLogicBlanket2,
+				    "HEPDBoxThermalBlanketIn",
+				    fLogicBlanketIn,
 				    motherVolume,
 				    false,0,true);
 
@@ -211,8 +216,8 @@ void HEPDBoxConstructionConfig4::Builder(G4VPhysicalVolume* motherVolume)
   G4VisAttributes* attGray = new G4VisAttributes(G4Colour::Gray());
   attGray->SetVisibility(true);
   attGray->SetForceAuxEdgeVisible(true);
-  fLogicBlanket1->SetVisAttributes(attGray);
-  fLogicBlanket2->SetVisAttributes(attGray);
+  fLogicBlanketOut->SetVisAttributes(attGray);
+  fLogicBlanketIn->SetVisAttributes(attGray);
 
 
 }

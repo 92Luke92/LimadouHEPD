@@ -97,7 +97,8 @@ private:
   G4UIcmdWithAString* fTrackerCarbonFiberMatConfigCmd;
 
   G4UIcommand*        fHEPDBoxMLBlanketMatConfigCmd;    
-  G4UIcmdWithAString* fHEPDBoxBlanketMatConfigCmd;    
+  G4UIcmdWithAString* fHEPDBoxBlanketOutMatConfigCmd;
+  G4UIcmdWithAString* fHEPDBoxBlanketInMatConfigCmd;
   G4UIcmdWithAString* fHEPDBoxWallMatConfigCmd;    
   G4UIcommand*        fHEPDBoxWallTwoMatConfigCmd;    
 

@@ -12,7 +12,8 @@
 
 /hepd/ActivateHEPDBox true
 /hepd/HEPDBoxConfiguration Config4
-/hepd/HEPDBox/BlanketMaterialConfiguration mylar
+/hepd/HEPDBox/BlanketMaterialOutConfiguration Kapton
+/hepd/HEPDBox/BlanketMaterialInConfiguration Copper
 /hepd/HEPDBox/WallTwoMaterialConfiguration Aluminium HCAluminium
 
 /hepd/ActivateTracker true

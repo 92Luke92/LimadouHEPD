@@ -56,7 +56,8 @@ public:
   HEPDBoxConstruction();
   ~HEPDBoxConstruction();
   
-  void SetBlanketMaterial(G4String aMat);
+  void SetBlanketOutMaterial(G4String aMat);
+  void SetBlanketInMaterial(G4String aMat);
   void SetBlanketMaterial(G4String aMat1,G4String aMat2,G4String aMat3,G4String aMat4);
   void SetWallMaterial(G4String aMat);
   void SetWallMaterial(G4String aMat1,G4String aMat2);
