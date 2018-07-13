@@ -87,7 +87,7 @@ HEPDSWProducerManager* HEPDSWProducerManager::GetInstance()
 void HEPDSWProducerManager::BeginOfEventAction(const G4Event*)
 {
   G4SDManager * SDman = G4SDManager::GetSDMpointer();
-  if(caloHitCollID<0||vetoHitCollID<0||trackerHitCollID<0||trackCollID<0){
+  if(caloHitCollID<0||vetoHitCollID<0||trackerHitCollID<0||trackCollID<0||pmtHitsCollID<0){
     if(saveCalo){
       caloHitCollID = SDman->GetCollectionID("caloCollection");
       vetoHitCollID = SDman->GetCollectionID("vetoCollection");
@@ -97,7 +97,6 @@ void HEPDSWProducerManager::BeginOfEventAction(const G4Event*)
       trackerHitCollID = SDman->GetCollectionID("trackerHitCollection");
     if(saveDegrader)
       degraderHitCollID = SDman->GetCollectionID("degraderHitCollection");
-    
     if(saveMCTruth){
       trackCollID = SDman->GetCollectionID("trackCollection");
       vertexCollID = SDman->GetCollectionID("vertexCollection");
@@ -190,11 +189,11 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 
     if(!(caloHitCollID<0)){
       caloHC = (CaloHitsCollection*)(HCE->GetHC(caloHitCollID));
-      //G4cout << " caloHC entries " << caloHC->entries() << G4endl; 
+      //G4cout << " caloHC entries " << caloHC->entries() << G4endl;
       std::map<int,TVector3> aStepPosMap;
       for(int i=0;i<caloHC->entries();i++){
         aStepPosMap.clear();
-        TVector3 Entry((*caloHC)[i]->GetEntryPoint().getX(),(*caloHC)[i]->GetEntryPoint().getY(),(*caloHC)[i]->GetEntryPoint().getZ());	
+        TVector3 Entry((*caloHC)[i]->GetEntryPoint().getX(),(*caloHC)[i]->GetEntryPoint().getY(),(*caloHC)[i]->GetEntryPoint().getZ());
 	TVector3 Exit((*caloHC)[i]->GetExitPoint().getX(),(*caloHC)[i]->GetExitPoint().getY(),(*caloHC)[i]->GetExitPoint().getZ());
 	aStepPosMap.empty();
         unsigned int mapsize = 0;
