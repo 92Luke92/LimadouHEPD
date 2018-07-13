@@ -231,7 +231,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
             TVector3 tv(g4tv.getX(),g4tv.getY(),g4tv.getZ());
 	    aStepPosMap[itkid]=tv;  
 	  }
-	  theVetoHitContainer.push_back(RootCaloHit((*vetoHC)[i]->GetVolume(),Entry,Exit,(*vetoHC)[i]->GetKinEnergy(),(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV,(*vetoHC)[i]->GetEdepMap(),aStepPosMap,(*caloHC)[i]->GetNPhot((*vetoHC)[i]->GetVolume())) ); // OP
+	  theVetoHitContainer.push_back(RootCaloHit((*vetoHC)[i]->GetVolume(),Entry,Exit,(*vetoHC)[i]->GetKinEnergy(),(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV,(*vetoHC)[i]->GetEdepMap(),aStepPosMap,(*vetoHC)[i]->GetNPhot((*vetoHC)[i]->GetVolume())) ); // OP
 	  if(verboseLevel>0) std::cout<<"VetoHit  # "<<i<<" ; Volume = "<<(*vetoHC)[i]->GetVolume()<<" ; Edep = "<<(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV<<" MeV"<<std::endl;
       }
     }
