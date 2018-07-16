@@ -32,8 +32,8 @@
 /hepd/Calorimeter/CarbonFiberMaterialConfiguration CarbonFiber
 
 # HEPD proton test beam configuration 
-#/hepd/ActivateHEPDProtonTB true
-#/hepd/ActivateHEPDDegrader true
+/hepd/ActivateHEPDProtonTB false
+/hepd/ActivateHEPDDegrader false
 
 # HEPD proton test beam configuration
 /hepd/ActivateHEPDNucleiTB true
@@ -90,7 +90,7 @@
 /vis/scene/add/trajectories smooth
 #/vis/modeling/trajectories/create/drawByCharge
 /vis/modeling/trajectories/create/drawByParticleID
-/vis/modeling/trajectories/drawByParticleID-0/set proton blue
+/vis/modeling/trajectories/drawByParticleID-0/set proton cyan
 /vis/modeling/trajectories/drawByParticleID-0/set e+ blue
 /vis/modeling/trajectories/drawByParticleID-0/set e- red
 /vis/modeling/trajectories/drawByParticleID-0/set alpha magenta
@@ -100,7 +100,7 @@
 /vis/modeling/trajectories/drawByParticleID-0/set mu- green
 /vis/modeling/trajectories/drawByParticleID-0/set pi+ cyan
 /vis/modeling/trajectories/drawByParticleID-0/set pi- cyan
-/vis/modeling/trajectories/drawByParticleID-0/set neutron black
+/vis/modeling/trajectories/drawByParticleID-0/set neutron green
 /vis/modeling/trajectories/drawByParticleID-0/set gamma yellow
 /vis/modeling/trajectories/drawByParticleID-0/set neutrino magenta
 #
@@ -144,6 +144,6 @@
 
 /hepd/producer/SetRootFile Test.root HEPD
 
-#/run/beamOn 1
+/run/beamOn 10
 
 #/hepd/producer/StoreRootFile
