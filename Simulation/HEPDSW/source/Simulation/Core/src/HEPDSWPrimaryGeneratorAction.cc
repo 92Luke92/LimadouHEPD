@@ -245,7 +245,7 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     G4String particleName;
     G4ParticleDefinition* particle = fParticleGun->GetParticleDefinition();
     const G4String& nome = particle->GetParticleName();
-    G4double masse = particle->GetPDGMass(); 
+    G4double masse = particle->GetPDGMass();
     G4double charge = particle->GetPDGCharge();
     //G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
     G4double Xmax = 2.*cm;

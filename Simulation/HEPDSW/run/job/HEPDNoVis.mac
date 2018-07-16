@@ -12,7 +12,8 @@
 
 /hepd/ActivateHEPDBox true
 /hepd/HEPDBoxConfiguration Config4
-/hepd/HEPDBox/BlanketMaterialConfiguration mylar
+#/hepd/HEPDBox/BlanketMaterialConfiguration mylar
+/hepd/HEPDBox/CompositeBlanketMaterialConfiguration Kapton Copper
 /hepd/HEPDBox/WallTwoMaterialConfiguration Aluminium HCAluminium
 
 /hepd/ActivateTracker true
@@ -77,7 +78,7 @@
 #He:	   248 MeV
 #C:	   744 MeV
 #O:	   992 MeV
-/hepd/gun/energy 248 MeV
+/hepd/gun/energy 180 MeV
 /hepd/gun/spot
 ############ Nuclei TB - LNS
 
@@ -100,6 +101,6 @@
 
 /hepd/producer/SetRootFile Test.root HEPD
 
-/run/beamOn 1000
+/run/beamOn 100000
 
 /hepd/producer/StoreRootFile

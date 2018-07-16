@@ -96,8 +96,8 @@ public:
   void TrackerSetCarbonFiberMaterial(G4String aMat);
 
   void HEPDBoxSetBlanketMaterial(G4String aMat1,G4String aMat2,G4String aMat3,G4String aMat4);
-  void HEPDBoxSetBlanketOutMaterial(G4String aMat);
-  void HEPDBoxSetBlanketInMaterial(G4String aMat);  
+  void HEPDBoxSetBlanketMaterial(G4String aMat);
+  void HEPDBoxSetBlanketMaterial(G4String aMat1, G4String aMat2);
   void HEPDBoxSetWallMaterial(G4String aMat);
   void HEPDBoxSetWallMaterial(G4String aMat1,G4String aMat2);
   void SatelliteSetBlanketMaterial(G4String aMat);
