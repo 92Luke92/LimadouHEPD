@@ -1,3 +1,7 @@
+//
+//  wjb modifed for optical photon simulation
+//
+
 #include "HEPDSWProducerManager.hh"
 #include "HEPDSWProducerMessenger.hh"
 
@@ -34,11 +38,11 @@ HEPDSWProducerManager* HEPDSWProducerManager::instance = 0;
 HEPDSWProducerManager::HEPDSWProducerManager():theEvent(0),theRootFile(0),theEventTree(0),thePathDir(0)
 {
   theMessenger = new HEPDSWProducerMessenger(this);
+  caloHitCollID=-1;
   pmtHitsCollID=-1;
   vetoHitCollID=-1;
   trackerHitCollID=-1;
   degraderHitCollID=-1;
-  caloHitCollID=-1;
   trackCollID=-1;
   vertexCollID=-1;
   theAutoSaveLimit = 1000;
@@ -87,7 +91,7 @@ HEPDSWProducerManager* HEPDSWProducerManager::GetInstance()
 void HEPDSWProducerManager::BeginOfEventAction(const G4Event*)
 {
   G4SDManager * SDman = G4SDManager::GetSDMpointer();
-  if(caloHitCollID<0||vetoHitCollID<0||trackerHitCollID<0||trackCollID<0||pmtHitsCollID<0){
+  if(caloHitCollID<0||vetoHitCollID<0||trackerHitCollID<0||trackCollID<0){
     if(saveCalo){
       caloHitCollID = SDman->GetCollectionID("caloCollection");
       vetoHitCollID = SDman->GetCollectionID("vetoCollection");
