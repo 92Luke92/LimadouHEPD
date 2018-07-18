@@ -90,8 +90,8 @@
 /vis/scene/add/trajectories smooth
 #/vis/modeling/trajectories/create/drawByCharge
 /vis/modeling/trajectories/create/drawByParticleID
-/vis/modeling/trajectories/drawByParticleID-0/set proton cyan
-/vis/modeling/trajectories/drawByParticleID-0/set e+ blue
+/vis/modeling/trajectories/drawByParticleID-0/set proton blue
+/vis/modeling/trajectories/drawByParticleID-0/set e+ red
 /vis/modeling/trajectories/drawByParticleID-0/set e- red
 /vis/modeling/trajectories/drawByParticleID-0/set alpha magenta
 /vis/modeling/trajectories/drawByParticleID-0/set C12 magenta
@@ -100,9 +100,9 @@
 /vis/modeling/trajectories/drawByParticleID-0/set mu- green
 /vis/modeling/trajectories/drawByParticleID-0/set pi+ cyan
 /vis/modeling/trajectories/drawByParticleID-0/set pi- cyan
-/vis/modeling/trajectories/drawByParticleID-0/set neutron green
+/vis/modeling/trajectories/drawByParticleID-0/set neutron black
 /vis/modeling/trajectories/drawByParticleID-0/set gamma yellow
-/vis/modeling/trajectories/drawByParticleID-0/set neutrino magenta
+/vis/modeling/trajectories/drawByParticleID-0/set neutrino grey
 #
 # To superimpose all of the events from a given run:
 /vis/scene/endOfEventAction accumulate
@@ -115,12 +115,12 @@
 
 ############ Nuclei TB - LNS
 /hepd/gun/setDefault
-/hepd/gun/particle He     #for nuclei: He, C, O
+/hepd/gun/particle C     #for nuclei: He, C, O
 #protons:  62 MeV
 #He:	   248 MeV
 #C:	   744 MeV
 #O:	   992 MeV
-/hepd/gun/energy 248 MeV
+/hepd/gun/energy 744 MeV
 /hepd/gun/spot
 ############ Nuclei TB - LNS
 
@@ -144,6 +144,6 @@
 
 /hepd/producer/SetRootFile Test.root HEPD
 
-/run/beamOn 10
+#/run/beamOn 10
 
 #/hepd/producer/StoreRootFile
