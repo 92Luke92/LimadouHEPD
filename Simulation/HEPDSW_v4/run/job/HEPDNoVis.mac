@@ -1,0 +1,114 @@
+#
+/control/verbose 2
+/run/verbose 1
+#
+#/hepd/setWorldSize 55 75 80 cm
+/hepd/setWorldSize 55 75 400 cm
+
+/hepd/ActivateSatellite true
+/hepd/SatelliteConfiguration Config1
+/hepd/Satellite/BlanketMaterialConfiguration mylar
+/hepd/Satellite/WallMaterialConfiguration Aluminium
+
+/hepd/ActivateHEPDBox true
+/hepd/HEPDBoxConfiguration Config4
+#/hepd/HEPDBox/BlanketMaterialConfiguration mylar
+/hepd/HEPDBox/CompositeBlanketMaterialConfiguration Kapton Copper
+/hepd/HEPDBox/WallTwoMaterialConfiguration Aluminium HCAluminium
+
+/hepd/ActivateTracker true
+/hepd/TrackerConfiguration Config4
+/hepd/Tracker/SiliconMaterialConfiguration Silicon
+/hepd/Tracker/KaptonMaterialConfiguration Kapton
+/hepd/Tracker/CarbonFiberMaterialConfiguration CarbonFiber
+
+/hepd/ActivateCalo true
+/hepd/CaloConfiguration Config6
+#/hepd/CaloConfiguration Optical ##--> OP
+/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration Scintillator LYSO
+#/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration ScintillatorEJ200 LYSO ##--> OP
+/hepd/Calorimeter/VetoMaterialConfiguration Scintillator
+/hepd/Calorimeter/PoronMaterialConfiguration Poron
+/hepd/Calorimeter/CarbonFiberMaterialConfiguration CarbonFiber
+
+# HEPD proton test beam configuration
+#/hepd/ActivateHEPDProtonTB true
+#/hepd/ActivateHEPDDegrader true
+## if Degrader is active (true), its width can be modified in /source/Geometry/Common/src/HEPDSWDetectorConstruction.cc in "degrader_dz"
+
+# HEPD nuclei test beam configuration
+#/hepd/ActivateHEPDNucleiTB true
+
+#
+## ELECTROMAGNETIC model
+/hepd/phys/addPhysics  emstandard_opt4
+
+## ELASTIC HADRONIC model (primary + secondary)
+/hepd/phys/addPhysics  elastic
+/hepd/phys/addPhysics  IonElastic
+
+## MODEL 1: HADRONIC INELASTIC model (qmd) (primary + secondary)
+/hepd/phys/addPhysics  Shielding
+/hepd/phys/addPhysics  qmd_ion
+
+## MODEL 2: HADRONIC INELASTIC model (Incl) (primary + secondary)
+#/hepd/phys/addPhysics  INCLXX
+#/hepd/phys/addPhysics  inclxx_ion
+
+## MODEL 3: HADRONIC INELASTIC model (Binary) (primary + secondary)
+#/hepd/phys/addPhysics  QGSP_BIC_HP
+#/hepd/phys/addPhysics  binary_ion
+
+
+#/hepd/step/stepMax 2.5 mm
+
+/run/initialize
+
+# degrader thickness
+#/hepd/ProtonDegrader 16 mm
+
+## Remove comments in the following three lines when Optical physics is activated!!!
+#/hepd/CalorimeterSD/useBirksLaw false ##--> OP
+#/hepd/VetoSD/useBirksLaw false ##--> OP
+#/hepd/gun/setDefault ##--> OP
+
+############ Nuclei TB - LNS
+#/hepd/gun/setDefault
+#/hepd/gun/particle He     #for nuclei: He, C, O
+##protons:  62 MeV
+##He:	   248 MeV
+##C:	   744 MeV
+##O:	   992 MeV
+#/hepd/gun/energy 235 MeV
+#/hepd/gun/spot
+############ Nuclei TB - LNS
+
+
+#/hepd/gun/setDefault
+#/hepd/gun/muon 30 30 cm 0.05 1000 GeV
+#/hepd/gun/random
+
+## position c3 trento tb
+#/hepd/gun/beam -1.75 -1.80 cm 0 deg     # 3C0
+#/hepd/gun/tbeam c3 0 deg
+
+###/hepd/gun/particle mu-     # muon energy: 4 GeV, ereso: 600 MeV
+#/hepd/gun/particle proton
+#/hepd/gun/energy 25 MeV    #TB trento; 70, 100, 125, 154, 174, 202, 228 MeV
+#/hepd/ereso 0.8 MeV     #ereso = beam energy resolution at Trento (delta E = 0.8 MeV)
+#/hepd/gun/powerlaw 1 100 MeV -3
+#
+
+/hepd/gun/setDefault
+/hepd/gun/particle proton
+/hepd/gun/beam -1.75 -1.80 cm 0 deg
+/hepd/gun/flat 20 70 MeV
+
+/tracking/verbose 0
+/random/setSeeds 1777992 744546
+
+/hepd/producer/SetRootFile Test.root HEPD
+
+/run/beamOn 1000000
+
+/hepd/producer/StoreRootFile
