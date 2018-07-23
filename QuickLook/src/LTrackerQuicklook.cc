@@ -42,14 +42,17 @@ int TrackerQuickLook(TString namefile, TString outPath){
   
    /*TSystem filename_nopath;
      const char * nopath = filename_nopath.BaseName((const char*)namefile.c_str());
-   */  const char *nopath = "StringaIntrodottaDaRoma2";
+   *///  const char *nopath = "StringaIntrodottaDaRoma2";
    TString outname = outPath;
    TString _temp= namefile;
+   
+   if(_temp.Last('/') != -1)
+      _temp.Replace(0, _temp.Last('/'), "");
 
-   _temp.Replace(0, _temp.Last('/'), "");
    outname += "/";
    outname += _temp;
-
+   
+   
    TString outnameStart;
    TString outnameEnd;
    outname.ReplaceAll(".root", 5, "_TrackerQL.pdf", 14);
@@ -172,7 +175,7 @@ int TrackerQuickLook(TString namefile, TString outPath){
       const double *sigma_chan = cal->GetSigma(ipk);
       const double *mean_chan = cal->GetPedestal(ipk);
       const double *NGindex_chan = cal->GetNGIndex(ipk);
-      const bool *CNmask = cal->GetCNMask(ipk);
+
       LTrackerMask hotchan_tmp = cal->GetMaskOnSigma(ipk, -999., HOTCHANNELTHRESHOLD);
       LTrackerMask coldchan_tmp = cal->GetMaskOnSigma(ipk, COLDCHANNELTHRESHOLD, 999.);
       LTrackerMask nongauschan_tmp = cal->GetMaskOnNGI(ipk, -999., GAUSCHANNELTHRESHOLD);
@@ -289,30 +292,30 @@ int TrackerQuickLook(TString namefile, TString outPath){
    pt->AddText("Number of events: ");
    pt->AddText(numEvents);
    pt->Draw();
-   output->Print(outnameStart,"pdf");
+   output->Print(outnameStart);
   
-   drawing6_chan_2D(sigmaraw[0])->Print(outname,"pdf");
-   drawing6_chan_2D(sigmaraw[1])->Print(outname,"pdf"); 
-   drawing6_chan_2D(sigmaped[0])->Print(outname,"pdf");
-   drawing6_chan_2D(sigmaped[1])->Print(outname,"pdf");
-   drawing6_chan_2D(pedestal[0])->Print(outname,"pdf");
-   drawing6_chan_2D(pedestal[1])->Print(outname,"pdf");
-   drawing6_va_2D(CN[0])->Print(outname,"pdf");
-   drawing6_va_2D(CN[1])->Print(outname,"pdf");
-   drawing6_chan_2D(NGindex[0])->Print(outname,"pdf");
+   drawing6_chan_2D(sigmaraw[0])->Print(outname);
+   drawing6_chan_2D(sigmaraw[1])->Print(outname); 
+   drawing6_chan_2D(sigmaped[0])->Print(outname);
+   drawing6_chan_2D(sigmaped[1])->Print(outname);
+   drawing6_chan_2D(pedestal[0])->Print(outname);
+   drawing6_chan_2D(pedestal[1])->Print(outname);
+   drawing6_va_2D(CN[0])->Print(outname);
+   drawing6_va_2D(CN[1])->Print(outname);
+   drawing6_chan_2D(NGindex[0])->Print(outname);
    drawing6_chan_2D(NGindex[1])->Print(outname);
-   drawing6_chan_2D(counts_clean[0])->Print(outname,"pdf");
-   drawing6_chan_2D(counts_clean[1])->Print(outname,"pdf");
-   drawing6_chan_2D(signal_noise[0])->Print(outname,"pdf");
-   drawing6_chan_2D(signal_noise[1])->Print(outname,"pdf");
-   drawing6_chan_1D(clustersize[0],true)->Print(outname,"pdf");
-   drawing6_chan_1D(clustersize[1],true)->Print(outname,"pdf");
-   drawing6_chan_1D(landau[0],false)->Print(outname,"pdf");
-   drawing6_chan_1D(landau[1],false)->Print(outname,"pdf");
-   drawing12_2D(temp_map[0],temp_map[1])->Print(outname,"pdf");
-   drawing12_2D(gaus_map[0],gaus_map[1])->Print(outname,"pdf");
+   drawing6_chan_2D(counts_clean[0])->Print(outname);
+   drawing6_chan_2D(counts_clean[1])->Print(outname);
+   drawing6_chan_2D(signal_noise[0])->Print(outname);
+   drawing6_chan_2D(signal_noise[1])->Print(outname);
+   drawing6_chan_1D(clustersize[0],true)->Print(outname);
+   drawing6_chan_1D(clustersize[1],true)->Print(outname);
+   drawing6_chan_1D(landau[0],false)->Print(outname);
+   drawing6_chan_1D(landau[1],false)->Print(outname);
+   drawing12_2D(temp_map[0],temp_map[1])->Print(outname);
+   drawing12_2D(gaus_map[0],gaus_map[1])->Print(outname);
   
-   output->Print(outnameEnd,"pdf");
+   output->Print(outnameEnd);
 
    gErrorIgnoreLevel = 1;
 

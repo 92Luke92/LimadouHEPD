@@ -912,7 +912,11 @@ void PMTScan(TString rootname, TString outPath )
       }
    }
 
-   gErrorIgnoreLevel = 1; 
+   gErrorIgnoreLevel = 1;
+
+   rootfile.Close();
+   
+      
 }
 
 

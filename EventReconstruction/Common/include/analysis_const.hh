@@ -27,7 +27,7 @@ const double NGILOW=-999.;
 const double NGIHIGH=3.;
 const double HOLDCORRCONST=0.018;
 
-const unsigned short MAXCLUSTERNR = 300;
+const unsigned short MAXCLUSTERNR = 500;
 const unsigned short NADJACENTCHANS =2;
 
 //eta manage

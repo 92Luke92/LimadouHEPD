@@ -42,7 +42,7 @@
 #define CALO_PL 16
 #define LYSO_CU 9
 #define VETO_PL 5
-#define INTEGTIME 20000
+#define INTEGTIME 1000
 
 using namespace std;
 
@@ -184,7 +184,6 @@ void TriggerScan(TString rootname, TString outPath )
    }
 
    TGraph *pmt_rate_meter_vs_time[65];
-   const char *name_pmt_rate_meter;
    for(int kk=0;kk<65;kk++) {
       pmt_rate_meter_vs_time[kk] = new TGraph();
    }
@@ -196,9 +195,9 @@ void TriggerScan(TString rootname, TString outPath )
       pmt_rate_meter_vs_time[kk]->SetTitle(Form("Rate Meter of %s (CH%i); Run time (s); PMT rate meter (Hz)", subdetector[kk-1], kk-1));
    }
    
-   Int_t OBDH_timestamp[1000];
-   Int_t OBDH_time_sec[1000];
-   Int_t OBDH_time_ms[1000];
+   // Int_t OBDH_timestamp[1000];
+   // Int_t OBDH_time_sec[1000];
+   // Int_t OBDH_time_ms[1000];
 
    //   int cpuStartTime[Tmd_entries/2][2];
    int **cpuStartTime = new int*[Tmd_entries/2] ;
@@ -211,9 +210,9 @@ void TriggerScan(TString rootname, TString outPath )
       rootfile.GetTmdEntry(j); 
       cpuStartTime[(j-1)/2][0] = metaData.CPU_time[0];
       cpuStartTime[(j-1)/2][1] = metaData.run_id;
-      OBDH_time_sec[(j-1)/2] = metaData.broadcast.OBDH.sec;
-      OBDH_time_ms[(j-1)/2] = metaData.broadcast.OBDH.ms;
-      OBDH_timestamp[(j-1)/2] = metaData.timestamp.OBDH;
+      // OBDH_time_sec[(j-1)/2] = metaData.broadcast.OBDH.sec;
+      // OBDH_time_ms[(j-1)/2] = metaData.broadcast.OBDH.ms;
+      // OBDH_timestamp[(j-1)/2] = metaData.timestamp.OBDH;
       
       for(int kk=0; kk<65; kk++)
 	pmt_rate_meter_vs_time[kk]->SetPoint(j, metaData.CPU_time[0]/1000., metaData.PMT_rate_meter[kk]);
@@ -226,6 +225,7 @@ void TriggerScan(TString rootname, TString outPath )
    Int_t time_flag = 0;
    Int_t numevent_int = 0;
    Int_t sum[9];
+   Int_t totevents = 0;
    for(int kk=0;kk<9;kk++)
       sum[kk] = 0;
 
@@ -257,7 +257,8 @@ void TriggerScan(TString rootname, TString outPath )
 	 // cout << "start time = " << time_flag << endl;
       }
       
-      if (event_time < time_flag){
+      if (event_time < time_flag)
+      {
 	 numevent_int++;
 	 for(int kk=0;kk<9;kk++)
 	    sum[kk] += ev.rate_meter[kk];
@@ -269,14 +270,20 @@ void TriggerScan(TString rootname, TString outPath )
 	 {
 	   
  	    rate_meter_vs_time[kk]->SetPoint(rate_meter_vs_time[kk]->GetN(), (time_flag-INTEGTIME/2.)/1000., (double)sum[kk]/numevent_int);
+
+	    if(kk == 5)
+	       totevents += ((sum[kk]/numevent_int));
 	    sum[kk] = 0;
 	 }
 	 // cout << "start time = " << time_flag << endl;
+
+
+	    
 	 numevent_int = 1;
 	 time_flag = event_time + INTEGTIME;
       }	 
    } //End of event loop
-   
+   std::cout << "totevents =  " << totevents*INTEGTIME << std::endl;
    
    TCanvas *c_lost_triggers = new TCanvas("c_lost_triggers","",1200,600);
    gPad->SetGrid();
@@ -286,7 +293,8 @@ void TriggerScan(TString rootname, TString outPath )
    l.SetTextSize(0.04);
    sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_lost_triggers->SaveAs(lost_trig_fig);
- 
+
+
    TCanvas *c_alive_dead_time = new TCanvas("c_alive_dead_time","",1200,600);
    c_alive_dead_time->Divide(2,1);
    c_alive_dead_time->cd(1);
@@ -304,6 +312,7 @@ void TriggerScan(TString rootname, TString outPath )
    TString alive_dead_time_fig = "3_alive_dead_time.png";    
    sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_alive_dead_time->SaveAs(alive_dead_time_fig);
+
   
    TCanvas *c_trig_flag= new TCanvas("c_trig_flag"," ",1200,600);
    c_trig_flag->cd();
@@ -374,7 +383,7 @@ void TriggerScan(TString rootname, TString outPath )
    sprintf(c,"%d",n++); l.DrawTextNDC(.98, 0.03, c); 
    c_rate_meter_trig_mask_7_9->SaveAs(rate_meter_trig_mask_7_9_fig);
 
-   
+
    //PMT rate meter
    TCanvas* c_rate_meter_pmt_1_9 = new TCanvas("c_rate_meter_pmt_1_9"," ",1200,600);
    c_rate_meter_pmt_1_9->Divide(3,3);
@@ -501,5 +510,8 @@ void TriggerScan(TString rootname, TString outPath )
    gROOT->ProcessLine(Form(".!convert `ls -v *.png` %s",char_outname));
    gROOT->ProcessLine(".!rm *.png");
 
+
+   rootfile.Close();
    gErrorIgnoreLevel = 1;
+   
 }

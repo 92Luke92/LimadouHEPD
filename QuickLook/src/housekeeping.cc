@@ -53,7 +53,9 @@ void HVPSMonitorToXML(TString rootname, TString outPath, TString xslPath = "")
   
      TString filename = outPath;
      TString _temp = rootname ;
-     _temp.Replace(0, _temp.Last('/'), "");
+
+     if(_temp.Last('/') != -1)
+	_temp.Replace(0, _temp.Last('/'), "");
 
      filename += "/";
      filename += _temp;
@@ -174,10 +176,13 @@ void HVPSMonitorToXML(TString rootname, TString outPath, TString xslPath = "")
     }
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
-
+  
     }
     else
     return;
+
+  rootfile.Close();
+  
 }
 
 
@@ -204,8 +209,10 @@ void DUMPConfigToXML(TString rootname, TString outPath, TString xslPath = "")
   
      TString filename = outPath;
      TString _temp = rootname ;
-     _temp.Replace(0, _temp.Last('/'), "");
 
+     if(_temp.Last('/') != -1)
+	_temp.Replace(0, _temp.Last('/'), "");
+     
      filename += "/";
      filename += _temp;
      filename.ReplaceAll(".root", 5, "_DUMPConfig.xml", 15);
@@ -322,7 +329,8 @@ void DUMPConfigToXML(TString rootname, TString outPath, TString xslPath = "")
   else
     return;
   
- 
+  rootfile.Close();
+  
   }
 
 
@@ -334,7 +342,9 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
 
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
 
   filename += "/";
   filename += _temp;
@@ -578,6 +588,8 @@ void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TStr
   outputFile2 << "</ROOT_SOURCE>\n";
   outputFile.close();
   outputFile2.close();
+
+  rootfile.Close();
 }
 
 
@@ -589,7 +601,9 @@ void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath = "")
 
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
 
   filename += "/";
   filename += _temp;
@@ -714,7 +728,7 @@ void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath = "")
   
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
-
+  rootfile.Close();
 }
 
 
@@ -725,7 +739,9 @@ void HVPSConfigToXML(TString rootname, TString outPath, TString xslPath = "")
 
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
 
   filename += "/";
   filename += _temp;
@@ -946,6 +962,8 @@ void HVPSConfigToXML(TString rootname, TString outPath, TString xslPath = "")
     }
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
+  rootfile.Close();
+  
 }
 
 void RunInfoToXML(TString rootname, TString outPath, TString xslPath = "")
@@ -955,7 +973,9 @@ void RunInfoToXML(TString rootname, TString outPath, TString xslPath = "")
   
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
 
   filename += "/";
   filename += _temp;
@@ -1153,6 +1173,7 @@ void RunInfoToXML(TString rootname, TString outPath, TString xslPath = "")
   outputFile << "</ROOT_SOURCE>\n";
  
   outputFile.close();
+  rootfile.Close();
 }
 
 
@@ -1161,7 +1182,9 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
   
    TString filename = outPath;
    TString _temp = rootname ;
-   _temp.Replace(0, _temp.Last('/'), "");
+
+   if(_temp.Last('/') != -1)
+      _temp.Replace(0, _temp.Last('/'), "");
 
    filename += "/";
    filename += _temp;
@@ -1882,6 +1905,7 @@ void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
    outputFile << "</ROOT_SOURCE>\n";
  
    outputFile.close();
+   rootfile.Close();
 }
 
 
@@ -1892,7 +1916,9 @@ void ScintConfigToXML(TString rootname, TString outPath, TString xslPath = "")
 
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
 
   filename += "/";
   filename += _temp;
@@ -2033,6 +2059,7 @@ void ScintConfigToXML(TString rootname, TString outPath, TString xslPath = "")
   
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
+  rootfile.Close();
 }
 
 
@@ -2043,7 +2070,9 @@ void SilConfigToXML(TString rootname, TString outPath, TString xslPath = "")
 
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
 
   filename += "/";
   filename += _temp;
@@ -2303,6 +2332,7 @@ void SilConfigToXML(TString rootname, TString outPath, TString xslPath = "")
   }
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
+  rootfile.Close();
 }
 
 
@@ -2313,7 +2343,9 @@ void TelemetryToXML(TString rootname, TString outPath,  TString xslPath = "")
   
   TString filename = outPath;
   TString _temp = rootname ;
-  _temp.Replace(0, _temp.Last('/'), "");
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
 
   filename += "/";
   filename += _temp;
@@ -2511,5 +2543,5 @@ void TelemetryToXML(TString rootname, TString outPath,  TString xslPath = "")
   
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
-
+  rootfile.Close();
 }

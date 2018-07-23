@@ -273,7 +273,6 @@ void EventRateL0(TString rootname, TString outPath){
 
 
 	const char *gname2[5];
-	const char *gtitle2[5];
 
 	gname2[0]=Form("BootN_%d_Applied_SAA_rate_lat", BOOT_temp[nb]);
 	gname2[1]=Form("BootN_%d_Applied_Eq_rate_lat", BOOT_temp[nb]);
@@ -551,7 +550,6 @@ TCanvas *Earth(TString name){
       TGraph*g = new TGraph(dat);
       c1->cd();
       TH2F *hm = new TH2F("hm","",  180, -180, 180, 161, -80.5, 80.5);
-      TH2F *hoverlay = new TH2F("hover","",  180, -180, 180, 161, -80.5, 80.5);
       hm->Draw("");
       g->Draw("p same");
       hm->GetYaxis()->SetTitleFont(132);

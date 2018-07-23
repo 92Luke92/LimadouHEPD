@@ -152,12 +152,14 @@ void LReco01Manager::Run(void) {
     if(maxFileEvents!=-1 && fevtcounter>maxFileEvents-1) break;
   }
   // metadata
-  for(int i0 = 0; i0 <2; ++i0) {
-    inFile->GetMDEntry(i0);
-    LEvRec1 l1ev;
-    l1ev.lev0MD = lev0MD;
-    outFile->SetMDTreeAddress(l1ev);
-    outFile->FillMD();
+  LEvRec1 l1ev;
+  for(int i0 = 0; i0 <2; ++i0)
+  {
+     inFile->GetMDEntry(i0);
+     l1ev.lev0MD = lev0MD;
+     if(i0 == 0)
+	outFile->SetMDTreeAddress(l1ev); // todo: ALE
+     outFile->FillMD();
   }
 
   std::cout << __LRECO01MANAGER__ << std::endl;
