@@ -118,7 +118,7 @@ void CollimatorConstruction::Builder(G4VPhysicalVolume* motherVolume)
   fSolidPlane_tot = new G4Box("fSolidPlane_tot",fPlane_X/2.,fPlane_Y/2.,fPlane_Z/2.);
   fSolidPlane_hol = new G4Tubs("fSolidPlane_hol",0.,fRmaxColl,fPlane_Z/2.,fStartPlane_hol,fStopPlane_hol);
   fSolidPlane = new G4SubtractionSolid("fSolidPlane",fSolidPlane_tot,fSolidPlane_hol,0,G4ThreeVector(0,0,0));
-  fLogicPlane = new G4LogicalVolume(fSolidPlane,C,"fLogicPlane"); //check correct material - NO Cu!
+  fLogicPlane = new G4LogicalVolume(fSolidPlane,C,"fLogicPlane"); //check correct material
   fPhysiPlane = new G4PVPlacement(0,G4ThreeVector(-1.75*cm,-1.8*cm,86.15*cm),"fPhysiPlane",fLogicPlane,motherVolume,false,0,true);
 
   
