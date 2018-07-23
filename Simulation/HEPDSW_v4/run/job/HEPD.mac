@@ -5,15 +5,15 @@
 #/hepd/setWorldSize 55 75 80 cm
 /hepd/setWorldSize 55 75 400 cm
 
-/hepd/ActivateSatellite false
+/hepd/ActivateSatellite true
 /hepd/SatelliteConfiguration Config1
 /hepd/Satellite/BlanketMaterialConfiguration mylar
 /hepd/Satellite/WallMaterialConfiguration Aluminium
 
 /hepd/ActivateHEPDBox true
 /hepd/HEPDBoxConfiguration Config4
-/hepd/HEPDBox/BlanketMaterialOutConfiguration Kapton
-/hepd/HEPDBox/BlanketMaterialInConfiguration Copper
+#/hepd/HEPDBox/BlanketMaterialConfiguration mylar
+/hepd/HEPDBox/CompositeBlanketMaterialConfiguration Kapton Copper
 /hepd/HEPDBox/WallTwoMaterialConfiguration Aluminium HCAluminium
 
 /hepd/ActivateTracker true
@@ -32,11 +32,11 @@
 /hepd/Calorimeter/CarbonFiberMaterialConfiguration CarbonFiber
 
 # HEPD proton test beam configuration 
-#/hepd/ActivateHEPDProtonTB true
-#/hepd/ActivateHEPDDegrader true
+/hepd/ActivateHEPDProtonTB false
+/hepd/ActivateHEPDDegrader false
 
 # HEPD proton test beam configuration
-/hepd/ActivateHEPDNucleiTB true
+/hepd/ActivateHEPDNucleiTB false
 
 ## ELECTROMAGNETIC model
 /hepd/phys/addPhysics  emstandard_opt4
@@ -91,7 +91,7 @@
 #/vis/modeling/trajectories/create/drawByCharge
 /vis/modeling/trajectories/create/drawByParticleID
 /vis/modeling/trajectories/drawByParticleID-0/set proton blue
-/vis/modeling/trajectories/drawByParticleID-0/set e+ blue
+/vis/modeling/trajectories/drawByParticleID-0/set e+ red
 /vis/modeling/trajectories/drawByParticleID-0/set e- red
 /vis/modeling/trajectories/drawByParticleID-0/set alpha magenta
 /vis/modeling/trajectories/drawByParticleID-0/set C12 magenta
@@ -102,7 +102,7 @@
 /vis/modeling/trajectories/drawByParticleID-0/set pi- cyan
 /vis/modeling/trajectories/drawByParticleID-0/set neutron black
 /vis/modeling/trajectories/drawByParticleID-0/set gamma yellow
-/vis/modeling/trajectories/drawByParticleID-0/set neutrino magenta
+/vis/modeling/trajectories/drawByParticleID-0/set neutrino grey
 #
 # To superimpose all of the events from a given run:
 /vis/scene/endOfEventAction accumulate
@@ -114,14 +114,14 @@
 
 
 ############ Nuclei TB - LNS
-/hepd/gun/setDefault
-/hepd/gun/particle He     #for nuclei: He, C, O
-#protons:  62 MeV
-#He:	   248 MeV
-#C:	   744 MeV
-#O:	   992 MeV
-/hepd/gun/energy 248 MeV
-/hepd/gun/spot
+#/hepd/gun/setDefault
+#/hepd/gun/particle C     #for nuclei: He, C, O
+##protons:  62 MeV
+##He:	   248 MeV
+##C:	   744 MeV
+##O:	   992 MeV
+#/hepd/gun/energy 744 MeV
+#/hepd/gun/spot
 ############ Nuclei TB - LNS
 
 
@@ -137,13 +137,16 @@
 #/hepd/gun/particle proton
 #/hepd/gun/energy 50 MeV
 #/hepd/gun/powerlaw 1 100 MeV -3
-#
+
+/hepd/gun/setDefault
+/hepd/gun/particle e-
+/hepd/gun/flat 1 10 MeV
 
 /tracking/verbose 0
 /random/setSeeds 1777992 744546
 
 /hepd/producer/SetRootFile Test.root HEPD
 
-#/run/beamOn 1
+#/run/beamOn 10
 
 #/hepd/producer/StoreRootFile

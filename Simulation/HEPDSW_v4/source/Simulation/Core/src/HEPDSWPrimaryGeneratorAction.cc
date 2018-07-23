@@ -67,7 +67,7 @@ Double_t Muon_Flux(Double_t *x, Double_t *par) {
 
   Double_t arg2 = ( (1/(1+((1.1*ce_muon*costheta_prod)/115))) + (0.054/(1+((1.1*ce_muon*costheta_prod)/850))) );
 
-  Double_t dIdE = arg1*arg2; 
+  Double_t dIdE = arg1*arg2;
 
   return(dIdE);
 
@@ -169,14 +169,13 @@ void HEPDSWPrimaryGeneratorAction::SetMuonGeneration(G4double dX,G4double dY, G4
   xrange_Muon_gen = dX;
   yrange_Muon_gen = dY;
   emin_Muon = Emin;
-  emax_Muon = Emax;  
+  emax_Muon = Emax; 
   fun_mu_ke = new TF1("muflux",Muon_Flux,((Double_t) emin_Muon/1000),((Double_t) emax_Muon/1000),1);
   fun_mu_ke->SetNpx(1000);
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4String particleName = "mu+";
   G4ParticleDefinition* particle = particleTable->FindParticle(particleName);
   fParticleGun->SetParticleDefinition(particle);
-
 }
 
 void HEPDSWPrimaryGeneratorAction::SetPowerLaw(G4double aEmin,G4double aEmax,G4double aGamma){
@@ -245,7 +244,7 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     G4String particleName;
     G4ParticleDefinition* particle = fParticleGun->GetParticleDefinition();
     const G4String& nome = particle->GetParticleName();
-    G4double masse = particle->GetPDGMass(); 
+    G4double masse = particle->GetPDGMass();
     G4double charge = particle->GetPDGCharge();
     //G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
     G4double Xmax = 2.*cm;

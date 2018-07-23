@@ -163,7 +163,7 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
 
   fFlatCmd = new G4UIcommand("/hepd/gun/flat",this);
   fFlatCmd->SetGuidance("Flat Spectra between Emin Emax [unit]");
-  fFlatCmd->AvailableForStates(G4State_Idle);  
+  fFlatCmd->AvailableForStates(G4State_Idle);
   param = new G4UIparameter("Emin",'d',false);
   param->SetGuidance("E min");
   fFlatCmd->SetParameter(param);
@@ -208,8 +208,7 @@ void HEPDSWPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String 
     { fAction->SetSpot();}
   if( command == fPartCmd )
     {
-      if(newValue=="proton") fAction->SetParticle(newValue);
-      else{
+      if(newValue=="He"||newValue=="C"||newValue=="O"){
         G4IonTable* ionTable = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
         G4int Z,A;
         if(newValue=="He"){Z=2; A=4;}
@@ -218,6 +217,7 @@ void HEPDSWPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String 
         G4ParticleDefinition* ion = ionTable->GetIon(Z,A,0.);
         fAction->SetParticle(ion->GetParticleName());
       }
+      else{fAction->SetParticle(newValue);}
     }
   
   if( command == fMuonCmd )

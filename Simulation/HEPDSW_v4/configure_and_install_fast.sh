@@ -7,3 +7,6 @@ echo "Compilation of the code with make!"
 make -j4
 echo "Installation of the code!"
 make install
+
+cp DataFormatDict_rdict.pcm ../lib
+source ../bin/hepdsw-env.sh

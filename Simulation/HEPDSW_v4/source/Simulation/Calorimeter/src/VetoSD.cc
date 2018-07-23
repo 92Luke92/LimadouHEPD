@@ -98,7 +98,7 @@ G4bool VetoSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   
   G4int detID;
   detID=GetDetID(aStep);
-  G4cout << "Calo Veto on Volume = "<< detID << " tkID " << tkID << G4endl;
+  //G4cout << "Calo Veto on Volume = "<< detID << " tkID " << tkID << G4endl;
   
   if(VetoID.find(detID)==VetoID.end() || VetoTrkID.find(detID)->second!=tkID){
     //    CaloHit* vetoHit = new CaloHit(volume);
