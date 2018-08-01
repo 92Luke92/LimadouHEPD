@@ -76,10 +76,28 @@ G4int CalorimeterSD::GetDetID(G4Step*aStep){
     detID= 1E3 + 3*1E2 + 1*1E1 + (layerVol+1)*1E0;  
   if(!volumeID.compare("S1ScintillatorP"))
     detID= 1E3 + 3*1E2 + 2*1E1 + (layerVol+1)*1E0;   
-  if(!volumeID.compare("ActiveLayerScint"))
-    detID= 1E3 + 2*1E2 + (layerUp+2); 
+  if(!volumeID.compare("ActiveLayerScintOdd")){
+    if(layerUp==1) detID=1216; //P1
+    if(layerUp==2) detID=1214; //P3
+    if(layerUp==3) detID=1212; //P5
+    if(layerUp==4) detID=1210; //P7
+    if(layerUp==5) detID=1208; //P9
+    if(layerUp==6) detID=1206; //P11
+    if(layerUp==7) detID=1204; //P13
+    if(layerUp==8) detID=1202; //P15
+    //detID= 1E3 + 2*1E2 + (layerUp+2);
+  }
+  if(!volumeID.compare("ActiveLayerScintEven")){
+    if(layerUp==1) detID=1215; //P2
+    if(layerUp==2) detID=1213; //P4
+    if(layerUp==3) detID=1211; //P6
+    if(layerUp==4) detID=1209; //P8
+    if(layerUp==5) detID=1207; //P10
+    if(layerUp==6) detID=1205; //P12
+    if(layerUp==7) detID=1203; //P14
+  }
   if(!volumeID.compare("ActiveLastLayerScint"))
-    detID= 1E3 + 2*1E2 + 1;
+    detID= 1E3 + 2*1E2 + 1; //P16
   if(!volumeID.compare("ActiveBlockCrystal"))
     detID= 1E3 + 1*1E2 + (layer2Up+1)*1E1 + (layerUp+1)*1E0;
   return detID;
@@ -122,7 +140,7 @@ G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
     G4int icell = CaloCollection->insert(calHit);
     LayerID[detID] = icell - 1;
     LayerTrkID[detID] = tkID;
-     if(verboseLevel>1){ 
+    if(verboseLevel>1){ 
        G4cout << " New  Hit on Calo Layer " 
           << detID <<" with deposited energy = "<<edep/MeV<< G4endl; 
      }
