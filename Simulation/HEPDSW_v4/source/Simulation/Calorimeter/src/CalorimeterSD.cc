@@ -75,7 +75,11 @@ G4int CalorimeterSD::GetDetID(G4Step*aStep){
   if(!volumeID.compare("S1ScintillatorM"))
     detID= 1E3 + 3*1E2 + 1*1E1 + (layerVol+1)*1E0;  
   if(!volumeID.compare("S1ScintillatorP"))
-    detID= 1E3 + 3*1E2 + 2*1E1 + (layerVol+1)*1E0;   
+    detID= 1E3 + 3*1E2 + 2*1E1 + (layerVol+1)*1E0;
+  //in case Config6 is activated
+  if(!volumeID.compare("ActiveLayerScint"))
+    detID= 1E3 + 2*1E2 + (layerUp+2); 
+  //in case ConfigOptical is activated
   if(!volumeID.compare("ActiveLayerScintOdd")){
     if(layerUp==1) detID=1216; //P1
     if(layerUp==2) detID=1214; //P3
@@ -96,6 +100,7 @@ G4int CalorimeterSD::GetDetID(G4Step*aStep){
     if(layerUp==6) detID=1205; //P12
     if(layerUp==7) detID=1203; //P14
   }
+  
   if(!volumeID.compare("ActiveLastLayerScint"))
     detID= 1E3 + 2*1E2 + 1; //P16
   if(!volumeID.compare("ActiveBlockCrystal"))
