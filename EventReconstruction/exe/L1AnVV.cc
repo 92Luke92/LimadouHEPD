@@ -5,14 +5,14 @@
 
 int main(int argc, char *argv[]) {
 
-        std::cout << "******************************************" << std::endl;
-        std::cout << "** be sure to have equalization         **" << std::endl;
-        std::cout << "** and energy reconstrcution parameters **" << std::endl;
-        std::cout << "** files on the run directory           **" << std::endl;
-        std::cout << "******************************************" << std::endl;
+        std::cout << "..........................................................." << std::endl;
+        std::cout << ". use not equalized data in input and place the proper    ." << std::endl;
+        std::cout << ". equalization and energy recon parameters files in the   ." << std::endl;
+        std::cout << ". run directory                                           ." << std::endl;
+        std::cout << "..........................................................." << std::endl;
 
 	if (argc != 2) {
-		std::cerr << "Error! Usage: ./Calo2OnAscii <DataRunL1> "			
+		std::cerr << "Error! Usage: L1AnVV <DataRunL1> "			
 			<< std::endl;
 		return EXIT_FAILURE;
 	}
