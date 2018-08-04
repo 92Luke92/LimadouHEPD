@@ -36,6 +36,8 @@ LEvTemp::LEvTemp(){
 
  lyso_ener_dep=0;
 
+ ener_dep=0;
+
  IsVetoLatHit=0; 
  
  IsLYSOHit=0; 

@@ -21,5 +21,6 @@ int main(int argc, char *argv[]) {
 	LScintillatorsL2::GetInstance().LoadRun(st);
 	//LScintillatorsL2::GetInstance().Calc(0,0);
         LScintillatorsL2::GetInstance().Test(1);
+        //LScintillatorsL2::GetInstance().MakeLYSOStudy(st);
 	return EXIT_SUCCESS;
 }
