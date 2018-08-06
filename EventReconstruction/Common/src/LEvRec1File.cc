@@ -40,7 +40,7 @@ void LEvRec1File::CreateTrees() {
   }
 
   fFile->cd();
-  fTreeMD = new TTree("L1md", "Limadou Level 1 meta data"); // What do we put inside it???
+  fTreeMD = new TTree("L1md", "Limadou Level 1 meta data"); 
   fTreeMD->SetDirectory(fFile);
   fTree = new TTree("L1", "Limadou Level 1 events");
   fTree->SetDirectory(fFile);
@@ -234,7 +234,7 @@ void LEvRec1File::SetAddresses() {
   return;  
 }
 
-void LEvRec1File::SetMDTreeAddress(LEvRec1 l1ev) {
+void LEvRec1File::SetMDTreeAddress(LEvRec1 &l1ev) {
    
    fTreeMD->Branch("boot_nr", &l1ev.lev0MD.boot_nr, "boot_nr/s");
    fTreeMD->Branch("run_id", &l1ev.lev0MD.run_id);

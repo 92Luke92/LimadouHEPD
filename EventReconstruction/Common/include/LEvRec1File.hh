@@ -29,7 +29,7 @@ public:
   void Fill(const LEvRec1 event);
   void FillMD();
   void FillRandom(const int nEvents);
-  void SetMDTreeAddress(LEvRec1 l1ev);
+  void SetMDTreeAddress(LEvRec1 &l1ev);
    
   ~LEvRec1File();
   

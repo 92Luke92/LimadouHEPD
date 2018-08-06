@@ -158,7 +158,7 @@ void LReco01Manager::Run(void) {
      inFile->GetMDEntry(i0);
      l1ev.lev0MD = lev0MD;
      if(i0 == 0)
-	outFile->SetMDTreeAddress(l1ev); // todo: ALE
+	outFile->SetMDTreeAddress(l1ev); 
      outFile->FillMD();
   }
 
