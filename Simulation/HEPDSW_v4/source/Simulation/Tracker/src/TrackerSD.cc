@@ -60,7 +60,7 @@ G4bool TrackerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   if(verboseLevel>1)
     std::cout<< " Entering a new Step " << aStep->GetTotalEnergyDeposit() << " given by Track "<< aStep->GetTrack()->GetTrackID()<<" with charge "<<aStep->GetTrack()->GetDefinition()->GetPDGCharge()
 	     <<" in the volume "<< aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName()<<std::endl;
-
+  
   if(aStep->GetTotalEnergyDeposit()>0. && 0.0 != aStep->GetTrack()->GetDefinition()->GetPDGCharge()){
     if(verboseLevel>1)
       std::cout<<" I'm going to check if I need a new Hit or I have to update the old one"<<std::endl;
@@ -68,21 +68,23 @@ G4bool TrackerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
       CreateHit(aStep);
     }else{
       UpdateHit(aStep);
-    }
+      }
   }
   return true;
 }
 
 G4bool TrackerSD::NewHit(G4Step* aStep){
-
+  
+  G4int old_detId = detId;
   if(verboseLevel>1)
     std::cout<<" I'm inside the NewHit method"<<std::endl;
   G4Track * theTrack = aStep->GetTrack();
   if(verboseLevel>1){
     std::cout<< " new TrackId = "<<theTrack->GetTrackID()<<" old TrackId = "<<trackID<<std::endl;
-    std::cout<< " old detId = "<<detId<< " new DetId = "<<SetDetectorId(aStep)<<std::endl;
+    std::cout<< " old detId = "<<old_detId<< " new DetId = "<<SetDetectorId(aStep)<<std::endl;
   }
-  if(theTrack->GetTrackID()!=trackID||SetDetectorId(aStep)!=detId){
+  
+  if(theTrack->GetTrackID()!=trackID||SetDetectorId(aStep)!=old_detId){
     return true;
   }
   return false;
@@ -115,10 +117,12 @@ int TrackerSD::SetDetectorId(G4Step* aStep){
     detId+=2;
   if(verboseLevel>1)
     std::cout<<"DetId = "<<detId<<std::endl;
+    
   return detId;
 }
 
 void TrackerSD::CreateHit(G4Step * aStep){
+  
   G4Track * theTrack    = aStep->GetTrack();
   if(verboseLevel>1)
     std::cout<<"TrackerSD::CreateHit Start to collect the info for the new Hit"<<std::endl;
@@ -160,6 +164,7 @@ void TrackerSD::CreateHit(G4Step * aStep){
 
 
 void TrackerSD::UpdateHit(G4Step* aStep){
+  
   if(verboseLevel>1)
     std::cout<<"TrackerSD::CreateHit I just going to update the Hit"<<std::endl;
   int mapKey = ((aStep->GetTrack()->GetTrackID()&tkIdMask)<<tkIdOffset)|(SetDetectorId(aStep)&detIdMask);

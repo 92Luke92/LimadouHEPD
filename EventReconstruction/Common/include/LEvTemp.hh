@@ -24,6 +24,7 @@ public:
   float trig_ener_dep;
   float calo_ener_dep;
   float lyso_ener_dep;
+  float ener_dep;
 
 };
 

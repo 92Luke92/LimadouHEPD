@@ -5,6 +5,7 @@
 // obtained with the calorimeter and vetos measuremets
 
 #include "TH1.h"
+#include "TH2.h"
 #include "LEvRec1File.hh"
 #include "LScintillatorsL2.hh"
 #include <iostream>
@@ -61,7 +62,7 @@ void LScintillatorsL2::input_calib_pars(double *teq, double *equ, double *leq){
  for(int t=0;t<9;t++){lg >> leq[t] >> dummy;}
  // equalization all to ref
 
- double ref = 100.000; 
+ double ref = 200.000; 
 
  for(int t=0;t<32;t++){equ[t]=ref/equ[t];} 
 
@@ -192,7 +193,7 @@ int IsVetoBottomHit=0, IsVetoLatHit=0;// veto
   
  LEvTemp lev2;
  
- fTree->Branch("temp_data", &lev2,"trig_mult/I:bars_status[6]/I:calo_mult/I:lyso_mult/I:IsVetoLatHit/I:IsLYSOHit/I:IsVetoBottomHit/I:trig_signal_sum/F:calo_signal_sum/F:lyso_signal_sum/F:plane_signal[16]/F:trig_ener_dep/F:calo_ener_dep/F:lyso_ener_dep/F");
+ fTree->Branch("temp_data", &lev2,"trig_mult/I:bars_status[6]/I:calo_mult/I:lyso_mult/I:IsVetoLatHit/I:IsLYSOHit/I:IsVetoBottomHit/I:trig_signal_sum/F:calo_signal_sum/F:lyso_signal_sum/F:plane_signal[16]/F:trig_ener_dep/F:calo_ener_dep/F:lyso_ener_dep/F:ener_dep/F");
 // ---------------------------------------------------------------------------
 
 
@@ -279,13 +280,10 @@ CalcLYSO(l1,l2,lres,lk);
 //IsLYSOHit=lres[2], lmult=lres[1], lsum=lres[0], enLYSO=lres[3];
 
 
-
-
-// vetos flags ----------------------------------------------------------------------------------------------------------------------
 // reset vars
 IsVetoBottomHit=0, IsVetoLatHit=0;
 
-IsVetoBottomHit=DeviceStatus(cev.veto.cont_hg[4][0],cev.veto.cont_hg[4][1]);
+IsVetoBottomHit=DeviceStatus(cev.veto.sn_hg[4][0],cev.veto.sn_hg[4][1]);
 
 
 for (int veto=0;veto<4;veto++){IsVetoLatHit=IsVetoLatHit+DeviceStatus(cev.veto.sn_hg[veto][0],cev.veto.sn_hg[veto][1]);}
@@ -309,6 +307,13 @@ for (int veto=0;veto<4;veto++){IsVetoLatHit=IsVetoLatHit+DeviceStatus(cev.veto.s
 
   lev2.trig_signal_sum= tsum; 
 
+
+ // here ptm 5east correction, A.S. correction under test, just double the pmt 5west 
+ // directly added to upper calo signal output
+           
+ //           std::cout << " pmt 5 east compensation !" << std::endl; 
+ //            cres[0]=cres[0] + 1.*(equ[9]*cev.scint.cont_hg[4][1]);
+
   lev2.calo_signal_sum=cres[0];
   
   lev2.lyso_signal_sum=lres[0];
@@ -329,32 +334,21 @@ for (int veto=0;veto<4;veto++){IsVetoLatHit=IsVetoLatHit+DeviceStatus(cev.veto.s
   
   lev2.IsVetoBottomHit=IsVetoBottomHit;
 
+  // Energy cals ---------------------------------------------------------------------------------------------------------------------------
+
+  double ek1[2]={-28.4,249.6};
+  double ek2[2]={-17.2,4.73};
+  lev2.ener_dep= CalcEnergy(lev2.calo_signal_sum + (0.5 * lev2.trig_signal_sum),lev2.lyso_signal_sum ,ek1,ek2);
+
+// vetos flags ----------------------------------------------------------------------------------------------------------------------
+
+
+
   fTree->Fill();
 
 
 
 
-
-
-// optional ascii output ----------------------------------------------------------------------------------------------------------------
-/*if(ascii_dump==1){
-os << iEv << " " 
-<< tsum << " " <<  tmult << " "  << tene << " " 
-<< sumall  << " "  << mult << " " << trlen << " " << enUC <<  " "
-<< IsLYSOHit << " " << lmult << " " << lsum << " " << enLYSO  << " " 
-<< IsVetoBottomHit  << " " << IsVetoLatHit << " " 
-<< hitbar[0] << " " << hitbar[1] << " " << hitbar[2] << " " << hitbar[3] << " " << hitbar[4] << " " << hitbar[5] << " " 
-<< 987654321 << " " 
-<< ChVsPlane[0] << " " <<  ChVsPlane[1] << " " <<  ChVsPlane[2] << " " << ChVsPlane[3] << " " <<  ChVsPlane[4] << " " <<  ChVsPlane[5] << " "
-<< ChVsPlane[6] << " " <<  ChVsPlane[7] << " " <<  ChVsPlane[8] << " " << ChVsPlane[9] << " " <<  ChVsPlane[10] << " " <<  ChVsPlane[11] << " "
-<< ChVsPlane[12] << " " <<  ChVsPlane[13] << " " <<  ChVsPlane[14] << " " << ChVsPlane[15]
-<< endl;}*/
-
-// all available vars
-//int tsum=0, tmult=0, hitbar[6]={0}; double tene=0; // trigger vars
-//int sumall=0,suma=0,sumb=0, mult=0, conn[16]={0}; double enUC=0, ChVsPlane[16];// calo vars
-//int IsLYSOHit=0, lmult=0; double lsum=0, enLYSO=0; // lyso
-//int IsVetoBottomHit=0, IsVetoLatHit=0;// veto
 
 
   
@@ -368,6 +362,22 @@ os << iEv << " "
 
 
 }//--------------------------------------------------------------------------------------
+
+double LScintillatorsL2::CalcEnergy(double supp, double slyso, double k1[2], double k2[2]){
+// all signals in adc_cts, all energies in MeV
+double sth = 00.;
+double eupp  = (supp/k1[1])-(k1[0]/k1[1]);
+double elyso = (slyso/k2[1])-(k2[0]/k2[1]);
+
+double energy = eupp;
+if (slyso > sth ) { energy=eupp+elyso;} 
+ 
+return  energy;
+
+}//--------------------------------------------------------------------------------------
+
+
+
 
 void LScintillatorsL2::CalcLYSO(double signal[9], double sn[9], double out[4], double k[2] ){
 
@@ -387,9 +397,9 @@ for (int lys=0;lys<9;lys++){
 
 
 // LYSO energy calc 
-//      double k[0]=0.0 ,k[1]=1.32 ;
-      out[3]=(double)(out[0]-k[1])/k[0];//MeV
-
+      k[0]=0.39 ,k[1]=0. ;// fixing conversion
+      //out[3]=(double)(out[0]-k[1])/k[0];//MeV
+       out[3]=(double)(out[0]*0.42)+5.5;//MeV
  
 return ;
 
@@ -423,6 +433,10 @@ for (int pln=0;pln<16;pln++){
          double c1=pmt_signals[pmt1]; // already de-pedestaleld and equalized
 
          double c2=pmt_signals[pmt2];
+
+
+         if(pln == 4){ c1 = 0.00;}// ignoring pmt 5east
+
          
          out[0]=out[0]+c1+c2;
 
@@ -435,16 +449,10 @@ for (int pln=0;pln<16;pln++){
          }//end if for hit plane
       }// end pln loop
 
-// check data posterior to ptm 5east failure then correct sumall
-/*if(hw_condition==1){
-      double comp=(
-      (equ[6]*cev.scint.cont_hg[3][0])+
-      (equ[7]*cev.scint.cont_hg[3][1])+
-      (equ[9]*cev.scint.cont_hg[4][1])+
-      (equ[10]*cev.scint.cont_hg[5][0])+
-      (equ[11]*cev.scint.cont_hg[5][1])  )/5.;
-      sumall=sumall+comp;}
 
+         
+
+/*
 // max connected length        
 trlen=1;
 for (int i=0;i<16;i++){
@@ -473,16 +481,132 @@ return ;
 
 
 
-double LScintillatorsL2::Sign2En(double signal, double thr){
-
-double k=120.;
-
-if(signal>thr){k = 120. +(3.*0.004166*signal); }
 
 
-return k;
+int LScintillatorsL2::MakeLYSOStudy(const std::string inputFileROOT){
+
+ 
+  double const LConv = 0.42, Offset=5.5;// MeV/adc , MeV
+
+  //histos
+  TH1D *s = new TH1D("","Signal Sum",500,0,1500);// lyso sum
+  TH1D *sall = new TH1D("","Signal Sum",500,0,1500);// lyso sum
+  TH1D *hmult = new TH1D("","Multiplicity",10,0,10);// lyso sum
+  TH1D *h[6];  for (int i = 0; i < 6; i++) {h[i] = new TH1D("","",500,0,1500);}
+  TH2D *cor[2]; for (int i = 0; i < 2; i++) 
+  cor[0] = new TH2D("","",3,0,4,3,0,4);
+  cor[1] = new TH2D("","",300,0,400,300,0,400);
+  TH1D *lh[9];  for (int i = 0; i < 9; i++) {lh[i] = new TH1D("","",500,10,1000);}// lyso indiv
+  TH1D *srecon = new TH1D("","Energy Recon",500,0,250);// lyso sum
+
+  // counters 
+
+  int CounterVetoB=0, CounterP1=0, CounterP16=0;
+
+  // data and equalization
+  double P1l1=0.,P1l2=0.,P16l1=0., P16l2=0., Vbl1=0.,Vbl2=0.;// high gain pmts
+  double Lyl[9]={0},Lyh[9]={0}, lowLsum=0. ;// low-high gain lyso
+  int multL=0;// multiplicity
+  double equP1[2]={100./107.5,100./100.},equP16[2]={100./157.5,100./157.2},equVB[2]={100./77.4,100./55.0};// equal
+  double equLlow[9]={100./303,100./544,100./296,100./410,100./270,100./275,100./225,100./268,100./342};
+
+  LEvRec1File inputFile(inputFileROOT.c_str(),"READ");
+  LEvRec1 cev;
+  inputFile.SetTheEventPointer(cev);
+
+  int nentries=inputFile.GetEntries();
+  for(int ie=0; ie<nentries; ++ie) {
+    inputFile.GetEntry(ie);
+    
+   for(int i = 0 ; i < 9; i++){
+       Lyl[i]=cev.lyso.cont_lg[i][0]*equLlow[i]; 
+       Lyh[i]=cev.lyso.cont_hg[i][0];
+   }
+
+   P1l1=cev.scint.cont_hg[0][0]*equP1[0];
+   P1l2=cev.scint.cont_hg[0][1]*equP1[1]; 
+   P16l1=cev.scint.cont_hg[15][0]*equP16[0];
+   P16l2=cev.scint.cont_hg[15][1]*equP16[1];
+   Vbl1=cev.veto.cont_hg[4][0]*equVB[0];
+   Vbl2=cev.veto.cont_hg[4][1]*equVB[1];
+   
+
+
+   lowLsum=0., multL=0;// reset lyso sum and mult
+   for(int i = 0 ; i < 9; i++){
+       
+       lowLsum=lowLsum+Lyl[i];
+       lh[i]->Fill(Lyl[i]);
+
+       if(DeviceStatus(cev.lyso.sn_lg[i][0], cev.lyso.sn_lg[i][0])==1){multL++;}
+      
+   }
+
+   int st=DeviceStatus(cev.veto.sn_hg[4][0], cev.veto.sn_hg[4][1]);// signal in bottom veto
+  
+      if(1){
+      
+         h[0]->Fill(P1l1);
+         h[1]->Fill(P1l2);
+         h[2]->Fill(P16l1);
+         h[3]->Fill(P16l2);
+         h[4]->Fill(Vbl1);
+         h[5]->Fill(Vbl2);
+   
+         cor[0]->Fill(lowLsum,P16l1+P16l2);
+       
+        
+   
+         s->Fill(lowLsum);
+         hmult->Fill(multL);
+         srecon->Fill((lowLsum*LConv)+Offset);
+   
+          if(DeviceStatus(cev.veto.sn_hg[4][0],cev.veto.sn_hg[4][1])==1){CounterVetoB++;}
+          if(DeviceStatus(cev.scint.sn_hg[0][0],cev.scint.sn_hg[0][1])==1){CounterP1++;}
+          if(DeviceStatus(cev.scint.sn_hg[15][0],cev.scint.sn_hg[15][1])==1){CounterP16++;}
+
+ 
+
+
+       }// end selection
+
+  }
+
+  inputFile.Close();
+
+   std::cout << " counter P1 " <<  CounterP1 << std::endl;
+   std::cout << " counter P16 " <<  CounterP16 << std::endl;
+   std::cout << " counter VetoB " <<  CounterVetoB << std::endl;
+
+
+   TFile f("histos.root", "recreate");
+
+   h[0]->SetTitle("P1l1");
+   h[1]->SetTitle("P1l2");
+   h[2]->SetTitle("P16l1");
+   h[3]->SetTitle("P16l2");
+   h[4]->SetTitle("Vbl1");
+   h[5]->SetTitle("Vbl2");
+
+   for (int i = 0; i < 6; i++) {h[i]->Write();}
+   cor[0]->Write();
+   cor[1]->Write(); 
+   
+  
+   for (int i = 0; i < 9; i++) {lh[i]->Write();}
+   s->Fit("landau","","",100,300);
+   s->Write();
+   srecon->Fit("landau","","",35,100);
+   srecon->Write();
+   hmult->Write();
+
+  return 0;
 
 }//--------------------------------------------------------------------------------------
+
+
+
+
 
 LScintillatorsL2::~LScintillatorsL2() {
   // do not care about singleton destructor
