@@ -53,7 +53,7 @@ void PmtSD::Initialize(G4HCofThisEvent*){
   
   verboseLevel = 0;
   for (int i=0; i<nPmt; i++) totalPhotEvent[i]=0;
-  G4cout << " init PmtSD " << G4endl;
+  //G4cout << " init PmtSD " << G4endl;
 }
 
 
@@ -113,13 +113,13 @@ G4bool PmtSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
 	G4int ncopy = 0;
 	for (int d=0; d<depth; d++) {
 	   G4VPhysicalVolume* dpvolume =  touchable->GetVolume(d);
-	   //	   G4cout << " depth " << d << " copy number " << touchable->GetCopyNumber(d) << " vname " << dpvolume->GetName() << G4endl;
+	   //G4cout << " depth " << d << " copy number " << touchable->GetCopyNumber(d) << " vname " << dpvolume->GetName() << G4endl;
 	}
         for (int d=0; d<1; d++) {
          G4VPhysicalVolume* dpvolume =  touchable->GetVolume(d);
 	 //	 G4cout << " depth " << d << " copy number " << touchable->GetCopyNumber(d) << " vname " << dpvolume->GetName() << G4endl;
 	 if (d == 0) {
-	   G4String vname = dpvolume->GetName(); 
+	   G4String vname = dpvolume->GetName();
 	   //	   G4cout << "vname " << vname << G4endl;
  	   if (strstr(vname,"TSP") != 0) {
 	     if (strcmp(vname,"TSPmt1") == 0) id_pmt = 1;
@@ -130,7 +130,7 @@ G4bool PmtSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
 	     if (strcmp(vname,"S1ScintillatorP") == 0)
 	       id_tscin = touchable->GetCopyNumber(1) + 4;
 	     sprintf(detname,"T%dPmt%d",id_tscin,id_pmt);
-	     //	     G4cout << " T1 PLANE " << detname << G4endl;
+	     //G4cout << " T1 PLANE " << detname << G4endl;
 	   }
 	   //	   else G4cout << " vname " << vname << G4endl;
  	   if (strstr(vname,"P1P") != 0) {
@@ -138,7 +138,7 @@ G4bool PmtSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
 	     if (strcmp(vname,"P1Pmt2") == 0) id_pmt = 2;
 	     ncopy = touchable->GetCopyNumber(2);
 	     id_cal_layer = 2*ncopy - 1;
-	     //	     G4cout << "ici" << " id_cal_layer " << id_cal_layer << " id_pmt " << id_pmt << " ncopy " << ncopy << G4endl;
+	     //     G4cout << "ici" << " id_cal_layer " << id_cal_layer << " id_pmt " << id_pmt << " ncopy " << ncopy << G4endl;
 	     sprintf(detname,"P%dPmt%d",id_cal_layer,id_pmt);
 	     //	     printf("%s/n",detname);
 	     //	     G4cout << " CAL PLANE ODD " << detname << G4endl;
@@ -150,6 +150,8 @@ G4bool PmtSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
 	     if (strcmp(vname,"P2Pmt2") == 0) id_pmt = 2;
 	     ncopy = touchable->GetCopyNumber(2);
 	     id_cal_layer = 2*ncopy;
+	     if(touchable->GetVolume(2)->GetName()=="LastScintLayer") id_cal_layer = 16;
+	     //G4cout << "ici" << " id_cal_layer " << id_cal_layer << " id_pmt " << id_pmt << " ncopy " << ncopy << G4endl;
 	     sprintf(detname,"P%dPmt%d",id_cal_layer,id_pmt);
 	     //	     G4cout << " CAL PLANE EVEN " << detname << G4endl;
 	   }
