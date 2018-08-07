@@ -111,6 +111,8 @@ G4bool PmtSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
 	G4int id_tscin = 0;
 	G4int id_cal_layer = 0;
 	G4int ncopy = 0;
+	G4int nblockraw=0;
+	G4int nblock=0;
 	for (int d=0; d<depth; d++) {
 	   G4VPhysicalVolume* dpvolume =  touchable->GetVolume(d);
 	   //G4cout << " depth " << d << " copy number " << touchable->GetCopyNumber(d) << " vname " << dpvolume->GetName() << G4endl;
@@ -154,6 +156,14 @@ G4bool PmtSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
 	     //G4cout << "ici" << " id_cal_layer " << id_cal_layer << " id_pmt " << id_pmt << " ncopy " << ncopy << G4endl;
 	     sprintf(detname,"P%dPmt%d",id_cal_layer,id_pmt);
 	     //	     G4cout << " CAL PLANE EVEN " << detname << G4endl;
+	   }
+	   if (strstr(vname,"L") != 0) {
+	     //	     G4cout << "I'm in LPmt" << G4endl;
+	     nblock = touchable->GetCopyNumber(2);
+	     nblockraw = touchable->GetCopyNumber(3);
+	     //G4cout << "nblock " << nblock << " nblockraw " << nblockraw << G4endl;
+	     sprintf(detname,"L%dPmt",3*nblockraw+nblock+1);
+	     //G4cout << "detname " << detname << G4endl;
 	   }
 	   //	   else G4cout << " vname " << vname << G4endl;
 	 }
