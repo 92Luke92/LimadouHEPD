@@ -263,8 +263,70 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
       pmtHC = (PmtHitsCollection*)(HCE->GetHC(pmtHitsCollID));
       for(int i=0;i<pmtHC->entries();i++){
         int TotalNPhot[53];
-	for (int j=0; j<53; j++) TotalNPhot[j] = (*pmtHC)[i]->GetNPhot(j);	
-	thePmtHitsContainer.push_back(RootPmtHits(TotalNPhot,(*pmtHC)[i]->GetNPmt()));
+	char PmtName[53][6];
+	//	G4cout << " entree " << i << " NPmt " << (*pmtHC)[i]->GetNPmt() << G4endl;
+        for (int j=0; j<53; j++) {
+	  TotalNPhot[j] = (*pmtHC)[i]->GetNPhot(j);
+	  //	  G4cout << " pmt " << j << " TotalNPhot " << TotalNPhot[j] << G4endl;
+          switch (j) {
+          case 0: sprintf(PmtName[j],"%s","T1w"); break;
+          case 1: sprintf(PmtName[j],"%s","T1e"); break;
+          case 2: sprintf(PmtName[j],"%s","T2w"); break;
+          case 3: sprintf(PmtName[j],"%s","T2e"); break;
+          case 4: sprintf(PmtName[j],"%s","T3w"); break;
+          case 5: sprintf(PmtName[j],"%s","T3e"); break;
+          case 6: sprintf(PmtName[j],"%s","T4w"); break;
+          case 7: sprintf(PmtName[j],"%s","T4e"); break;
+          case 8: sprintf(PmtName[j],"%s","T5w"); break;
+          case 9: sprintf(PmtName[j],"%s","T5e"); break;
+          case 10: sprintf(PmtName[j],"%s","T6w"); break;
+          case 11: sprintf(PmtName[j],"%s","T6e"); break;
+          case 12: sprintf(PmtName[j],"%s","P1nw"); break;
+          case 13: sprintf(PmtName[j],"%s","P1se"); break;
+          case 14: sprintf(PmtName[j],"%s","P2sw"); break;
+          case 15: sprintf(PmtName[j],"%s","P2ne"); break;
+          case 16: sprintf(PmtName[j],"%s","P3nw"); break;
+          case 17: sprintf(PmtName[j],"%s","P3se"); break;
+          case 18: sprintf(PmtName[j],"%s","P4sw"); break;
+          case 19: sprintf(PmtName[j],"%s","P4ne"); break;
+          case 20: sprintf(PmtName[j],"%s","P5nw"); break;
+          case 21: sprintf(PmtName[j],"%s","P5se"); break;
+          case 22: sprintf(PmtName[j],"%s","P6sw"); break;
+          case 23: sprintf(PmtName[j],"%s","P6ne"); break;
+          case 24: sprintf(PmtName[j],"%s","P7nw"); break;
+          case 25: sprintf(PmtName[j],"%s","P7se"); break;
+          case 26: sprintf(PmtName[j],"%s","P8sw"); break;
+          case 27: sprintf(PmtName[j],"%s","P8ne"); break;
+          case 28: sprintf(PmtName[j],"%s","P9nw"); break;
+          case 29: sprintf(PmtName[j],"%s","P9se"); break;
+          case 30: sprintf(PmtName[j],"%s","P10sw"); break;
+          case 31: sprintf(PmtName[j],"%s","P10ne"); break;
+          case 32: sprintf(PmtName[j],"%s","P11nw"); break;
+          case 33: sprintf(PmtName[j],"%s","P11se"); break;
+          case 34: sprintf(PmtName[j],"%s","P12sw"); break;
+          case 35: sprintf(PmtName[j],"%s","P12ne"); break;
+          case 36: sprintf(PmtName[j],"%s","P13nw"); break;
+          case 37: sprintf(PmtName[j],"%s","P13se"); break;
+          case 38: sprintf(PmtName[j],"%s","P14sw"); break;
+          case 39: sprintf(PmtName[j],"%s","P14ne"); break;
+          case 40: sprintf(PmtName[j],"%s","P15nw"); break;
+          case 41: sprintf(PmtName[j],"%s","P15se"); break;
+          case 42: sprintf(PmtName[j],"%s","P16sw"); break;
+          case 43: sprintf(PmtName[j],"%s","P16ne"); break;
+          case 44: sprintf(PmtName[j],"%s","L1ne"); break;
+          case 45: sprintf(PmtName[j],"%s","L4n"); break;
+          case 46: sprintf(PmtName[j],"%s","L7nw"); break;
+          case 47: sprintf(PmtName[j],"%s","L2e"); break;
+          case 48: sprintf(PmtName[j],"%s","L5c"); break;
+          case 49: sprintf(PmtName[j],"%s","L8w"); break;
+          case 50: sprintf(PmtName[j],"%s","L3se"); break;
+          case 51: sprintf(PmtName[j],"%s","L6s"); break;
+          case 52: sprintf(PmtName[j],"%s","L9sw"); break;
+          default: break;
+          }
+        }	
+	thePmtHitsContainer.push_back(RootPmtHits(TotalNPhot,&PmtName[0],
+						  (*pmtHC)[i]->GetNPmt()));
       }
     }
 
