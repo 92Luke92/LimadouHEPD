@@ -169,7 +169,7 @@ void HEPDSWPrimaryGeneratorAction::SetMuonGeneration(G4double dX,G4double dY, G4
   xrange_Muon_gen = dX;
   yrange_Muon_gen = dY;
   emin_Muon = Emin;
-  emax_Muon = Emax; 
+  emax_Muon = Emax;
   fun_mu_ke = new TF1("muflux",Muon_Flux,((Double_t) emin_Muon/1000),((Double_t) emax_Muon/1000),1);
   fun_mu_ke->SetNpx(1000);
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
@@ -225,7 +225,7 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     G4String particleName;
     G4ParticleDefinition* particle = fParticleGun->GetParticleDefinition();
     const G4String& nome = particle->GetParticleName();
-    G4double masse = particle->GetPDGMass(); 
+    G4double masse = particle->GetPDGMass();
     G4double charge = particle->GetPDGCharge();
     //G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
     fParticleGun->SetParticlePosition(position);
@@ -234,7 +234,7 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     if (beam_reso) {
       G4double new_beam_energy = G4RandGauss::shoot(beam_energy,beam_ereso);
       G4double denergy = new_beam_energy - beam_energy;
-      printf("beam energy %6.2lf MeV de %6.2lf MeV\n",beam_energy,denergy);
+      //printf("beam energy %6.2lf MeV de %6.2lf MeV\n",beam_energy,denergy);
       fParticleGun->SetParticleEnergy(new_beam_energy);
     }
     fParticleGun->SetParticleMomentumDirection(direction.unit());
@@ -278,12 +278,7 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fParticleGun->GeneratePrimaryVertex(anEvent);
   }
 
-
-  else{
-    fParticleGun->GeneratePrimaryVertex(anEvent);
-  }
-
-  if(muon){
+  else if(muon){
     G4double phi = 2*CLHEP::pi*G4RandFlat::shoot();
     Double_t cosang = fun_mu_costhe->GetRandom(0.65,1.00);
     G4double theta = ((G4double) TMath::ACos(cosang));
@@ -302,7 +297,11 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fParticleGun->SetParticlePosition(position);
     fParticleGun->SetParticleMomentumDirection(direction.unit());
     fParticleGun->GeneratePrimaryVertex(anEvent);
-    G4cout << "ev " << anEvent->GetEventID() << " x " << position.x() << " y " << position.y() << " z " << position.z() << " ke " << ke << " dir x " << direction.x() << " dir y " << direction.y() << " dir z " << direction.z() << G4endl; 
+    //G4cout << "ev " << anEvent->GetEventID() << " x " << position.x() << " y " << position.y() << " z " << position.z() << " ke " << ke << " dir x " << direction.x() << " dir y " << direction.y() << " dir z " << direction.z() << G4endl; 
+  }
+
+  else{
+    fParticleGun->GeneratePrimaryVertex(anEvent);
   }
   
 }
@@ -330,7 +329,7 @@ G4double HEPDSWPrimaryGeneratorAction::FlatSpectrum(G4double Emin,G4double Emax)
 {
   G4double energy;
   energy = CLHEP::RandFlat::shoot(Emin, Emax);
-  G4cout << " energie " << energy << G4endl;
+  //G4cout << " energie " << energy << G4endl;
   return energy;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
