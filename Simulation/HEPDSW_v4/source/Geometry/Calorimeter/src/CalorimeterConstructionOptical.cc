@@ -1051,7 +1051,8 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
   G4Material* vacuum          = pMaterial->GetMaterial("Galactic");
   G4Material* scintLayerMat   = pMaterial->GetMaterial(scintMaterial);
   G4Material* pmtMat          = pMaterial->GetMaterial(pmtMaterial);  //OP
-  G4Material* crystalLayerMat = pMaterial->GetMaterial(crystalMaterial);
+  G4Material* crystalLayerMat = pMaterial->GetMaterial(crystalMaterial); //Op
+  G4cout << " crystalMaterial " << crystalMaterial << G4endl;
   G4Material* vetoLayerMat    = pMaterial->GetMaterial(vetoMaterial);
   G4Material* cfMat           = pMaterial->GetMaterial(cfiberMaterial);
   G4Material* porMat          = pMaterial->GetMaterial(poronMaterial);
@@ -1921,7 +1922,7 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 
  
   G4cout << " fPhysiS1 z mm " << fPhysiS1_Z+ShiftOrigin << G4endl; 
-
+    
   fPhysiS1 = new G4PVPlacement(0,
 			       G4ThreeVector(fPhysiS1_X,fPhysiS1_Y,fPhysiS1_Z + ShiftOrigin ),
 			       "S1",
@@ -1929,17 +1930,17 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 			       motherVolume,                
 			       false,                       
 			       0,true);       
-
+  
   //  G4VPhysicalVolume* fPhysiS1Scint = new G4PVPlacement(0,
-
-  /*  new G4PVPlacement(0,
+  /*
+  new G4PVPlacement(0,
 			       G4ThreeVector(fPhysiS1_X,fPhysiS1_Y,fPhysiS1_Z + ShiftOrigin + 5*cm ),
 			       "PhysiS1Scint",
 			       fLogicS1Scint,                
 			       motherVolume,                
 			       false,                       
-			       0,true);      */
-
+			       0,true);      
+  */
 
   G4RotationMatrix* S1rm = new G4RotationMatrix();
   S1rm->rotateY(90.*deg);
@@ -2069,117 +2070,13 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 //  G4RotationMatrix* S1rm = new G4RotationMatrix();
 //  S1rm->rotateY(90.*deg);
 
-  /*
-  G4double S1x = fS1Scint_X/2.+ fPmt_Height;
-  G4double S1y = fS1Scint_Y/2. + 4.*mm;
-  G4double S1z = fPhysiS1_Z + ShiftOrigin - 2.2*mm;
-
-  fPhysiT1Pmt1 = new G4PVPlacement(S1rm,
-				G4ThreeVector(S1x, -S1y-2.*fS1Scint_Y, S1z),
-				"T1Pmt1",
-				fLogicPmt,
-				motherVolume,
-				false,
-				0,true);
-
-  fPhysiT1Pmt2 = new G4PVPlacement(S1rm,
-				G4ThreeVector(-S1x, -S1y-2.*fS1Scint_Y, S1z),
-				"T1Pmt2",
-				fLogicPmt,
-				motherVolume,
-				false,
-				0,true);
-
-  fPhysiT2Pmt1 = new G4PVPlacement(S1rm,
-				G4ThreeVector(S1x, -S1y-fS1Scint_Y, S1z),
-				"T2Pmt1",
-				fLogicPmt,
-				motherVolume,
-				false,
-				0,true);
-
-  fPhysiT2Pmt2 = new G4PVPlacement(S1rm,
-				G4ThreeVector(-S1x, -S1y-fS1Scint_Y, S1z),
-				"T2Pmt2",
-				fLogicPmt,
-				motherVolume,
-				false,
-				0,true);
-  
-
-  fPhysiT3Pmt1 = new G4PVPlacement(S1rm,
-				G4ThreeVector(S1x, -S1y, S1z),
-				"T3Pmt1",
-				fLogicPmt,
-				motherVolume,
-				false,
-				0,true);
-
-  fPhysiT3Pmt2 = new G4PVPlacement(S1rm,
-				G4ThreeVector(-S1x, -S1y, S1z),
-				"T3Pmt2",
-				fLogicPmt,
-				motherVolume,
-				false,
-				0,true);
-
-  fPhysiT4Pmt1 = new G4PVPlacement(S1rm,
-				G4ThreeVector(S1x, S1y, S1z),
-				"T4Pmt1",
-				fLogicPmt,
-				motherVolume,
-				false,
-				0,true);
-
-  fPhysiT4Pmt2 = new G4PVPlacement(S1rm,
-				G4ThreeVector(-S1x, S1y, S1z),
-				"T4Pmt2",
-				fLogicPmt,
-				motherVolume,
-				false,
-				0,true);
-
-  fPhysiT5Pmt1 = new G4PVPlacement(S1rm,
-				G4ThreeVector(S1x, S1y+fS1Scint_Y, S1z),
-				"T5Pmt1",
-				fLogicPmt,
-				motherVolume,
-				false,
-				0,true);
-
-  fPhysiT5Pmt2 = new G4PVPlacement(S1rm,
-				G4ThreeVector(-S1x, S1y+fS1Scint_Y, S1z),
-				"T5Pmt2",
-				fLogicPmt,
-				motherVolume,
-				false,
-				0,true);
-
-  fPhysiT6Pmt1 = new G4PVPlacement(S1rm,
-				G4ThreeVector(S1x, S1y+2.*fS1Scint_Y, S1z),
-				"T6Pmt1",
-				fLogicPmt,
-				motherVolume,
-				false,
-				0,true);
-
-
-  fPhysiT6Pmt2 = new G4PVPlacement(S1rm,
-				G4ThreeVector(-S1x, S1y+2.*fS1Scint_Y, S1z),
-				"T6Pmt2",
-				fLogicPmt,
-				motherVolume,
-				false,
-				0,true);
-
-  */
   //OP - end
 
 
   // CALO 
   
   G4cout << " fPhysiCaloBox z mm dans mere " << ShiftOrigin << G4endl; 
-
+  
   fPhysiCaloBox = new G4PVPlacement(0,                        
 				    G4ThreeVector(0,0,ShiftOrigin),   
 				    "Calorimeter",               
@@ -2188,7 +2085,7 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 				    false,                       
 				    0,true);       
 
-       
+        
   G4cout << " fPhysiScintLayer dz mm rep dans fPhysiScintBox " << fCaloLayer_Z << G4endl;
   G4cout << " fPhysiScintBox z mm dans fPhysiCaloBox " << fPhysiScintBox_Z << G4endl;
   
@@ -2199,11 +2096,11 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 				      fPhysiCaloBox,                
 				      false,                       
 				      0,true);
-
+ 
   G4double StartZ = fScint_Z/2. - fCaloLayer_Z/2.;
   G4int NoScinPlanes = 8;
   G4double CenterSpacing_Z = 2.*fCaloLayer_Z;
-  //G4double WidthScinPlane = fCaloLayer_Z;
+  G4double WidthScinPlane = fCaloLayer_Z;
   for (int layer=0; layer<NoScinPlanes; layer++) {
     G4double zpos = StartZ - layer*CenterSpacing_Z;
     fPhysiScintLayer_Odd = new G4PVPlacement(0,                        
@@ -2214,7 +2111,7 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 					   false,                       
 					   layer+1,true); 
   }
-  
+    
   NoScinPlanes = 7;
   StartZ = fScint_Z/2. - 3.*fCaloLayer_Z/2.;
   for (int layer=0; layer<NoScinPlanes; layer++) {
@@ -2227,7 +2124,7 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 					   false,                       
 					   layer+1,true); 
   }
-  
+    
   G4cout << " fPhysiLastScintLayer z mm dans fPhysiCalobox " << fPhysiLastScintLayer_Z << G4endl; 
 
   fPhysiLastScintLayer = new G4PVPlacement(0,                        
@@ -2240,7 +2137,7 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
   
 
   G4cout << " fPhysiScintActiveLayer z mm dans fPhysiScintLayer " << fPhysiActiveLayer_Z << G4endl; 
-  
+    
   // piani scintillatore
   fPhysiScintActiveLayer_Odd = new G4PVPlacement(0,                   
 					     G4ThreeVector(fPhysiActiveLayer_X,fPhysiActiveLayer_Y,fPhysiActiveLayer_Z),     
@@ -2258,7 +2155,7 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 					     false,               
 					     0,true);
  
-
+  
   /*######################  Costole Poron angoli calorimetro ################################*/
   fPhysiExternalPoronSupport1 = new G4PVPlacement(0,                   
 						  G4ThreeVector(fPhysiExternalPoronSupport_X,fPhysiExternalPoronSupport_Y,fPhysiExternalPoronSupport_Z + ShiftOrigin),     
@@ -2600,7 +2497,7 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 
 
   /*###################################    Ultimo piano di scintillatore plastico    ###################################################*/
-  
+    
   G4cout << " fPhysiScintActiveLayer z mm dans fPhysiLastScintLayer " << fPhysiActiveLayer_Z-fPoronFrontPO_Z/2. << G4endl; 
   fPhysiScintActiveLayer_Even = new G4PVPlacement(0,                   
 					     G4ThreeVector(fPhysiActiveLayer_X,fPhysiActiveLayer_Y,fPhysiActiveLayer_Z-fPoronFrontPO_Z/2.),     
@@ -2610,6 +2507,7 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 					     fPhysiLastScintLayer,        
 					     false,               
 					     0,true); 
+  
   // croce di poron
   fPhysiScintCFSupp = new G4PVPlacement(0,    
 					G4ThreeVector(fPhysiCFSuppPor_X, fPhysiCFSuppPor_Y, fPhysiCFSuppPor_Z-fPoronFrontPO_Z/2. ),     
@@ -2772,7 +2670,7 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 					false,               
 					0,true); 
   				        
-
+  
   G4cout << "fPhysiCrystalBlockRaw rep dans fPhysiCrystalBlockPlaneContainer" << G4endl;
   fPhysiCrystalBlockRaw = new G4PVReplica("CrystalBlockRaw", 
 					  fLogicCrystalBlockRawContainer,            
@@ -2789,7 +2687,7 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 				     3,
 				     fCFBlockContainerExt_X);   
 
-  
+    
   G4cout << "fPhysiCrystalActiveBlock z mm dans fPhysiTeflonLYSO 0 " << G4endl; 
   fPhysiCrystalActiveBlock = new G4PVPlacement(0,                   
 					       G4ThreeVector(0 , 0 ,0),
@@ -2798,6 +2696,7 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 					       fPhysiTeflonLYSO,        
 					       false,               
 					       0,true); 
+  
   fPhysiTeflonContainer = new G4PVPlacement(0,                   
 					    G4ThreeVector(0,0,0),
 					    "Teflon",              
@@ -2805,84 +2704,8 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
 					    fPhysiTeflonLYSO,        
 					    false,               
 					    0,true);
-
-  //OP - begin
-  /*
-  G4double Pmt_dz = +fPmt_Height;
-  //  G4double pmt_dz = -fPmt_Height;
   
-  fPhysiL1Pmt = new G4PVPlacement(0,
-				  G4ThreeVector(-fCrystalBlockRawContainer_Y,-fCrystalBlockRawContainer_Y,ShiftOrigin+fPhysiCrystalBox_Z+fPhysiCrystalBlockPlaneContainer_Z+Pmt_dz-2.*cm),
-				  "L1Pmt",
-				  fLogicPmt,
-				  motherVolume,
-				  false,
-				  0,true);
-
-  fPhysiL2Pmt = new G4PVPlacement(0,
-				  G4ThreeVector(-fCrystalBlockRawContainer_Y,0.,ShiftOrigin+fPhysiCrystalBox_Z+fPhysiCrystalBlockPlaneContainer_Z+Pmt_dz-2.*cm),
-				  "L2Pmt",
-				  fLogicPmt,
-				  motherVolume,
-				  false,
-				  0,true);
-
-  fPhysiL3Pmt = new G4PVPlacement(0,
-				  G4ThreeVector(-fCrystalBlockRawContainer_Y,fCrystalBlockRawContainer_Y,ShiftOrigin+fPhysiCrystalBox_Z+fPhysiCrystalBlockPlaneContainer_Z+Pmt_dz-2.*cm),
-				  "L3Pmt",
-				  fLogicPmt,
-				  motherVolume,
-				  false,
-				  0,true);
-
-  fPhysiL4Pmt = new G4PVPlacement(0,
-				  G4ThreeVector(0.,-fCrystalBlockRawContainer_Y,ShiftOrigin+fPhysiCrystalBox_Z+fPhysiCrystalBlockPlaneContainer_Z+Pmt_dz-2.*cm),
-				  "L4Pmt",
-				  fLogicPmt,
-				  motherVolume,
-				  false,
-				  0,true);
-
-  fPhysiL5Pmt = new G4PVPlacement(0,
-				  G4ThreeVector(0.,0.,ShiftOrigin+fPhysiCrystalBox_Z+fPhysiCrystalBlockPlaneContainer_Z+Pmt_dz-2.*cm),
-				  "L5Pmt",
-				  fLogicPmt,
-				  motherVolume,
-				  false,
-				  0,true);
-
-  fPhysiL6Pmt = new G4PVPlacement(0,
-				  G4ThreeVector(0.,fCrystalBlockRawContainer_Y,ShiftOrigin+fPhysiCrystalBox_Z+fPhysiCrystalBlockPlaneContainer_Z+Pmt_dz-2.*cm),
-				  "L6Pmt",
-				  fLogicPmt,
-				  motherVolume,
-				  false,
-				  0,true);
-
-  fPhysiL7Pmt = new G4PVPlacement(0,
-				  G4ThreeVector(fCrystalBlockRawContainer_Y,-fCrystalBlockRawContainer_Y,ShiftOrigin+fPhysiCrystalBox_Z+fPhysiCrystalBlockPlaneContainer_Z+Pmt_dz-2.*cm),
-				  "L7Pmt",
-				  fLogicPmt,
-				  motherVolume,
-				  false,
-				  0,true);
-
-  fPhysiL8Pmt = new G4PVPlacement(0,
-				  G4ThreeVector(fCrystalBlockRawContainer_Y,0.,ShiftOrigin+fPhysiCrystalBox_Z+fPhysiCrystalBlockPlaneContainer_Z+Pmt_dz-2.*cm),
-				  "L8Pmt",
-				  fLogicPmt,
-				  motherVolume,
-				  false,
-				  0,true);
-
-  fPhysiL9Pmt = new G4PVPlacement(0,
-				  G4ThreeVector(fCrystalBlockRawContainer_Y,fCrystalBlockRawContainer_Y,ShiftOrigin+fPhysiCrystalBox_Z+fPhysiCrystalBlockPlaneContainer_Z+Pmt_dz-2.*cm),
-				  "L9Pmt",
-				  fLogicPmt,
-				  motherVolume,
-				  false,
-				  0,true);
-  */
+  //OP - begin
 
   //////////////////////////////////////
   
@@ -2958,6 +2781,28 @@ void CalorimeterConstructionOptical::Builder(G4VPhysicalVolume* motherVolume)
   new G4LogicalSkinSurface("S1scintWrapping",fLogicS1Scint, matMylarSurface);
   new G4LogicalSkinSurface("CalscintWrapping",fLogicScintActiveLayer_Odd, matMylarSurface);
   new G4LogicalSkinSurface("CalscintWrapping",fLogicScintActiveLayer_Even, matMylarSurface);
+
+  //Optical surfaces for LYSO
+
+  G4OpticalSurface* matTeflonSurface = new G4OpticalSurface("teflonSurface");
+  matTeflonSurface->SetModel(glisur);
+  matTeflonSurface->SetFinish(ground);
+  matTeflonSurface->SetType(dielectric_dielectric);
+
+  G4MaterialPropertiesTable* MPTteflonSurface = new G4MaterialPropertiesTable();
+  const G4int teflonnum = 9;
+  G4double teflon_Energy[teflonnum]={1.14*eV,2.02*eV,3.26*eV,6.12*eV,6.89*eV,7.29*eV,7.75*eV,8.27*eV,8.55*eV};
+  G4double teflon_RIND[teflonnum]  = {1.28,1.28,1.29,1.33,1.34,1.35,1.37,1.41,1.42};
+  //Attenuation length come from this paper "Optimization of the effective light attenuation length of YAP:Ce and LYSO:Ce crystals for a novel geometrical PET concept"
+  G4double teflon_ABSL[teflonnum]  = { 500*cm,500*cm,500*cm,500*cm,500*cm,500*cm,100*cm,25*cm,20*cm};
+  G4double teflon_REFL[teflonnum]  = { 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99};
+
+  MPTteflonSurface->AddProperty("RINDEX",        teflon_Energy, teflon_RIND,  teflonnum);
+  MPTteflonSurface->AddProperty("ABSLENGTH",     teflon_Energy, teflon_ABSL,  teflonnum);
+  MPTteflonSurface->AddProperty("REFLECTIVITY", teflon_Energy, teflon_REFL, teflonnum);
+  matTeflonSurface->SetMaterialPropertiesTable(MPTteflonSurface);
+
+  new G4LogicalSkinSurface("LYSOWrapping",fLogicCrystalActiveBlock, matTeflonSurface);
 
 /* new G4LogicalBorderSurface("scintWrapping",fPhysiScintLayer, motherVolume, matMylarSurface);
   new G4LogicalBorderSurface("scintWrapping",fPhysiLastScintLayer, motherVolume, matMylarSurface);
