@@ -39,6 +39,9 @@
 # HEPD nuclei test beam configuration
 #/hepd/ActivateHEPDNucleiTB true
 
+# HEPD electron test beam configuration
+#/hepd/ActivateHEPDElectronTB true
+
 #
 ## ELECTROMAGNETIC model
 /hepd/phys/addPhysics  emstandard_opt4
