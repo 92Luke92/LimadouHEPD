@@ -111,7 +111,8 @@ G4int CalorimeterSD::GetDetID(G4Step*aStep){
 G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   G4double edep = aStep->GetTotalEnergyDeposit();
   G4int tkID = aStep->GetTrack()->GetTrackID();
-  G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition(); 
+  G4int partID = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
+  G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition();
   G4ThreeVector theEntryPoint = aStep->GetPreStepPoint()->GetPosition();
   G4double theKE      = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
   //  G4cout << "Calo step edep(MeV) = " << edep/MeV <<" ; given by Track = "<<tkID<< G4endl;
@@ -139,7 +140,7 @@ G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   
    if(LayerID.find(detID)==LayerID.end() || LayerTrkID.find(detID)->second!=tkID){
     //    CaloHit* calHit = new CaloHit(volumeID);
-     CaloHit* calHit = new CaloHit(detID,theEntryPoint,theExitPoint,theKE);
+     CaloHit* calHit = new CaloHit(partID,detID,theEntryPoint,theExitPoint,theKE);
     calHit->SetEdep(edep/MeV,tkID);
     calHit->SetStepPos(theExitPoint,tkID);
     G4int icell = CaloCollection->insert(calHit);

@@ -37,9 +37,10 @@ CaloHit::CaloHit()
 // CaloHit::CaloHit(G4String volume)
 //   : VolumeID(volume)
 // {;}
-CaloHit::CaloHit(G4int det,G4ThreeVector aEntry, G4ThreeVector aExit, G4double aKE)
+CaloHit::CaloHit(G4int aPartID, G4int det,G4ThreeVector aEntry, G4ThreeVector aExit, G4double aKE)
   : DetID(det)
-{theEntryPoint = aEntry;
+{thePartID = aPartID;
+  theEntryPoint = aEntry;
   theExitPoint = aExit;
   theKinEnergy = aKE;}
 
@@ -51,6 +52,7 @@ CaloHit::CaloHit(const CaloHit &right)
   : G4VHit()
 {
   //  VolumeID = right.VolumeID;
+  thePartID = right.thePartID;
   DetID = right.DetID;
   theEntryPoint = right.theEntryPoint;
   theExitPoint = right.theExitPoint;
@@ -63,6 +65,7 @@ CaloHit::CaloHit(const CaloHit &right)
 const CaloHit& CaloHit::operator=(const CaloHit &right)
 {
   //  VolumeID = right.VolumeID;
+  thePartID = right.thePartID;
   DetID = right.DetID;
   theEntryPoint = right.theEntryPoint;
   theExitPoint = right.theExitPoint;

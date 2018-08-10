@@ -208,17 +208,17 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
           int itkid = j->first;
           G4ThreeVector g4tv = j->second;
           TVector3 tv(g4tv.getX(),g4tv.getY(),g4tv.getZ());
-	  aStepPosMap[itkid]=tv;  
+	  aStepPosMap[itkid]=tv;
 	}
         if (arret) break;
-	theCaloHitContainer.push_back( RootCaloHit((*caloHC)[i]->GetVolume(),Entry,Exit,(*caloHC)[i]->GetKinEnergy(),(*caloHC)[i]->GetTotalEdep()/CLHEP::MeV,(*caloHC)[i]->GetEdepMap(),aStepPosMap,(*caloHC)[i]->GetNPhot((*caloHC)[i]->GetVolume())) ); // OP
+	theCaloHitContainer.push_back( RootCaloHit((*caloHC)[i]->GetPartID(),(*caloHC)[i]->GetVolume(),Entry,Exit,(*caloHC)[i]->GetKinEnergy(),(*caloHC)[i]->GetTotalEdep()/CLHEP::MeV,(*caloHC)[i]->GetEdepMap(),aStepPosMap,(*caloHC)[i]->GetNPhot((*caloHC)[i]->GetVolume())) ); // OP
 	  if(verboseLevel>0) std::cout <<"CaloHit  # "<<i<<" ; Volume = "<<(*caloHC)[i]->GetVolume()<<" ; Edep = "<<(*caloHC)[i]->GetTotalEdep()/CLHEP::MeV<<" MeV"<< std::endl;
       }
     }
 
     if(!(vetoHitCollID<0)){
       vetoHC = (CaloHitsCollection*)(HCE->GetHC(vetoHitCollID));
-      //G4cout << " vetoHC entries " << vetoHC->entries() << G4endl; 
+      //G4cout << " vetoHC entries " << vetoHC->entries() << G4endl;
       std::map<int,TVector3> aStepPosMap;
       for(int i=0;i<vetoHC->entries();i++){
         aStepPosMap.clear();
@@ -232,9 +232,9 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
             int itkid = j->first;
             G4ThreeVector g4tv = j->second;
             TVector3 tv(g4tv.getX(),g4tv.getY(),g4tv.getZ());
-	    aStepPosMap[itkid]=tv;  
+	    aStepPosMap[itkid]=tv;
 	  }
-	  theVetoHitContainer.push_back(RootCaloHit((*vetoHC)[i]->GetVolume(),Entry,Exit,(*vetoHC)[i]->GetKinEnergy(),(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV,(*vetoHC)[i]->GetEdepMap(),aStepPosMap,(*vetoHC)[i]->GetNPhot((*vetoHC)[i]->GetVolume())) ); // OP
+	  theVetoHitContainer.push_back(RootCaloHit(0,(*vetoHC)[i]->GetVolume(),Entry,Exit,(*vetoHC)[i]->GetKinEnergy(),(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV,(*vetoHC)[i]->GetEdepMap(),aStepPosMap,(*vetoHC)[i]->GetNPhot((*vetoHC)[i]->GetVolume())) ); // OP
 	  if(verboseLevel>0) std::cout<<"VetoHit  # "<<i<<" ; Volume = "<<(*vetoHC)[i]->GetVolume()<<" ; Edep = "<<(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV<<" MeV"<<std::endl;
       }
     }

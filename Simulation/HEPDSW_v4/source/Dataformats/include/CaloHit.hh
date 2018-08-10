@@ -38,7 +38,7 @@ public:
 
   CaloHit();
   //  CaloHit(G4String volume);
-  CaloHit(G4int DetID,G4ThreeVector aEntry, G4ThreeVector aExit, G4double aKE);
+  CaloHit(G4int aPartID, G4int DetID,G4ThreeVector aEntry, G4ThreeVector aExit, G4double aKE);
   ~CaloHit();
   CaloHit(const CaloHit &right);
   const CaloHit& operator=(const CaloHit &right);
@@ -52,6 +52,7 @@ public:
 
 private:
   //  G4String VolumeID;
+  G4int thePartID;
   G4int DetID;
   G4ThreeVector theEntryPoint;
   G4ThreeVector theExitPoint;
@@ -75,6 +76,7 @@ public:
   inline G4double GetTotalEdep()
   { return totalEdep; }
 
+  inline G4int GetPartID(){return thePartID;}
   inline G4ThreeVector GetEntryPoint(){return theEntryPoint;}
   inline G4ThreeVector GetExitPoint(){return theExitPoint;}
   inline G4double GetKinEnergy(){return theKinEnergy;}

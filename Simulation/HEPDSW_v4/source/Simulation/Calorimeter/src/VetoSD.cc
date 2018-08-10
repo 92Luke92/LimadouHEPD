@@ -84,6 +84,7 @@ G4int VetoSD::GetDetID(G4Step* aStep){
 G4bool VetoSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   G4double edep = aStep->GetTotalEnergyDeposit();
   G4int tkID = aStep->GetTrack()->GetTrackID();
+  G4int partID = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
   G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition(); 
   G4ThreeVector theEntryPoint = aStep->GetPreStepPoint()->GetPosition();
   G4double theKE      = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
@@ -102,7 +103,7 @@ G4bool VetoSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   
   if(VetoID.find(detID)==VetoID.end() || VetoTrkID.find(detID)->second!=tkID){
     //    CaloHit* vetoHit = new CaloHit(volume);
-    CaloHit* vetoHit = new CaloHit(detID,theEntryPoint,theExitPoint,theKE);
+    CaloHit* vetoHit = new CaloHit(partID,detID,theEntryPoint,theExitPoint,theKE);
     vetoHit->SetEdep(edep/MeV,tkID);
     vetoHit->SetStepPos(theExitPoint,tkID);
     G4int icell = VetoCollection->insert(vetoHit);
