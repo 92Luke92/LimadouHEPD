@@ -102,6 +102,7 @@ HEPDSWPrimaryGeneratorAction::HEPDSWPrimaryGeneratorAction(HEPDSWDetectorConstru
   beam=false;
   beam_reso=false;
   nuclei_beam=false;
+  electron_beam=false;
   centerpointing=false;
   powerlaw = false;
   flat=false;
@@ -162,6 +163,9 @@ void HEPDSWPrimaryGeneratorAction::SetBeam(G4double Xpos,G4double Ypos,G4double 
 
 //for nuclei test beam
 void HEPDSWPrimaryGeneratorAction::SetSpot(){nuclei_beam=true;}
+
+//for electron test beam
+void HEPDSWPrimaryGeneratorAction::SetElectronSpot(){electron_beam=true;}
 
 
 void HEPDSWPrimaryGeneratorAction::SetMuonGeneration(G4double dX,G4double dY, G4double Emin, G4double Emax){
@@ -247,19 +251,57 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     G4double masse = particle->GetPDGMass();
     G4double charge = particle->GetPDGCharge();
     //G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
-    G4double Xmax = 2.*cm;
-    G4double Ymax = 2.*cm;
+    G4double Xmax = 2.5*mm;
+    G4double Ymax = 2.5*mm;
     G4double Xpos = 999.*cm;
     G4double Ypos = 999.*cm;
     Xpos = -Xmax+2.*Xmax*G4RandFlat::shoot();
     Ypos = -Ymax+2.*Ymax*G4RandFlat::shoot();
-    while (sqrt(pow(Xpos,2)+pow(Ypos,2))>2.*cm){
+    while (sqrt(pow(Xpos,2)+pow(Ypos,2))>2.5*mm){
       Xpos = -Xmax+2.*Xmax*G4RandFlat::shoot();
       Ypos = -Ymax+2.*Ymax*G4RandFlat::shoot();
     }
     G4double Zpos = 196.*cm;
     Xpos-=1.75*cm;
     Ypos-=1.8*cm;
+    position = G4ThreeVector(Xpos,Ypos,Zpos);
+    G4double theta = 0.*deg;
+    G4double phi = 0.*deg;
+    direction = G4ThreeVector(cos(phi)*sin(theta),sin(phi)*sin(theta),-cos(theta));
+    
+    fParticleGun->SetParticlePosition(position);
+    if(flat)
+      fParticleGun->SetParticleEnergy(FlatSpectrum(eminFlat,emaxFlat));
+    if (beam_reso) {
+      G4double new_beam_energy = G4RandGauss::shoot(beam_energy,beam_ereso);
+      G4double denergy = new_beam_energy - beam_energy;
+      printf("beam energy %6.2lf MeV de %6.2lf MeV\n",beam_energy,denergy);
+      fParticleGun->SetParticleEnergy(new_beam_energy);
+    }
+    fParticleGun->SetParticleMomentumDirection(direction.unit());
+    fParticleGun->GeneratePrimaryVertex(anEvent);
+  }
+
+  else if(electron_beam){
+    G4String particleName;
+    G4ParticleDefinition* particle = fParticleGun->GetParticleDefinition();
+    const G4String& nome = particle->GetParticleName();
+    G4double masse = particle->GetPDGMass();
+    G4double charge = particle->GetPDGCharge();
+    //G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
+    G4double Xmax = 0.5*mm;
+    G4double Ymax = 0.5*mm;
+    G4double Xpos = 999.*cm;
+    G4double Ypos = 999.*cm;
+    Xpos = -Xmax+2.*Xmax*G4RandFlat::shoot();
+    Ypos = -Ymax+2.*Ymax*G4RandFlat::shoot();
+    while (sqrt(pow(Xpos,2)+pow(Ypos,2))>0.5*mm){
+      Xpos = -Xmax+2.*Xmax*G4RandFlat::shoot();
+      Ypos = -Ymax+2.*Ymax*G4RandFlat::shoot();
+    }
+    Xpos-=1.75*cm;
+    Ypos-=1.8*cm;
+    G4double Zpos = 140.*cm; //check the correct number
     position = G4ThreeVector(Xpos,Ypos,Zpos);
     G4double theta = 0.*deg;
     G4double phi = 0.*deg;

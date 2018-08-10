@@ -76,6 +76,8 @@ HEPDSWDetectorConstruction::HEPDSWDetectorConstruction()
   G4double proton_tb_offset_Z = fISOcenterZ + HEPD_offset_Z;
   useProtonTB=false;
   useNucleiTB=false;
+  useElectronTB=false;
+  
   G4cout << " useProtonTB " << useProtonTB << G4endl;
   G4cout << " useNucleiTB " << useNucleiTB << G4endl;
   
@@ -145,7 +147,7 @@ G4VPhysicalVolume* HEPDSWDetectorConstruction::Construct()
 
   fSolidWorld = new G4Box("world",fworldHalfX,fworldHalfY,fworldHalfZ);
   
-  if (useProtonTB || useNucleiTB)
+  if (useProtonTB || useNucleiTB || useElectronTB)
   fLogicWorld = new G4LogicalVolume(fSolidWorld,air,"world");
   else
   fLogicWorld = new G4LogicalVolume(fSolidWorld,vacuum,"world");

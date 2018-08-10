@@ -109,6 +109,10 @@ HEPDSWDetectorMessenger::HEPDSWDetectorMessenger(HEPDSWDetectorConstruction * De
   fHEPDNucleiTBCmd->SetGuidance("Enable or disable the Nuclei Test Beam configuration");
   fHEPDNucleiTBCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  fHEPDElectronTBCmd = new G4UIcmdWithABool("/hepd/ActivateHEPDElectronTB",this);
+  fHEPDElectronTBCmd->SetGuidance("Enable or disable the electron Test Beam configuration");
+  fHEPDElectronTBCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
   fCaloConfigCmd = new G4UIcmdWithAString("/hepd/CaloConfiguration",this);
   fCaloConfigCmd->SetGuidance("Select the calorimeter configuration");
   fCaloConfigCmd->SetParameterName("CaloConfiguration",false);
@@ -280,6 +284,7 @@ HEPDSWDetectorMessenger::~HEPDSWDetectorMessenger()
   delete fHEPDBoxConfigCmd;
   delete fHEPDProtonTBCmd;
   delete fHEPDNucleiTBCmd;
+  delete fHEPDElectronTBCmd;
   delete fProtonDegraderCmd;
   delete fHepdDir;
   //  delete fCaloCaloMatConfigCmd;	
@@ -353,6 +358,10 @@ void HEPDSWDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue
 
   if (command == fHEPDNucleiTBCmd) {
     Detector->SetNucleiTBDetector(fHEPDNucleiTBCmd->GetNewBoolValue(newValue));
+  }
+
+  if (command == fHEPDElectronTBCmd) {
+    Detector->SetElectronTBDetector(fHEPDElectronTBCmd->GetNewBoolValue(newValue));
   }
   
 //   if(command == fCaloCaloMatConfigCmd)

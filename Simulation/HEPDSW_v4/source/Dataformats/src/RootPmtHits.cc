@@ -67,9 +67,9 @@ RootPmtHits::RootPmtHits ()
     case 52: sprintf(thePmtName[i],"%s","L9sw"); break;
     default: break;
     }
-    printf(" i %d %s\n",i,thePmtName[i]);
+    //printf(" i %d %s\n",i,thePmtName[i]);
     TString pmtname(thePmtName[i]);
-    printf(" pmtname %s\n",pmtname.Data());
+    //printf(" pmtname %s\n",pmtname.Data());
   }  
 }
 ////////////////////////////////////////////////////////////////////////////////

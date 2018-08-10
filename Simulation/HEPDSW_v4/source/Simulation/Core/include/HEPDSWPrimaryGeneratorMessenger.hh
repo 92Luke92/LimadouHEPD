@@ -60,6 +60,7 @@ private:
   G4UIcmdWithoutParameter*   fRndmCmd;
   G4UIcmdWithoutParameter*   fPntngCmd;
   G4UIcmdWithoutParameter*   fSpotCmd;
+  G4UIcmdWithoutParameter*   fElectronSpotCmd;
   G4UIcmdWithADoubleAndUnit* fEnrgCmd;
   G4UIcmdWithAString*        fPartCmd;
   G4UIcommand*               fMuonCmd;

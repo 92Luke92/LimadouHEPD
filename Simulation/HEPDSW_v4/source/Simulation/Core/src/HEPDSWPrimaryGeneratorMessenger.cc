@@ -66,6 +66,11 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
   fSpotCmd = new G4UIcmdWithoutParameter("/hepd/gun/spot",this);
   fSpotCmd->SetGuidance("enable or disable the beam spot");
   fSpotCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  //for electron test beam
+  fElectronSpotCmd = new G4UIcmdWithoutParameter("/hepd/gun/electronspot",this);
+  fElectronSpotCmd->SetGuidance("enable or disable the beam spot in electron configuration");
+  fElectronSpotCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
   
   fEnrgCmd = new G4UIcmdWithADoubleAndUnit("/hepd/gun/energy",this);
   fEnrgCmd->SetGuidance("Set the energy of the particle");
@@ -185,6 +190,7 @@ HEPDSWPrimaryGeneratorMessenger::~HEPDSWPrimaryGeneratorMessenger()
   delete fRndmCmd;
   delete fEnrgCmd;
   delete fSpotCmd;
+  delete fElectronSpotCmd;
   delete fPntngCmd;
   delete fBeamCmd;
   delete fPowerLawCmd;
@@ -206,6 +212,8 @@ void HEPDSWPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String 
     { fAction->SetEnergy(fEnrgCmd->GetNewDoubleValue(newValue));}
   if( command == fSpotCmd )
     { fAction->SetSpot();}
+  if( command == fElectronSpotCmd )
+    { fAction->SetElectronSpot();}
   if( command == fPartCmd )
     {
       if(newValue=="He"||newValue=="C"||newValue=="O"){

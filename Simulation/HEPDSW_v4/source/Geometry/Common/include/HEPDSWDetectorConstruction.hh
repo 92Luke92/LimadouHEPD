@@ -72,6 +72,7 @@ public:
 
   inline void SetProtonTBDetector(G4bool aDet){useProtonTB=aDet;}
   inline void SetNucleiTBDetector(G4bool aDet){useNucleiTB=aDet;}
+  inline void SetElectronTBDetector(G4bool aDet){useElectronTB=aDet;}
   inline void SetDegrader(G4bool aDet){useDegrader=aDet;}
   inline void SetProtonDegrader(G4double dz){degrader_dz=dz; fDegraderBuilder->Builder(fPhysiWorld,fworldHalfZ,degrader_dz); }
 
@@ -114,6 +115,7 @@ private:
   G4bool             useDegrader;
   G4bool             useProtonTB;
   G4bool             useNucleiTB;
+  G4bool             useElectronTB;
 
   HEPDSWMaterial*      pMaterial;
   

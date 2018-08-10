@@ -73,6 +73,7 @@ private:
   G4UIcmdWithADoubleAndUnit* fProtonDegraderCmd;
 
   G4UIcmdWithABool* fHEPDNucleiTBCmd;
+  G4UIcmdWithABool* fHEPDElectronTBCmd;
 
   G4UIcmdWithAString* fCaloConfigCmd;
   //G4UIcmdWithAString* fScintConfigCmd;
