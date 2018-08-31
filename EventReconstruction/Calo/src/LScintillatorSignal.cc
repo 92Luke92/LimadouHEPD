@@ -44,12 +44,12 @@ double LScintillatorSignal::GetZ(const int iu, const int ipmt) const {
 
 double LScintillatorSignal::GetSNOfUnit(const int unit, const bool isHG) const {
   double result=0;
-  if(unit==4) return 2.*sn_hg[unit][0]; // PMT 1 broken
+  if(unit==4) return 2.*sn_hg[unit][1]; // PMT 0 broken
   else return LCaloSignal::GetSNOfUnit(unit,isHG);
 }
 
 double LScintillatorSignal::GetCountsOfUnit(const int unit, const bool isHG) const {
   double result=0.;
-  if(unit==4) return 2.*cont_hg[unit][0]; // PMT 1 broken
+  if(unit==4) return 2.*cont_hg[unit][1]; // PMT 0 broken
   else return LCaloSignal::GetCountsOfUnit(unit,isHG);
 }

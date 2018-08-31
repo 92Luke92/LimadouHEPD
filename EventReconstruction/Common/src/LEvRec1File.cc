@@ -62,22 +62,26 @@ void LEvRec1File::CreateTrees() {
   trigger_countLGBR = fTree->Branch("trigger_countLG[12]", 0, "trigger_countLG[12]/D");
   trigger_snLGBR = fTree->Branch("trigger_snLG[12]", 0, "trigger_snLG[12]/D");
   trigger_trigger_flagBR = fTree->Branch("trigger_trigger_flag[12]", 0, "trigger_trigger_flag[12]/O");
+  trigger_is_saturatedBR = fTree->Branch("trigger_is_saturated[12]", 0, "trigger_is_saturated[12]/O");
   scint_countHGBR = fTree->Branch("scint_countHG[32]", 0, "scint_countHG[32]/D");
   scint_snHGBR = fTree->Branch("scint_snHG[32]", 0, "scint_snHG[32]/D");
   scint_countLGBR = fTree->Branch("scint_countLG[32]", 0, "scint_countLG[32]/D");
   scint_snLGBR = fTree->Branch("scint_snLG[32]", 0, "scint_snLG[32]/D");
   scint_trigger_flagBR = fTree->Branch("scint_trigger_flag[32]", 0, "scint_trigger_flag[32]/O");
+  scint_is_saturatedBR = fTree->Branch("scint_is_saturated[32]", 0, "scint_is_saturated[32]/O");
   veto_countHGBR = fTree->Branch("veto_countHG[10]", 0, "veto_countHG[10]/D");
   veto_snHGBR = fTree->Branch("veto_snHG[10]", 0, "veto_snHG[10]/D");
   veto_countLGBR = fTree->Branch("veto_countLG[10]", 0, "veto_countLG[10]/D");
   veto_snLGBR = fTree->Branch("veto_snLG[10]", 0, "veto_snLG[10]/D");
   veto_trigger_flagBR = fTree->Branch("veto_trigger_flag[10]", 0, "veto_trigger_flag[10]/O");
+  veto_is_saturatedBR = fTree->Branch("veto_is_saturated[10]", 0, "veto_is_saturated[10]/O");
   lyso_countHGBR = fTree->Branch("lyso_countHG[9]", 0, "lyso_countHG[9]/D");
   lyso_snHGBR = fTree->Branch("lyso_snHG[9]", 0, "lyso_snHG[9]/D");
   lyso_countLGBR = fTree->Branch("lyso_countLG[9]", 0, "lyso_countLG[9]/D");
   lyso_snLGBR = fTree->Branch("lyso_snLG[9]", 0, "lyso_snLG[9]/D");
   lyso_trigger_flagBR = fTree->Branch("lyso_trigger_flag[9]", 0, "lyso_trigger_flag[9]/O");
- 
+  lyso_is_saturatedBR = fTree->Branch("lyso_is_saturated[9]", 0, "lyso_is_saturated[9]/O");
+
   
   runTypeBR = fTree->Branch("runType", 0, "runType/s");
   boot_nrBR = fTree->Branch("boot_nr", 0, "boot_nr/s");
@@ -116,21 +120,25 @@ void LEvRec1File::InitializeBranches(void) {
   trigger_countLGBR = fTree->GetBranch("trigger_countLG[12]");
   trigger_snLGBR = fTree->GetBranch("trigger_snLG[12]");
   trigger_trigger_flagBR = fTree->GetBranch("trigger_trigger_flag[12]");
+  trigger_is_saturatedBR = fTree->GetBranch("trigger_is_saturated[12]");
   scint_countHGBR = fTree->GetBranch("scint_countHG[32]");
   scint_snHGBR = fTree->GetBranch("scint_snHG[32]");
   scint_countLGBR = fTree->GetBranch("scint_countLG[32]");
   scint_snLGBR = fTree->GetBranch("scint_snLG[32]");
   scint_trigger_flagBR = fTree->GetBranch("scint_trigger_flag[32]");
+  scint_is_saturatedBR = fTree->GetBranch("scint_is_saturated[32]");
   veto_countHGBR = fTree->GetBranch("veto_countHG[10]");
   veto_snHGBR = fTree->GetBranch("veto_snHG[10]");
   veto_countLGBR = fTree->GetBranch("veto_countLG[10]");
   veto_snLGBR = fTree->GetBranch("veto_snLG[10]");
   veto_trigger_flagBR = fTree->GetBranch("veto_trigger_flag[10]");
+  veto_is_saturatedBR = fTree->GetBranch("veto_is_saturated[10]");
   lyso_countHGBR = fTree->GetBranch("lyso_countHG[9]");
   lyso_snHGBR = fTree->GetBranch("lyso_snHG[9]");
   lyso_countLGBR = fTree->GetBranch("lyso_countLG[9]");
   lyso_snLGBR = fTree->GetBranch("lyso_snLG[9]");
   lyso_trigger_flagBR = fTree->GetBranch("lyso_trigger_flag[9]");
+  lyso_is_saturatedBR = fTree->GetBranch("lyso_is_saturated[9]");
 
   runTypeBR = fTree->GetBranch("runType");
   boot_nrBR = fTree->GetBranch("boot_nr");
@@ -202,21 +210,25 @@ void LEvRec1File::SetAddresses() {
   trigger_countLGBR->SetAddress(&(evstr.trigger_countLG[0]));
   trigger_snLGBR->SetAddress(&(evstr.trigger_snLG[0]));
   trigger_trigger_flagBR->SetAddress(&(evstr.trigger_trigger_flag[0]));
+  trigger_is_saturatedBR->SetAddress(&(evstr.trigger_is_saturated[0]));
   scint_countHGBR->SetAddress(&(evstr.scint_countHG[0]));
   scint_snHGBR->SetAddress(&(evstr.scint_snHG[0]));
   scint_countLGBR->SetAddress(&(evstr.scint_countLG[0]));
   scint_snLGBR->SetAddress(&(evstr.scint_snLG[0]));
   scint_trigger_flagBR->SetAddress(&(evstr.scint_trigger_flag[0]));
+  scint_is_saturatedBR->SetAddress(&(evstr.scint_is_saturated[0]));
   veto_countHGBR->SetAddress(&(evstr.veto_countHG[0]));
   veto_snHGBR->SetAddress(&(evstr.veto_snHG[0]));
   veto_countLGBR->SetAddress(&(evstr.veto_countLG[0]));
   veto_snLGBR->SetAddress(&(evstr.veto_snLG[0]));
   veto_trigger_flagBR->SetAddress(&(evstr.veto_trigger_flag[0]));
+  veto_is_saturatedBR->SetAddress(&(evstr.veto_is_saturated[0]));
   lyso_countHGBR->SetAddress(&(evstr.lyso_countHG[0]));
   lyso_snHGBR->SetAddress(&(evstr.lyso_snHG[0]));
   lyso_countLGBR->SetAddress(&(evstr.lyso_countLG[0]));
   lyso_snLGBR->SetAddress(&(evstr.lyso_snLG[0]));
   lyso_trigger_flagBR->SetAddress(&(evstr.lyso_trigger_flag[0]));
+  lyso_is_saturatedBR->SetAddress(&(evstr.lyso_is_saturated[0]));
 
   runTypeBR->SetAddress(&(evstr.runType));
   boot_nrBR->SetAddress(&(evstr.boot_nr));

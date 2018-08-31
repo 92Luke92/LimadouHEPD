@@ -19,6 +19,8 @@ LTriggerSignal GetTriggerSignal(const LEvRec0 lev0, const LCalibration cal) {
      result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
      result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigmaLG[index];
      result.trigger_flag[iu][ipmt] = lev0.trigger_flag[index];
+     if(lev0.pmt_high[index] == (NADC-1))
+	result.is_saturated[iu][ipmt] = true;
     }
   }
 
@@ -44,6 +46,8 @@ LScintillatorSignal GetScintillatorSignal(const LEvRec0 lev0, const LCalibration
       result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
       result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigmaLG[index];
       result.trigger_flag[iu][ipmt] = lev0.trigger_flag[index];
+      if(lev0.pmt_high[index] == (NADC-1))
+	 result.is_saturated[iu][ipmt] = true;
     }
   }
   
@@ -69,6 +73,8 @@ LVetoSignal GetVetoSignal(const LEvRec0 lev0, const LCalibration cal) {
       result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
       result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigmaLG[index];
       result.trigger_flag[iu][ipmt] = lev0.trigger_flag[index];
+      if(lev0.pmt_high[index] == (NADC-1))
+	 result.is_saturated[iu][ipmt] = true;
     }
   }
   
@@ -94,6 +100,8 @@ LLysoSignal GetLysoSignal(const LEvRec0 lev0, const LCalibration cal) {
       result.cont_lg[iu][ipmt] = static_cast<double>(lev0.pmt_low[index])-pedestalLG[index];
       result.sn_lg[iu][ipmt] = result.cont_lg[iu][ipmt]/sigmaLG[index];
       result.trigger_flag[iu][ipmt] = lev0.trigger_flag[index];
+      if(lev0.pmt_low[index] == (NADC-1))
+	 result.is_saturated[iu][ipmt] = true;
     }
   }
   

@@ -14,8 +14,8 @@ public:
   double GetY(const int iu, const int ipmt) const;
   double GetZ(const int iu, const int ipmt) const;
 
-  double GetSNOfUnit(const int unit, const bool isHG) const; // PMT 1 broken
-  double GetCountsOfUnit(const int unit, const bool isHG) const; // PMT 1 broken
+  double GetSNOfUnit(const int unit, const bool isHG) const; // PMT 0 broken
+  double GetCountsOfUnit(const int unit, const bool isHG) const; // PMT 0 broken
  };
 
 

@@ -81,21 +81,25 @@ struct LEvRec1Stream {
   double trigger_countLG[2*NTRIGSCINT];
   double trigger_snLG[2*NTRIGSCINT];
   bool trigger_trigger_flag[2*NTRIGSCINT];
+  bool trigger_is_saturated[2*NTRIGSCINT];
   double scint_countHG[2*NSCINTPLANES];
   double scint_snHG[2*NSCINTPLANES];
   double scint_countLG[2*NSCINTPLANES];
   double scint_snLG[2*NSCINTPLANES];
   bool scint_trigger_flag[2*NSCINTPLANES];
+  bool scint_is_saturated[2*NSCINTPLANES];
   double veto_countHG[2*NVETOSCINT];
   double veto_snHG[2*NVETOSCINT];
   double veto_countLG[2*NVETOSCINT];
   double veto_snLG[2*NVETOSCINT];
   bool veto_trigger_flag[2*NVETOSCINT];
+  bool veto_is_saturated[2*NVETOSCINT];
   double lyso_countHG[NLYSOCRYSTALS];
   double lyso_snHG[NLYSOCRYSTALS];
   double lyso_countLG[NLYSOCRYSTALS];
   double lyso_snLG[NLYSOCRYSTALS];
   bool lyso_trigger_flag[NLYSOCRYSTALS];
+  bool lyso_is_saturated[NLYSOCRYSTALS];
   
   int nClusters;
   int seed[MAXNCLUSTERS];

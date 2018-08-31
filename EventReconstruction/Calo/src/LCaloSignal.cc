@@ -15,6 +15,7 @@ LCaloSignal::LCaloSignal() {
   cont_lg=0;
   sn_lg=0;
   trigger_flag=0;
+  is_saturated=0;
 }
 
 LCaloSignal::LCaloSignal(const LCaloSignal &cs) {
@@ -25,18 +26,21 @@ LCaloSignal::LCaloSignal(const LCaloSignal &cs) {
   cont_lg = new double*[nunits];
   sn_lg = new double*[nunits];
   trigger_flag = new bool*[nunits];
+  is_saturated = new bool*[nunits];
   for(int iu=0; iu<nunits; ++iu) {
     cont_hg[iu] = new double[npmts];
     sn_hg[iu] = new double[npmts];
     cont_lg[iu] = new double[npmts];
     sn_lg[iu] = new double[npmts];
     trigger_flag[iu] = new bool[npmts];
+    is_saturated[iu] = new bool[npmts];
     for(int ip=0; ip<npmts; ++ip) {
       cont_hg[iu][ip] = cs.cont_hg[iu][ip];
       sn_hg[iu][ip] = cs.sn_hg[iu][ip];
       cont_lg[iu][ip] = cs.cont_lg[iu][ip];
       sn_lg[iu][ip] = cs.sn_lg[iu][ip];
       trigger_flag[iu][ip] = cs.trigger_flag[iu][ip];
+      is_saturated[iu][ip] = cs.is_saturated[iu][ip];
     }
   }
 }
@@ -52,18 +56,21 @@ LCaloSignal& LCaloSignal::operator=(const LCaloSignal& cs) {  // copy assignment
     cont_lg = new double*[nunits];
     sn_lg = new double*[nunits];
     trigger_flag = new bool*[nunits];
+    is_saturated = new bool*[nunits];
     for(int iu=0; iu<nunits; ++iu) {
       cont_hg[iu] = new double[npmts];
       sn_hg[iu] = new double[npmts];
       cont_lg[iu] = new double[npmts];
       sn_lg[iu] = new double[npmts];
       trigger_flag[iu] = new bool[npmts];
+      is_saturated[iu] = new bool[npmts];
       for(int ip=0; ip<npmts; ++ip) {
 	cont_hg[iu][ip] = cs.cont_hg[iu][ip];
 	sn_hg[iu][ip] = cs.sn_hg[iu][ip];
 	cont_lg[iu][ip] = cs.cont_lg[iu][ip];
 	sn_lg[iu][ip] = cs.sn_lg[iu][ip];
 	trigger_flag[iu][ip] = cs.trigger_flag[iu][ip];
+	is_saturated[iu][ip] = cs.is_saturated[iu][ip];
       }
     }
   }
@@ -91,6 +98,10 @@ void LCaloSignal::ClearHEAP() {
     for(int iu=0; iu<nunits; ++iu) if(trigger_flag[iu]) delete[] trigger_flag[iu];
     delete[] trigger_flag;
   }
+  if(is_saturated) {
+    for(int iu=0; iu<nunits; ++iu) if(is_saturated[iu]) delete[] is_saturated[iu];
+    delete[] is_saturated;
+  }
 
   nunits = 0;
   npmts = 0;
@@ -100,6 +111,7 @@ void LCaloSignal::ClearHEAP() {
   cont_lg=0;
   sn_lg=0;
   trigger_flag=0;
+  is_saturated=0;
 
   return;
 }
@@ -116,6 +128,7 @@ void LCaloSignal::Reset() {
       sn_hg[i][j]=0.;
       sn_lg[i][j]=0.;
       trigger_flag[i][j]=false;
+      is_saturated[i][j]=false;
     }
   }
   return;
@@ -130,12 +143,14 @@ void LCaloSignal::CreateContainers() {
   cont_lg = new double*[nunits];
   sn_lg = new double*[nunits];
   trigger_flag = new bool*[nunits];
+  is_saturated = new bool*[nunits];
   for(int iu=0; iu<nunits; ++iu) {
     cont_hg[iu] = new double[npmts];
     sn_hg[iu] = new double[npmts];
     cont_lg[iu] = new double[npmts];
     sn_lg[iu] = new double[npmts];
     trigger_flag[iu] = new bool[npmts];
+    is_saturated[iu] = new bool[npmts];
   }
   Reset();
   return;
@@ -162,6 +177,16 @@ void LCaloSignal::DumpTriggerFlag(void) const {
   std::cout << std::endl;
 }
 
+void LCaloSignal::DumpPMTSaturation(void) const {
+  std::cout << "PMT SATURATION" << std::endl;
+  for(int iu=0; iu<nunits; ++iu) {
+    std::cout << "  Unit " << iu << ": ";
+    for(int ip=0; ip<npmts; ++ip) std::cout << is_saturated[iu][ip] << "  ";
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+}
+
 void LCaloSignal::DumpAll() const {
   if(!(nunits>0)) return;
   DumpModule(cont_hg, "HIGH GAIN counts");
@@ -169,6 +194,7 @@ void LCaloSignal::DumpAll() const {
   DumpModule(cont_lg, "LOW GAIN counts");
   DumpModule(sn_lg, "LOW GAIN signal to noise");
   DumpTriggerFlag();
+  DumpPMTSaturation();
   return;
 }
 
@@ -189,6 +215,7 @@ void LCaloSignal::FillRandom(void) {
       sn_hg[i][j]=cont_hg[i][j]/sigmaIN;
       sn_lg[i][j]=cont_lg[i][j]/sigmaIN;
       trigger_flag[i][j]=false;
+      is_saturated[i][j]=false;
     }
   }
   return;
@@ -196,13 +223,15 @@ void LCaloSignal::FillRandom(void) {
 
 double LCaloSignal::GetSNOfUnit(const int unit, const bool isHG) const {
   double result=0;
-  for(int ipmt=0; ipmt<npmts; ++ipmt) result += (isHG ? sn_hg[unit][ipmt]: sn_lg[unit][ipmt]); // do not sum in quadrature!! You would make significance always positive even for negative signals!
+  for(int ipmt=0; ipmt<npmts; ++ipmt)
+     result += (isHG ? sn_hg[unit][ipmt]: sn_lg[unit][ipmt]); // do not sum in quadrature!! You would make significance always positive even for negative signals!
   return result;  
 }
 
 double LCaloSignal::GetCountsOfUnit(const int unit, const bool isHG) const {
   double result=0.;
-  for(int ipmt=0; ipmt<npmts; ++ipmt) result += (isHG ? cont_hg[unit][ipmt] : cont_lg[unit][ipmt]);
+  for(int ipmt=0; ipmt<npmts; ++ipmt)
+     result += (isHG ? cont_hg[unit][ipmt] : cont_lg[unit][ipmt]);
   return result;  
 }
 
@@ -299,5 +328,13 @@ double LCaloSignal::GetCounts(const bool isHG, const double threshold_sn) const 
   return result;  
 }
 
-
+bool LCaloSignal::CheckSaturation(void) const {
+  bool result=false;
+  for(int unit=0; unit<nunits; ++unit)
+     for(int ipmt=0; ipmt<npmts; ++ipmt) 
+        if (is_saturated[unit][ipmt])
+	   result = true;
+  
+  return result;  
+}
 

@@ -62,6 +62,7 @@
 -1              -1
 -1              -1
 -1              -1
-# Eq factors obtained by F. Palma running over boot number 166, runs 1570-3539 included. Selection (T3 XOR T4) & P1 & P2 & P3 & P14 & P15 & P16 & Lyso centrale & No hit sui restanti lyso & No hit su veto laterale & Veto bottom.
+# Eq factors obtained by F. Palma running over boot number 166, runs 1570-3539 included.
+# Selection (T3 XOR T4) & P1 & P2 & P3 & P14 & P15 & P16 & Lyso centrale & No hit sui restanti lyso & No hit su veto laterale & Veto bottom.
 # Modified by R. Iuppa as follows:
-#   1. all numbers put to -1 (not to be equalised) because still not sure about equalisation procedure for LG
+# 1. all numbers put to -1 (not to be equalised) because still not sure about equalisation procedure for LG

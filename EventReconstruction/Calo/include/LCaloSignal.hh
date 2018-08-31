@@ -20,6 +20,7 @@ public:
   double **cont_lg;
   double **sn_lg;
   bool **trigger_flag;
+  bool **is_saturated;
   virtual double GetX(const int iu, const int ipmt) const =0;
   virtual double GetY(const int iu, const int ipmt) const =0;
   virtual double GetZ(const int iu, const int ipmt) const =0;
@@ -33,11 +34,14 @@ public:
   double GetSNOfUnit(const int unit, const bool isHG) const;
   double GetCountsOfUnit(const int unit, const bool isHG) const;
   double GetCounts(const bool isHG, const double threshold = THRESHOLD) const;
-  
+  bool CheckSaturation(void) const;
+
+  bool CheckSaturation(void);
 protected:
   void CreateContainers(void);
   void DumpModule(double** inp, const char *string) const;
   void DumpTriggerFlag() const;
+  void DumpPMTSaturation(void) const;
   void DumpAll() const;
   int nunits;
   int npmts;
