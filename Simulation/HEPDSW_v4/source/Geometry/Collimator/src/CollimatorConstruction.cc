@@ -65,8 +65,8 @@ CollimatorConstruction::CollimatorConstruction()
   fStopColl=360.*deg;
   
 
-  fPlane_X = 40.*cm; //check correct number
-  fPlane_Y = 40.*cm; //check correct number
+  fPlane_X = 360.*mm;
+  fPlane_Y = 345.*mm;
   fPlane_Z = 5.1*cm;
   fStartPlane_hol = 0.*deg;
   fStopPlane_hol = 360.*deg;
@@ -106,7 +106,14 @@ void CollimatorConstruction::Builder(G4VPhysicalVolume* motherVolume)
   brass->AddMaterial(Cu,70*perCent);
   brass->AddMaterial(Zn,30*perCent);
 
-  G4Material* C = new G4Material("Carbon",6.,12.01*g/mole,2.267*g/cm3);
+  // NIST reference
+  G4Element* elC = new G4Element("Carbon","C",6,12.01*g/mole);
+  G4Element* elO = new G4Element("Oxygen","O",8,16.*g/mole);
+  G4Element* elH = new G4Element("Hydrogen","H",1,1.01*g/mole);
+  G4Material* PMMA = new G4Material("PMMA", 1.19*g/cm3, 3);
+  PMMA -> AddElement(elC, 5);
+  PMMA -> AddElement(elO, 2);
+  PMMA -> AddElement(elH, 8);
   
   fSolidColl1 = new G4Tubs("fSolidColl1",fRmin1Coll,fRmaxColl,fHeigth1Coll/2.,fStartColl,fStopColl);
   fSolidColl2 = new G4Tubs("fSolidColl2",fRmin2Coll,fRmaxColl,fHeigth2Coll/2.,fStartColl,fStopColl);
@@ -118,7 +125,7 @@ void CollimatorConstruction::Builder(G4VPhysicalVolume* motherVolume)
   fSolidPlane_tot = new G4Box("fSolidPlane_tot",fPlane_X/2.,fPlane_Y/2.,fPlane_Z/2.);
   fSolidPlane_hol = new G4Tubs("fSolidPlane_hol",0.,fRmaxColl,fPlane_Z/2.,fStartPlane_hol,fStopPlane_hol);
   fSolidPlane = new G4SubtractionSolid("fSolidPlane",fSolidPlane_tot,fSolidPlane_hol,0,G4ThreeVector(0,0,0));
-  fLogicPlane = new G4LogicalVolume(fSolidPlane,C,"fLogicPlane"); //check correct material
+  fLogicPlane = new G4LogicalVolume(fSolidPlane,PMMA,"fLogicPlane"); //check correct material
   fPhysiPlane = new G4PVPlacement(0,G4ThreeVector(-1.75*cm,-1.8*cm,86.15*cm),"fPhysiPlane",fLogicPlane,motherVolume,false,0,true);
 
   
