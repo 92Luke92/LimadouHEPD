@@ -60,11 +60,50 @@ get_directory_property(headers DIRECTORY source DEFINITION headers)
 get_directory_property(sources DIRECTORY source DEFINITION sources)
 
 include(FindROOT)
+
+
+## ============================================================================
+##
+##  CERN ROOT ANALYSIS FRAMEWORK
+##
+## ============================================================================
+
+# You need to tell CMake where to find the ROOT installation.
+# For ROOT built with CMake.
+# Add in CMAKE_PREFIX_PATH the installation prefix for ROOT
+list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
+
+if(APPLE)
+    set(ROOT_REQUIRED_COMPONENTS RIO Core Net Geom GenVector GuiBld Eve Gviz Gui GCocoa RGL gdml)
+    set(ROOT_OPTIONAL_COMPONENTS Minuit EG) #EG is not used yet, maybe needed in the future if enhnanced PDG functionality is needed
+elseif(UNIX)
+    set(ROOT_REQUIRED_COMPONENTS RIO Core Net Geom GenVector GuiBld Eve Gviz Gui GX11 GX11TTF Gdml)
+    set(ROOT_OPTIONAL_COMPONENTS Minuit EG)
+endif()
+
+# Locate the ROOT package and defines a number of variables (e.g. ROOT_INCLUDE_DIRS)
+find_package(ROOT 6.00 REQUIRED COMPONENTS ${ROOT_REQUIRED_COMPONENTS} OPTIONAL_COMPONENTS ${ROOT_OPTIONAL_COMPONENTS})
+
+
+## use this to print out all the cmake variables
+get_cmake_property(_variableNames VARIABLES)
+#list (SORT _variableNames)
+#foreach (_variableName ${_variableNames})
+#    message(STATUS "${_variableName}=${${_variableName}}")
+#endforeach()
+message(STATUS "${ROOT_REQUIRED_COMPONENTS}")
+message(STATUS "Component ${ROOT_FIND_COMPONENTS} found")
+message(STATUS "Component ${ROOT_minuit2_FOUND} found")
+message(STATUS "Component ${ROOT_FOUND} found")
+
+
+# Define useful ROOT functions and macros (e.g. ROOT_GENERATE_DICTIONARY)
 if(ROOT_FOUND)
 	MESSAGE( STATUS "HEPDSW will be compiled with ROOT.")
 	include_directories(${ROOT_INCLUDE_DIR})
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_ANALYSIS_ROOT")
 	set(EXTRA_LIBRARIES "${EXTRA_LIBRARIES} ${ROOT_LIBRARIES}")
+	set(ROOT_LIBRARIES ${ROOT_LIBRARIES} -lEve)
 	set (HEPDSW_BUILTWITH_ROOT "yes")
 else()
 	MESSAGE(FATAL_ERROR "ROOT installation not found!Installation interrupted!")
@@ -117,6 +156,15 @@ add_dependencies(hepdsw_exe hepdsw_lib)
 
 set_target_properties(hepdsw_exe PROPERTIES OUTPUT_NAME "hepdsw")
 target_link_libraries(hepdsw_exe hepdsw_lib)
+
+#----------------------------------------------------------------------------------
+
+# HEPDEV executable
+add_executable(hepdEV_exe ${PROJECT_SOURCE_DIR}/source/Executable/HEPD_viewer.cc ${headers})
+add_dependencies(hepdEV_exe hepdsw_lib)
+
+set_target_properties(hepdEV_exe PROPERTIES OUTPUT_NAME "hepdEV")
+target_link_libraries(hepdEV_exe hepdsw_lib)
 
 
 #----------------------------------------------------------------------------

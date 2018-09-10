@@ -17,4 +17,5 @@
 #pragma link C++ class RootDegraderHit+;
 #pragma link C++ class std::vector<RootDegraderHit>+;
 #pragma link C++ class RootEvent+;
+#pragma link C++ class HEPDView3D;
 #endif 

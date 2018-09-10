@@ -17,10 +17,10 @@ Track::Track (G4int aTrackId, G4int aPDG, G4String aName,
 		      G4ThreeVector aPosition, G4ThreeVector aMomentumDirection, G4double aKinEnergy,
 	      G4int aMotherTrackId, G4String aVertexVolumeName, G4String aCreatorProcessName)
 { 
-  theTrackId             = aTrackId;	 
+  theTrackId             = aTrackId;
   thePDG                 = aPDG;
   theName                = aName;
-  thePosition            = aPosition;	 
+  thePosition            = aPosition;
   theMomentumDirection   = aMomentumDirection;
   theKinEnergy           = aKinEnergy;
   theMotherTrackId       = aMotherTrackId;
@@ -38,7 +38,7 @@ Track::Track (const Track& right) : G4VHit()
   theTrackId              = right.theTrackId;
   thePDG                  = right.thePDG;
   theName                 = right.theName;
-  thePosition             = right.thePosition;	 
+  thePosition             = right.thePosition;
   theMomentumDirection    = right.theMomentumDirection;
   theKinEnergy            = right.theKinEnergy;
   theMotherTrackId        = right.theMotherTrackId;
