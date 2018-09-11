@@ -67,7 +67,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     RootEvent* MCevt = new RootEvent;
     TBranch* b_Event = new TBranch;
     Tmc->SetBranchAddress ("Event", &MCevt, &b_Event);
-    EcalADC ecaladc(EcalADC::Synthesis);
+    EcalADC ecaladc(EcalADC::RawEdep);
     TrackerADC trkadc;
 
     if (ne>100000) ne=100000;
