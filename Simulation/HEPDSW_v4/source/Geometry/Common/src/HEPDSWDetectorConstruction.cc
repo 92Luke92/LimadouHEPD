@@ -161,6 +161,7 @@ G4VPhysicalVolume* HEPDSWDetectorConstruction::Construct()
   attInvisible->SetForceAuxEdgeVisible(true);
   fLogicWorld->SetVisAttributes(attInvisible);
   
+  
   if(useSatellite)
     fSatelliteBuilder->Builder(theSatelliteConfig,fPhysiWorld);
   if(useHEPDBox)
@@ -172,7 +173,7 @@ G4VPhysicalVolume* HEPDSWDetectorConstruction::Construct()
   if(useTracker)
     fTrackerBuilder->Builder(theTrackerConfig,fPhysiWorld);
 
-  if (useProtonTB && useDegrader) fDegraderBuilder->Builder(fPhysiWorld,fworldHalfZ,degrader_dz);
+  //if (useProtonTB && useDegrader) fDegraderBuilder->Builder(fPhysiWorld,fworldHalfZ,degrader_dz);
   if (useNucleiTB) fCollimatorBuilder->Builder(fPhysiWorld);
   
   return fPhysiWorld;
