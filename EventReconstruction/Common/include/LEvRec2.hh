@@ -2,6 +2,7 @@
 #define __LEVREC2__ 1
 
 #include <cstddef>
+#include "ldsimplevars.hh"
 
 struct LEvRec2Stream;
 
@@ -29,6 +30,8 @@ struct LEvRec2Stream {
   double Angle;
   double EnergyLoss;
   int ParticleID;
+  //float seemsLepton(leptonDiscriminator* discr=new ldsimpleVars);
+
 
   LEvRec2Stream();
   LEvRec2Stream(const LEvRec2 event);

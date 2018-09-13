@@ -11,7 +11,7 @@ endif()
 
 include(${ROOT_USE_FILE})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/Tracker/include ${CMAKE_SOURCE_DIR}/Calo/include ${CMAKE_SOURCE_DIR}/Tracker/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/Tracker/include ${CMAKE_SOURCE_DIR}/Common/include ${CMAKE_SOURCE_DIR}/Calo/include ${CMAKE_SOURCE_DIR}/Tracker/include)
 
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 
