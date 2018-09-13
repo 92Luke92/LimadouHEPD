@@ -14,6 +14,7 @@ public:
   LTrackerCluster();
   LTrackerCluster& operator=(const LTrackerCluster& other);
   LTrackerCluster(const int inpSeed, const double *inpCont, const double *inpSigma);
+  void LTrackerCluster_ASOF20180423(const int inpSeed, const double *inpCont, const double *inpSigma);
   void Dump() const;
   void FillRandom(void);
   bool operator < (const LTrackerCluster& cl) const;

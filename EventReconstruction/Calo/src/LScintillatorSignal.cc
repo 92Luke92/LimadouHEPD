@@ -2,6 +2,7 @@
 #include "detector_const.hh"
 
 #include <iostream>
+#include <math.h>
 
 LScintillatorSignal::LScintillatorSignal() {
     nunits=SCINTPLANES;
@@ -39,4 +40,16 @@ double LScintillatorSignal::GetZ(const int iu, const int ipmt) const {
     +TRIGBARTHICKNESS+TRIG_SCINT_GAP;
   double result = OFFSET+(iu+0.5)*SCINTPLANETHICKNESS + iu*SCINT_SCINT_GAP;
   return result;
+}
+
+double LScintillatorSignal::GetSNOfUnit(const int unit, const bool isHG) const {
+  double result=0;
+  if(unit==4) return 2.*sn_hg[unit][1]; // PMT 0 broken
+  else return LCaloSignal::GetSNOfUnit(unit,isHG);
+}
+
+double LScintillatorSignal::GetCountsOfUnit(const int unit, const bool isHG) const {
+  double result=0.;
+  if(unit==4) return 2.*cont_hg[unit][1]; // PMT 0 broken
+  else return LCaloSignal::GetCountsOfUnit(unit,isHG);
 }

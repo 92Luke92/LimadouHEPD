@@ -14,6 +14,7 @@ add_subdirectory(Tracker)
 add_subdirectory(Calo)
 add_subdirectory(exe)
 
+
 add_definitions( -std=c++11)
 
 
@@ -28,7 +29,3 @@ if(DOXYGEN_FOUND)
 		)
 endif(DOXYGEN_FOUND)
 
-
-
-
-#other cmakelists to be added here when written

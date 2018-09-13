@@ -26,6 +26,11 @@ LEvRec0File::LEvRec0File(const char *inpFile) {
       Tmd->GetEntry(i);
       RunId[i] = runid;
    }
+  unsigned short run_type; 
+  Tmd->SetBranchAddress("run_type",&run_type);
+  Tmd->GetEntry(0);
+  runType = run_type;
+
 }
 
 
@@ -45,12 +50,17 @@ int LEvRec0File::SetTheEventPointer(LEvRec0 &ev) {
    treeCalib->SetBranchAddress("trigger_flag[64]", &ev.trigger_flag);
    treeCalib->SetBranchAddress("alive_time", &ev.alive_time);
    treeCalib->SetBranchAddress("dead_time", &ev.dead_time);
-   treeCalib->SetBranchAddress("strip[4608]",&ev.strip);
-
-  // treeCalib->SetBranchStatus("*",kFALSE);
-  // treeCalib->SetBranchStatus("strip[4608]",kTRUE);
-  // treeCalib->SetBranchStatus("event_index",kTRUE);
-
+   
+   if(IsZeroSuppressed())
+   {
+      treeCalib->SetBranchAddress("clust_nr", &ev.clust_nr);
+      treeCalib->SetBranchAddress("cluster", &ev.cluster);
+   }
+   else 
+      treeCalib->SetBranchAddress("strip[4608]", &ev.strip);
+   
+   // treeCalib->SetBranchStatus("*",kFALSE);
+   
   return 0;
 }
 

@@ -96,16 +96,16 @@ std::vector<LTrackerCluster> GetClusters(const double* cont, const double *sigma
     while(1) {
       int extentAhead=std::min(SIDE_CHAN-1-ChanToSideChan(maxindex1),2);
       for(int index=1; index<=extentAhead; ++index) {
-	if(sn[maxindex1+index]>newmax1) {
-	  newmaxindex1=maxindex1+index;
-	  newmax1=sn[maxindex1+index];
-	}
+	       if(sn[maxindex1+index]>newmax1) {
+	         newmaxindex1=maxindex1+index;
+	         newmax1=sn[maxindex1+index];
+	       }
       } // Endl loop for newmax1
       if(newmaxindex1 == maxindex1) {
-	break;
+	     break;
       } else {
-	maxindex1 = newmaxindex1;
-	max1 = newmax1;
+	     maxindex1 = newmaxindex1;
+	     max1 = newmax1;
       }
     }
     // Compare with the threshold
@@ -202,7 +202,9 @@ LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal) {
   const double *sigma = cal.GetTrackerCalibration()->GetSigma(0);
   LTrackerMask hotmask=cal.GetTrackerCalibration()->GetMaskOnSigma(0,COLDSIGMA,HOTSIGMA);//set the variables!!!
   LTrackerMask ngmask=cal.GetTrackerCalibration()->GetMaskOnNGI(0,NGILOW,NGIHIGH);//set the variables!!!
-  LTrackerMask evmask=(hotmask&&ngmask);
+
+  LTrackerMask colmask=cal.GetTrackerCalibration()->GetMaskOnColumn(0);
+  LTrackerMask evmask=(hotmask&&ngmask&&colmask);
 
   //CN calculation
   LTrackerMask cnmask=cal.GetTrackerCalibration()->GetCNMask(0);
@@ -210,6 +212,57 @@ LTrackerSignal GetTrackerSignal(const LEvRec0 lev0, const LCalibration cal) {
   for (int iva=0;iva<N_VA;++iva) CN[iva]=0.; 
   ComputeCN(lev0.strip,ped,&cnmask,CN);
   for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich])-ped[ich]-CN[ChanToVA(ich)];
+  std::vector<LTrackerCluster> tmp = GetClusters(cont, sigma,&evmask);
+  // sorting on the eta SN
+  std::sort(tmp.begin(), tmp.end(), std::greater<LTrackerCluster>());    
+
+  LTrackerSignal result;
+  for(auto tmpit : tmp) result.push_back(tmpit);
+  
+  return result;
+}
+
+
+LTrackerSignal GetTrackerSignalCompressed(const LEvRec0 lev0, const LCalibration cal) {
+  double cont[NCHAN];
+  //const double *ped = cal.GetTrackerCalibration()->GetPedestal(0);
+  const double *sigma = cal.GetTrackerCalibration()->GetSigma(0);
+  LTrackerMask hotmask=cal.GetTrackerCalibration()->GetMaskOnSigma(0,COLDSIGMA,HOTSIGMA);//set the variables!!!
+  LTrackerMask ngmask=cal.GetTrackerCalibration()->GetMaskOnNGI(0,NGILOW,NGIHIGH);//set the variables!!!
+
+  LTrackerMask colmask=cal.GetTrackerCalibration()->GetMaskOnColumn(0);
+  LTrackerMask evmask=(hotmask&&ngmask&&colmask);
+
+  //for(int ich=0; ich<NCHAN; ++ich) cont[ich]=static_cast<double>(lev0.strip[ich]); // OLD COMPRESSED VERSION 
+  for(int ich=0; ich<NCHAN; ++ich) cont[ich]=0.;
+    
+  for(int icl=0; icl<lev0.clust_nr; ++icl) {
+    short iseed=lev0.cluster[icl][0];
+    int side = ChanToSide(iseed);
+    int schan = ChanToSideChan(iseed);
+    unsigned short nAdjStrip = lev0.GetNAdjacentStrips();
+    if(side == 0) { // p-side
+      for(int i=0; i<2*nAdjStrip+1; ++i) {
+        int deltaseed = -nAdjStrip+i;
+        int index = schan+deltaseed;
+        if(index<0 || index>SIDE_CHAN-1) {
+          continue; // channels not physically connected
+        } else {
+          cont[iseed+deltaseed] = static_cast<double>(lev0.cluster[icl][i+1]);
+        }
+      }
+    } else {      // n-side
+      for(int i=0; i<2*nAdjStrip+1; ++i) {
+        int deltaseed = -nAdjStrip+i;
+        int index = schan+deltaseed;
+        // account for degeneracy
+        if(index<0) deltaseed+=SIDE_CHAN;
+        else if(index>SIDE_CHAN-1) deltaseed-=SIDE_CHAN;
+        // always fill
+        cont[iseed+deltaseed] = static_cast<double>(lev0.cluster[icl][i+1]);
+      }
+    }
+  }
   std::vector<LTrackerCluster> tmp = GetClusters(cont, sigma,&evmask);
   // sorting on the eta SN
   std::sort(tmp.begin(), tmp.end(), std::greater<LTrackerCluster>());    

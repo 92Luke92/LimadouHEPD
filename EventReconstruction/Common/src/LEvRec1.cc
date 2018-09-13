@@ -1,4 +1,5 @@
 #include "LEvRec1.hh"
+#include "LReco01Manager.hh"
 #include <iostream>
 
 LEvRec1::LEvRec1() {
@@ -43,9 +44,10 @@ void LEvRec1::Reset(){
 }
 
 
-void LEvRec1::Dump() const {
+void LEvRec1::Dump(int entry) const {
   DumpTracker();
   DumpCalo();
+  DumpMD(entry);
   return;
 }
 
@@ -80,6 +82,13 @@ void LEvRec1::DumpVeto() const {
 
 void LEvRec1::DumpLyso() const {
   lyso.Dump();
+  return;
+}
+
+void LEvRec1::DumpMD(int entry) const {
+   if(entry == 0 || entry == 1 )
+      lev0MD.Dump() ;
+   
   return;
 }
 
@@ -134,6 +143,7 @@ void LEvRec1::CopyFromLEvRec1Stream(const LEvRec1Stream evstr) {
       trig.cont_lg[iu][ip]=evstr.trigger_countLG[iu*npmts+ip];
       trig.sn_lg[iu][ip]=evstr.trigger_snLG[iu*npmts+ip];
       trig.trigger_flag[iu][ip]=evstr.trigger_trigger_flag[iu*npmts+ip];
+      trig.is_saturated[iu][ip]=evstr.trigger_is_saturated[iu*npmts+ip];
     }
   }
   nunits=scint.GetNUnits();
@@ -145,6 +155,7 @@ void LEvRec1::CopyFromLEvRec1Stream(const LEvRec1Stream evstr) {
       scint.cont_lg[iu][ip]=evstr.scint_countLG[iu*npmts+ip];
       scint.sn_lg[iu][ip]=evstr.scint_snLG[iu*npmts+ip];
       scint.trigger_flag[iu][ip]=evstr.scint_trigger_flag[iu*npmts+ip];
+      scint.is_saturated[iu][ip]=evstr.scint_is_saturated[iu*npmts+ip];
     }
   }
   nunits=veto.GetNUnits();
@@ -156,6 +167,7 @@ void LEvRec1::CopyFromLEvRec1Stream(const LEvRec1Stream evstr) {
       veto.cont_lg[iu][ip]=evstr.veto_countLG[iu*npmts+ip];
       veto.sn_lg[iu][ip]=evstr.veto_snLG[iu*npmts+ip];
       veto.trigger_flag[iu][ip]=evstr.veto_trigger_flag[iu*npmts+ip];
+      veto.is_saturated[iu][ip]=evstr.veto_is_saturated[iu*npmts+ip];
     }
   }
   nunits=lyso.GetNUnits();
@@ -167,6 +179,7 @@ void LEvRec1::CopyFromLEvRec1Stream(const LEvRec1Stream evstr) {
       lyso.cont_lg[iu][ip]=evstr.lyso_countLG[iu*npmts+ip];
       lyso.sn_lg[iu][ip]=evstr.lyso_snLG[iu*npmts+ip];
       lyso.trigger_flag[iu][ip]=evstr.lyso_trigger_flag[iu*npmts+ip];
+      lyso.is_saturated[iu][ip]=evstr.lyso_is_saturated[iu*npmts+ip];
     }
   }
 
@@ -190,10 +203,12 @@ void LEvRec1Stream::CopyFromLEvRec1(const LEvRec1 event) {
   Reset();
   nClusters = event.GetNOfTrackerClusters();
   if(nClusters>MAXNCLUSTERS) {
-    std::cerr << "LEvRec1Stream::CopyFromLEvRec1 error! Event containing "
+    if(LReco01Manager::GetInstance().verboseFLAG>=2) {
+      std::cerr << "LEvRec1Stream::CopyFromLEvRec1 error! Event containing "
 	      << nClusters << " clusters passed as input. I copy only the first "
 	      << "MAXNCLUSTERS=" << MAXNCLUSTERS << std::endl;
-    std::cerr << "nClusters too is set to this number." << std::endl;
+      std::cerr << "nClusters too is set to this number." << std::endl;
+    }
     nClusters=MAXNCLUSTERS;
     // Warning! This approach relies on the cls vector having decending order in SN.
     // But it does not distinguish the single ladders! You may have the situation when
@@ -222,6 +237,7 @@ void LEvRec1Stream::CopyFromLEvRec1(const LEvRec1 event) {
       trigger_countLG[iu*npmts+ip]=event.trig.cont_lg[iu][ip];
       trigger_snLG[iu*npmts+ip]=event.trig.sn_lg[iu][ip];
       trigger_trigger_flag[iu*npmts+ip]=event.trig.trigger_flag[iu][ip];
+      trigger_is_saturated[iu*npmts+ip]=event.trig.is_saturated[iu][ip];
     }
   }
 
@@ -234,6 +250,7 @@ void LEvRec1Stream::CopyFromLEvRec1(const LEvRec1 event) {
       scint_countLG[iu*npmts+ip]=event.scint.cont_lg[iu][ip];
       scint_snLG[iu*npmts+ip]=event.scint.sn_lg[iu][ip];
       scint_trigger_flag[iu*npmts+ip]=event.scint.trigger_flag[iu][ip];
+      scint_is_saturated[iu*npmts+ip]=event.scint.is_saturated[iu][ip];
     }
   }
 
@@ -246,6 +263,7 @@ void LEvRec1Stream::CopyFromLEvRec1(const LEvRec1 event) {
       veto_countLG[iu*npmts+ip]=event.veto.cont_lg[iu][ip];
       veto_snLG[iu*npmts+ip]=event.veto.sn_lg[iu][ip];
       veto_trigger_flag[iu*npmts+ip]=event.veto.trigger_flag[iu][ip];
+      veto_is_saturated[iu*npmts+ip]=event.veto.is_saturated[iu][ip];
     }
   }
 
@@ -258,6 +276,7 @@ void LEvRec1Stream::CopyFromLEvRec1(const LEvRec1 event) {
       lyso_countLG[iu*npmts+ip]=event.lyso.cont_lg[iu][ip];
       lyso_snLG[iu*npmts+ip]=event.lyso.sn_lg[iu][ip];
       lyso_trigger_flag[iu*npmts+ip]=event.lyso.trigger_flag[iu][ip];
+      lyso_is_saturated[iu*npmts+ip]=event.lyso.is_saturated[iu][ip];
     }
   }
 
@@ -286,7 +305,8 @@ void LEvRec1Stream::DumpTrigger(void) const {
 		<< trigger_snHG[iu*2+ip] << " "
 		<< trigger_countLG[iu*2+ip] << " "
 		<< trigger_snLG[iu*2+ip] << " "
-		<< trigger_trigger_flag[iu*2+ip] << std::endl;
+		<< trigger_trigger_flag[iu*2+ip] << " "
+		<< trigger_is_saturated[iu*2+ip] << std::endl;
     }
   }
 
@@ -334,6 +354,7 @@ void LEvRec1Stream::Reset() {
     trigger_countLG[i]=0.;
     trigger_snLG[i]=0.;
     trigger_trigger_flag[i]=false;
+    trigger_is_saturated[i]=false;
   }
   for(int i=0; i<2*NSCINTPLANES; ++i) {
     scint_countHG[i]=0.;
@@ -341,6 +362,7 @@ void LEvRec1Stream::Reset() {
     scint_countLG[i]=0.;
     scint_snLG[i]=0.;
     scint_trigger_flag[i]=false;
+    scint_is_saturated[i]=false;
   }
   for(int i=0; i<2*NVETOSCINT; ++i) {
     veto_countHG[i]=0.;
@@ -348,6 +370,7 @@ void LEvRec1Stream::Reset() {
     veto_countLG[i]=0.;
     veto_snLG[i]=0.;
     veto_trigger_flag[i]=false;
+    veto_is_saturated[i]=false;
   }
   for(int i=0; i<NLYSOCRYSTALS; ++i) {
     lyso_countHG[i]=0.;
@@ -355,6 +378,7 @@ void LEvRec1Stream::Reset() {
     lyso_countLG[i]=0.;
     lyso_snLG[i]=0.;
     lyso_trigger_flag[i]=false;
+    lyso_is_saturated[i]=false;
   }
   
   runType = 0x0;
@@ -375,4 +399,45 @@ void LEvRec1Stream::Reset() {
 
 LEvRec1Stream::~LEvRec1Stream() {
   Reset();
+}
+
+bool LEvRec1::DiscontinousSignal(const double threshold_sn) const {
+  int lastPlane = GetLastPlaneHit(threshold_sn);
+  if(lastPlane==-999) return true;
+  bool isHG=true;
+  for(int i = 0; i<lastPlane; ++i ) if(scint.GetSNOfUnit(i, isHG)<threshold_sn) return true;
+  return false;
+}
+
+int LEvRec1::GetLastPlaneHit(const double threshold_sn) const {
+  int lastPlane=-999;
+  bool isHG=true;
+  for(int i=0; i<NSCINTPLANES; ++i) if(scint.GetSNOfUnit(i, isHG)>threshold_sn) lastPlane = i;
+  return lastPlane;
+}
+
+double LEvRec1::GetMSPlaneToMSBarRatio(const double threshold_sn) const {
+  bool isHG=true;
+  double result = scint.GetCountsOfMSU(isHG,threshold_sn)/trig.GetCountsOfMSU(isHG,threshold_sn);
+  return result;
+}
+
+double LEvRec1::GetScintCounts(const double threshold_sn) const {
+  bool isHG = true;
+  double result = scint.GetCounts(isHG, threshold_sn);
+  return result;
+}
+
+double LEvRec1::GetTriggerCounts(const double threshold_sn) const {
+  bool isHG = true;
+  double result =0.;
+  if(trig.GetSNOfMSU(isHG,threshold_sn)>threshold_sn) {
+    int MSU = trig.GetTheMostSignificantUnit(isHG,threshold_sn);
+    result += trig.GetCountsOfMSU(isHG,threshold_sn);
+    if(trig.GetSNOf2ndMSU(isHG,threshold_sn)>threshold_sn) {
+      int MSU2nd = trig.GetThe2ndMostSignificantUnit(isHG,threshold_sn);
+      if(MSU-MSU2nd==1) result += trig.GetCountsOf2ndMSU(isHG,threshold_sn); // only for adjacent bars
+    }
+  }
+  return result;
 }

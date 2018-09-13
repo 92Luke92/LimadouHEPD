@@ -16,6 +16,10 @@ public:
   std::size_t push_back(const LTrackerCluster cl);
   void FillRandom(void);
   void HoldTimeCorrectionSig();
+  void Dump();
+  int GetMSCluster(void);
+  double GetMSClusterSN(void);
+  double GetMSClusterCounts(void);
   //void HoldTimeCorrection(const double HOLDCORRCONST);
   std::vector<LTrackerCluster> cls;
 private:

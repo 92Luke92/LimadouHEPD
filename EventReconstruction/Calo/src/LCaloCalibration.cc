@@ -8,6 +8,18 @@
 #include <random>
 #include <chrono>
 
+const double __CHECKCALO__=0.1;
+
+const bool LCaloCalibration::CheckStatus(const double *refPedestal, const double *refSigma) const {
+  bool result = true;
+  for(int iPmt=0; iPmt<NPMT; ++iPmt) {
+    if(fabs((pedestal[iPmt]-refPedestal[iPmt])/pedestal[iPmt])>__CHECKCALO__) result = false;
+    if(fabs((sigma[iPmt]-refSigma[iPmt])/sigma[iPmt])>__CHECKCALO__) result = false;
+  }
+  if(result==false) std::cerr << __LCALOCALIBRATION__ << " warning! CheckStatus pictured a bad situation!" << std:: endl;
+  return false;
+}
+
 LCaloCalibration::LCaloCalibration() {
   Reset();
 }
@@ -152,6 +164,62 @@ LCaloCalibration* LCaloCalibration::ReadRoot(const char *fileIn, enum pmt_calib_
 	    << &result << ")" << std::endl << std::flush;
 
   return result;
+
+}
+
+
+const int LCaloCalibration::trigger_cal(const int i, const int j, int flag) const {
+  if(i<0 || i>=NTRIGSCINT) return -999;
+  if(j<0 || j>=2) return -999;
+  if(flag==PED) return pedestal[i+j*NPMT/2];
+  else if(flag==SIG) return sigma[i+j*NPMT/2];
+  else return -999;
+}
+
+const int LCaloCalibration::plane_cal(const int i, const int j, int flag) const {
+  if(i<0 || i>=NSCINTPLANES) return -999;
+  if(j<0 || j>=2) return -999;
+  if(flag==PED) return pedestal[NTRIGSCINT+i+j*NPMT/2];
+  else if(flag==SIG) return sigma[NTRIGSCINT+i+j*NPMT/2];
+  else return -999;
+}
+
+const int LCaloCalibration::lyso_cal(const int i, int flag) const {
+   if(i<0 || i>=NLYSOCRYSTALS) return -999;
+   if (flag ==PED)
+   {
+      if(i==0) return pedestal[28]; // North West
+      if(i==1) return pedestal[62]; // North
+      if(i==2) return pedestal[29]; // North East
+      if(i==3) return pedestal[30]; // West
+      if(i==4) return pedestal[31]; // Center
+      if(i==5) return pedestal[60]; // East
+      if(i==6) return pedestal[27]; // South West
+      if(i==7) return pedestal[61]; // South
+      if(i==8) return pedestal[59]; // South East
+   }
+   if (flag == SIG)
+   {
+      if(i==0) return sigma[28]; // North West
+      if(i==1) return sigma[62]; // North
+      if(i==2) return sigma[29]; // North East
+      if(i==3) return sigma[30]; // West
+      if(i==4) return sigma[31]; // Center
+      if(i==5) return sigma[60]; // East
+      if(i==6) return sigma[27]; // South West
+      if(i==7) return sigma[61]; // South
+      if(i==8) return sigma[59]; // South East
+   }
+
+}
+
+const int LCaloCalibration::veto_cal(const int i, const int j, int flag) const {
+  if(i<0 || i>=NVETOSCINT) return -999;
+  if(j<0 || j>=2) return -999;
+  if (flag==PED)
+     return pedestal[NTRIGSCINT+NSCINTPLANES +i+j*NPMT/2];
+  if (flag==SIG)
+     return sigma[NTRIGSCINT+NSCINTPLANES +i+j*NPMT/2];
 
 }
 

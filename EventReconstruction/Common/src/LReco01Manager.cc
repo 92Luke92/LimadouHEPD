@@ -21,8 +21,16 @@ void LReco01Manager::LoadSteering(const char* steerFileIN) {
   steer.Load(steerFile);
   // Load calibration
   calFileName = steer.GetParameter<std::string>("CALBFILE");
-  //cal = LCalibration::ReadROOT(calFileName.c_str());
-  cal = LCalibration::Read(calFileName.c_str());
+  cal = LCalibration::ReadROOT(calFileName.c_str());
+  //cal = LCalibration::Read(calFileName.c_str());
+  // Load equalizations
+  eqHGFileName = steer.GetParameter<std::string>("EQHGFILE");
+  eqHG = LCaloEqualization::Read(eqHGFileName);
+  eqLGFileName = steer.GetParameter<std::string>("EQLGFILE");
+  eqLG = LCaloEqualization::Read(eqLGFileName);
+
+  eqHG->Dump();
+  eqLG->Dump();
   // Input file 
   L0fname = steer.GetParameter<std::string>("INPFILE");
   // Output folder
@@ -32,7 +40,7 @@ void LReco01Manager::LoadSteering(const char* steerFileIN) {
   // Max File Events
   maxFileEvents = steer.GetParameter<int>("MAXFEVTS");
   // Verbosity
-  verboseFLAG = steer.GetParameter<bool>("VERBOSE");
+  verboseFLAG = steer.GetParameter<int>("VERBOSE");
   std::cout << __LRECO01MANAGER__ << "Steering file loaded." << std::endl;
   steeringLoadedFLAG=true;
 
@@ -44,13 +52,19 @@ void LReco01Manager::LoadSteering(const char* steerFileIN) {
 void LReco01Manager::Reset(void) {
   steerFile="";
   calFileName="";
+  eqHGFileName="";
+  eqLGFileName="";
   outDirectory="";
   skipEvents=0;
   maxFileEvents=0;
-  verboseFLAG=true;
+  verboseFLAG=1;
   steeringLoadedFLAG=false;
   if(cal) cal->Reset();
   cal=0;
+  if(eqHG) eqHG->Reset();
+  eqHG = 0;
+  if(eqLG) eqLG->Reset();
+  eqLG = 0;
   L0fname="";
   inFile=0;
   outFile=0;
@@ -66,6 +80,14 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
   }
   if(cal->CheckStatus()==false) {
     std::cout << __LRECO01MANAGER__ << "calibration status bad." << std::endl;
+    result=false;
+  }
+  if(eqHG->CheckStatus()==false) {
+    std::cout << __LRECO01MANAGER__ << "High gain equalization status bad." << std::endl;
+    result=false;
+  }
+  if(eqLG->CheckStatus()==false) {
+    std::cout << __LRECO01MANAGER__ << "Low  gain equalization status bad." << std::endl;
     result=false;
   }
 
@@ -84,9 +106,11 @@ bool LReco01Manager::CheckLoadedSteering(void) const {
   }
   else {
     std::cout << __LRECO01MANAGER__ << "steering file \"" << steerFile << "\" ok." << std::endl;
-    if(verboseFLAG==true) {
+    if(verboseFLAG>0) {
       std::cout << __LRECO01MANAGER__ << "Reco parameters:" << std::endl;
       std::cout << __LRECO01MANAGER__ << "calFileName  " << calFileName << std::endl;
+      std::cout << __LRECO01MANAGER__ << "eqHGFileName  " << eqHGFileName << std::endl;
+      std::cout << __LRECO01MANAGER__ << "eqLGFileName  " << eqLGFileName << std::endl;
       std::cout << __LRECO01MANAGER__ << "inpFile  " << L0fname << std::endl;
       std::cout << __LRECO01MANAGER__ << "outDirectory " << outDirectory << std::endl;
       std::cout << __LRECO01MANAGER__ << "skipEvents    " << skipEvents << std::endl;
@@ -110,20 +134,34 @@ void LReco01Manager::Run(void) {
   NewOutFile();
   LEvRec0 lev0;
   inFile->SetTheEventPointer(lev0);
+  LEvRec0Md lev0MD;
+  inFile->SetMdPointer(lev0MD);
+
   int nentries=inFile->GetEntries();
   std::cout << __LRECO01MANAGER__ << "Looping on file " << L0fname << " (" << nentries << " entries)" << std::endl;
   int startEvent = (skipEvents==-1 ? 0 : skipEvents);
   for(int i0=startEvent; i0<nentries; ++i0){
     if(i0%PRINTOUTEVENTS==0) {
-      std::cout << __LRECO01MANAGER__
-		<<"event " << i0 << "/" <<nentries << std::endl;
+      std::cout << __LRECO01MANAGER__ <<"event " << i0 << "/" <<nentries << std::endl;
     }
     inFile->GetEntry(i0);
-    LEvRec1 l1ev = L0ToL1(lev0,cal);
-    outFile->Fill(L0ToL1(lev0,cal));
+
+    LEvRec1 l1ev = L0ToL1(lev0, cal, eqHG, eqLG);
+    outFile->Fill(l1ev);
     ++fevtcounter;
     if(maxFileEvents!=-1 && fevtcounter>maxFileEvents-1) break;
   }
+  // metadata
+  LEvRec1 l1ev;
+  for(int i0 = 0; i0 <2; ++i0)
+  {
+     inFile->GetMDEntry(i0);
+     l1ev.lev0MD = lev0MD;
+     if(i0 == 0)
+	outFile->SetMDTreeAddress(l1ev); 
+     outFile->FillMD();
+  }
+
   std::cout << __LRECO01MANAGER__ << std::endl;
   inFile->Close();
   delete inFile;
@@ -184,7 +222,7 @@ std::string LReco01Manager::L0NameToL1Name(void) { // Naming convention needed!
 }
 
 
-LEvRec1 LReco01Manager::L0ToL1(const LEvRec0 lev0IN, const LCalibration *calIN) {
+LEvRec1 LReco01Manager::L0ToL1(const LEvRec0 lev0IN, const LCalibration *calIN, const LCaloEqualization *eqHGIN, const LCaloEqualization *eqLGIN) {
   LEvRec1 result;
 
   result.runType = lev0IN.runType;
@@ -199,12 +237,24 @@ LEvRec1 LReco01Manager::L0ToL1(const LEvRec0 lev0IN, const LCalibration *calIN) 
   for(int i=0; i<NRATEMETER; ++i) result.rate_meter[i] = lev0IN.rate_meter[i];
   result.alive_time = lev0IN.alive_time;
   result.dead_time = lev0IN.dead_time;
-
-  result.tracker=GetTrackerSignal(lev0IN, *calIN);
+  
+  if(lev0IN.IsVirgin()) {
+    result.tracker=GetTrackerSignal(lev0IN, *calIN);
+  }
+  else if(lev0IN.IsZeroSuppressed()) {
+    result.tracker=GetTrackerSignalCompressed(lev0IN, *calIN);
+  }
+  else {
+    std::cerr << __LRECO01MANAGER__ << "RunType unmanageable: " << lev0IN.runType << std::endl; 
+    LEvRec1 ___result_res;
+    return ___result_res;
+  }
   result.trig=GetTriggerSignal(lev0IN, *calIN);
   result.scint=GetScintillatorSignal(lev0IN, *calIN);
   result.veto=GetVetoSignal(lev0IN, *calIN);
   result.lyso=GetLysoSignal(lev0IN, *calIN);
+
+  if(eqHGIN!=0 && eqLGIN!=0) EqualizeCalo(result, *eqHGIN, *eqLGIN);
 
   return result;
 }

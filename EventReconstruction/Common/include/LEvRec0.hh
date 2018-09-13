@@ -5,11 +5,13 @@
 #define __LEVREC0__ 1
 
 
+
+
 class LEvRec0 {
 
 public:
   LEvRec0();
-  
+ 
   unsigned short   runType;
   unsigned short   boot_nr;
   unsigned short   run_id;
@@ -28,11 +30,21 @@ public:
   unsigned int     dead_time;
 
   short            strip[NCHAN];
-   
+  unsigned short   clust_nr;
+  short            cluster[MAXCLUSTERNR][1+2*NADJACENTCHANS+1];     
+  
   void DumpStrip(void) const;
   void DumpEventIndex() const;
   bool IsZeroSuppressed() const;
   bool IsVirgin() const;
+  bool IsStdCalibration() const;
+  inline unsigned short GetNAdjacentStrips(void) const {return NADJACENTCHANS;};
+
+  const int trigger(const int i, const int j) const;
+  const int plane(const int i, const int j) const;
+  const int lyso(const int i) const;
+  const int veto (const int i, const int j) const;
+
 };
 
 
@@ -196,9 +208,56 @@ public:
    short              PMT_temp[2]; // 0 = startrun, 1 stoprun
 
    Status_Register_t  status_reg;
-   
+
+   void               Dump(void) const;
 };
+
 #pragma pack(pop)
 
+
+// Added according to QuickLook
+struct orbit_conf_out_t           
+{
+   bool             ladder_mask[3];
+   unsigned char    trigger_mask[2];
+   unsigned short   run_duration;
+   int     lat1;
+   int     lat2;
+   int     long1;
+   int     long2;
+} ;
+// Added according to QuickLook
+struct dummy_packet_out_t
+{
+   unsigned short    len;
+   unsigned short    boot_nr;
+   unsigned short    run_id;
+   orbit_conf_out_t  orbit_conf[5];
+   bool              user_orbital_settings;
+   unsigned short    WO_config_ID;
+   unsigned short    calib_period;
+   bool              safe_mode;
+} ;
+
+class LEvRec0Conf {
+   
+public:
+   LEvRec0Conf();
+   
+   dummy_packet_out_t    dummy_pkt;
+   
+};
+
+class LEvRec0HVpmt {
+   
+public:
+   LEvRec0HVpmt();
+   
+   unsigned short     boot_nr;
+   unsigned short     run_id;
+   unsigned short     HV_pmt_mon[10];
+   unsigned short     HV_sil_mon[2]; 
+   
+};
 
 #endif

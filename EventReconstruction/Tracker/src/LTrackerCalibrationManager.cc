@@ -127,8 +127,17 @@ LTrackerCalibrationSlot LTrackerCalibrationManager::CalibrateSlot(const int Star
   calRunFile->GetEntry(StopEntry-1);
   int StopEvent=static_cast<int>(cev.event_index);
 
+  LEvRec0Md cevMD;
+  calRunFile->SetMdPointer(cevMD);
+  bool column_mask[3];
+  calRunFile->GetMDEntry(0); 
+  for (int i = 0; i< N_COLUMN; i++)
+     column_mask[i] = cevMD.silConfig.ladder_mask[i];
+
+
+  
   // Result
-  LTrackerCalibrationSlot result(StartEvent, StopEvent, sigma0, mean2, sigma2, ngindex, CN_mask);
+  LTrackerCalibrationSlot result(StartEvent, StopEvent, sigma0, mean2, sigma2, ngindex, CN_mask, column_mask);
   return result;
 }
 

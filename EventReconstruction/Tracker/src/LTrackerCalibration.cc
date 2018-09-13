@@ -84,9 +84,9 @@ LTrackerCalibration* LTrackerCalibration::Read(const char *fileIn) {
 
 LTrackerCalibration* LTrackerCalibration::ReadRoot(const char *fileIn) {
    
-   int RunIdST;
+
    
-   LTrackerCalibration *rsult = new LTrackerCalibration(RunIdST);
+   int RunIdST;
    
    LEvRec0 outev;
    LEvRec0File inputFile(fileIn);
@@ -96,7 +96,8 @@ LTrackerCalibration* LTrackerCalibration::ReadRoot(const char *fileIn) {
    
    LTrackerCalibration *result =  new LTrackerCalibration(RunIdST);
    result->Add(LTrackerCalibrationSlot::ReadRoot(fileIn));
-   
+   std::cout << " ############## Reading Root Calib " << std::endl;
+
    return result;
 }
 
@@ -173,6 +174,7 @@ LTrackerCalibration* LTrackerCalibration::CreateFakeCalibration(const LTrackerCa
   double pedNew[NCHAN];
   double buffer[NCHAN];
   bool buffer2[NCHAN];
+  bool column_on[N_COLUMN];
   std::cout<<"Random number genrator initialization"<<std::endl;
   //Random number generator
   typedef std::chrono::high_resolution_clock myclock;
@@ -190,7 +192,11 @@ LTrackerCalibration* LTrackerCalibration::CreateFakeCalibration(const LTrackerCa
     buffer[iChan]=-9999.;
     buffer2[iChan]=true;
   }
-  LTrackerCalibrationSlot slot(0,0,buffer,pedNew,sigmaNew,buffer,buffer2);
+
+  for(int iCol=0;iCol<N_COLUMN;iCol++)
+     column_on[iCol] = 1;
+  
+  LTrackerCalibrationSlot slot(0,0,buffer,pedNew,sigmaNew,buffer,buffer2, column_on);
 
   LTrackerCalibration* result=new LTrackerCalibration();
   result->Add(slot);

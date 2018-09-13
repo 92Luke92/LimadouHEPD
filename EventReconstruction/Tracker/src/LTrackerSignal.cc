@@ -3,6 +3,32 @@
 #include <random>
 #include <chrono>
 
+int LTrackerSignal::GetMSCluster(void) {
+  int result = -999;
+  double oldSN=-999.;
+  int size = cls.size();
+  for(int i =0; i< size; ++i) {
+    double newSN = cls.at(i).GetEtaSN();
+    if(newSN > oldSN) {
+      oldSN = newSN;
+      result = i;
+    }
+  }
+  return result;
+}
+
+double LTrackerSignal::GetMSClusterSN(void) {
+  int cluster = GetMSCluster();
+  if(cluster<0) return -999.;
+  else return cls.at(cluster).GetEtaSN();
+}
+
+double LTrackerSignal::GetMSClusterCounts(void) {
+  int cluster = GetMSCluster();
+  if(cluster<0) return -999.;
+  return cls.at(cluster).GetEtaCounts();
+}
+
 void LTrackerSignal::Reset() {
   cls.resize(0);
   length=0;
@@ -50,6 +76,14 @@ void LTrackerSignal::HoldTimeCorrectionSig(){
   HTCFLAG = true;
   return;
 }
+
+void LTrackerSignal::Dump() {
+  for (int icls = 0; icls<cls.size(); ++icls){
+    cls.at(icls).Dump();
+  }
+  return;
+}
+
 /*
 void LTrackerSignal::HoldTimeCorrection(const double HOLDCORRCONST){
   if(HTCFLAG == true) return; // no double correction

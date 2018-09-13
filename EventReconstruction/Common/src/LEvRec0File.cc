@@ -1,4 +1,5 @@
 #include "LEvRec0File.hh"
+#include "TBranch.h"
 #include <iostream>
 #include <sstream>
 
@@ -6,6 +7,8 @@ LEvRec0File::LEvRec0File() {
   fFile=0;
   fTree=0;
   Tmd=0;
+  TConf=0;
+  THVpmt=0;
   RunId=-999;
   BootNr=-999;
   runType=0;
@@ -45,8 +48,14 @@ LEvRec0File::LEvRec0File(const char *outFile, LEvRec0 &event, LEvRec0Md &metadat
    fTree->Branch("dead_time", &event.dead_time, "dead_time/i");
 
    // silicon data
-   fTree->Branch("strip[4608]", &event.strip[0], "strip[4608]/s");
-
+   if(event.IsZeroSuppressed()) {
+    fTree->Branch("clust_nr", &event.clust_nr, "clust_nr/s");
+    std::ostringstream branchspecs;
+    branchspecs << "cluster[clust_nr][" << 2*metadata.silConfig.adj_strip+2 << "]/S";
+    fTree->Branch("cluster", &event.cluster[0][0], branchspecs.str().c_str());
+    } else if (event.IsVirgin() || event.IsStdCalibration()) {
+    fTree->Branch("strip[4608]", &event.strip[0], "strip[4608]/s");
+   }
 
    // meta data Tree
    Tmd->Branch("boot_nr", &metadata.boot_nr, "boot_nr/s");
@@ -86,7 +95,7 @@ LEvRec0File::LEvRec0File(const char *outFile, LEvRec0 &event, LEvRec0Md &metadat
    	       ":sec_ss22/i:us_ss22/i:att_quat_ss22[4]/i:sec_ss32/i:us_ss32/i"
    	       ":att_quat_ss32[4]/i:quat_valID_x2/b:attitude_det/b:NU/b");
    
-   // scinentific packet
+   // scientific packet
    Tmd->Branch("PMT_rate_meter[65]", &metadata.PMT_rate_meter[0]);
    Tmd->Branch("CPU_temp_start_stop_Run[2]", &metadata.CPU_temp[0]);
    Tmd->Branch("PMT_temp_start_stop_Run[2]", &metadata.PMT_temp[0]);
@@ -100,6 +109,8 @@ LEvRec0File::LEvRec0File(const char *outFile, LEvRec0 &event, LEvRec0Md &metadat
    Tmd->Branch("status_register", &metadata.status_reg.statusDAQ,
    	       "statusDAQ/s:statusPMT/s:statusTM_TC/s:statusHV_PS/s"
    	       ":CPU_board_boot/s:statusCPU/s");
+
+
 }
 
 
@@ -108,6 +119,9 @@ void LEvRec0File::Open(const char *inpFile) {
   //calibration run processing...
   fTree=(TTree*)fFile->Get("T");
   Tmd = (TTree*)fFile->Get("Tmd");
+  // Added according to QuickLook
+  if (IsTConf())	TConf = (TTree*)fFile->Get("TConf");
+  if (IsTHVpmt())	THVpmt = (TTree*)fFile->Get("THVpmt");
   unsigned short run_id;
   Tmd->SetBranchAddress("run_id",&run_id);
   unsigned short boot_nr;
@@ -115,16 +129,20 @@ void LEvRec0File::Open(const char *inpFile) {
   unsigned short run_type; 
   Tmd->SetBranchAddress("run_type",&run_type);
   Tmd->GetEntry(0);
+  
   RunId = static_cast<int>(run_id);
   BootNr = static_cast<int>(boot_nr);
   runType = run_type;
-  
+ 
   return;
 }
 
 void LEvRec0File::Reset() {
   if(fFile) {
     fTree=0;
+    Tmd=0;
+    TConf=0;
+    THVpmt=0;
     fFile->Close();
   }
   RunId=-999;
@@ -168,9 +186,15 @@ int LEvRec0File::SetTheEventPointer(LEvRec0 &ev) {
   fTree->SetBranchAddress("trigger_flag[64]", &ev.trigger_flag);
   fTree->SetBranchAddress("alive_time", &ev.alive_time);
   fTree->SetBranchAddress("dead_time", &ev.dead_time);
-  fTree->SetBranchAddress("strip[4608]",&ev.strip);
-  
-  fTree->SetBranchStatus("*",kTRUE);
+  if(IsZeroSuppressed()) {
+    fTree->SetBranchAddress("clust_nr", &ev.clust_nr);
+    TBranch *branch = fTree->GetBranch("cluster");
+    branch->SetAddress(ev.cluster);
+  } else {
+    TBranch *branch = fTree->GetBranch("strip[4608]");
+    branch->SetAddress(ev.strip);
+  }
+  fTree->SetBranchStatus("*",true);
   
   return 0;
 }
@@ -212,6 +236,50 @@ int LEvRec0File::SetMdPointer(LEvRec0Md &metaData) {
    return 0;
 }
 
+// Added according to QuickLook
+int LEvRec0File::SetTConfPointer(LEvRec0Conf &dummyPKT) {
+
+  TConf->SetBranchAddress("boot_nr", &dummyPKT.dummy_pkt.boot_nr);
+  TConf->SetBranchAddress("run_id", &dummyPKT.dummy_pkt.run_id);
+  
+  // orbit zone 1 configuration
+   TConf->SetBranchAddress("orbit_conf_1", &dummyPKT.dummy_pkt.orbit_conf[0].ladder_mask);
+   
+   // orbit zone 2 configuration
+   TConf->SetBranchAddress("orbit_conf_2", &dummyPKT.dummy_pkt.orbit_conf[1].ladder_mask);
+
+   // orbit zone 3 configuration
+   TConf->SetBranchAddress("orbit_conf_3", &dummyPKT.dummy_pkt.orbit_conf[2].ladder_mask);
+
+   // orbit zone 4 configuration
+   TConf->SetBranchAddress("orbit_conf_4", &dummyPKT.dummy_pkt.orbit_conf[3].ladder_mask);
+  
+   // orbit zone 5 configuration
+   TConf->SetBranchAddress("orbit_conf_5", &dummyPKT.dummy_pkt.orbit_conf[4].ladder_mask);
+
+   // Other Configurations
+   TConf->SetBranchAddress("user_orbital_settings", &dummyPKT.dummy_pkt.user_orbital_settings);
+   TConf->SetBranchAddress("WO_config_ID", &dummyPKT.dummy_pkt.WO_config_ID);
+   TConf->SetBranchAddress("calib_period", &dummyPKT.dummy_pkt.calib_period);
+   TConf->SetBranchAddress("safe_mode", &dummyPKT.dummy_pkt.safe_mode);
+   
+   return 0;
+}
+
+// Added according to QuickLook
+int LEvRec0File::SetTHVpmtPointer(LEvRec0HVpmt &HVpkt) {
+
+  THVpmt->SetBranchAddress("boot_nr", &HVpkt.boot_nr);
+  THVpmt->SetBranchAddress("run_id", &HVpkt.run_id);
+
+  THVpmt->SetBranchAddress("HV_pmt_mon[10]", &HVpkt.HV_pmt_mon[0]);
+  THVpmt->SetBranchAddress("HV_sil_mon[2]", &HVpkt.HV_sil_mon[0]);
+
+  return 0;
+
+ } 
+
+
 int LEvRec0File::GetEntry(int iEntry) {
   fTree->GetEntry(iEntry);
   return 0;
@@ -223,9 +291,35 @@ int LEvRec0File::GetMDEntry(int iEntry) {
   return 0;
 }
 
+// Added according to QuickLook
+int LEvRec0File::GetTConfEntry(int iEntry) {
+   TConf->GetEntry(iEntry);
+  return 0;
+}
+// Added according to QuickLook
+int LEvRec0File::GetTHVpmtEntry(int iEntry) {
+   THVpmt->GetEntry(iEntry);
+  return 0;
+}
+
 
 int LEvRec0File::GetEntries() {
   return fTree->GetEntries();
+}
+
+// Added according to QuickLook
+int LEvRec0File::GetMDEntries() {
+  return Tmd->GetEntries();
+}
+
+// Added according to QuickLook
+int LEvRec0File::GetTConfEntries() {
+  return TConf->GetEntries();
+}
+
+// Added according to QuickLook
+int LEvRec0File::GetTHVpmtEntries() {
+  return THVpmt->GetEntries();
 }
 
 void LEvRec0File::Close() {

@@ -11,6 +11,12 @@ LEvRec0::LEvRec0(){
    for(int i=0; i<NCHAN; ++i)
       strip[i]=0;
    
+   clust_nr = 0;
+   for (int icl =0 ; icl< MAXCLUSTERNR; ++icl)
+     for(int ich=0; ich<NADJACENTCHANS; ++ich)
+	cluster[icl][ich] = 0;
+   
+   
    runType = 0x0;
    trigger_index=0;
    hepd_time=0;
@@ -32,8 +38,22 @@ LEvRec0::LEvRec0(){
 
 void LEvRec0::DumpStrip(void) {
   std::cout << "strip" << std::endl;
-  for(int i=0; i<NCHAN;++i) std::cout << strip[i] << " ";
-  std::cout << std::endl;
+  if(IsVirgin() || IsStdCalibration())
+  {
+     for(int i=0; i<NCHAN;++i) std::cout << strip[i] << " ";
+     std::cout << std::endl;
+  }
+  else if(IsComp())
+  {
+     for(int i=0; i<clust_nr; ++i)
+     {
+	std::cout << cluster[i][0] << "   ";
+	for(int ich=1; ich<=2*NADJACENTCHANS+1; ++ich)
+	   std::cout << cluster[i][ich] << " ";
+	std::cout <<  "      ";
+     }
+     std::cout << std::endl;
+  }
   return;
 }
 
@@ -43,16 +63,22 @@ void LEvRec0::DumpEventIndex() {
   return;
 }
 
+//0x63 RUN_MIXED (VR+ZS-CN)
+//0x36 RUN_ZERO-SUPPRESSED
+//0x55 RUN_ZERO-SUPPRESSED COMMON NOISE
 bool  LEvRec0::IsComp(void) {
    int ret = false;
    //std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
-   if (runType == 0x36 || runType == 0x6336)
+    if (runType == 0x0055|| runType == 0x0036|| runType == 0x6336 || runType == 0x6355)
       ret = true;
    
    return ret;
    
 }
 
+//0x4E RUN_VIRGIN_RAW
+//0x63(4E) RUN_MIXED (VR+ZS-CN)
+//0x78 RUN_GENERIC (HV and Gain PMT Calibration)->VR+ packet HVPS mon
 bool  LEvRec0::IsVirgin(void) {
    bool ret = false;
    //std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
@@ -61,6 +87,16 @@ bool  LEvRec0::IsVirgin(void) {
    
    return ret;
    
+}
+
+
+//0x1B STD CALIBRATION
+bool  LEvRec0::IsStdCalibration(void) const {
+   bool ret = false;
+   //std::cout << std::hex << "runType = 0x" << runType << std::dec << std::endl;
+   if (runType == 0x001B)
+      ret = true;
+   return ret;
 }
 
 

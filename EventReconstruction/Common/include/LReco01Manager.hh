@@ -1,10 +1,11 @@
 #ifndef __LRECO01MANAGER__
 #define __LRECO01MANAGER__ "LReco01Manager   ########## "
 
-#include <string>
+#include <string.h>
 #include "LEvRec0File.hh"
 #include "LEvRec1File.hh"
 #include "LCalibration.hh"
+#include "LCaloEqualization.hh"
 
 const int MINL0EVENTS=100;
 const int PRINTOUTEVENTS=1000;
@@ -15,6 +16,7 @@ public:
   static LReco01Manager& GetInstance();
   void LoadSteering(const char *steerFileIN);
   void Run(void);
+  int verboseFLAG; // 0 default (only important messages), 1 intermediate (not event-wise), 2 event-wise verbosity
 
 private:
   LReco01Manager();
@@ -24,17 +26,20 @@ private:
   bool CheckLoadedSteering(void) const;
   bool CheckInputFile(const std::string fname) const;
   void NewOutFile(void);
-  LEvRec1 L0ToL1(const LEvRec0 lev0, const LCalibration *cal);
+  LEvRec1 L0ToL1(const LEvRec0 lev0, const LCalibration *cal, const LCaloEqualization *eqHGIN=0, const LCaloEqualization *eqLGIN=0);
   std::string L0NameToL1Name(void);
   
   std::string steerFile;
 
   std::string calFileName;
   LCalibration *cal;
+  std::string eqHGFileName;
+  std::string eqLGFileName;
+  LCaloEqualization *eqHG;
+  LCaloEqualization *eqLG;
   std::string outDirectory;
   int skipEvents;  // events to be skipped
   int maxFileEvents; // max events to be processed for in the file
-  bool verboseFLAG;
   bool steeringLoadedFLAG;
 
   std::string L0fname;

@@ -27,6 +27,8 @@ const double NGILOW=-999.;
 const double NGIHIGH=3.;
 const double HOLDCORRCONST=0.018;
 
+const unsigned short MAXCLUSTERNR = 500;
+const unsigned short NADJACENTCHANS =2;
 
 //eta manage
 
@@ -34,5 +36,8 @@ const int ETASTEP=400;
 const double ETAMIN=-0.2;
 const double ETAMAX=1.2;
 const double ETARANGE=ETAMAX-ETAMIN;
+
+// CALO
+const double SNTHRESHOLDFORCALOANALYSIS=10.;
 
 #endif

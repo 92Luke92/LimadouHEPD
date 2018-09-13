@@ -27,8 +27,10 @@
 #include "housekeeping.hh"
 #include <TDatime.h>
 
+#include <iomanip>
+#define OBDH_TO_EPOCH_OFFSET_SEC 1230768000
 
-void HVPSMonitorToXML(TString rootname, TString xslPath = "")
+void HVPSMonitorToXML(TString rootname, TString outPath, TString xslPath = "")
 {
 
   LEvRec0File rootfile(rootname.Data());
@@ -49,7 +51,14 @@ void HVPSMonitorToXML(TString rootname, TString xslPath = "")
      int THVpmt_entries = rootfile.GetTHVpmtEntries(); 
      // cout << "Number of THVpmt entries: " << THVpmt_entries << endl;
   
-     TString filename = rootname;
+     TString filename = outPath;
+     TString _temp = rootname ;
+
+     if(_temp.Last('/') != -1)
+	_temp.Replace(0, _temp.Last('/'), "");
+
+     filename += "/";
+     filename += _temp;
      filename.ReplaceAll(".root", 5, "_HVPSMonitor.xml", 16);
 
      ofstream outputFile;
@@ -167,14 +176,17 @@ void HVPSMonitorToXML(TString rootname, TString xslPath = "")
     }
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
-
+  
     }
     else
     return;
+
+  rootfile.Close();
+  
 }
 
 
-void DUMPConfigToXML(TString rootname, TString xslPath = "")
+void DUMPConfigToXML(TString rootname, TString outPath, TString xslPath = "")
 {
   
 
@@ -195,7 +207,14 @@ void DUMPConfigToXML(TString rootname, TString xslPath = "")
      int TConf_entries = rootfile.GetTConfEntries(); 
      //cout << "Number of TConf entries: " << TConf_entries << endl;
   
-     TString filename = rootname;
+     TString filename = outPath;
+     TString _temp = rootname ;
+
+     if(_temp.Last('/') != -1)
+	_temp.Replace(0, _temp.Last('/'), "");
+     
+     filename += "/";
+     filename += _temp;
      filename.ReplaceAll(".root", 5, "_DUMPConfig.xml", 15);
 
      ofstream outputFile;
@@ -310,17 +329,25 @@ void DUMPConfigToXML(TString rootname, TString xslPath = "")
   else
     return;
   
- 
+  rootfile.Close();
+  
   }
 
 
 
-void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
+void BroadcastToXML(TString rootname, TString outPath, TString xslPath= "", TString xslPath2= "")
 {
   
   cout << endl << "Processing Broadcast to xml files:" << rootname << endl;
 
-  TString filename = rootname;
+  TString filename = outPath;
+  TString _temp = rootname ;
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
+
+  filename += "/";
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_Time.xml",9 );
 
   ofstream outputFile;
@@ -330,7 +357,9 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
     exit(0);
   }
 
-  TString filename2 = rootname;
+  TString filename2 = outPath;
+  filename2 += "/";
+  filename2 += _temp;
   filename2.ReplaceAll(".root", 5, "_GPS.xml",8 );
 
   ofstream outputFile2;
@@ -373,7 +402,7 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       OBDH_ms_vect[j] = metaData.broadcast.OBDH.ms;
       OBDH_sec_vect[j]=  metaData.broadcast.OBDH.sec;
       OBDH_timestamp_vect[j] = metaData.timestamp.OBDH;
-      
+      //cout << "OBDH TIMESTAMP VECT" << OBDH_sec_vect[j] << endl; 
 
       if (j%2!=0) {
 	CPU_Time[j-1]=metaData.CPU_time[0];
@@ -427,21 +456,23 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       if(longitude > 180 && longitude < -180)
 	 outputFile << "\t<LONGITUDE_error>"   <<  0 << "</LONGITUDE_error>\n";
       
-      UShort_t ABS_diff_sec[Tmd_entries];
-      UShort_t ABS_Time_Run_ms[Tmd_entries];
-      UShort_t ABS_Time_Run_sec[Tmd_entries];
+      UInt_t ABS_diff_sec[Tmd_entries];
+      UInt_t ABS_Time_Run_ms[Tmd_entries];
+      UInt_t ABS_Time_Run_sec[Tmd_entries];
 
 
       if (t%2==0) {
        	ABS_diff_sec[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])/1000;
        	ABS_Time_Run_ms[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])%1000;  	
        	ABS_Time_Run_sec[t]=OBDH_sec_vect[t]+ABS_diff_sec[t];
+	 
       }
 
       if (t%2!=0) {
        	ABS_diff_sec[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])/1000;
-       	ABS_Time_Run_ms[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])%1000;  	
+       	ABS_Time_Run_ms[t]=(CPU_Time[t]-OBDH_timestamp_vect[t]+OBDH_ms_vect[t])%1000;
        	ABS_Time_Run_sec[t]=OBDH_sec_vect[t]+ABS_diff_sec[t];
+	 
       }
       
       TDatime h;
@@ -456,18 +487,18 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
       Int_t timestamp_ABS_2009;
       
 
-      timestamp_OBDH_2009 = 1230764400+metaData.broadcast.OBDH.sec;
-      timestamp_GPS_2009 = 1230764400+metaData.broadcast.GPS.sec;
-      timestamp_AOCC_2009 = 1230764400+metaData.broadcast.AOCC.sec;
-      timestamp_ABS_2009 = 1230764400+ABS_Time_Run_sec[t];
+      timestamp_OBDH_2009 = OBDH_TO_EPOCH_OFFSET_SEC+metaData.broadcast.OBDH.sec;
+      timestamp_GPS_2009 = OBDH_TO_EPOCH_OFFSET_SEC+metaData.broadcast.GPS.sec;
+      timestamp_AOCC_2009 = OBDH_TO_EPOCH_OFFSET_SEC+metaData.broadcast.AOCC.sec;
+      timestamp_ABS_2009 = OBDH_TO_EPOCH_OFFSET_SEC+ABS_Time_Run_sec[t];
       
-     	
+           	
       h.Set(timestamp_OBDH_2009);
       GPS.Set(timestamp_GPS_2009);
       AOCC.Set(timestamp_AOCC_2009);
       absolute.Set(timestamp_ABS_2009);
-    
-    
+
+          
       
       if (metaData.broadcast.OBDH.sec == 0xBBBBBBBB){
 	outputFile << "\t<OBDH_S>" << "N.A." << "</OBDH_S>\n";
@@ -557,16 +588,25 @@ void BroadcastToXML(TString rootname, TString xslPath= "", TString xslPath2= "")
   outputFile2 << "</ROOT_SOURCE>\n";
   outputFile.close();
   outputFile2.close();
+
+  rootfile.Close();
 }
 
 
 
-void CPUTimeTempToXML(TString rootname, TString xslPath = "")
+void CPUTimeTempToXML(TString rootname, TString outPath, TString xslPath = "")
 {
   
   cout << endl << "Processing CPU Time to xml file:" << rootname << endl;
 
-  TString filename = rootname;
+  TString filename = outPath;
+  TString _temp = rootname ;
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
+
+  filename += "/";
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_CPUTimeTemp.xml", 16);
 
   ofstream outputFile;
@@ -576,10 +616,10 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
     exit(0);
   }
 
-  Short_t CPU_temp_start;
-  Short_t CPU_temp_stop;
-  Short_t PMT_temp_start;
-  Short_t PMT_temp_stop;
+  Double_t CPU_temp_start;
+  Double_t CPU_temp_stop;
+  Double_t PMT_temp_start;
+  Double_t PMT_temp_stop;
   UInt_t REAL_run_duration;
   LEvRec0File rootfile(rootname.Data());
   LEvRec0 ev;
@@ -623,8 +663,7 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 	  PMT_temp_start = metaData.PMT_temp[0]*0.25;
 	  PMT_temp_stop = metaData.PMT_temp[1]*0.25;
 	  REAL_run_duration= (metaData.CPU_time[1]-metaData.CPU_time[0])/1000;
-
-	 
+	  	 
 	  if ((CPU_temp_start <-10) && (CPU_temp_start >-20))
 	    outputFile << "\t<CPU_TEMP_START_Y>"  <<  1  << "</CPU_TEMP_START_Y>\n";
 	  
@@ -679,7 +718,7 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
 	  outputFile << "\t<CPU_TEMP_START>" <<  CPU_temp_start  << "</CPU_TEMP_START>\n";
 	  outputFile << "\t<CPU_TEMP_STOP>"  <<  CPU_temp_stop  << "</CPU_TEMP_STOP>\n";
 	  outputFile << "\t<PMT_TEMP_START>" <<  PMT_temp_start << "</PMT_TEMP_START>\n";
-	  outputFile << "\t<PMT_TEMP_STOP>"  <<  PMT_temp_stop  << "</PMT_TEMP_STOP>\n";
+	  outputFile <<  "\t<PMT_TEMP_STOP>"  <<  PMT_temp_stop  << "</PMT_TEMP_STOP>\n";
 
 	  outputFile << "</CPUTIMETEMP>\n";   
  
@@ -689,16 +728,23 @@ void CPUTimeTempToXML(TString rootname, TString xslPath = "")
   
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
-
+  rootfile.Close();
 }
 
 
-void HVPSConfigToXML(TString rootname, TString xslPath = "")
+void HVPSConfigToXML(TString rootname, TString outPath, TString xslPath = "")
 {
   
   cout << endl <<  "Processing HVPS to xml file:" << rootname << endl;
 
-  TString filename = rootname;
+  TString filename = outPath;
+  TString _temp = rootname ;
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
+
+  filename += "/";
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_HVPSConfig.xml", 15);
 
   ofstream outputFile;
@@ -761,7 +807,18 @@ void HVPSConfigToXML(TString rootname, TString xslPath = "")
       outputFile << "\t<HV_PMT6_error>"  <<  0 << "</HV_PMT6_error>\n";
       outputFile << "\t<HV_PMT7_error>"  <<  0 << "</HV_PMT7_error>\n";
       outputFile << "\t<HV_PMT8_error>"  <<  0 << "</HV_PMT8_error>\n";
-      outputFile << "\t<HV_PMT9_error>"  <<  0 << "</HV_PMT9_error>\n"; 
+      outputFile << "\t<HV_PMT9_error>"  <<  0 << "</HV_PMT9_error>\n";
+
+      outputFile << "\t<MASK_PMT0_OFF>"  << 0 << "</MASK_PMT0_OFF>\n";
+      outputFile << "\t<MASK_PMT1_OFF>"  << 0 << "</MASK_PMT1_OFF>\n";
+      outputFile << "\t<MASK_PMT2_OFF>"  << 0 << "</MASK_PMT2_OFF>\n";
+      outputFile << "\t<MASK_PMT3_OFF>"  << 0 << "</MASK_PMT3_OFF>\n";
+      outputFile << "\t<MASK_PMT4_OFF>"  << 0 << "</MASK_PMT4_OFF>\n";
+      outputFile << "\t<MASK_PMT5_OFF>"  << 0 << "</MASK_PMT5_OFF>\n";
+      outputFile << "\t<MASK_PMT6_OFF>"  << 0 << "</MASK_PMT6_OFF>\n";
+      outputFile << "\t<MASK_PMT7_OFF>"  << 0 << "</MASK_PMT7_OFF>\n";
+      outputFile << "\t<MASK_PMT8_OFF>"  << 0 << "</MASK_PMT8_OFF>\n";
+      outputFile << "\t<MASK_PMT9_OFF>"  << 0 << "</MASK_PMT9_OFF>\n";
       
       outputFile << "\t<BOOT_NR>" << metaData.boot_nr << "</BOOT_NR>\n";
       outputFile << "\t<RUN_NR>"  << metaData.run_id  << "</RUN_NR>\n";
@@ -840,58 +897,88 @@ void HVPSConfigToXML(TString rootname, TString xslPath = "")
 
       if(metaData.HV_mask[0] == 0)
 	outputFile << "\t<MASK_PMT0>"  << "ON"  << "</MASK_PMT0>\n";
-      if(metaData.HV_mask[0] == 1)
+      if(metaData.HV_mask[0] == 1){
 	outputFile << "\t<MASK_PMT0>"  << "OFF" << "</MASK_PMT0>\n";
+        outputFile << "\t<MASK_PMT0_OFF>"  << 1 << "</MASK_PMT0_OFF>\n";
+	}
       if(metaData.HV_mask[1] == 0)
 	outputFile << "\t<MASK_PMT1>"  << "ON"  << "</MASK_PMT1>\n";
-      if(metaData.HV_mask[1] == 1)
+      if(metaData.HV_mask[1] == 1){
 	outputFile << "\t<MASK_PMT1>"  << "OFF"  << "</MASK_PMT1>\n";
+        outputFile << "\t<MASK_PMT1_OFF>"  << 1 << "</MASK_PMT1_OFF>\n";
+	}
       if(metaData.HV_mask[2] == 0)
 	outputFile << "\t<MASK_PMT2>"  << "ON"  << "</MASK_PMT2>\n";
-      if(metaData.HV_mask[2] == 1)
-	outputFile << "\t<MASK_PMT2>"  << "OFF" << "</MASK_PMT2>\n";
+      if(metaData.HV_mask[2] == 1){
+	outputFile << "\t<MASK_PMT2>"  << "OFF"  << "</MASK_PMT2>\n";
+        outputFile << "\t<MASK_PMT2_OFF>"  << 1 << "</MASK_PMT2_OFF>\n";
+	}
       if(metaData.HV_mask[3] == 0)
 	outputFile << "\t<MASK_PMT3>"  << "ON"  << "</MASK_PMT3>\n";
-      if(metaData.HV_mask[3] == 1)
-	outputFile << "\t<MASK_PMT3>"  << "OFF" << "</MASK_PMT3>\n";
+      if(metaData.HV_mask[3] == 1){
+	outputFile << "\t<MASK_PMT3>"  << "OFF"  << "</MASK_PMT3>\n";
+        outputFile << "\t<MASK_PMT3_OFF>"  << 1 << "</MASK_PMT3_OFF>\n";
+	}
       if(metaData.HV_mask[4] == 0)
 	outputFile << "\t<MASK_PMT4>"  << "ON"  << "</MASK_PMT4>\n";
-      if(metaData.HV_mask[4] == 1)
-	outputFile << "\t<MASK_PMT4>"  << "OFF" << "</MASK_PMT4>\n";
+      if(metaData.HV_mask[4] == 1){
+	outputFile << "\t<MASK_PMT4>"  << "OFF"  << "</MASK_PMT4>\n";
+        outputFile << "\t<MASK_PMT4_OFF>"  << 1 << "</MASK_PMT4_OFF>\n";
+	}	
       if(metaData.HV_mask[5] == 0)
 	outputFile << "\t<MASK_PMT5>"  << "ON"  << "</MASK_PMT5>\n";
-      if(metaData.HV_mask[5] == 1)
-	outputFile << "\t<MASK_PMT5>" << "OFF"  << "</MASK_PMT5>\n";
+      if(metaData.HV_mask[5] == 1){
+	outputFile << "\t<MASK_PMT5>"  << "OFF"  << "</MASK_PMT5>\n";
+        outputFile << "\t<MASK_PMT5_OFF>"  << 1 << "</MASK_PMT5_OFF>\n";
+	}		
       if(metaData.HV_mask[6] == 0)
 	outputFile << "\t<MASK_PMT6>" << "ON"   << "</MASK_PMT6>\n";
-      if(metaData.HV_mask[6] == 1)
-	outputFile << "\t<MASK_PMT6>" << "OFF"  << "</MASK_PMT6>\n";
+      if(metaData.HV_mask[6] == 1){
+	outputFile << "\t<MASK_PMT6>"  << "OFF"  << "</MASK_PMT6>\n";
+        outputFile << "\t<MASK_PMT6_OFF>"  << 1 << "</MASK_PMT6_OFF>\n";
+	}		
       if(metaData.HV_mask[7] == 0)
 	outputFile << "\t<MASK_PMT7>" << "ON"   << "</MASK_PMT7>\n";
-      if(metaData.HV_mask[7] == 1)
-	outputFile << "\t<MASK_PMT7>" << "OFF" << "</MASK_PMT7>\n";
+      if(metaData.HV_mask[7] == 1){
+	outputFile << "\t<MASK_PMT7>"  << "OFF"  << "</MASK_PMT7>\n";
+        outputFile << "\t<MASK_PMT7_OFF>"  << 1 << "</MASK_PMT7_OFF>\n";
+	}		
       if(metaData.HV_mask[8] == 0)
 	outputFile << "\t<MASK_PMT8>" << "ON"  << "</MASK_PMT8>\n";
-      if(metaData.HV_mask[8] == 1)
-	outputFile << "\t<MASK_PMT8>" << "OFF" << "</MASK_PMT8>\n";
+      if(metaData.HV_mask[8] == 1){
+	outputFile << "\t<MASK_PMT8>"  << "OFF"  << "</MASK_PMT8>\n";
+        outputFile << "\t<MASK_PMT8_OFF>"  << 1 << "</MASK_PMT8_OFF>\n";
+	}		
       if(metaData.HV_mask[9] == 0)
 	outputFile << "\t<MASK_PMT9>" << "ON" << "</MASK_PMT9>\n";
-      if(metaData.HV_mask[9] == 1)
-	outputFile << "\t<MASK_PMT9>" << "OFF" << "</MASK_PMT9>\n";
+      if(metaData.HV_mask[9] == 1){
+	outputFile << "\t<MASK_PMT9>"  << "OFF"  << "</MASK_PMT9>\n";
+        outputFile << "\t<MASK_PMT9_OFF>"  << 1 << "</MASK_PMT9_OFF>\n";
+	}		
+	
 
       outputFile << "</HVPSCONFIG>\n";
 
     }
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
+  rootfile.Close();
+  
 }
 
-void RunInfoToXML(TString rootname, TString xslPath = "")
+void RunInfoToXML(TString rootname, TString outPath, TString xslPath = "")
 {
   
   cout << endl << "Processing Run Info to xml file:" << rootname << endl;
   
-  TString filename = rootname;
+  TString filename = outPath;
+  TString _temp = rootname ;
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
+
+  filename += "/";
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_RunInfo.xml", 12);
 
   ofstream outputFile;
@@ -955,8 +1042,7 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
 
     int applied_orbit=orbitZone_vect[t] & 0x00FF;
     int calculated_orbit=orbitZone_vect[t] >> 8;
-    //cout <<  "orbit zone calculated: " << hex << calculated_orbit << endl;
-    // cout << "orbit zone applied: " << hex << applied_orbit << endl;
+
        
     if (t%2==0){
 
@@ -1012,19 +1098,19 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
       outputFile <<  "\t<RUN_TYPE>"   << "FAST CALIB"  << "</RUN_TYPE>\n";
 
     if (run_type_vect[t]==54)
-      outputFile <<  "\t<RUN_TYPE>"   << "RUN ZERO-SUPPRESSED"  << "</RUN_TYPE>\n";
+      outputFile <<  "\t<RUN_TYPE>"   << "ZERO-SUPPRESSED"  << "</RUN_TYPE>\n";
 
     if (run_type_vect[t]==78)
-      outputFile <<  "\t<RUN_TYPE>"   << "RUN VIRGIN RAW"  << "</RUN_TYPE>\n";
+      outputFile <<  "\t<RUN_TYPE>"   << "VIRGIN RAW"  << "</RUN_TYPE>\n";
 
     if (run_type_vect[t]==85)
-      outputFile <<  "\t<RUN_TYPE>"   << "RUN ZERO-SUPPRESSED COMMON NOISE"  << "</RUN_TYPE>\n";
+      outputFile <<  "\t<RUN_TYPE>"   << "ZERO-SUPPRESSED COMMON NOISE"  << "</RUN_TYPE>\n";
 
     if (run_type_vect[t]==99)
-      outputFile <<  "\t<RUN_TYPE>"   << "RUN MIXED"  << "</RUN_TYPE>\n";
+      outputFile <<  "\t<RUN_TYPE>"   << "MIXED"  << "</RUN_TYPE>\n";
 
     if (run_type_vect[t]==120)
-      outputFile <<  "\t<RUN_TYPE>"   << "RUN GENERIC"  << "</RUN_TYPE>\n";
+      outputFile <<  "\t<RUN_TYPE>"   << "GENERIC"  << "</RUN_TYPE>\n";
 
     if (run_type_vect[t]==135)
       outputFile <<  "\t<RUN_TYPE>"   << "STOP"  << "</RUN_TYPE>\n";
@@ -1087,17 +1173,755 @@ void RunInfoToXML(TString rootname, TString xslPath = "")
   outputFile << "</ROOT_SOURCE>\n";
  
   outputFile.close();
+  rootfile.Close();
 }
 
 
+void FastInfoToXML(TString rootname, TString outPath, TString xslPath = ""){
+  
+  
+   TString filename = outPath;
+   TString _temp = rootname ;
+
+   if(_temp.Last('/') != -1)
+      _temp.Replace(0, _temp.Last('/'), "");
+
+   filename += "/";
+   filename += _temp;
+   filename.ReplaceAll(".root", 5, "_FastInfo.xml", 13);
+
+   ofstream outputFile;
+   outputFile.open(filename.Data(), ios::trunc);
 
 
-void ScintConfigToXML(TString rootname, TString xslPath = "")
+   if (!outputFile.is_open()){
+      printf("Cannot open the file %s for the output", filename.Data());
+      exit(0);
+   }
+
+
+   LEvRec0File rootfile(rootname.Data());
+   LEvRec0 ev;
+   LEvRec0Md metaData;
+   rootfile.SetTheEventPointer(ev);
+   rootfile.SetTmdPointer(metaData);
+
+   cout << endl << "Processing Fast Info to xml file:" << rootname << endl;
+
+   outputFile << "<?xml version='1.0' encoding='ISO-8859-1'?>\n";
+   outputFile << "<!-- Prologo XML -->\n";
+
+   outputFile << "<?xml-stylesheet type='text/xsl' href='"<< xslPath.Data()<<"'?>\n";
+   outputFile << "<ROOT_SOURCE>\n";
+  
+   // Metadata
+   int Tmd_entries = rootfile.GetTmdEntries();
+   //TTree *T=(TTree*)rootfile->Get("T");
+   int n_events = 0;
+   //cout << "Number of Tmd entries: " << Tmd_entries << endl;
+   rootfile.GetEntry(0);
+   rootfile.GetTmdEntry(0);
+   int start_bootnr = metaData.boot_nr;
+   int new_bootnr = ev.boot_nr;
+   int start_runid = ev.run_id;
+   int new_runid = ev.run_id;
+   int Tentries = rootfile.GetEntries();
+   int nEntriesForRun[Tmd_entries/2];
+   for (int j=0; j<Tmd_entries/2; j++ )
+      nEntriesForRun[j] = 0;
+   int runInMergedFile = 0;
+
+// calculating the number of events for each single run
+   for (int nev=0; nev<Tentries; nev++ )
+   {
+      rootfile.GetEntry(nev);
+      new_runid = ev.run_id;
+      new_bootnr = ev.boot_nr;
+      n_events++;
+      
+      if ((new_runid != start_runid) || (new_bootnr   != start_bootnr))
+      {
+	 nEntriesForRun[runInMergedFile] = (n_events-1);
+	 n_events = 1;
+	 start_runid = new_runid;
+	 start_bootnr = new_bootnr;
+	 // cout << "Events in Run "  << runInMergedFile << " = " << nEntriesForRun[runInMergedFile] << endl;
+	 runInMergedFile++;
+
+      }
+
+      if (nev == (Tentries -1))
+      {
+	 nEntriesForRun[runInMergedFile] = n_events;
+	 // cout << "Events in Run "  << runInMergedFile << " = " << nEntriesForRun[runInMergedFile] << endl;
+      }
+
+   }
+   
+  
+  
+   UShort_t run_type_vect[Tmd_entries];
+   UShort_t run_duration_vect[Tmd_entries];
+   UShort_t orbitZone_vect[Tmd_entries];
+   UShort_t run_id_vect[Tmd_entries];
+   UShort_t boot_nr_vect[Tmd_entries];
+   Short_t CPU_temp_start[Tmd_entries];
+   Short_t CPU_temp_stop[Tmd_entries];
+   double long_vect_start[Tmd_entries];
+   double long_vect_stop[Tmd_entries];
+   double lat_vect_start[Tmd_entries];
+   double lat_vect_stop[Tmd_entries];
+  
+   Short_t REAL_run_duration[Tmd_entries];
+  
+   int e = 0;
+   int g = 0;
+  
+   for(int j=0;j<Tmd_entries;j++)
+   {
+
+      rootfile.GetTmdEntry(j);   
+
+      run_type_vect[j] = metaData.run_type;
+      run_duration_vect[j] = metaData.run_duration;
+      orbitZone_vect[j] = metaData.orbit_Zone;
+      
+      run_id_vect[j]=metaData.run_id;
+      boot_nr_vect[j]=metaData.boot_nr;
+
+      CPU_temp_start[j] = metaData.CPU_temp[0]*0.0625;
+      CPU_temp_stop[j] = metaData.CPU_temp[1]*0.0625;
+      
+      
+      if(j%2==0) {
+	 long_vect_start[e] = (double)(metaData.broadcast.GPS.lon)*pow(10,-7);
+	 lat_vect_start[e]  = (double)(metaData.broadcast.GPS.lat)*pow(10,-7);
+	 e = e+1;
+	 //cout << "longitude   " <<  (double)(metaData.broadcast.GPS.lon)*pow(10,-7) << endl;
+	
+      }
+      if(j%2!=0) {
+	
+	 long_vect_stop[g] = (double)(metaData.broadcast.GPS.lon)*pow(10,-7);
+	 lat_vect_stop[g]  = (double)(metaData.broadcast.GPS.lat)*pow(10,-7);
+	 g=g+1;
+      }
+      
+   }
+
+   int x=0;
+
+   for(int t=0;t<Tmd_entries;t++) {
+    
+      rootfile.GetTmdEntry(t);
+            
+      if (t%2!=0){
+
+	 outputFile << "<RUN_INFO2>\n";
+
+	 TString current_mask="(";
+	 TString trigger_mask="";
+	 int veto = (short)metaData.trigger_mask[0];
+
+	 outputFile << "\t<LATITUDE_error>"   <<  0 << "</LATITUDE_error>\n";
+	 outputFile << "\t<LONGITUDE_error>"   <<  0 << "</LONGITUDE_error>\n";      
+	 outputFile <<  dec << "\t<RUN_TYPE_error>"<< 0 << "</RUN_TYPE_error>\n";
+	 outputFile << "\t<RUN_DURATION_error>"<< 0 << "</RUN_DURATION_error>\n";
+	 outputFile << dec << "\t<ORBIT_error>"<< 0 << "</ORBIT_error>\n";
+	 outputFile << dec << "\t<ORBIT_error_yellow>"<< 0 << "</ORBIT_error_yellow>\n";
+
+
+	 int applied_orbit=orbitZone_vect[t] & 0x00FF;
+	 int calculated_orbit=orbitZone_vect[t] >> 8;
+	 REAL_run_duration[t]= (metaData.CPU_time[1]-metaData.CPU_time[0])/1000;
+    
+      
+	 if(lat_vect_start[t] > 90 && lat_vect_start[t] < -90)
+	    outputFile << "\t<LATITUDE_error>"   <<  1 << "</LATITUDE_error>\n";
+	 if(lat_vect_stop[t] > 90 && lat_vect_stop[t] < -90)
+	    outputFile << "\t<LATITUDE_error>"   <<  1 << "</LATITUDE_error>\n";
+
+	 if(long_vect_start[t] > 180 && long_vect_start[t] < -180)
+	    outputFile << "\t<LONGITUDE_error>"   <<  0 << "</LONGITUDE_error>\n";
+	 if(long_vect_stop[t] > 180 && long_vect_stop[t] < -180)
+	    outputFile << "\t<LONGITUDE_error>"   <<  0 << "</LONGITUDE_error>\n";
+      
+	 if (applied_orbit != 0 && applied_orbit != 1 && applied_orbit != 2 && applied_orbit != 3 && applied_orbit != 4 && applied_orbit != 5) 
+	    outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
+          
+	 if (calculated_orbit == 170) 
+	    outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";   
+      
+
+	         
+	 if (applied_orbit != 0 && applied_orbit != 1 && applied_orbit != 2 && applied_orbit != 3 && applied_orbit != 4 && applied_orbit != 5) 
+	    outputFile << dec << "\t<ORBIT_error>"<< 1 << "</ORBIT_error>\n";
+          
+	 if (orbitZone_vect[t] >> 8 == 170) 
+	    outputFile << dec << "\t<ORBIT_error_yellow>"<< 1 << "</ORBIT_error_yellow>\n";
+	 
+      
+	 outputFile << dec << "\t<BOOT_NR>"    << boot_nr_vect[t]  << "</BOOT_NR>\n";
+	 outputFile << dec << "\t<RUN_NR>"     << run_id_vect[t]  << "</RUN_NR>\n";
+       
+	 if (run_type_vect[t]==0)
+	    outputFile <<  "\t<RUN_TYPE>"   << "NO RUN"  << "</RUN_TYPE>\n";
+
+	 if (run_type_vect[t]==27)
+	    outputFile <<  "\t<RUN_TYPE>"   << "STD CALIB"  << "</RUN_TYPE>\n";
+
+	 if (run_type_vect[t]==45)
+	    outputFile <<  "\t<RUN_TYPE>"   << "FAST CALIB"  << "</RUN_TYPE>\n";
+
+	 if (run_type_vect[t]==54)
+	    outputFile <<  "\t<RUN_TYPE>"   << "ZERO-SUPPRESSED"  << "</RUN_TYPE>\n";
+
+	 if (run_type_vect[t]==78)
+	    outputFile <<  "\t<RUN_TYPE>"   << "VIRGIN"  << "</RUN_TYPE>\n";
+
+	 if (run_type_vect[t]==85)
+	    outputFile <<  "\t<RUN_TYPE>"   << "ZERO-SUPPRESSED CN"  << "</RUN_TYPE>\n";
+
+	 if (run_type_vect[t]==99)
+	    outputFile <<  "\t<RUN_TYPE>"   << "MIXED"  << "</RUN_TYPE>\n";
+
+	 if (run_type_vect[t]==120)
+	    outputFile <<  "\t<RUN_TYPE>"   << "GENERIC"  << "</RUN_TYPE>\n";
+       
+	 if (run_type_vect[t]==135)
+	    outputFile <<  "\t<RUN_TYPE>"   << "STOP"  << "</RUN_TYPE>\n";
+
+	 if (run_type_vect[t]==156)
+	    outputFile <<  "\t<RUN_TYPE>"   << "DUMP CALIB"  << "</RUN_TYPE>\n";
+
+	 if (run_type_vect[t]==170)
+	    outputFile <<  "\t<RUN_TYPE>"   << "DUMP INFO"  << "</RUN_TYPE>\n";
+
+	 outputFile << "\t<N_EVENTS>"  << nEntriesForRun[t/2]  << "</N_EVENTS>\n";
+	 outputFile << dec << "\t<RUN_DURATION>" << REAL_run_duration[t] << "</RUN_DURATION>\n";
+
+
+	 if (applied_orbit == 04)
+	    outputFile <<  "\t<Applied_ORBIT_ZONE>"   << "DEFAULT" << "</Applied_ORBIT_ZONE>\n";
+         
+	 if (applied_orbit == 0)
+	    outputFile <<  "\t<Applied_ORBIT_ZONE>"   << "SAA" << "</Applied_ORBIT_ZONE>\n";
+          
+	 if (applied_orbit == 1)
+	    outputFile <<  "\t<Applied_ORBIT_ZONE>"   << "EQUATORIAL" << "</Applied_ORBIT_ZONE>\n";
+    
+	 if (applied_orbit == 2)
+	    outputFile <<  "\t<Applied_ORBIT_ZONE>"   << "SOUTH POLE" << "</Applied_ORBIT_ZONE>\n";
+  
+	 if (applied_orbit == 3)
+	    outputFile <<  "\t<Applied_ORBIT_ZONE>"   << "NORTH POLE" << "</Applied_ORBIT_ZONE>\n";
+
+	 if (applied_orbit == 5)
+	    outputFile <<  "\t<Applied_ORBIT_ZONE>"   << "STANDBY ZONE" << "</Applied_ORBIT_ZONE>\n";
+
+	 outputFile << "\t<LATITUDE>" << "[" << lat_vect_start[x]<< "; "<< lat_vect_stop[x] <<"]"<< "</LATITUDE>\n";
+	 outputFile << "\t<LONGITUDE>" << "[" << long_vect_start[x]<< "; "<< long_vect_stop[x] <<"]"<< "</LONGITUDE>\n";
+
+	 x=x+1;
+
+	 if((short)metaData.trigger_mask[1]==0)
+	    trigger_mask+="T";
+
+	 if((short)metaData.trigger_mask[1]==1)
+	    trigger_mask+="T and P1";
+
+	 if((short)metaData.trigger_mask[1]==2)
+	    trigger_mask+="T and (P1 or P2)";
+
+	 if((short)metaData.trigger_mask[1]==3)
+	   trigger_mask+="(T3 or T4) and (P1 or P2)";
+	   
+
+	 if((short)metaData.trigger_mask[1]==4)
+	    trigger_mask+="T and P1 and P2";
+
+	 if((short)metaData.trigger_mask[1]==5)
+	    trigger_mask+="T and P1 and P2 and P3";
+
+	 if((short)metaData.trigger_mask[1]==6)
+	    trigger_mask+="T and (P1 or P2) and (P15 or P16)";
+
+	 if((short)metaData.trigger_mask[1]==7)
+	    trigger_mask+="T and (P1 or P2) and L";
+     
+	 //cout << "current mask  "<< current_mask << endl;
+
+	 if((short)metaData.trigger_mask[1]==8)
+	    outputFile << "\t<TRIGGER>"  << "GENERIC TRIGGER MASK" << "</TRIGGER>\n";
+	 else
+	    outputFile << "\t<TRIGGER>"  <<   trigger_mask  << "</TRIGGER>\n";
+	 
+  
+
+
+	 if((short)metaData.trigger_mask[1]==0){
+	   int on=0;
+	 if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	    on=1;
+	    current_mask+="T1 ";
+	 }
+	 if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	    if(on==1)
+	       current_mask+="or T2";
+	    if(on==0){
+	       current_mask+="T2 ";
+	       on=1;
+	    }
+	 }
+	 if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	    if(on==1)
+	       current_mask+="or T3";
+	    if(on==0){
+	       current_mask+="T3 ";
+	       on=1;
+	    }
+	 }
+	 if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	    if(on==1)
+	       current_mask+="or T4";
+	    if(on==0){
+	       current_mask+="T4 ";
+	       on=1;
+	    }
+	 }
+	 if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	    if(on==1)
+	       current_mask+="or T5";
+	    if(on==0){
+	       current_mask+="T5 ";
+	       on=1;
+	    }
+	 }
+	 if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	    if(on==1)
+	       current_mask+="or T6";
+	    if(on==0){
+	       current_mask+="T6 ";
+	       on=1;
+	    }
+	 }
+	 current_mask+=")";
+	 }
+	 
+
+	 if((short)metaData.trigger_mask[1]==1)
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     current_mask+=")";
+	 
+	     current_mask+=" and P1";
+	   }
+
+	 if((short)metaData.trigger_mask[1]==2)
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";
+
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and (P1 or P2)";
+
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==0 || metaData.PMT_mask[39]==0))
+	       current_mask+=" and P1";
+
+	     if((metaData.PMT_mask[6]==0 || metaData.PMT_mask[38]==0) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and P2";
+	     
+	   }
+
+	 
+	 if((short)metaData.trigger_mask[1]==3){
+
+	   if((metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1) && (metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1))
+	     current_mask+="(T3 or T4)";
+
+	   if((metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1) && (metaData.PMT_mask[3]==0 || metaData.PMT_mask[35]==0))
+	     current_mask+="T3";
+
+	   if((metaData.PMT_mask[2]==0 || metaData.PMT_mask[34]==0) && (metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1))
+	     current_mask+="T4";
+
+	   if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	     current_mask+=" and (P1 or P2)";
+
+	   if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==0 || metaData.PMT_mask[39]==0))
+	     current_mask+=" and P1";
+
+	   if((metaData.PMT_mask[6]==0 || metaData.PMT_mask[38]==0) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	     current_mask+=" and P2";	   
+	 }
+
+	 if((short)metaData.trigger_mask[1]==4)
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";
+	     current_mask+=" and P1 and P2";
+	   }
+
+	 if((short)metaData.trigger_mask[1]==5)
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";  
+	     current_mask+=" and P1 and P2 and P3";
+	   }
+
+	 
+	 if((short)metaData.trigger_mask[1]==6)
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";
+	     
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and (P1 or P2)";
+
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==0 || metaData.PMT_mask[39]==0))
+	       current_mask+=" and P1";
+
+	     if((metaData.PMT_mask[6]==0 || metaData.PMT_mask[38]==0) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and P2";
+
+	     if((metaData.PMT_mask[20]==1 || metaData.PMT_mask[52]==1) && (metaData.PMT_mask[21]==1 || metaData.PMT_mask[53]==1))
+	       current_mask+=" and (P15 or P16)";
+
+	     if((metaData.PMT_mask[20]==1 || metaData.PMT_mask[52]==1) && (metaData.PMT_mask[21]==0 || metaData.PMT_mask[53]==0))
+	       current_mask+=" and P15";
+
+	     if((metaData.PMT_mask[20]==0 || metaData.PMT_mask[52]==0) && (metaData.PMT_mask[21]==1 || metaData.PMT_mask[53]==1))
+	       current_mask+=" and P16";
+	   }
+	    
+
+	 if((short)metaData.trigger_mask[1]==7)
+	   {
+	     int on=0;
+	     if(metaData.PMT_mask[0]==1 || metaData.PMT_mask[32]==1){
+	       on=1;
+	       current_mask+="T1 ";
+	     }
+	     if(metaData.PMT_mask[1]==1 || metaData.PMT_mask[33]==1){
+	       if(on==1)
+		 current_mask+="or T2";
+	       if(on==0){
+		 current_mask+="T2 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[2]==1 || metaData.PMT_mask[34]==1){
+	       if(on==1)
+		 current_mask+="or T3";
+	       if(on==0){
+		 current_mask+="T3 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[3]==1 || metaData.PMT_mask[35]==1){
+	       if(on==1)
+		 current_mask+="or T4";
+	       if(on==0){
+		 current_mask+="T4 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[4]==1 || metaData.PMT_mask[36]==1){
+	       if(on==1)
+		 current_mask+="or T5";
+	       if(on==0){
+		 current_mask+="T5 ";
+		 on=1;
+	       }
+	     }
+	     if(metaData.PMT_mask[5]==1 || metaData.PMT_mask[37]==1){
+	       if(on==1)
+		 current_mask+="or T6";
+	       if(on==0){
+		 current_mask+="T6 ";
+		 on=1;
+	       }
+	     }
+	     
+	     current_mask+=")";
+	     
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and (P1 or P2) and L";
+
+	     if((metaData.PMT_mask[6]==1 || metaData.PMT_mask[38]==1) && (metaData.PMT_mask[7]==0 || metaData.PMT_mask[39]==0))
+	       current_mask+=" and P1 and L";
+
+	     if((metaData.PMT_mask[6]==0 || metaData.PMT_mask[38]==0) && (metaData.PMT_mask[7]==1 || metaData.PMT_mask[39]==1))
+	       current_mask+=" and P2 and L";
+	   }
+     
+	 //cout << "current mask  "<< current_mask << endl;
+
+	 if((short)metaData.trigger_mask[1]==8)
+	    outputFile << "\t<TRIGGER_PMT_MASK>"  << "GENERIC TRIGGER MASK" << "</TRIGGER_PMT_MASK>\n";
+	 else
+	    outputFile << "\t<TRIGGER_PMT_MASK>"  <<   current_mask  << "</TRIGGER_PMT_MASK>\n";
+
+	 if(veto==0)
+            outputFile << "\t<VETO>"  << "NO" << "</VETO>\n";
+	 else if(veto==1)
+	    outputFile << "\t<VETO>"  << "LATERAL" << "</VETO>\n";
+	 else if(veto==2)
+	    outputFile << "\t<VETO>"  << "BOTTOM" << "</VETO>\n";
+	 else if(veto==3)
+	    outputFile << "\t<VETO>"  << "ALL" << "</VETO>\n";
+
+      
+	 outputFile << "</RUN_INFO2>\n";
+      }
+     
+
+   }  
+   
+   outputFile << "</ROOT_SOURCE>\n";
+ 
+   outputFile.close();
+   rootfile.Close();
+}
+
+
+void ScintConfigToXML(TString rootname, TString outPath, TString xslPath = "")
 {
   
   cout << endl <<  "Processing Scint to xml file:" << rootname << endl;
 
-  TString filename = rootname;
+  TString filename = outPath;
+  TString _temp = rootname ;
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
+
+  filename += "/";
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_ScintConfig.xml", 16);
 
   ofstream outputFile;
@@ -1225,6 +2049,8 @@ void ScintConfigToXML(TString rootname, TString xslPath = "")
 	outputFile << dec <<"/<GEN_TRIG_MASK_15>" << metaData.gen_trig_mask[15]  << "</GEN_TRIG_MASK_15>/n";
 	outputFile << dec <<"/<GEN_TRIG_MASK_16>" << metaData.gen_trig_mask[16]  << "</GEN_TRIG_MASK_16>/n";
 	outputFile << dec <<"/<GEN_TRIG_MASK_17>" << metaData.gen_trig_mask[17]  << "</GEN_TRIG_MASK_17>/n";
+	
+	
 
 	outputFile << "</SCINTCONFIG>\n";
       }   
@@ -1233,15 +2059,23 @@ void ScintConfigToXML(TString rootname, TString xslPath = "")
   
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
+  rootfile.Close();
 }
 
 
-void SilConfigToXML(TString rootname, TString xslPath = "")
+void SilConfigToXML(TString rootname, TString outPath, TString xslPath = "")
 {
   
   cout << endl << "Processing Silicon Config to xml file:" << rootname << endl;
 
-  TString filename = rootname;
+  TString filename = outPath;
+  TString _temp = rootname ;
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
+
+  filename += "/";
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_SilConfig.xml", 14);
 
   ofstream outputFile;
@@ -1498,15 +2332,23 @@ void SilConfigToXML(TString rootname, TString xslPath = "")
   }
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
+  rootfile.Close();
 }
 
 
-void TelemetryToXML(TString rootname, TString xslPath = "")
+void TelemetryToXML(TString rootname, TString outPath,  TString xslPath = "")
 {
   
   cout << endl << "Processing Telemetry to xml file:" << rootname << endl;
   
-  TString filename = rootname;
+  TString filename = outPath;
+  TString _temp = rootname ;
+
+  if(_temp.Last('/') != -1)
+     _temp.Replace(0, _temp.Last('/'), "");
+
+  filename += "/";
+  filename += _temp;
   filename.ReplaceAll(".root", 5, "_Telemetry.xml", 14);
 
   ofstream outputFile;
@@ -1701,5 +2543,5 @@ void TelemetryToXML(TString rootname, TString xslPath = "")
   
   outputFile << "</ROOT_SOURCE>\n";
   outputFile.close();
-
+  rootfile.Close();
 }

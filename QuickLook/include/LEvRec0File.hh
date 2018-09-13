@@ -35,7 +35,10 @@ public:
    inline int GetRunID(int iEntry){return RunId[iEntry];}; 
    int RunIDtoEntry(unsigned short runid);
 
-
+   inline unsigned short GetRunType(){return runType;};
+   inline bool IsZeroSuppressed(){return (GetRunType()==0x36 || GetRunType()==0x0055);};
+   inline bool IsVirgin(){return GetRunType()==0x4e;};
+   inline bool IsMixed(){return GetRunType()==0x63;};
    
    ~LEvRec0File();
   
@@ -46,6 +49,8 @@ private:
    TTree *TConf;
    TTree *THVpmt;
    unsigned short *RunId;
+   unsigned short runType;
+
 };
 
 

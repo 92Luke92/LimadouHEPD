@@ -49,7 +49,6 @@ LTrackerMask operator!(const LTrackerMask& m1) {
 
 
 void LTrackerMask::Dump() {
-  for(auto ib : m) std::cout << ib << " ";
-  std::cout << std::endl;
+   for(auto ib : m) std::cout << ib << " ";
   return;
 }

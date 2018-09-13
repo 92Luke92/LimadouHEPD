@@ -14,10 +14,13 @@ void LTrackerCalibrationSlot::Reset() {
     ngindex[iChan]=0;
     CN_mask[iChan]=0;
   }
+  for(int icol=0; icol<N_COLUMN; ++icol) 
+     column_mask[icol]=0;
+
   return;
 }
 
-LTrackerCalibrationSlot::LTrackerCalibrationSlot(int StartE, int StopE, double *rawsig, double *ped, double *sig, double *ngi, bool *cnm) {
+LTrackerCalibrationSlot::LTrackerCalibrationSlot(int StartE, int StopE, double *rawsig, double *ped, double *sig, double *ngi, bool *cnm, bool *col_mask) {
   StartEvent=StartE;
   StopEvent=StopE;
   for(int iChan=0; iChan<NCHAN; ++iChan) {
@@ -27,6 +30,9 @@ LTrackerCalibrationSlot::LTrackerCalibrationSlot(int StartE, int StopE, double *
     ngindex[iChan]=ngi[iChan];
     CN_mask[iChan]=cnm[iChan];
   }
+  for(int icol=0; icol<N_COLUMN; ++icol) 
+     column_mask[icol]= col_mask[icol];
+
 }
 
 void LTrackerCalibrationSlot::Write(std::ofstream *output) {
@@ -42,11 +48,15 @@ LTrackerCalibrationSlot LTrackerCalibrationSlot::Read(std::ifstream *input) {
   double sigmarawST[NCHAN], pedestalST[NCHAN], sigmaST[NCHAN], ngindexST[NCHAN];
  
   bool cnmST[NCHAN];
+  bool column_mask[N_COLUMN];
+  for(int iCol=0; iCol<N_COLUMN; iCol++)
+     column_mask[iCol] = true;
+
   *input >> word >> StartEventST >>  StopEventST;
   for(int iChan=0; iChan<NCHAN; ++iChan)
     *input >> sigmarawST[iChan] >> pedestalST[iChan] >>  sigmaST[iChan] >> ngindexST[iChan] >> cnmST[iChan];
   
-   LTrackerCalibrationSlot result(StartEventST, StopEventST, sigmarawST, pedestalST, sigmaST, ngindexST, cnmST);
+  LTrackerCalibrationSlot result(StartEventST, StopEventST, sigmarawST, pedestalST, sigmaST, ngindexST, cnmST, column_mask);
   
    return result;
 }
@@ -58,13 +68,13 @@ LTrackerCalibrationSlot LTrackerCalibrationSlot::ReadRoot(const char *input) {
   bool cnmST[NCHAN];
 
   memset(&sigmarawST[0], 0, NCHAN*(sizeof(double)));
-  memset(&ngindexST[0], 0, NCHAN*(sizeof(double)));
-  
+  memset(&cnmST[0], 1, NCHAN*(sizeof(bool)));
+
   LEvRec0 outev;
   LEvRec0File inputFile(input);
   inputFile.SetTheEventPointer(outev);
-
   inputFile.GetEntry(0);  // ped
+  
   for(int iChan=0; iChan<NCHAN; ++iChan)
   {
      pedestalST[iChan] = outev.strip[iChan];
@@ -74,11 +84,24 @@ LTrackerCalibrationSlot LTrackerCalibrationSlot::ReadRoot(const char *input) {
   for(int iChan=0; iChan<NCHAN; ++iChan)
   {
      sigmaST[iChan] = (outev.strip[iChan] & 0x0FFF);
+     ngindexST[iChan] = (outev.strip[iChan] & 0x4000);
+     
+     if (ngindexST[iChan] == 0 )
+	ngindexST[iChan] = -1; // good channel
+     else  ngindexST[iChan] = 100; // bad channel
+     
      //std::cout << "sigmaST[" << iChan << "] = " << sigmaST[iChan] << std::endl;
   }
 
-  LTrackerCalibrationSlot result(StartEventST, StopEventST, sigmarawST, pedestalST, sigmaST, ngindexST, cnmST);
-  
+  LEvRec0Md cevMD;
+  inputFile.SetMdPointer(cevMD);
+  bool column_mask[N_COLUMN];
+  inputFile.GetMDEntry(0); 
+  for (int i = 0; i< N_COLUMN; i++)
+     column_mask[i] = cevMD.silConfig.ladder_mask[i];
+
+  LTrackerCalibrationSlot result(StartEventST, StopEventST, sigmarawST, pedestalST, sigmaST, ngindexST, cnmST, column_mask);
+    
    return result;
 }
 
@@ -100,6 +123,15 @@ LTrackerMask LTrackerCalibrationSlot::GetMaskOnNGI(const double ngiMin, const do
   return result;
 }
 
+LTrackerMask LTrackerCalibrationSlot::GetMaskOnColumn() {
+  LTrackerMask result;
+  for(int iChan=0; iChan<NCHAN; ++iChan) {
+     if(column_mask[iChan/COLUMN_CHAN] == false ) result[iChan] = false;
+     else result[iChan] = true;
+  }
+  return result;
+}
+
 
 LTrackerCalibrationSlot::LTrackerCalibrationSlot(const LTrackerCalibrationSlot &other) {
     for(int ichan=0; ichan<NCHAN; ++ichan) {
@@ -109,6 +141,8 @@ LTrackerCalibrationSlot::LTrackerCalibrationSlot(const LTrackerCalibrationSlot &
       ngindex[ichan] = other.GetNGIndex()[ichan];
       CN_mask[ichan] = other.GetCNMask()[ichan];
     }
+    for(int iCol=0; iCol<N_COLUMN; ++iCol) 
+       column_mask[iCol] = other.GetColumnMask()[iCol];
     
     // event info
     StartEvent = other.GetStartEvent();
@@ -123,8 +157,10 @@ LTrackerCalibrationSlot& LTrackerCalibrationSlot::operator=(const LTrackerCalibr
       sigma[ichan] = other.GetSigma()[ichan];
       ngindex[ichan] = other.GetNGIndex()[ichan];
       CN_mask[ichan] = other.GetCNMask()[ichan];
+      
     }
-    
+    for(int iCol=0; iCol<N_COLUMN; ++iCol) 
+       column_mask[iCol] = other.GetColumnMask()[iCol];
     // event info
     StartEvent = other.GetStartEvent();
     StopEvent = other.GetStopEvent();
@@ -149,7 +185,9 @@ LTrackerCalibrationSlot& LTrackerCalibrationSlot::operator+=(const LTrackerCalib
     ngindex[ichan] += sqrt(var);
     CN_mask[ichan] = (CN_mask[ichan]||rhs.GetCNMask()[ichan]);
   }
-
+  for(int iCol=0; iCol<N_COLUMN; ++iCol) 
+     column_mask[iCol] = rhs.GetColumnMask()[iCol];
+     
   // event info
   StartEvent = std::min(StartEvent,rhs.GetStartEvent());
   StopEvent = std::max(StopEvent,rhs.GetStopEvent());

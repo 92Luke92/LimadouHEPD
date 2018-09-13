@@ -2,6 +2,7 @@
 #include "detector_const.hh"
 
 #include <iostream>
+#include <math.h>
 
 LTriggerSignal::LTriggerSignal() {
     nunits=TRIGBARS;
@@ -45,3 +46,23 @@ bool LTriggerSignal::SignalSharedAmongBars(const bool isHG, const double thresho
   return (maxbar-max2bar==1 || maxbar-max2bar==-1);
 }
 
+double LTriggerSignal::GetSN(const bool isHG, const double threshold) const {
+  double result = GetSNOfMSU(isHG, threshold);
+  if(result < 0.) return -999.;
+  double result2=0.;
+  if(SignalSharedAmongBars(isHG,threshold)) {
+    result2 = GetSNOf2ndMSU(isHG, threshold);
+    result = sqrt(result*result+result2*result2);
+  }
+  if(result > threshold) return result;
+  else return -999.;
+}
+
+double LTriggerSignal::GetCounts(const bool isHG, const double threshold) const {
+  if(GetSN(isHG, threshold)<0.) return -999.;
+  double result = GetCountsOfMSU(isHG, threshold);
+  if(result < 0.) return -999.;
+  double result2=0.;
+  if(SignalSharedAmongBars(isHG,threshold)) result += GetCountsOf2ndMSU(isHG, threshold);
+  return result;
+}

@@ -1,0 +1,155 @@
+#
+/control/verbose 2
+/run/verbose 1
+#
+#/hepd/setWorldSize 55 75 80 cm
+/hepd/setWorldSize 55 75 400 cm
+
+/hepd/ActivateSatellite true
+/hepd/SatelliteConfiguration Config1
+/hepd/Satellite/BlanketMaterialConfiguration mylar
+/hepd/Satellite/WallMaterialConfiguration Aluminium
+
+/hepd/ActivateHEPDBox true
+/hepd/HEPDBoxConfiguration Config4
+#/hepd/HEPDBox/BlanketMaterialConfiguration mylar
+/hepd/HEPDBox/CompositeBlanketMaterialConfiguration Kapton Copper
+/hepd/HEPDBox/WallTwoMaterialConfiguration Aluminium HCAluminium
+
+/hepd/ActivateTracker true
+/hepd/TrackerConfiguration Config4
+/hepd/Tracker/SiliconMaterialConfiguration Silicon
+/hepd/Tracker/KaptonMaterialConfiguration Kapton
+/hepd/Tracker/CarbonFiberMaterialConfiguration CarbonFiber
+
+/hepd/ActivateCalo true
+/hepd/CaloConfiguration Config6
+#/hepd/CaloConfiguration Optical ##--> OP
+/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration Scintillator LYSO
+#/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration ScintillatorEJ200 LYSO ##--> OP
+/hepd/Calorimeter/VetoMaterialConfiguration Scintillator
+/hepd/Calorimeter/PoronMaterialConfiguration Poron
+/hepd/Calorimeter/CarbonFiberMaterialConfiguration CarbonFiber
+
+# HEPD proton test beam configuration 
+/hepd/ActivateHEPDProtonTB false
+/hepd/ActivateHEPDDegrader false
+
+# HEPD proton test beam configuration
+/hepd/ActivateHEPDNucleiTB false
+
+# HEPD electron test beam configuration
+/hepd/ActivateHEPDElectronTB false
+
+## ELECTROMAGNETIC model
+/hepd/phys/addPhysics  emstandard_opt4
+
+## ELASTIC HADRONIC model (primary + secondary)
+/hepd/phys/addPhysics  elastic
+/hepd/phys/addPhysics  IonElastic
+
+## MODEL 1: HADRONIC INELASTIC model (qmd) (primary + secondary)
+/hepd/phys/addPhysics  Shielding
+/hepd/phys/addPhysics  qmd_ion
+
+## MODEL 2: HADRONIC INELASTIC model (Incl) (primary + secondary)
+#/hepd/phys/addPhysics  INCLXX
+#/hepd/phys/addPhysics  inclxx_ion
+
+## MODEL 3: HADRONIC INELASTIC model (Binary) (primary + secondary)
+#/hepd/phys/addPhysics  QGSP_BIC_HP
+#/hepd/phys/addPhysics  binary_ion
+
+
+/run/initialize
+
+
+## Remove comments in the following three lines when Optical physics is activated!!!
+#/hepd/CalorimeterSD/useBirksLaw false ##--> OP
+#/hepd/VetoSD/useBirksLaw false ##--> OP
+#/hepd/gun/setDefault ##--> OP
+
+#
+# Use this open statement to create an OpenGL view:
+/vis/open OGL 600x600-0+0
+
+# Disable auto refresh and quieten vis messages whilst scene and
+# trajectories are established:
+/vis/viewer/set/autoRefresh false
+/vis/verbose errors
+#
+# Draw geometry:
+/vis/drawVolume
+#/vis/viewer/set/style wireframe
+#/vis/viewer/set/style surface
+#
+# Draw coordinate axes:
+/vis/scene/add/axes 0 0 0 38.2 cm
+/vis/viewer/set/background white
+#/vis/viewer/set/viewpoint/ThetaPhi 90. 0.
+#
+# Draw smooth trajectories at end of event, showing trajectory points
+# as markers 2 pixels wide:
+/vis/scene/add/trajectories smooth
+#/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/set proton blue
+/vis/modeling/trajectories/drawByParticleID-0/set e+ red
+/vis/modeling/trajectories/drawByParticleID-0/set e- red
+/vis/modeling/trajectories/drawByParticleID-0/set alpha magenta
+/vis/modeling/trajectories/drawByParticleID-0/set C12 magenta
+/vis/modeling/trajectories/drawByParticleID-0/set He3 magenta
+/vis/modeling/trajectories/drawByParticleID-0/set mu+ green
+/vis/modeling/trajectories/drawByParticleID-0/set mu- green
+/vis/modeling/trajectories/drawByParticleID-0/set pi+ cyan
+/vis/modeling/trajectories/drawByParticleID-0/set pi- cyan
+/vis/modeling/trajectories/drawByParticleID-0/set neutron black
+/vis/modeling/trajectories/drawByParticleID-0/set gamma yellow
+/vis/modeling/trajectories/drawByParticleID-0/set neutrino grey
+#
+# To superimpose all of the events from a given run:
+/vis/scene/endOfEventAction accumulate
+#
+# Re-establish auto refreshing and verbosity:
+/vis/viewer/set/autoRefresh true
+/vis/verbose warnings
+#
+
+
+############ Nuclei TB - LNS
+#/hepd/gun/setDefault
+#/hepd/gun/particle C     #for nuclei: He, C, O
+##protons:  62 MeV
+##He:	   248 MeV
+##C:	   744 MeV
+##O:	   992 MeV
+#/hepd/gun/energy 744 MeV
+#/hepd/gun/spot
+############ Nuclei TB - LNS
+
+
+#/hepd/gun/muon 30 30 cm 0.05 1000 GeV
+#/hepd/gun/random
+
+
+## position c3 trento tb
+#/hepd/gun/beam 1.75 1.80 cm 0 deg
+#/hepd/gun/tbeam c3 0 deg
+
+#/hepd/gun/toCenter
+#/hepd/gun/particle proton
+#/hepd/gun/energy 50 MeV
+#/hepd/gun/powerlaw 1 100 MeV -3
+
+/hepd/gun/setDefault
+/hepd/gun/particle e-
+/hepd/gun/flat 1 10 MeV
+
+/tracking/verbose 0
+/random/setSeeds 1777992 744546
+
+/hepd/producer/SetRootFile Test.root HEPD
+
+#/run/beamOn 10
+
+#/hepd/producer/StoreRootFile

@@ -97,6 +97,49 @@ LTrackerCluster::LTrackerCluster(const int inpSeed, const double *inpCont, const
   }
 
   seed=inpSeed;
+  int side = ChanToSide(seed);
+  int schan = ChanToSideChan(seed);
+  if(side == 0) { // p-side
+    for(int i=0; i<CLUSTERCHANNELS; ++i) {
+      int deltaseed = -CLUSTERCHANNELS/2+i;
+      int index = schan+deltaseed;
+      if(index<0 || index>SIDE_CHAN-1) {
+        count[i]=-999.;
+        sigma[i]=-999.;
+        sn[i]=-999.;
+      } else {
+        count[i]=inpCont[inpSeed+deltaseed];
+        sigma[i]=inpSigma[inpSeed+deltaseed];
+        sn[i]=count[i]/sigma[i];
+      }
+    }
+  } else {      // n-side
+    for(int i=0; i<CLUSTERCHANNELS; ++i) {
+      int deltaseed = -CLUSTERCHANNELS/2+i;
+      int index = schan+deltaseed;
+      // account for degeneracy
+      if(index<0) deltaseed+=SIDE_CHAN;
+      else if(index>SIDE_CHAN-1) deltaseed-=SIDE_CHAN;
+      // always fill
+      count[i]=inpCont[inpSeed+deltaseed];
+      sigma[i]=inpSigma[inpSeed+deltaseed];
+      sn[i]=count[i]/sigma[i];
+    }
+  }
+
+  ComputeEta();
+}
+
+void LTrackerCluster::LTrackerCluster_ASOF20180423(const int inpSeed, const double *inpCont, const double *inpSigma){
+  if(inpSeed<0 || inpSeed>NCHAN) {
+    LTrackerCluster();
+    std::cerr << "LTrackerCluster::LTrackerCluster(int inpSeed, double *inpCont, double *inpSigma)   error:"
+       << " inpSeed=" << inpSeed << ". Default constructor used."
+       << std::endl;
+    return;
+  }
+
+  seed=inpSeed;
   for(int i=0; i<CLUSTERCHANNELS; ++i) {
     int index=ChanToLadderChan(inpSeed)-CLUSTERCHANNELS/2+i;
     if(index<0 || index>LADDER_CHAN-1) {
@@ -105,12 +148,13 @@ LTrackerCluster::LTrackerCluster(const int inpSeed, const double *inpCont, const
       sn[i]=-999.;
     } else {
       count[i]=inpCont[inpSeed-CLUSTERCHANNELS/2+i];
-      sigma[i]=inpSigma[inpSeed-CLUSTERCHANNELS/2+i];;
+      sigma[i]=inpSigma[inpSeed-CLUSTERCHANNELS/2+i];
       sn[i]=count[i]/sigma[i];
     }
   }
   ComputeEta();
   //ComputeEta3();
+  return;
 }
 
 double LTrackerCluster::GetSides(const double SideThreshold){
