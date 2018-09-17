@@ -235,7 +235,7 @@ void HEPDSWPhysicsList::AddOpticalProcesses()
   G4OpRayleigh* theRayleighScattProcess = new G4OpRayleigh("RayleighScattering");
   G4OpMieHG* theMieHGScattProcess = new G4OpMieHG("MieHGScattering");
 
-  auto theParticleIterator = GetParticleIterator(); // see slide 3 of https://indico.fnal.gov/event/13701/contribution/0/material/slides/0.pdf
+  //auto theParticleIterator = GetParticleIterator(); // see slide 3 of https://indico.fnal.gov/event/13701/contribution/0/material/slides/0.pdf
   theParticleIterator->reset();
   while( (*theParticleIterator)() )
   {
@@ -273,7 +273,7 @@ void HEPDSWPhysicsList::AddDecay()
 
   G4Decay* fDecayProcess = new G4Decay();
 
-  auto theParticleIterator = GetParticleIterator(); // see slide 3 of https://indico.fnal.gov/event/13701/contribution/0/material/slides/0.pdf
+  //auto theParticleIterator = GetParticleIterator(); // see slide 3 of https://indico.fnal.gov/event/13701/contribution/0/material/slides/0.pdf
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){
     G4ParticleDefinition* particle = theParticleIterator->value();
@@ -295,7 +295,7 @@ void HEPDSWPhysicsList::AddDecay()
 
 void HEPDSWPhysicsList::AddStepMax()
 {
-  auto theParticleIterator = GetParticleIterator(); // see slide 3 of https://indico.fnal.gov/event/13701/contribution/0/material/slides/0.pdf
+  //auto theParticleIterator = GetParticleIterator(); // see slide 3 of https://indico.fnal.gov/event/13701/contribution/0/material/slides/0.pdf
   theParticleIterator->reset();
   while ((*theParticleIterator)()){
       G4ParticleDefinition* particle = theParticleIterator->value();

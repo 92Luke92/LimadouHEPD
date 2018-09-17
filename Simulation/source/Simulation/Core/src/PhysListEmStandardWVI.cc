@@ -86,10 +86,10 @@ void PhysListEmStandardWVI::ConstructProcess()
   // Add standard EM Processes
   //
 
-  auto theParticleIterator = GetParticleIterator(); // see slide 3 of https://indico.fnal.gov/event/13701/contribution/0/material/slides/0.pdf
-  theParticleIterator->reset();
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
+  //auto theParticleIterator = GetParticleIterator(); // see slide 3 of https://indico.fnal.gov/event/13701/contribution/0/material/slides/0.pdf
+  aParticleIterator->reset();
+  while( (*aParticleIterator)() ){
+    G4ParticleDefinition* particle = aParticleIterator->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
     G4String particleName = particle->GetParticleName();
 
