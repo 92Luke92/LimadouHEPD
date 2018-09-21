@@ -18,6 +18,7 @@
 #include "RootEvent.hh"
 #include "RootCaloHit.hh"
 #include "RootTrackerHit.hh"
+#include "RootPmtHits.hh"
 
 
 // ROOT libs
@@ -38,6 +39,7 @@ std::string  getLvl0filename (const std::string mcfilename);
 void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc);
 std::vector<float> CaloHitsToEdep (std::vector<RootCaloHit>);
 void getPMTs (std::vector<RootCaloHit>, ushort * pmt_high, ushort * pmt_low, EcalADC ecaladc);
+void getPMTs_OP (std::vector<RootPmtHits>, ushort * pmt_high, ushort * pmt_low, EcalADC ecaladc);
 void getStrips (std::vector<RootTrackerHit>, short* strips, TrackerADC trkadc);
 int getMCTrackHitsEnergy(std::vector<RootTrackerHit> trHits);
 
@@ -76,12 +78,15 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
         Tmc->GetEntry (ie);
         std::vector<RootCaloHit> caloHits =  MCevt->GetCaloHit();
         std::vector<RootTrackerHit>  trackerHits =  MCevt->GetTrackerHit();
+	std::vector<RootPmtHits> pmtHits = MCevt->GetPmtHits();
+	
         if(ie==0) ecaladc.setMCEnergy(getMCTrackHitsEnergy(trackerHits));
 
         LEvRec0* ev = lvl0writer->pev();
         ev->Reset();
 
-        getPMTs (caloHits, ev->pmt_high, ev->pmt_low, ecaladc);
+	if(ecaladc.OPmethod) getPMTs_OP (pmtHits, ev->pmt_high, ev->pmt_low, ecaladc);
+        else getPMTs (caloHits, ev->pmt_high, ev->pmt_low, ecaladc);
         getStrips (trackerHits, ev->strip, trkadc);
         lvl0writer->Fill();
         std::cout << ie << "\r" << std::flush;
@@ -96,7 +101,8 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 
 std::string  getMCfilename (int argc, char** argv)
 {
-    std::string filename = "../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
+  std::string filename = "/home/luke/MC2Lvl0/LimadouHEPD/Tools/p_125MeV_3C.root";
+  //std::string filename = "../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
     if (argc > 1) filename = argv[1];
     std::cout << "MC2Lvl0: MC file name set to " << filename << std::endl;
     return filename;
@@ -127,6 +133,15 @@ void getPMTs (std::vector<RootCaloHit> CaloHits, ushort* pmt_high, ushort* pmt_l
     ecaladc.SetPositions(pmt_info);
     ecaladc.NormalizePMThg(pmt_high);
     ecaladc.NormalizePMTlg(pmt_low);
+    return;
+}
+
+
+void getPMTs_OP (std::vector<RootPmtHits> pmtHits, ushort* pmt_high, ushort* pmt_low, EcalADC ecaladc )
+{
+  ecaladc.NormalizePMThg_OP(pmtHits, pmt_high);
+  ecaladc.NormalizePMTlg_OP(pmtHits, pmt_low);
+  
     return;
 }
 
