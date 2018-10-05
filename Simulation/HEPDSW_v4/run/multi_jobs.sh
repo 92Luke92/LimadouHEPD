@@ -13,5 +13,3 @@ do
 
     bsub -q limadou -e err$i/ -o log$i/ hepdsw $MACPATH
 done
-
-rm job/$FILENAME*.mac
