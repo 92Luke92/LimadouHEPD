@@ -23,8 +23,8 @@
 /hepd/Tracker/CarbonFiberMaterialConfiguration CarbonFiber
 
 /hepd/ActivateCalo true
-/hepd/CaloConfiguration Config6
-/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration Scintillator LYSO
+/hepd/CaloConfiguration Optical
+/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration ScintillatorEJ200 LYSO
 /hepd/Calorimeter/VetoMaterialConfiguration Scintillator
 /hepd/Calorimeter/PoronMaterialConfiguration Poron
 /hepd/Calorimeter/CarbonFiberMaterialConfiguration CarbonFiber
