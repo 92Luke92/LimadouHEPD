@@ -72,7 +72,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     EcalADC ecaladc(EcalADC::RawEdep);
     TrackerADC trkadc;
 
-    if (ne>100000) ne=100000;
+    //if (ne>100000) ne=100000;
 
     for (int ie = 0; ie < ne; ie++) {
         Tmc->GetEntry (ie);
@@ -101,8 +101,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 
 std::string  getMCfilename (int argc, char** argv)
 {
-  std::string filename = "/home/luke/MC2Lvl0/LimadouHEPD/Tools/p_125MeV_3C.root";
-  //std::string filename = "../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
+    std::string filename = "../../../Simulation/run/Simulations_root/hepd5000_qmd_173MeV_proton_3C0.root"; // Supposing you run from Tools/MC2Lvl0/build/ ; I know, it's ugly :(
     if (argc > 1) filename = argv[1];
     std::cout << "MC2Lvl0: MC file name set to " << filename << std::endl;
     return filename;
