@@ -1,0 +1,13 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=@CMAKE_INSTALL_PREFIX@
+libdir=@HEPDOrbital_INSTALL_LIBRARY_DIR@
+sharedlibdir=@HEPDOrbital_INSTALL_LIBRARY_DIR@
+includedir=@HEPDOrbital_INSTALL_INCLUDE_DIR@
+
+Name: HEPDOrbital
+Description: HEPDOrbital analysis package
+Version: @HEPDOrbital_VERSION_NUM@
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}

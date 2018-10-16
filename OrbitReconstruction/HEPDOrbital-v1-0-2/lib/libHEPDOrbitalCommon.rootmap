@@ -1,0 +1,32 @@
+[ libHEPDOrbitalCommon.so ]
+# List of selected classes
+class CoordGeodetic
+class CoordTopocentric
+class DateTime
+class DecayedException
+class Eci
+class Observer
+class OrbitalElements
+class SGP4
+class SatelliteException
+class SolarPosition
+class TimeSpan
+class Tle
+class TleException
+class Vector
+header CoordGeodetic.h
+header CoordTopocentric.h
+header DateTime.h
+header DecayedException.h
+header Eci.h
+header Observer.h
+header OrbitalElements.h
+header SGP4.h
+header SatelliteException.h
+header SolarPosition.h
+header TimeSpan.h
+header Tle.h
+header TleException.h
+header Vector.h
+# List of selected namespaces
+namespace Util

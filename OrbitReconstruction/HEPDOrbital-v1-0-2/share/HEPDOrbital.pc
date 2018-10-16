@@ -1,0 +1,13 @@
+prefix=/home/fool/REPOFICO/LimadouHEPD/OrbitReconstruction/build/../HEPDOrbital-v1-0-2
+exec_prefix=/home/fool/REPOFICO/LimadouHEPD/OrbitReconstruction/build/../HEPDOrbital-v1-0-2
+libdir=/home/fool/REPOFICO/LimadouHEPD/OrbitReconstruction/build/../HEPDOrbital-v1-0-2/lib
+sharedlibdir=/home/fool/REPOFICO/LimadouHEPD/OrbitReconstruction/build/../HEPDOrbital-v1-0-2/lib
+includedir=/home/fool/REPOFICO/LimadouHEPD/OrbitReconstruction/build/../HEPDOrbital-v1-0-2/include
+
+Name: HEPDOrbital
+Description: HEPDOrbital analysis package
+Version: HEPDOrbital-v1-0-2
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}
