@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 	std::string st = argv[1];
 	LScintillatorsL2::GetInstance().LoadRun(st);
 	//LScintillatorsL2::GetInstance().Calc(0,0);
-        LScintillatorsL2::GetInstance().Test(1);
-        //LScintillatorsL2::GetInstance().MakeLYSOStudy(st);
+        LScintillatorsL2::GetInstance().Test(5.);
+        //LScintillatorsL2::GetInstance().MakeLYSOStudy(st, 5.);
 	return EXIT_SUCCESS;
 }

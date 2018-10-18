@@ -108,9 +108,9 @@ void LScintillatorsL2::input_energyrecon_pars(double *t_p0, double *t_p1, double
 
 
 
-int LScintillatorsL2::DeviceStatus(double sn1, double sn2){
+int LScintillatorsL2::DeviceStatus(double sn1, double sn2, double th){
 
-int status=0;double act_threshold=5.0;
+int status=0;double act_threshold=th;
 
 if( sn1>act_threshold  && sn2>act_threshold){status=1;}
 
@@ -157,7 +157,7 @@ int LScintillatorsL2::LoadRun(const std::string inputFileROOT) {
 
 
 
-int LScintillatorsL2::Calc(int hw_condition, int ascii_dump) {
+int LScintillatorsL2::Calc(int hw_condition, double sign_th) {
 
 // calibration constants and analysis pars
 
@@ -215,7 +215,7 @@ tsum=0., tmult=0, tene=0.; for(int a=0;a<6;a++){hitbar[a]=0.0;};
 for (int bar=0;bar<6;bar++){ 
     int  tpmt1=(bar*2)+0;
     int  tpmt2=(bar*2)+1;
-    if( DeviceStatus(cev.trig.sn_hg[bar][0],cev.trig.sn_hg[bar][1])==1 )
+    if( DeviceStatus(cev.trig.sn_hg[bar][0],cev.trig.sn_hg[bar][1], sign_th)==1 , sign_th)
          {
          double c1=teq[tpmt1]*cev.trig.cont_hg[bar][0];
          double c2=teq[tpmt2]*cev.trig.cont_hg[bar][1];
@@ -253,7 +253,7 @@ cal2[cr]=cev.scint.sn_hg[plane][dev];
 ck[0]=c_p0[0]; ck[1]=c_p1[0];
 
 // calculation
-CalcUpperC(cal1,cal2,cres,cresarray,ck);
+CalcUpperC(cal1,cal2,cres,cresarray,ck, sign_th);
 
 
 // LYSO vars ---------------------------------------------------------------------------------------------------------------------------
@@ -274,7 +274,7 @@ l2[cr]=cev.lyso.sn_lg[cr][0];
 lk[0]=c_p0[1]; lk[1]=c_p1[1];
 
 // calculation
-CalcLYSO(l1,l2,lres,lk);
+CalcLYSO(l1,l2,lres,lk, sign_th);
 
 // to be changed with lev2 elements
 //IsLYSOHit=lres[2], lmult=lres[1], lsum=lres[0], enLYSO=lres[3];
@@ -283,10 +283,10 @@ CalcLYSO(l1,l2,lres,lk);
 // reset vars
 IsVetoBottomHit=0, IsVetoLatHit=0;
 
-IsVetoBottomHit=DeviceStatus(cev.veto.sn_hg[4][0],cev.veto.sn_hg[4][1]);
+IsVetoBottomHit=DeviceStatus(cev.veto.sn_hg[4][0],cev.veto.sn_hg[4][1], sign_th);
 
 
-for (int veto=0;veto<4;veto++){IsVetoLatHit=IsVetoLatHit+DeviceStatus(cev.veto.sn_hg[veto][0],cev.veto.sn_hg[veto][1]);}
+for (int veto=0;veto<4;veto++){IsVetoLatHit=IsVetoLatHit+DeviceStatus(cev.veto.sn_hg[veto][0],cev.veto.sn_hg[veto][1], sign_th);}
  
 
 //int IsLYSOHit=0;
@@ -379,13 +379,13 @@ return  energy;
 
 
 
-void LScintillatorsL2::CalcLYSO(double signal[9], double sn[9], double out[4], double k[2] ){
+void LScintillatorsL2::CalcLYSO(double signal[9], double sn[9], double out[4], double k[2], double sign_th ){
 
 for (int i=0;i<4;i++){out[i]=0;}//  reset out[4], it contains signal , multip flags, energy
 
 for (int lys=0;lys<9;lys++){
 
-      if(DeviceStatus(sn[lys],sn[lys])==1){
+      if(DeviceStatus(sn[lys],sn[lys], sign_th)==1){
 
       out[1]++;
 
@@ -415,7 +415,10 @@ return ;
 
 
 
-void LScintillatorsL2::CalcUpperC(double pmt_signals[32], double pmt_sns[32], double out[3], double outarray[16], double  k[2]){
+void LScintillatorsL2::CalcUpperC(double pmt_signals[32], double pmt_sns[32], double out[3], double outarray[16], double  k[2], double sign_th){
+
+double PlaneEqF[16]={445.,440.,441.,424.,400.,439.,423.,426.,434.,430.,427.,433.,425.,422.,431.,425.};// temporary hardcoded plane equalization
+for (int p = 0; p<16; p++){PlaneEqF[p]=400./PlaneEqF[p]; }
 
 for (int i=0;i<3;i++){out[i]=0;}//  reset out[3], it contains signal , multip flag, energy
 
@@ -427,7 +430,7 @@ for (int pln=0;pln<16;pln++){
 
     int  pmt2=(pln*2)+1; // firts plane shoudl have pmt 0 and 1
 
-    if( DeviceStatus(pmt_sns[pmt1],pmt_sns[pmt2])==1)
+    if( DeviceStatus(pmt_sns[pmt1],pmt_sns[pmt2], sign_th)==1)
          {
 
          double c1=pmt_signals[pmt1]; // already de-pedestaleld and equalized
@@ -440,7 +443,7 @@ for (int pln=0;pln<16;pln++){
          
          out[0]=out[0]+c1+c2;
 
-         outarray[pln]=c1+c2;
+         outarray[pln]=PlaneEqF[pln]*(c1+c2);// this is equalized to have each plane to 400 with a MIP
 
          out[1]++;
 
@@ -483,7 +486,7 @@ return ;
 
 
 
-int LScintillatorsL2::MakeLYSOStudy(const std::string inputFileROOT){
+int LScintillatorsL2::MakeLYSOStudy(const std::string inputFileROOT, double sign_th){
 
  
   double const LConv = 0.42, Offset=5.5;// MeV/adc , MeV
@@ -538,11 +541,11 @@ int LScintillatorsL2::MakeLYSOStudy(const std::string inputFileROOT){
        lowLsum=lowLsum+Lyl[i];
        lh[i]->Fill(Lyl[i]);
 
-       if(DeviceStatus(cev.lyso.sn_lg[i][0], cev.lyso.sn_lg[i][0])==1){multL++;}
+       if(DeviceStatus(cev.lyso.sn_lg[i][0], cev.lyso.sn_lg[i][0], sign_th)==1){multL++;}
       
    }
 
-   int st=DeviceStatus(cev.veto.sn_hg[4][0], cev.veto.sn_hg[4][1]);// signal in bottom veto
+   int st=DeviceStatus(cev.veto.sn_hg[4][0], cev.veto.sn_hg[4][1], sign_th);// signal in bottom veto
   
       if(1){
       
@@ -561,9 +564,9 @@ int LScintillatorsL2::MakeLYSOStudy(const std::string inputFileROOT){
          hmult->Fill(multL);
          srecon->Fill((lowLsum*LConv)+Offset);
    
-          if(DeviceStatus(cev.veto.sn_hg[4][0],cev.veto.sn_hg[4][1])==1){CounterVetoB++;}
-          if(DeviceStatus(cev.scint.sn_hg[0][0],cev.scint.sn_hg[0][1])==1){CounterP1++;}
-          if(DeviceStatus(cev.scint.sn_hg[15][0],cev.scint.sn_hg[15][1])==1){CounterP16++;}
+          if(DeviceStatus(cev.veto.sn_hg[4][0],cev.veto.sn_hg[4][1], sign_th)==1){CounterVetoB++;}
+          if(DeviceStatus(cev.scint.sn_hg[0][0],cev.scint.sn_hg[0][1], sign_th)==1){CounterP1++;}
+          if(DeviceStatus(cev.scint.sn_hg[15][0],cev.scint.sn_hg[15][1], sign_th)==1){CounterP16++;}
 
  
 
