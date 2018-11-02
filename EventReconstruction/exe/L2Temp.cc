@@ -18,6 +18,7 @@
 #include "TString.h"
 #include "LOfflineL0Selector.hh"
 #include "LCalibration.hh"
+#include "LCaloEqualization.hh"
 
 const int NBINS = 4096/4;
 const double XMIN = 0.;
@@ -26,7 +27,8 @@ const double NPMTT = 63;
 
 const double BINPMT = 4100;
 // const double BINPMT = 4100;
-const double CALO_THD = 10;
+const double CALO_SIGTHD = 10;
+const double CALO_VETOTHD = 3;
 // const double KCALOMU = (31.85/8572.);
 // const double OFFSETMU = 0;
 const double KCALOFITNOTRIG = (1/265.1);
@@ -43,6 +45,10 @@ const double OFFSETFITLYSO = 12.5*KCALOFITLYSO;
 
 const double PLANETOBAR_THRESH = 10.;
 
+const int    PLANEINTRIG = 2;
+const double TRIGEQ = 100.;
+const double PLANEEQ = 200.;
+
 typedef struct trigPaddle
 {
    int    pad;
@@ -50,191 +56,63 @@ typedef struct trigPaddle
 }trigPaddle_t;
 
 
-bool isLatVetoHit(LEvRec1 ev);
-int triggerMultiplicity(LEvRec1 ev);
-int planeMultiplicity(LEvRec1 ev);
-int lysoMultiplicity(LEvRec1 ev);
 bool isContainedInUpperCalo(LEvRec1 ev);
-int  lastHitPlane(LEvRec1 ev);
-double CaloSum(LEvRec1 ev, double *mpv);
-double LysoSum(LEvRec1 ev, double *mpv);
-trigPaddle_t highestTrigPad(LEvRec1 ev);
-trigPaddle_t highestTrigPadMIP(LEvRec1 ev);
-
-// int  triggerMultiplicity(LEvRec0 ev, LCalibration *calib);
-// int  triggerTotalADC(LEvRec0 ev, LCalibration *calib);
+double CaloSum(LEvRec1 ev, LCaloEqualization *eqHG);
+double LysoSum(LEvRec1 ev, LCaloEqualization *eqLG);
 
 
-
-bool isLatVetoHit(LEvRec1 ev)
-{
-   for(int i = 0; i<(NVETOSCINT-1) ; i++)
-	 if(ev.veto.sn_hg[i][0] >= CALO_THD || 
-	    ev.veto.sn_hg[i][1] >= CALO_THD   )
-	    return true;
-   return false;   
-}
-
-int triggerMultiplicity(LEvRec1 ev)
-{
-   int mult=0;
-   
-   for (int i=0; i<NTRIGSCINT;i++)
-      if(ev.trig.sn_hg[i][0] >= CALO_THD && 
-	 ev.trig.sn_hg[i][1] >= CALO_THD   )
-	 mult++;
-
-   return mult;
-}
-
-int planeMultiplicity(LEvRec1 ev)
-{
-   int mult=0;
-   
-   for (int i=0; i<NSCINTPLANES;i++)
-   {
-      if(i != 4                           &&  // P5 correction
-	 ev.scint.sn_hg[i][0] >= CALO_THD && 
-	 ev.scint.sn_hg[i][1] >= CALO_THD   )
-	 mult++;
-      else if(i == 4 && 
-	      ev.scint.sn_hg[i][1] >= CALO_THD)
-	 mult++;
-   }
-   
-   return mult;
-}
-
-int lysoMultiplicity(LEvRec1 ev)
-{
-   int mult=0;
-   
-   for (int i=0; i<NLYSOCRYSTALS;i++)
-      if( ev.lyso.sn_lg[i][0] >= CALO_THD ) 
-	 mult++;
-
-   return mult;
-}
 
 bool isContainedInUpperCalo(LEvRec1 ev)
 {
-
+   
    for (int i=0; i<NLYSOCRYSTALS;i++)
    { 
-      if( ev.lyso.sn_lg[i][0] >= CALO_THD ) 
+      if( ev.lyso.sn_lg[i][0] >= CALO_SIGTHD ) 
 	 return false;
    }
    
-   if(ev.veto.sn_hg[4][0] >= CALO_THD || 
-      ev.veto.sn_hg[4][1] >= CALO_THD   )
+   if(ev.veto.sn_hg[4][0] >= CALO_VETOTHD || 
+      ev.veto.sn_hg[4][1] >= CALO_VETOTHD   )
       return false;
    
-   bool ret = !isLatVetoHit(ev);
+   bool ret = !ev.isLatVetoHit(CALO_VETOTHD);
    return ret;   
 }
 
 
 
-int lastHitPlane(LEvRec1 ev)
+
+double CaloSum(LEvRec1 ev, LCaloEqualization *eqHG)
 {
-   int lastPlane = -1;
-   for(int i = 0; i<NSCINTPLANES; i++)
-   {
-      if(ev.scint.sn_hg[i][0] >= CALO_THD && 
-	 ev.scint.sn_hg[i][1] >= CALO_THD   )
-	 lastPlane=i+1;
-      else if (i==4 && ev.scint.sn_hg[i][1] >= CALO_THD)    // P5se correction
-	 lastPlane=i+1;
-      else if(i==0 && triggerMultiplicity(ev) >=1) 
-      {
-	 lastPlane = 0;
-	 break;
-      }
-      
-   }
-   
-   for (int i=0; i<NLYSOCRYSTALS;i++)
-   { 
-      if( ev.lyso.sn_lg[i][0] >= CALO_THD )
-      {
-	 lastPlane = 17;
-	 break;
-      }
-   }
-
-   if(ev.veto.sn_hg[4][0] >= CALO_THD || 
-      ev.veto.sn_hg[4][1] >= CALO_THD)
-      lastPlane = 18;
-
-   return lastPlane;
-}
-
-
-
-
-
-double CaloSum(LEvRec1 ev, double *eqFact)
-{
+   int OFFSET=NTRIGSCINT*2;
    double sum=0;
    
    for (int i=0; i<NSCINTPLANES;i++)
    {
-      if (i == 4 && ev.scint.sn_hg[i][1] >= CALO_THD)
-	 sum += ((ev.scint.cont_hg[i][1]*eqFact[i*2+1])*2); // P5se correction
+      if (i == 4 && ev.scint.sn_hg[i][1] >= CALO_SIGTHD)
+	 sum += ((ev.scint.cont_hg[i][1]*(PLANEEQ/eqHG->GetMPVFactor(OFFSET+2*i+1)))*2); // P5se correction
       else
-	 if(ev.scint.sn_hg[i][0] >= CALO_THD &&
-	    ev.scint.sn_hg[i][1] >= CALO_THD   )
-	    sum += (ev.scint.cont_hg[i][0]*eqFact[i*2] + 
-		    ev.scint.cont_hg[i][1]*eqFact[i*2+1]);
+	 if(ev.scint.sn_hg[i][0] >= CALO_SIGTHD &&
+	    ev.scint.sn_hg[i][1] >= CALO_SIGTHD   )
+	    sum += (ev.scint.cont_hg[i][0]*(PLANEEQ/eqHG->GetMPVFactor(OFFSET+2*i)) + 
+		    ev.scint.cont_hg[i][1]*(PLANEEQ/eqHG->GetMPVFactor(OFFSET+2*i+1)));
    }
    
    return sum;   
 }
 
 
-double LysoSum(LEvRec1 ev, double *eqFact)
+double LysoSum(LEvRec1 ev, LCaloEqualization *eqLG)
 {
    double sum=0;
-   
+   int OFFSET=NTRIGSCINT*2+NSCINTPLANES*2+NVETOSCINT*2; 
    for (int i=0; i<NLYSOCRYSTALS;i++)
-      if(ev.lyso.sn_lg[i][0] >= CALO_THD)
-	 sum += (ev.lyso.cont_lg[i][0]* eqFact[i]);  
+      if(ev.lyso.sn_lg[i][0] >= CALO_SIGTHD)
+	 sum += (ev.lyso.cont_lg[i][0]*(PLANEEQ/eqLG->GetMPVFactor(OFFSET+i)));  
 
 
    return sum;   
 }
-
-
-trigPaddle_t highestTrigPad(LEvRec1 ev, double *eqFact)
-{
-   double trigPadSum=0;
-   double trigPadSig=0;
-   double max=0;
-
-   trigPaddle_t trigpad;
-   trigpad.signal = 0;
-   trigpad.pad = 0;
-   
-   for (int i=0; i<NTRIGSCINT;i++)
-   {
-      for (int j = 0; j<2; j++)
-      {
-	 trigPadSig += (ev.trig.sn_hg[i][j]);
-	 trigPadSum += (ev.trig.cont_hg[i][j]*eqFact[i*2+j]);
-      }
-      if(trigPadSig > max)
-      {
-	 trigpad.pad = i;
-	 trigpad.signal = trigPadSum;
-	 max = trigPadSig;
-      }
-      trigPadSig = 0;
-      trigPadSum = 0;
-   }
-   //std::cout << "highest pad: " << trigpad.signal << std::endl;
-   return trigpad;
-}
-
 
 
 // double HEPDangle(LEvRec1 ev)
@@ -287,38 +165,21 @@ int main(int argc, char **argv) {
    fin.SetTheEventPointer(ev);
    fin.SetMDPointer(ev);
 
+   std::string eqHGFileName = "/storage/gpfs_data/limadou/asotgiu/EQUALIZATION_2/eqHG_MIPcut.txt";
+   std::string eqLGFileName = "/storage/gpfs_data/limadou/asotgiu/EQUALIZATION_2/eqLG_MIPcut.txt";
 
-   TFile fout(argv[2],"recreate");
+   LCaloEqualization *eqHG = LCaloEqualization::Read(eqHGFileName);
+   LCaloEqualization *eqLG = LCaloEqualization::Read(eqLGFileName);
 
-   // new equalization factors 03/10/2018 calculated on the data sample 20180801-20180807
-   double mpvHG_trigger[12] = {160.122, 105.319, 223.409, 231.457, 243.364, 281.156, 
-			       197.559, 287.353, 198.553, 199.217, 159.034, 340.039};
+   eqHG->Dump();
+   eqLG->Dump();
 
-   double mpvHG_trig_pmt_ratio[12];
-   for (int i =0; i< 12; i++)
-      mpvHG_trig_pmt_ratio[i]= 100./mpvHG_trigger[i];
-  
-   double mpvHG_plane[32] = {129.911, 113.054, 99.708, 95.5058, 140.519, 107.913,
-			     166.225, 139.717, -1, 77.6728, 74.2986, 80.9133,
-			     148.674, 133.407, 129.921, 121.277, 87.6364, 124.701,
-			     97.3621, 76.6955, 94.3065, 138.371, 100.506, 97.9831, 
-			     132.813, 130.105, 161.09, 202.034, 160.96, 160.264,
-			     162.938, 140.652 };
+   int OFFSET = 0;
 
-   double mpvHG_plane_pmt_ratio[32];
-   for (int i =0; i< 32; i++)
-      mpvHG_plane_pmt_ratio[i] = 200./mpvHG_plane[i]; 
+
+   TFile fout(argv[2],"recreate"); // NEW
+
    
-
-   double mpvLG_lyso[9] = {313.233, 542.868, 297.211, 440.209, 287.004,
-			   298.896, 238.178, 297.297, 345.133};
-   
-   double mpvLG_lyso_pmt_ratio[9];
-   for (int i =0; i< 9; i++)
-      mpvLG_lyso_pmt_ratio[i] = 200./mpvLG_lyso[i]; 
-
-
-
    Double_t     planeSum[16];
    Double_t     lysoCrystal[9];
    Bool_t       isPlaneHit[16];
@@ -328,23 +189,28 @@ int main(int argc, char **argv) {
    Bool_t       isTrigHit[6];
    Bool_t       isLysoHit[9];
 
+   Bool_t       isP5seHit3;
    Bool_t       isP5seHit5;   
-   Bool_t       isP5seHit8;
-   Bool_t       isP5seHit10;
+   Bool_t       isaTrigPMTSat;  
+   Bool_t       isaScintPMTSat;   
+   Bool_t       isaLysoPMTSat;   
+   Bool_t       isaVetoPMTSat;   
+   Bool_t       offlineTrig;
+   Bool_t       isAutoVeto;
    Bool_t       isLateralVetoHit;
    Bool_t       isBotVetoHit;
    Int_t        LastPlane;
-   Double_t     SumUPcalo;
-   Double_t     SumLYSO;
-   Double_t     SumLYSOCorr;
+   Double_t     UPcaloSignal;
+   Double_t     LYSOSignal;
+   Double_t     LYSOEnergy;
    Double_t     Etot;
-   Double_t     SumUPcaloEAS1;
-   Double_t     SumUPcaloEAS2;
-   Double_t     SumUPcaloNOP5Corr;
-   Double_t     SumUPcaloCorr;
-   Double_t     SumUPcaloTrig;
-   Double_t     SumUPcaloTrigCorr;
-   Double_t     SumUPcaloTrigCorrVinc;
+   Double_t     UPcaloEAS1Signal;
+   Double_t     UPcaloEAS2Signal;
+   Double_t     UPcaloNOP5Energy;
+   Double_t     UPcaloEnergy;
+   Double_t     UPcaloTrigSignal;
+   Double_t     UPcaloTrigEnergy;
+
    Double_t     TrackerMSCounts;
    Double_t     TrackerMSSN;
    Double_t     PlaneToBar;
@@ -359,10 +225,10 @@ int main(int argc, char **argv) {
 
    trigPaddle_t     Etrig;
    trigPaddle_t     EtrigMIP;
-   Int_t            hiTrigPad;
-   double           hiTrigSignal;
-   double           hiTrigSignalMIP;
-   double           hiTrigSignalMIP_GM;
+   Int_t            mostSigPad;
+   double           mostSigPadSignal;
+   double           mostSigPadSignalMIP;
+   double           mostSigPadSignalMIP_GM;
 
    double           HEPDaxisDir;
    double           HEPDangleStep;
@@ -378,12 +244,12 @@ int main(int argc, char **argv) {
    unsigned int     hepd_time;
    unsigned int     startRunTime;
    unsigned int     stopRunTime;
-   unsigned char    roll_angle[3];
-   unsigned char    pitch_angle[3];
-   unsigned char    yaw_angle[3];
-   unsigned int     q1;
-   unsigned int     q2;
-   unsigned int     q3;
+   // unsigned char    roll_angle[3];
+   // unsigned char    pitch_angle[3];
+   // unsigned char    yaw_angle[3];
+   // unsigned int     q1;
+   // unsigned int     q2;
+   // unsigned int     q3;
 
    LEvRec0Md   lev0MD;
    TTree * level2MD = new TTree("L2md","L2md");
@@ -444,38 +310,44 @@ int main(int argc, char **argv) {
    level2->Branch("event_index", &event_index);
    level2->Branch("alive_time", &alive_time);
    level2->Branch("dead_time", &dead_time);
-   level2->Branch("roll_angle[3]", &roll_angle[0]);
-   level2->Branch("pitch_angle[3]", &pitch_angle[0]);
-   level2->Branch("yaw_angle[3]", &yaw_angle[0]);
-   level2->Branch("q1", &q1);
-   level2->Branch("q2", &q2);
-   level2->Branch("q3", &q3);
+   // level2->Branch("roll_angle[3]", &roll_angle[0]);
+   // level2->Branch("pitch_angle[3]", &pitch_angle[0]);
+   // level2->Branch("yaw_angle[3]", &yaw_angle[0]);
+   // level2->Branch("q1", &q1);
+   // level2->Branch("q2", &q2);
+   // level2->Branch("q3", &q3);
 
    level2->Branch("TrackerMSCounts", &TrackerMSCounts, "TrackerMSCounts/D");
    level2->Branch("TrackerMSSN", &TrackerMSSN, "TrackerMSSN/D");
 
-   level2->Branch("trigSum[6]", &trigSum[0]);
+   level2->Branch("trigSumSig[6]", &trigSum[0]);
    level2->Branch("trigSumMIP[6]", &trigSumMIP[0]);
-   level2->Branch("mostSignPad", &hiTrigPad);
-   level2->Branch("mostSignPadSignal", &hiTrigSignal);
-   level2->Branch("mostSignPadSignalMIP", &hiTrigSignalMIP);
-   level2->Branch("mostSignPadSignalMIP_GM", &hiTrigSignalMIP_GM);
-   level2->Branch("planeSum[16]", &planeSum[0]);
-   level2->Branch("lysoCrystal[9]", &lysoCrystal[0]);
-   level2->Branch("isLysoHit[9]", &isLysoHit[0]);
+   level2->Branch("mostSigPad", &mostSigPad);
+   level2->Branch("mostSigPadSignal", &mostSigPadSignal);
+   level2->Branch("mostSigPadSignalMIP", &mostSigPadSignalMIP);
+   level2->Branch("mostSigPadSignalMIP_GM", &mostSigPadSignalMIP_GM);
+   level2->Branch("planeSumSig[16]", &planeSum[0]);
+   level2->Branch("lysoCrystalSig[9]", &lysoCrystal[0]);
 
    level2->Branch("isTrigHit[6]", &isTrigHit[0]);
    level2->Branch("isPlaneHit[16]", &isPlaneHit[0]);
-   level2->Branch("isLatVetoHit", &isLateralVetoHit);
-   level2->Branch("isBotVetoHit", &isBotVetoHit);
-   level2->Branch("isP5seHit5", &isP5seHit5);
-   level2->Branch("isP5seHit8", &isP5seHit8);
-   level2->Branch("isP5seHit10", &isP5seHit10);
+   level2->Branch("isLysoHit[9]", &isLysoHit[0]);
 
-   level2->Branch("EUPcalo", &SumUPcaloTrigCorrVinc);
-   level2->Branch("sumUPcalo", &SumUPcalo);
-   level2->Branch("sumLYSO", &SumLYSO);
-   level2->Branch("ELYSO", &SumLYSOCorr);
+   level2->Branch("offlineTrigger", &offlineTrig);
+   level2->Branch("isAutoVeto", &isAutoVeto);
+   level2->Branch("isLatVetoHit", &isLateralVetoHit);
+   level2->Branch("isBotVetoHit", &isBotVetoHit); 
+   level2->Branch("isP5seHit3", &isP5seHit3);
+   level2->Branch("isP5seHit5", &isP5seHit5);
+   level2->Branch("isaTrigPMTSat", &isaTrigPMTSat);
+   level2->Branch("isaScintPMTSat", &isaScintPMTSat);
+   level2->Branch("isaLysoPMTSat", &isaLysoPMTSat);
+   level2->Branch("isaVetoPMTSat", &isaVetoPMTSat);
+
+   level2->Branch("UPcaloTrigEnergy", &UPcaloTrigEnergy);
+   level2->Branch("UPcaloSignal", &UPcaloSignal);
+   level2->Branch("LYSOSignal", &LYSOSignal);
+   level2->Branch("LYSOEnergy", &LYSOEnergy);
    level2->Branch("Etot", &Etot);
 
    level2->Branch("TrigMult", &TrigMult);
@@ -499,7 +371,6 @@ int main(int argc, char **argv) {
    // level2->Branch("HEPDaxisDir", &HEPDaxisDir);  
 
 
-   bool goodHit;
    int nent = fin.GetEntries();
 
    fin.GetEntry(0);   
@@ -526,6 +397,8 @@ int main(int argc, char **argv) {
    // halfRunTime /=2.;
 
    std::cout << " entries = " << nent << std::endl;
+   double trigSignal = 0;
+   bool isHG=true;	      
 
    for(int imd=0; imd<fin.GetMDEntries() ; imd++)
    {
@@ -542,17 +415,33 @@ int main(int argc, char **argv) {
 
       if(iev%100000 == 0)
 	 std::cout << ((double)iev/(double)nent)*100 << "%" << std::endl;
-
-      goodHit = true;
       
-      Etrig = highestTrigPad(ev, mpvHG_trig_pmt_ratio);
-      hiTrigPad = Etrig.pad;
-      hiTrigSignal = Etrig.signal;
-      hiTrigSignalMIP = (ev.trig.cont_hg[Etrig.pad][0]/mpvHG_trigger[Etrig.pad*2] + 
-			 ev.trig.cont_hg[Etrig.pad][1]/mpvHG_trigger[Etrig.pad*2+1] )/2.;
-      hiTrigSignalMIP_GM = pow((ev.trig.cont_hg[Etrig.pad][0]/mpvHG_trigger[Etrig.pad*2]* 
-				ev.trig.cont_hg[Etrig.pad][1]/mpvHG_trigger[Etrig.pad*2+1]),
-			       1./2.);
+      mostSigPad =  ev.trig.GetTheMostSignificantUnit(isHG, CALO_SIGTHD);
+
+      if(mostSigPad >= 0 )
+      {
+	 trigSignal = (ev.trig.cont_hg[mostSigPad][0] * 
+		       (TRIGEQ/eqHG->GetMPVFactor(2*mostSigPad)) + 
+		       ev.trig.cont_hg[mostSigPad][1] * 
+		       (TRIGEQ/eqHG->GetMPVFactor(2*mostSigPad+1)));
+	 
+	 mostSigPadSignal = trigSignal;
+	 mostSigPadSignalMIP = (ev.trig.cont_hg[mostSigPad][0]/eqHG->GetMPVFactor(2*mostSigPad) + 
+				ev.trig.cont_hg[mostSigPad][1]/eqHG->GetMPVFactor(2*mostSigPad+1) )/2.;
+	 
+	 mostSigPadSignalMIP_GM = pow(((ev.trig.cont_hg[mostSigPad][0]/eqHG->GetMPVFactor(2*mostSigPad))* 
+				       (ev.trig.cont_hg[mostSigPad][1]/eqHG->GetMPVFactor(2*mostSigPad)))
+					 ,1./2.);
+	 isAutoVeto = ev.AutoVeto(CALO_VETOTHD, mostSigPad);
+	 
+      }
+      else
+      {
+	 mostSigPadSignal = -999;
+	 mostSigPadSignalMIP = -999;
+	 mostSigPadSignalMIP_GM = -999;
+      }
+
 
       boot_nr = ev.boot_nr;
       run_id = ev.run_id;
@@ -560,6 +449,7 @@ int main(int argc, char **argv) {
       alive_time = ev.alive_time;
       dead_time = ev.dead_time;
       hepd_time = ev.hepd_time;
+
       // if(ev.hepd_time > halfRunTime)
       // 	 fin.GetMDEntry(1);
       
@@ -579,103 +469,92 @@ int main(int argc, char **argv) {
 
 
       // no lat veto hit
-      // goodHit = !isLatVetoHit(ev);
-
-      // only T3 paddle
-      // goodHit &= (Etrig.pad == 2);
-
-      // hit on P1 ... P11 plane except P5
-      // for(int i = 0; i<10; i++)
-      // {
-      // 	 if(i!=4)
-      // 	    goodHit &= ( ev.scint.sn_hg[i][0] >= CALO_THD &&
-      // 			 ev.scint.sn_hg[i][1] >= CALO_THD );
-      // }
+      isLateralVetoHit = ev.isLatVetoHit(CALO_VETOTHD);
+      offlineTrig = ev.PreSelection(CALO_SIGTHD, mostSigPad, PLANEINTRIG);
       
-      // hit on bottom veto
-      // goodHit &= (ev.veto.sn_hg[4][0] >= CALO_THD || ev.veto.sn_hg[4][1] >= CALO_THD );
-	 
-      // no hit on bottom veto or LYSO
-      // goodHit &= (lastHitPlane(ev) <= 16) ;
-	 
-      // if (ev.veto.sn_hg[4][0] >= CALO_THD || ev.veto.sn_hg[4][1] >= CALO_THD )
-      // 	 continue;
-
-
-      // if(!goodHit)
-      // 	 continue;
-
-      // no lat veto hit
-      isLateralVetoHit = isLatVetoHit(ev);
-
       // hit on T1... T6 paddle
       for(int i = 0; i<6; i++)
       {
-	 trigSum[i] = (ev.trig.cont_hg[i][0] * mpvHG_trig_pmt_ratio[i*2] +
-		       ev.trig.cont_hg[i][1] * mpvHG_trig_pmt_ratio[i*2+1]);
-	 trigSumMIP[i] = (ev.trig.cont_hg[i][0] /mpvHG_trigger[i*2] +    
-			  ev.trig.cont_hg[i][1] /mpvHG_trigger[i*2+1])/2.;
+	 trigSum[i] = (ev.trig.cont_hg[i][0] * (TRIGEQ/eqHG->GetMPVFactor(2*i)) +
+		       ev.trig.cont_hg[i][1] * (TRIGEQ/eqHG->GetMPVFactor(2*i+1)));
+	 trigSumMIP[i] = (ev.trig.cont_hg[i][0] /eqHG->GetMPVFactor(2*i) +    
+			  ev.trig.cont_hg[i][1] /eqHG->GetMPVFactor(2*i+1))/2.;
 
-	 isTrigHit[i] = ( (ev.trig.sn_hg[i][0] >= CALO_THD) &&
-			  (ev.trig.sn_hg[i][1] >= CALO_THD) );
+	 isTrigHit[i] = ( (ev.trig.sn_hg[i][0] > CALO_VETOTHD) ||
+			  (ev.trig.sn_hg[i][1] > CALO_VETOTHD)   );
       }
 
       // hit on P1... P16 plane except P5
+      OFFSET = NTRIGSCINT*2;
       for(int i = 0; i<16; i++)
       {
       	 if(i==4)
 	 {
-	    planeSum[i] = (ev.scint.cont_hg[i][1]*mpvHG_plane_pmt_ratio[i*2+1]*2);
-	    isPlaneHit[i] = (ev.scint.sn_hg[i][1] >= CALO_THD );
+	    planeSum[i] = (ev.scint.cont_hg[i][1]*(PLANEEQ/eqHG->GetMPVFactor(OFFSET+2*i+1))*2);
+	    isPlaneHit[i] = (ev.scint.sn_hg[i][1] > CALO_VETOTHD );
 	 }
 	 else
 	 {
-	    planeSum[i] = (ev.scint.cont_hg[i][0]* mpvHG_plane_pmt_ratio[i*2] +
-			   ev.scint.cont_hg[i][1]* mpvHG_plane_pmt_ratio[i*2+1]);
-	    isPlaneHit[i] = ( (ev.scint.sn_hg[i][0] >= CALO_THD) &&
-			      (ev.scint.sn_hg[i][1] >= CALO_THD) );
+	    planeSum[i] = (ev.scint.cont_hg[i][0]* (PLANEEQ/eqHG->GetMPVFactor(OFFSET+2*i)) +
+			   ev.scint.cont_hg[i][1]* (PLANEEQ/eqHG->GetMPVFactor(OFFSET+2*i+1)));
+	    isPlaneHit[i] = ( (ev.scint.sn_hg[i][0] > CALO_VETOTHD) ||
+			      (ev.scint.sn_hg[i][1] > CALO_VETOTHD)   );
 	 }
+	 
       }
 
 
       // hit on lyso
+      OFFSET = NTRIGSCINT*2+NSCINTPLANES*2+NVETOSCINT*2; 
       for(int i = 0; i<NLYSOCRYSTALS; i++)
       {
-	 isLysoHit[i] =(ev.lyso.sn_lg[i][0] >= CALO_THD);
-	 lysoCrystal[i] = (ev.lyso.cont_lg[i][0] *mpvLG_lyso_pmt_ratio[i]);
+	 isLysoHit[i] =(ev.lyso.sn_lg[i][0] > CALO_VETOTHD);
+	 lysoCrystal[i] = (ev.lyso.cont_lg[i][0] * (PLANEEQ/eqLG->GetMPVFactor(OFFSET+i)));
       }
       
       // hit on bottom veto
-      isBotVetoHit = ( (ev.veto.sn_hg[4][0] >= CALO_THD) ||
-		       (ev.veto.sn_hg[4][1] >= CALO_THD)   );
-      
+      isBotVetoHit = ev.isBotVetoHit(CALO_VETOTHD);
+
 
       // P5se booleans
+      isP5seHit3 = (ev.scint.sn_hg[4][0] > 3);
       isP5seHit5 = (ev.scint.sn_hg[4][0] > 5);
-      isP5seHit8 = (ev.scint.sn_hg[4][0] > 8);
-      isP5seHit10 = (ev.scint.sn_hg[4][0] > 10);
+
+      // is a PMT saturated?
+      isaTrigPMTSat = ev.trig.CheckSaturation();
+      isaScintPMTSat = ev.scint.CheckSaturation();
+      isaLysoPMTSat = ev.lyso.CheckSaturation();
+      isaVetoPMTSat = ev.veto.CheckSaturation();
 
       // level 2 variables
-      LastPlane = lastHitPlane(ev);
-      TrigMult = triggerMultiplicity(ev);
-      PlaneMult = planeMultiplicity(ev);
-      LysoMult = lysoMultiplicity(ev);
+      LastPlane = ev.lastPlaneHit(CALO_SIGTHD);
+      TrigMult = ev.triggerMultiplicity(CALO_SIGTHD);
+      PlaneMult = ev.planeMultiplicity(CALO_SIGTHD);
+      LysoMult = ev.lysoMultiplicity(CALO_SIGTHD);
 
-      SumUPcaloTrig = CaloSum(ev, mpvHG_plane_pmt_ratio) + Etrig.signal;
-
-      SumUPcaloTrigCorrVinc = (CaloSum(ev, mpvHG_plane_pmt_ratio)+Etrig.signal)*KCALOFITVINC + OFFSETFITVINC;
-
-      SumUPcalo = CaloSum(ev, mpvHG_plane_pmt_ratio);
-
-      SumLYSO   = LysoSum(ev, mpvLG_lyso_pmt_ratio);
-      SumLYSOCorr   = LysoSum(ev, mpvLG_lyso_pmt_ratio)*KCALOFITLYSO+OFFSETFITLYSO ;
-
-      if(LysoMult >0)  
-	 Etot = SumUPcaloTrigCorrVinc + SumLYSOCorr;
+      if(mostSigPad > -1)
+      {
+	 UPcaloTrigSignal = CaloSum(ev, eqHG) + mostSigPadSignal;
+	 UPcaloTrigEnergy = (CaloSum(ev, eqHG) + mostSigPadSignal)*KCALOFITVINC + OFFSETFITVINC;
+      }
       else
-	 Etot = SumUPcaloTrigCorrVinc;
+      {
+	 UPcaloTrigSignal = -999;
+	 UPcaloTrigEnergy = -999;
+      }
+      
+      UPcaloSignal = CaloSum(ev, eqHG);
+
+      LYSOSignal   = LysoSum(ev, eqLG);
+      LYSOEnergy   = LysoSum(ev, eqLG)*KCALOFITLYSO+OFFSETFITLYSO ;
+
+      if(LysoMult > 0)  
+	 Etot = UPcaloTrigEnergy + LYSOEnergy;
+      else
+	 Etot = UPcaloTrigEnergy;
 
       PlaneToBar = ev.GetMSPlaneToMSBarRatio(PLANETOBAR_THRESH);
+
 
       // orbital info variables
       // rig = ev.rig;
@@ -696,7 +575,7 @@ int main(int argc, char **argv) {
       level2->Fill();
  
    }
-   
+
 
    fout.Write();
    fout.Close();
@@ -707,6 +586,22 @@ int main(int argc, char **argv) {
 
 
 
+// // new equalization factors 03/10/2018 calculated on the data sample 20180801-20180807
+// double mpvHG_trigger[12] = {160.122, 105.319, 223.409, 231.457, 243.364, 281.156, 
+// 			       197.559, 287.353, 198.553, 199.217, 159.034, 340.039};
+
+  
+// double mpvHG_plane[32] = {129.911, 113.054, 99.708, 95.5058, 140.519, 107.913,
+// 			     166.225, 139.717, -1, 77.6728, 74.2986, 80.9133,
+// 			     148.674, 133.407, 129.921, 121.277, 87.6364, 124.701,
+// 			     97.3621, 76.6955, 94.3065, 138.371, 100.506, 97.9831, 
+// 			     132.813, 130.105, 161.09, 202.034, 160.96, 160.264,
+// 			     162.938, 140.652 };
+
+   
+
+// double mpvLG_lyso[9] = {313.233, 542.868, 297.211, 440.209, 287.004,
+// 			   298.896, 238.178, 297.297, 345.133};
 
 
 

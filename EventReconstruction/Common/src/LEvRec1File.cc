@@ -7,6 +7,7 @@
 LEvRec1File::LEvRec1File(const char *inpFile, const char *openMode="READ") {
   WritableFLAG=false; // safety
   metaDataFlag=true;
+  
   evptr= 0;
   
   std::string omstr(openMode);
@@ -96,6 +97,20 @@ void LEvRec1File::CreateTrees() {
   alive_timeBR = fTree->Branch("alive_time", 0, "alive_time/i");
   dead_timeBR = fTree->Branch("dead_time", 0, "dead_time/i");
 
+  // orbital info
+  // if(ORBITAL_INFO)
+  // {
+  //    rigBR = fTree->Branch("rig", 0, "rig/D");
+  //    abstimeBR = fTree->Branch("abstime", 0, "abstime/i");
+  //    BBR = fTree->Branch("B", 0, "B/D");
+  //    latBR = fTree->Branch("lat", 0, "lat/D");  
+  //    lonBR = fTree->Branch("lon", 0, "lon/D");
+  //    altBR = fTree->Branch("alt", 0, "alt/D");
+  //    LBR = fTree->Branch("L", 0, "L/D");
+  //    B_xBR = fTree->Branch("B_x", 0, "B_x/D");
+  //    B_yBR = fTree->Branch("B_y", 0, "B_y/D");
+  //    B_zBR = fTree->Branch("B_z", 0, "B_z/D");
+  // }
   SetAddresses();
  
   return;
@@ -153,6 +168,20 @@ void LEvRec1File::InitializeBranches(void) {
   alive_timeBR = fTree->GetBranch("alive_time");
   dead_timeBR = fTree->GetBranch("dead_time");
 
+  // orbital info
+  // if(ORBITAL_INFO)
+  // {
+  //    rigBR = fTree->GetBranch("rig");
+  //    abstimeBR = fTree->GetBranch("abstime");
+  //    BBR = fTree->GetBranch("B");
+  //    latBR = fTree->GetBranch("lat");  
+  //    lonBR = fTree->GetBranch("lon");
+  //    altBR = fTree->GetBranch("alt");
+  //    LBR = fTree->GetBranch("L");
+  //    B_xBR = fTree->GetBranch("B_x");
+  //    B_yBR = fTree->GetBranch("B_y");
+  //    B_zBR = fTree->GetBranch("B_z");
+  // }
   // MetaData Tree
   if (metaDataFlag)
   {
@@ -242,6 +271,20 @@ void LEvRec1File::SetAddresses() {
   rate_meterBR->SetAddress(&(evstr.rate_meter[0]));
   alive_timeBR->SetAddress(&(evstr.alive_time));
   dead_timeBR->SetAddress(&(evstr.dead_time));
+
+  // if (ORBITAL_INFO)
+  // {
+  //    rigBR->SetAddress(&(evstr.rig));
+  //    abstimeBR->SetAddress(&(evstr.abstime));
+  //    BBR->SetAddress(&(evstr.B));
+  //    latBR->SetAddress(&(evstr.lat));
+  //    lonBR->SetAddress(&(evstr.lon));
+  //    altBR->SetAddress(&(evstr.alt));
+  //    LBR->SetAddress(&(evstr.L));
+  //    B_xBR->SetAddress(&(evstr.B_x));
+  //    B_yBR->SetAddress(&(evstr.B_y));
+  //    B_zBR->SetAddress(&(evstr.B_z));
+  // }
 
   return;  
 }

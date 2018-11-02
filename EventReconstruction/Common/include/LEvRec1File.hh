@@ -91,7 +91,18 @@ private:
   TBranch *rate_meterBR;
   TBranch *alive_timeBR;
   TBranch *dead_timeBR;
-
+ 
+   TBranch *rigBR;     
+   TBranch *abstimeBR ;
+   TBranch *BBR ;    
+   TBranch *lonBR ;    
+   TBranch *latBR ;  
+   TBranch *altBR ;  
+   TBranch *LBR ;  
+   TBranch *B_xBR ;    
+   TBranch *B_yBR ;  
+   TBranch *B_zBR ;  
+   
   TBranch *run_idMDBR ;
   TBranch *boot_nrMDBR;
   TBranch *run_typeMDBR;
@@ -115,6 +126,8 @@ private:
   TBranch *CPU_timeBR;
   TBranch *CPU_timestampBR;
   TBranch *status_registerBR;
+
+
    
   bool WritableFLAG;
   bool metaDataFlag;

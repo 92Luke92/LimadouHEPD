@@ -36,7 +36,6 @@ public:
   double GetCounts(const bool isHG, const double threshold = THRESHOLD) const;
   bool CheckSaturation(void) const;
 
-  bool CheckSaturation(void);
 protected:
   void CreateContainers(void);
   void DumpModule(double** inp, const char *string) const;

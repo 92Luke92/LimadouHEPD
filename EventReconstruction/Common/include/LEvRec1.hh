@@ -34,12 +34,24 @@ public:
   void FillRandom(void);
   void CopyFromLEvRec1Stream(const LEvRec1Stream evstr);
 
- // Analysis
+  // Analysis
   bool DiscontinousSignal(const double threshold_sn) const;
   int GetLastPlaneHit(const double threshold_sn) const;
   double GetMSPlaneToMSBarRatio(const double threshold_sn) const;
   double GetScintCounts(const double threshold_sn) const;
   double GetTriggerCounts(const double threshold_sn) const;
+   bool PreSelection(const double threshold_sn, const int mostSigPaddle,
+		     const double numOfPlanesInTrig) const;
+  bool AutoVeto(const double threshold_veto, const int mostSigPaddle) const ;
+  bool isLatVetoHit(const double threshold_sn) const;
+  bool LysoVeto(const double threshold_sn) const ;
+  bool isBotVetoHit(const double threshold_sn) const ;
+
+  int triggerMultiplicity(const double threshold_sn) const;
+  int planeMultiplicity(const double threshold_sn) const ;
+  int lysoMultiplicity(const double threshold_sn) const;
+  int lastPlaneHit(const double threshold_sn) const;
+  bool areallPlaneHit(const double threshold_sn) const;
 
   unsigned short   runType;
   unsigned short   boot_nr;
@@ -53,6 +65,17 @@ public:
   unsigned short   rate_meter[NRATEMETER];
   unsigned int     alive_time;
   unsigned int     dead_time;
+  double           rig ;
+  unsigned int     abstime;
+  double           B ;
+  double           L ;
+  double           alt;
+  double           lon;
+  double           lat;
+  double           B_x;
+  double           B_y;  
+  double           B_z;
+
 
   
   LTrackerSignal tracker;
@@ -126,6 +149,16 @@ struct LEvRec1Stream {
   unsigned short   rate_meter[NRATEMETER];
   unsigned int     alive_time;
   unsigned int     dead_time;
+  double           rig;
+  unsigned int     abstime;
+  double           B;
+  double           lat;
+  double           lon;
+  double           alt;
+  double           L;
+  double           B_x;
+  double           B_y;
+  double           B_z;
 
   LEvRec1Stream();
   LEvRec1Stream(const LEvRec1 event);

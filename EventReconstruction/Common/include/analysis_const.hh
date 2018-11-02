@@ -40,4 +40,9 @@ const double ETARANGE=ETAMAX-ETAMIN;
 // CALO
 const double SNTHRESHOLDFORCALOANALYSIS=10.;
 
+// Orbital INFO
+//const double ORBITAL_INFO=0;
+const double DEGUNIT=0.00005; // unit for satellite attitude angles 
+
+
 #endif

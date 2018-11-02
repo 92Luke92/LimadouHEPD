@@ -34,6 +34,20 @@ void LEvRec1::Reset(){
   alive_time=0;
   dead_time=0;
 
+  // if(ORBITAL_INFO)
+  // {
+  //    rig = 0;
+  //    abstime = 0;
+  //    B = 0;
+  //    L = 0;
+  //    alt = 0;
+  //    lon = 0;
+  //    lat = 0;
+  //    B_x = 0;
+  //    B_y = 0;  
+  //    B_z = 0;
+  // }
+
   tracker.Reset();
   trig.Reset();
   scint.Reset();
@@ -110,6 +124,20 @@ void LEvRec1::CopyFromLEvRec1Stream(const LEvRec1Stream evstr) {
   alive_time = evstr.alive_time;
   dead_time = evstr.dead_time;
 
+  // if(ORBITAL_INFO)
+  // {
+  //    rig = evstr.rig;
+  //    abstime = evstr.abstime;
+  //    B = evstr.B;
+  //    lat = evstr.lat;
+  //    lon = evstr.lon;
+  //    alt = evstr.alt;
+  //    L = evstr.L;
+  //    B_x = evstr.B_x;
+  //    B_y = evstr.B_y;
+  //    B_z = evstr.B_z;
+  // }
+  
   // tracker
   for(int i=0; i<evstr.nClusters; ++i) {
     LTrackerCluster cl;
@@ -441,3 +469,190 @@ double LEvRec1::GetTriggerCounts(const double threshold_sn) const {
   }
   return result;
 }
+
+
+// return false if the s/n of the PMTs in the online trigger is not > 10 
+bool LEvRec1::PreSelection(const double threshold_sn, 
+			   const int mostSigPaddle, 
+			   const double numOfPlanesInTrig) const { // 10 sigma
+   bool planeHit = true;
+   bool trigHit = true;
+   
+   if(mostSigPaddle < 0 )
+      return false;
+   
+   if(trig.sn_hg[mostSigPaddle][0] < threshold_sn  ||
+      trig.sn_hg[mostSigPaddle][1] < threshold_sn    )
+      trigHit = false;
+   
+   for (int i=0; i<numOfPlanesInTrig;i++)
+   {
+      if(scint.sn_hg[i][0] < threshold_sn  || 
+	 scint.sn_hg[i][1] < threshold_sn   )  
+      {
+	 planeHit = false;
+	 break;
+      }
+   }
+	 
+   return (trigHit & planeHit);
+}
+
+
+// return true if more than 1 trigger paddle is hit (s/n > 3)
+bool LEvRec1::AutoVeto(const double threshold_veto, const int mostSigPaddle) const { // 3 sigma
+   bool ret = false;
+   
+   for (int i=0; i<NTRIGSCINT;i++)
+   {
+      if(i==mostSigPaddle)
+	 continue;
+      if(trig.sn_hg[i][0] > threshold_veto  || 
+	 trig.sn_hg[i][1] > threshold_veto    )
+      {
+	 ret = true;
+	 break;
+      }
+   }
+	 
+   return ret;
+}
+
+
+// return true  if at least one PMT of the lateral veto has s/n > 3
+bool LEvRec1::isLatVetoHit(const double threshold_sn) const { // 3 sigma
+   bool ret = false;
+
+   for(int i = 0; i<(NVETOSCINT-1) ; i++) // no bottom veto
+   {
+      if(veto.sn_hg[i][0] > threshold_sn || 
+	 veto.sn_hg[i][1] > threshold_sn   )
+	 return true;
+   }
+   return ret;
+}
+
+
+// return true  if at least one PMT of the lyso has s/n > 3
+bool LEvRec1::LysoVeto(const double threshold_sn) const { // 3 sigma
+   bool ret = false;
+
+   for(int i = 0; i<NLYSOCRYSTALS ; i++) 
+   {
+      if(lyso.sn_lg[i][0] > threshold_sn)
+	 return true;
+   }
+   return ret;
+}
+
+// return true  if at least one PMT of the bottom veto has s/n > 3
+bool LEvRec1::isBotVetoHit(const double threshold_sn) const { // 3 sigma
+   bool ret = false;
+   if(veto.sn_hg[4][0] > threshold_sn || 
+      veto.sn_hg[4][1] > threshold_sn   )
+      return true;
+
+   return ret;
+}
+
+
+
+int LEvRec1::triggerMultiplicity(const double threshold_sn) const // 10 sigma
+{
+   int mult=0;
+   
+   for (int i=0; i<NTRIGSCINT;i++)
+   {
+      if(trig.sn_hg[i][0] >= threshold_sn && 
+   	 trig.sn_hg[i][1] >= threshold_sn   )
+   	 mult++;
+   }
+
+   return mult;
+}
+
+int LEvRec1::planeMultiplicity(const double threshold_sn) const // 10 sigma
+{
+   int mult=0;
+   
+   for (int i=0; i<NSCINTPLANES;i++)
+   {
+      if(i != 4                           &&  // P5 correction
+	 scint.sn_hg[i][0] >= threshold_sn && 
+	 scint.sn_hg[i][1] >= threshold_sn   )
+	 mult++;
+      else if(i == 4 && 
+	      scint.sn_hg[i][1] >= threshold_sn)
+	 mult++;
+   }
+   
+   return mult;
+}
+
+
+int LEvRec1::lysoMultiplicity(const double threshold_sn) const // 10 sigma
+{
+   int mult=0;
+   
+   for (int i=0; i<NLYSOCRYSTALS;i++)
+      if( lyso.sn_lg[i][0] >=  threshold_sn ) 
+	 mult++;
+
+   return mult;
+}
+
+
+// if P1 (P16) lastPlane = 1 (16), if Lyso lastPlaneHit = 17, if bottom lastPlaneHit = 18
+int LEvRec1::lastPlaneHit(const double threshold_sn) const
+{
+   int lastPlane = -1;
+
+   for(int i = 0; i<NSCINTPLANES; i++)
+   {
+      if (i == 4)
+	 if (scint.sn_hg[i][1] >= threshold_sn)    // P5se correction
+	    lastPlane=i+1;
+	 else;
+      else if(i!=4)
+    	 if(scint.sn_hg[i][0] >= threshold_sn && 
+	    scint.sn_hg[i][1] >= threshold_sn   )
+	    lastPlane=i+1;
+   }
+   
+   for (int i=0; i<NLYSOCRYSTALS;i++)
+   { 
+      if( lyso.sn_lg[i][0] >= threshold_sn )
+      {
+	 lastPlane = 17;
+	 break;
+      }
+   }
+
+   if(veto.sn_hg[4][0] >= threshold_sn  && 
+      veto.sn_hg[4][1] >= threshold_sn    )
+      lastPlane = 18;
+
+   return lastPlane;
+}
+
+
+bool LEvRec1::areallPlaneHit(const double threshold_sn) const // 10 sigma
+{
+   bool ret = true;
+   for (int i=0; i<NSCINTPLANES;i++)
+   {
+      if(i!=4)
+      {
+	 if( scint.sn_hg[i][0] < threshold_sn ||
+	     scint.sn_hg[i][1] < threshold_sn   )
+	    return false;
+      }
+      else
+	 if( scint.sn_hg[i][1] < threshold_sn)
+	    return false;
+   }
+
+   return ret;
+}
+
+
