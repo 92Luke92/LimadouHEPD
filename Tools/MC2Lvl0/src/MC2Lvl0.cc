@@ -43,8 +43,12 @@ void getPMTs_OP (std::vector<RootPmtHits>, ushort * pmt_high, ushort * pmt_low, 
 void getStrips (std::vector<RootTrackerHit>, short* strips, TrackerADC trkadc);
 int getMCTrackHitsEnergy(std::vector<RootTrackerHit> trHits);
 
-
-
+TTree* Tmct = new TTree("TMCTruth","TMCTruth");
+int particleid;
+unsigned short energy;
+short gen[3];
+short theta;
+short phi;
 
 
 int main (int argc, char** argv) {
@@ -53,6 +57,13 @@ int main (int argc, char** argv) {
     TFile* filemc = TFile::Open (mcfilename.c_str(), "READ");
     TTree* Tmc =  static_cast<TTree*> (filemc->Get ("HEPD/EventTree"));
     LEvRec0Writer lvl0writer (lvl0filename);
+    //mctruth tree
+    Tmct->Branch("particleid", &particleid);
+    Tmct->Branch("energy", &energy);
+    Tmct->Branch("gen[3]", &gen[0]);
+    Tmct->Branch("theta", &theta);
+    Tmct->Branch("phi", &phi);
+    
     LoopOnEvents (&lvl0writer, Tmc);
     lvl0writer.Write();
     lvl0writer.Close(); delete Tmc;
@@ -69,18 +80,19 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     RootEvent* MCevt = new RootEvent;
     TBranch* b_Event = new TBranch;
     Tmc->SetBranchAddress ("Event", &MCevt, &b_Event);
-    EcalADC ecaladc(EcalADC::RawEdep);
+    EcalADC ecaladc(EcalADC::OptPhot);
     TrackerADC trkadc;
 
     //if (ne>100000) ne=100000;
 
     for (int ie = 0; ie < ne; ie++) {
         Tmc->GetEntry (ie);
+	std::vector<RootTrack> trackHits = MCevt->GetTracks();
         std::vector<RootCaloHit> caloHits =  MCevt->GetCaloHit();
         std::vector<RootTrackerHit>  trackerHits =  MCevt->GetTrackerHit();
 	std::vector<RootPmtHits> pmtHits = MCevt->GetPmtHits();
 	
-        if(ie==0) ecaladc.setMCEnergy(getMCTrackHitsEnergy(trackerHits));
+        //if(ie==0) ecaladc.setMCEnergy(getMCTrackHitsEnergy(trackerHits));
 
         LEvRec0* ev = lvl0writer->pev();
         ev->Reset();
@@ -88,6 +100,17 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 	if(ecaladc.OPmethod) getPMTs_OP (pmtHits, ev->pmt_high, ev->pmt_low, ecaladc);
         else getPMTs (caloHits, ev->pmt_high, ev->pmt_low, ecaladc);
         getStrips (trackerHits, ev->strip, trkadc);
+
+	particleid = trackHits[0].GetPDG();
+	energy = trackHits[0].GetKinEnergy();
+	gen[0] = trackHits[0].GetPosition().X();
+	gen[1] = trackHits[0].GetPosition().Y();
+	gen[2] = trackHits[0].GetPosition().Z();
+	theta = trackHits[0].GetDirection().Theta()*180/TMath::Pi();
+	phi = trackHits[0].GetDirection().Phi()*180/TMath::Pi();
+	Tmct->Fill();
+	
+	
         lvl0writer->Fill();
         std::cout << ie << "\r" << std::flush;
     }
