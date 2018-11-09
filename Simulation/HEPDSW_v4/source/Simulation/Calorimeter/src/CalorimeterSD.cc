@@ -118,8 +118,8 @@ G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   //  G4cout << "Calo step edep(MeV) = " << edep/MeV <<" ; given by Track = "<<tkID<< G4endl;
   // if(verboseLevel>1) G4cout << "Calo step edep(MeV) = " << edep/MeV <<" ; given by Track = "<<tkID<< G4endl;
   if(edep==0.) return false;
-  if(useBirks)
-    edep*=BirksAttenuation(aStep);
+  //if(useBirks)
+    //edep*=BirksAttenuation(aStep);  //it's not Birks' law!
   //  G4VPhysicalVolume* physVol = aStep->GetPreStepPoint()->GetPhysicalVolume();
   
   //  std::stringstream ss;
@@ -177,7 +177,7 @@ void CalorimeterSD::DrawAll(){
 
 void CalorimeterSD::PrintAll(){
 } 
-
+/*
 G4double CalorimeterSD::BirksAttenuation(const G4Step* aStep){
   double weight = 1.;
   double charge = aStep->GetPreStepPoint()->GetCharge();
@@ -199,3 +199,4 @@ G4double CalorimeterSD::BirksAttenuation(const G4Step* aStep){
   }
   return weight;
 }
+*/
