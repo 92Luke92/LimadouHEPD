@@ -59,10 +59,6 @@
 #/hepd/ProtonDegrader 25 mm
 
 
-/hepd/CalorimeterSD/useBirksLaw true
-/hepd/VetoSD/useBirksLaw true
-/hepd/gun/setDefault
-
 ############ Protons TB - Trento
 #/hepd/gun/setDefault
 #/hepd/gun/particle proton
