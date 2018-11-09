@@ -65,6 +65,7 @@ int main (int argc, char** argv) {
     Tmct->Branch("phi", &phi);
     
     LoopOnEvents (&lvl0writer, Tmc);
+    Tmct->Write();
     lvl0writer.Write();
     lvl0writer.Close(); delete Tmc;
     filemc->Close();    delete filemc;
@@ -83,6 +84,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     EcalADC ecaladc(EcalADC::OptPhot);
     TrackerADC trkadc;
 
+    std::cout << "Entries are: " << Tmc->GetEntries() << std::endl;
     //if (ne>100000) ne=100000;
 
     for (int ie = 0; ie < ne; ie++) {
@@ -106,13 +108,14 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 	gen[0] = trackHits[0].GetPosition().X();
 	gen[1] = trackHits[0].GetPosition().Y();
 	gen[2] = trackHits[0].GetPosition().Z();
-	theta = trackHits[0].GetDirection().Theta()*180/TMath::Pi();
+	theta = trackHits[0].GetDirection().Theta()*180/TMath::Pi();//vertical part. theta = 0
+	if(theta>90) theta=180-theta;
 	phi = trackHits[0].GetDirection().Phi()*180/TMath::Pi();
 	Tmct->Fill();
 	
 	
         lvl0writer->Fill();
-        std::cout << ie << "\r" << std::flush;
+	std::cout << ie << " out of " << ne << "\r" << std::flush;
     }
     delete b_Event;
     delete MCevt;

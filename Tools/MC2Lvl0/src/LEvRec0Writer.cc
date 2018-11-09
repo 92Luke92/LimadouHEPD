@@ -1,5 +1,6 @@
 #include "LEvRec0Writer.hh"
 #include "LEvRec0.hh"
+#include "LEvRecMCTruth.hh"
 
 
 

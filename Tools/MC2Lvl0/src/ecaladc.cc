@@ -23,6 +23,7 @@ float EcalADC::VectorXYDist (TVector2 v1, TVector2 v2)
 
 EcalADC::EcalADC(method ecalmethod)
 {
+  OPmethod=false;
     switch(ecalmethod) {
         case Laurent:
             methodHg = new LaurentMethod("laurentHGpeakshift.csv");
