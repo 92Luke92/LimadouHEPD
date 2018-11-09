@@ -18,7 +18,7 @@ public:
   unsigned short y;
   unsigned short theta;
   unsigned short phi;
-  
+
   void Dump(void) const;
   
 };

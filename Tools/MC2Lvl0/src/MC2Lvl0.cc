@@ -102,7 +102,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 	if(ecaladc.OPmethod) getPMTs_OP (pmtHits, ev->pmt_high, ev->pmt_low, ecaladc);
         else getPMTs (caloHits, ev->pmt_high, ev->pmt_low, ecaladc);
         getStrips (trackerHits, ev->strip, trkadc);
-
+	
 	particleid = trackHits[0].GetPDG();
 	energy = trackHits[0].GetKinEnergy();
 	gen[0] = trackHits[0].GetPosition().X();
@@ -112,7 +112,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 	if(theta>90) theta=180-theta;
 	phi = trackHits[0].GetDirection().Phi()*180/TMath::Pi();
 	Tmct->Fill();
-	
+		
 	
         lvl0writer->Fill();
 	std::cout << ie << " out of " << ne << "\r" << std::flush;

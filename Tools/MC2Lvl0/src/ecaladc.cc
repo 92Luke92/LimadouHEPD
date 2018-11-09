@@ -45,6 +45,7 @@ EcalADC::EcalADC(method ecalmethod)
 	    OPmethod=true;
 	    methodHg = new OptPhotMethod("OptPhot_HG_pol2.csv");
 	    methodLg = new OptPhotMethod("OptPhot_LG_p228.csv");
+	      break;
         case RawEdep:
             methodHg = new RawEdepMethod("nullped.csv");
             methodLg = new RawEdepMethod("nullped.csv");
