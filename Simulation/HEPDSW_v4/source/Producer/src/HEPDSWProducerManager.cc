@@ -239,18 +239,22 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
       }
     }
 
-    /*    
+    
     if(!(trackCollID<0)){
       trackHC = (TracksCollection*)(HCE->GetHC(trackCollID));
-      for(int i=0;i<trackHC->entries();i++){
+      /*for(int i=0;i<trackHC->entries();i++){
         TVector3 Pos((*trackHC)[i]->GetPosition().getX(),(*trackHC)[i]->GetPosition().getY(),(*trackHC)[i]->GetPosition().getZ());
 	TVector3 Dir((*trackHC)[i]->GetMomentumDirection().getX(),(*trackHC)[i]->GetMomentumDirection().getY(),(*trackHC)[i]->GetMomentumDirection().getZ());
 	if((*trackHC)[i]->GetName()!="opticalphoton"){
 	theTrackContainer.push_back(RootTrack((*trackHC)[i]->GetTrackId(),(*trackHC)[i]->GetPDGCode(),(*trackHC)[i]->GetName(),Pos,Dir,(*trackHC)[i]->GetKinEnergy(),(*trackHC)[i]->GetMotherTrackId(),(*trackHC)[i]->GetVertexVolumeName(),(*trackHC)[i]->GetCreatorProcessName()));
 	}
-      }
+	}*/
+      //save only track of primary
+      TVector3 Pos((*trackHC)[0]->GetPosition().getX(),(*trackHC)[0]->GetPosition().getY(),(*trackHC)[0]->GetPosition().getZ());
+      TVector3 Dir((*trackHC)[0]->GetMomentumDirection().getX(),(*trackHC)[0]->GetMomentumDirection().getY(),(*trackHC)[0]->GetMomentumDirection().getZ());
+      theTrackContainer.push_back(RootTrack((*trackHC)[0]->GetTrackId(),(*trackHC)[0]->GetPDGCode(),(*trackHC)[0]->GetName(),Pos,Dir,(*trackHC)[0]->GetKinEnergy(),(*trackHC)[0]->GetMotherTrackId(),(*trackHC)[0]->GetVertexVolumeName(),(*trackHC)[0]->GetCreatorProcessName()));
     }
-    */
+
     
     if(!(vertexCollID<0)){
       vertexHC = (VertexsCollection*)(HCE->GetHC(vertexCollID));
