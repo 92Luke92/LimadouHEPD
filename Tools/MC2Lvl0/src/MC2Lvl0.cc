@@ -49,6 +49,15 @@ unsigned short energy;
 short gen[3];
 short theta;
 short phi;
+float SILEdep[2];
+float TEdep[6];
+float PEdep[16];
+float LEdep[9];
+float VEdep[5];
+float TRIGEdep;
+float TOWEREdep;
+float TOTALEdep;
+int pmt[53];
 
 
 int main (int argc, char** argv) {
@@ -63,6 +72,16 @@ int main (int argc, char** argv) {
     Tmct->Branch("gen[3]", &gen[0]);
     Tmct->Branch("theta", &theta);
     Tmct->Branch("phi", &phi);
+    Tmct->Branch("SILEdep[2]", &SILEdep[0]);
+    Tmct->Branch("TEdep[6]", &TEdep[0]);
+    Tmct->Branch("PEdep[16]", &PEdep[0]);
+    Tmct->Branch("LEdep[9]", &LEdep[0]);
+    Tmct->Branch("VEdep[5]", &VEdep[0]);
+    Tmct->Branch("TRIGEdep", &TRIGEdep);
+    Tmct->Branch("TOWEREdep", &TOWEREdep);
+    Tmct->Branch("TOTALEdep", &TOTALEdep);
+    Tmct->Branch("pmt[53]", &pmt[0]);
+    
     
     LoopOnEvents (&lvl0writer, Tmc);
     Tmct->Write();
@@ -87,12 +106,16 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
     std::cout << "Entries are: " << Tmc->GetEntries() << std::endl;
     //if (ne>100000) ne=100000;
 
+    Int_t checkID=0;
+    Int_t checkIDTrack=0;
     for (int ie = 0; ie < ne; ie++) {
         Tmc->GetEntry (ie);
 	std::vector<RootTrack> trackHits = MCevt->GetTracks();
         std::vector<RootCaloHit> caloHits =  MCevt->GetCaloHit();
+	std::vector<RootCaloHit> vetoHits =  MCevt->GetVetoHit();
         std::vector<RootTrackerHit>  trackerHits =  MCevt->GetTrackerHit();
 	std::vector<RootPmtHits> pmtHits = MCevt->GetPmtHits();
+	
 	
         //if(ie==0) ecaladc.setMCEnergy(getMCTrackHitsEnergy(trackerHits));
 
@@ -102,6 +125,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 	if(ecaladc.OPmethod) getPMTs_OP (pmtHits, ev->pmt_high, ev->pmt_low, ecaladc);
         else getPMTs (caloHits, ev->pmt_high, ev->pmt_low, ecaladc);
         getStrips (trackerHits, ev->strip, trkadc);
+
 	
 	particleid = trackHits[0].GetPDG();
 	energy = trackHits[0].GetKinEnergy();
@@ -111,8 +135,76 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 	theta = trackHits[0].GetDirection().Theta()*180/TMath::Pi();//vertical part. theta = 0
 	if(theta>90) theta=180-theta;
 	phi = trackHits[0].GetDirection().Phi()*180/TMath::Pi();
+
+	for(size_t th=0; th<trackerHits.size(); th++){
+	  Int_t layerTrack = trackerHits[th].GetDetectorId();
+	  //1st plane silicon: layerTrack = 2221
+	  //2nd plane silicon: layerTrack = 2121
+	  checkIDTrack = layerTrack / 100;
+	  TOTALEdep+=trackerHits[th].GetELoss();
+	  SILEdep[22-checkIDTrack] += trackerHits[th].GetELoss();
+	}
+
+	for(size_t ch=0; ch<caloHits.size(); ch++){
+	  Int_t layer = caloHits[ch].GetVolume();
+	  TOTALEdep+=caloHits[ch].GetTotalEdep();
+	  checkID = layer / 100;
+	  if(checkID == 12) TOWEREdep += caloHits[ch].GetTotalEdep();
+	  if(checkID == 13) TRIGEdep += caloHits[ch].GetTotalEdep();
+
+	  if(layer==1311) TEdep[0]+=caloHits[ch].GetTotalEdep();
+	  if(layer==1312) TEdep[1]+=caloHits[ch].GetTotalEdep();
+	  if(layer==1313) TEdep[2]+=caloHits[ch].GetTotalEdep();
+	  if(layer==1321) TEdep[3]+=caloHits[ch].GetTotalEdep();
+	  if(layer==1322) TEdep[4]+=caloHits[ch].GetTotalEdep();
+	  if(layer==1323) TEdep[5]+=caloHits[ch].GetTotalEdep();
+
+	  if(checkID==12) PEdep[1216-layer]+=caloHits[ch].GetTotalEdep();
+
+	  if(layer == 1111) LEdep[0]+=caloHits[ch].GetTotalEdep();
+	  if(layer == 1112) LEdep[3]+=caloHits[ch].GetTotalEdep();
+	  if(layer == 1113) LEdep[6]+=caloHits[ch].GetTotalEdep();
+	  if(layer == 1121) LEdep[1]+=caloHits[ch].GetTotalEdep();
+	  if(layer == 1122) LEdep[4]+=caloHits[ch].GetTotalEdep();
+	  if(layer == 1123) LEdep[7]+=caloHits[ch].GetTotalEdep();
+	  if(layer == 1131) LEdep[2]+=caloHits[ch].GetTotalEdep();
+	  if(layer == 1132) LEdep[5]+=caloHits[ch].GetTotalEdep();
+	  if(layer == 1133) LEdep[8]+=caloHits[ch].GetTotalEdep();
+	}
+
+	for(size_t vh=0; vh<vetoHits.size(); vh++){
+	  TOTALEdep+=vetoHits[vh].GetTotalEdep();
+	  Int_t layer = vetoHits[vh].GetVolume();
+
+	  if(layer == 1411) VEdep[0]+=vetoHits[vh].GetTotalEdep();
+          if(layer == 1412) VEdep[1]+=vetoHits[vh].GetTotalEdep();
+	  if(layer == 1421) VEdep[2]+=vetoHits[vh].GetTotalEdep();
+	  if(layer == 1422) VEdep[3]+=vetoHits[vh].GetTotalEdep();
+	  if(layer == 1430) VEdep[4]+=vetoHits[vh].GetTotalEdep();
+	}
+
+	for(size_t ph=0; ph < pmtHits.size(); ph++){
+	  for(int i=0; i<53; i++) pmt[i]=pmtHits[ph].GetNPhot(i);
+	}
+	
+
 	Tmct->Fill();
-		
+	
+	particleid = 0;
+	energy = 0.;
+	for (int i=0; i<3; i++) gen[i] = 0.;
+	theta = 0.;
+	phi = 0.;
+	for (int i=0; i<2; i++) SILEdep[i]=0.;
+	TRIGEdep=0.;
+	TOWEREdep=0.;
+	for (int i=0; i<6; i++) TEdep[i] = 0.;
+	for (int i=0; i<16; i++) PEdep[i] = 0.;
+	for (int i=0; i<9; i++) LEdep[i] = 0.;
+	for (int i=0; i<5; i++) VEdep[i] = 0.;
+	TOTALEdep = 0.;
+	for (int i=0; i<53; i++) pmt[i] = 0;
+
 	
         lvl0writer->Fill();
 	std::cout << ie << " out of " << ne << "\r" << std::flush;

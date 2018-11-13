@@ -31,10 +31,10 @@ void LEvRec0Writer::SetAllEventPointers() {
 
 void LEvRec0Writer::SetTEventPointer() {
   fTree->Branch("run_type", &evT.runType);
-  fTree->Branch("evT_boot_nr", &evT.boot_nr);
-  fTree->Branch("evT_run_id", &evT.run_id);
-  fTree->Branch("evTent_index", &evT.event_index);
-  fTree->Branch("evTent_length", &evT.event_length);
+  fTree->Branch("ev_boot_nr", &evT.boot_nr);
+  fTree->Branch("ev_run_id", &evT.run_id);
+  fTree->Branch("event_index", &evT.event_index);
+  fTree->Branch("event_length", &evT.event_length);
   fTree->Branch("trigger_index", &evT.trigger_index);
   fTree->Branch("hepd_time", &evT.hepd_time);
   fTree->Branch("pmt_high[64]", evT.pmt_high);
