@@ -42,7 +42,7 @@ class G4SubtractionSolid;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
 class HEPDSWMaterial;
-class MCTruthSD;
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class HEPDBoxConstructionConfig4
@@ -52,9 +52,8 @@ public:
   HEPDBoxConstructionConfig4();
   ~HEPDBoxConstructionConfig4();
 
-  void SetBlanketMaterial(G4String aMat);
-  void SetBlanketOuterMaterial(G4String aMat);
-  void SetBlanketInnerMaterial(G4String aMat);
+  void SetBlanketOutMaterial(G4String aMat);
+  void SetBlanketInMaterial(G4String aMat);
   void SetWallMaterial(G4String aMat1,G4String aMat2);
 
   void Builder(G4VPhysicalVolume* motherVolume);
@@ -62,17 +61,15 @@ public:
 private:
   void ComputeObjectsPositioning();
 
-  G4String blanketMaterial;
-  G4String blanketOuterMaterial;
-  G4String blanketInnerMaterial;
+  G4String blanketOutMaterial;
+  G4String blanketInMaterial;
   G4String wallMaterial;
   G4String wallHoneyCombMaterial;
 
   G4double fBlanket_X;
   G4double fBlanket_Y;
-  //G4double fBlanket_Z;
-  G4double fBlanketCopper_Z;
-  G4double fBlanketKapton_Z;
+  G4double fBlanketOut_Z;
+  G4double fBlanketIn_Z;
 
   G4double fWallExternal_X;
   G4double fWallExternal_Y;
@@ -89,9 +86,7 @@ private:
   G4double transWallHole_X;
   G4double transWallHole_Y;
 
-  //G4double fPhysiBlanket_Z;
-  G4double fPhysiBlanketCopper_Z;
-  G4double fPhysiBlanketKapton_Z;
+  G4double fPhysiBlanket_Z;
 
   G4double fPhysiWallExternalIn_X;
   G4double fPhysiWallExternalIn_Y;
@@ -107,21 +102,18 @@ private:
 
   HEPDSWMaterial*  pMaterial;
 
-  //G4Box* fSolidBlanket;
-  G4Box* fSolidBlanketCopper;
-  G4Box* fSolidBlanketKapton;
+  G4Box* fSolidBlanketOut;
+  G4Box* fSolidBlanketIn;
   G4SubtractionSolid* fSolidWallExternal;
   G4SubtractionSolid* fSolidWallHoneyComb;
 
-  //G4LogicalVolume* fLogicBlanket;
-  G4LogicalVolume* fLogicBlanketCopper;
-  G4LogicalVolume* fLogicBlanketKapton;
+  G4LogicalVolume* fLogicBlanketOut;
+  G4LogicalVolume* fLogicBlanketIn;
   G4LogicalVolume* fLogicWallExternal;
   G4LogicalVolume* fLogicWallHoneyComb;
 
-  //G4VPhysicalVolume* fPhysiBlanket;
-  G4VPhysicalVolume* fPhysiBlanketCopper;
-  G4VPhysicalVolume* fPhysiBlanketKapton;
+  G4VPhysicalVolume* fPhysiBlanketOut;
+  G4VPhysicalVolume* fPhysiBlanketIn;
   G4VPhysicalVolume* fPhysiWallExternalIn;
   G4VPhysicalVolume* fPhysiWallHoneyComb;
   G4VPhysicalVolume* fPhysiWallExternalOut;

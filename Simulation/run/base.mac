@@ -1,0 +1,84 @@
+#
+/control/verbose 2
+/run/verbose 1
+#
+/hepd/setWorldSize 55 75 400 cm
+
+
+/hepd/ActivateSatellite false
+/hepd/SatelliteConfiguration Config1
+/hepd/Satellite/BlanketMaterialConfiguration mylar
+/hepd/Satellite/WallMaterialConfiguration Aluminium
+
+/hepd/ActivateHEPDBox true
+/hepd/HEPDBoxConfiguration Config4
+#/hepd/HEPDBox/BlanketMaterialConfiguration mylar
+/hepd/HEPDBox/CompositeBlanketMaterialConfiguration Kapton Copper
+/hepd/HEPDBox/WallTwoMaterialConfiguration Aluminium HCAluminium
+
+/hepd/ActivateTracker true
+/hepd/TrackerConfiguration Config4
+/hepd/Tracker/SiliconMaterialConfiguration Silicon
+/hepd/Tracker/KaptonMaterialConfiguration Kapton
+/hepd/Tracker/CarbonFiberMaterialConfiguration CarbonFiber
+
+/hepd/ActivateCalo true
+/hepd/CaloConfiguration Optical
+/hepd/Calorimeter/CalorimeterTwoMaterialConfiguration ScintillatorEJ200 LYSO
+/hepd/Calorimeter/VetoMaterialConfiguration Scintillator
+/hepd/Calorimeter/PoronMaterialConfiguration Poron
+/hepd/Calorimeter/CarbonFiberMaterialConfiguration CarbonFiber
+
+# HEPD proton test beam configuration
+/hepd/ActivateHEPDProtonTB false
+/hepd/ActivateHEPDDegrader false
+
+# HEPD nuclei test beam configuration
+/hepd/ActivateHEPDNucleiTB false
+
+# HEPD electron test beam configuration
+/hepd/ActivateHEPDElectronTB false
+
+#
+## ELECTROMAGNETIC model
+/hepd/phys/addPhysics  emstandard_opt4
+
+## ELASTIC HADRONIC model (primary + secondary)
+/hepd/phys/addPhysics  elastic
+/hepd/phys/addPhysics  IonElastic
+
+## MODEL 1: HADRONIC INELASTIC model (qmd) (primary + secondary)
+/hepd/phys/addPhysics  Shielding
+/hepd/phys/addPhysics  qmd_ion
+
+/run/initialize
+
+
+# degrader thickness
+#/hepd/ProtonDegrader 16 mm
+#/hepd/ProtonDegrader 25 mm
+
+
+############ Protons TB - Trento
+#/hepd/gun/setDefault
+#/hepd/gun/particle proton
+#/hepd/gun/energy 125 MeV
+#/hepd/gun/ereso 0.8 MeV
+#/hepd/gun/tbeam c3 0 deg
+############ Protons TB - Trento
+
+
+############ Muons
+#/hepd/gun/setDefault
+#/hepd/gun/muon 30 30 cm 0.05 1000 GeV
+############ Muons
+
+
+############ Electrons - LNF
+#/hepd/gun/setDefault
+#/hepd/gun/particle e-
+#/hepd/gun/energy 30 MeV
+#/hepd/gun/electronspot
+############ Electrons - LNF
+
+/tracking/verbose 0

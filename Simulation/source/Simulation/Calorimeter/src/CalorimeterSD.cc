@@ -75,11 +75,34 @@ G4int CalorimeterSD::GetDetID(G4Step*aStep){
   if(!volumeID.compare("S1ScintillatorM"))
     detID= 1E3 + 3*1E2 + 1*1E1 + (layerVol+1)*1E0;  
   if(!volumeID.compare("S1ScintillatorP"))
-    detID= 1E3 + 3*1E2 + 2*1E1 + (layerVol+1)*1E0;   
+    detID= 1E3 + 3*1E2 + 2*1E1 + (layerVol+1)*1E0;
+  //in case Config6 is activated
   if(!volumeID.compare("ActiveLayerScint"))
     detID= 1E3 + 2*1E2 + (layerUp+2); 
+  //in case ConfigOptical is activated
+  if(!volumeID.compare("ActiveLayerScintOdd")){
+    if(layerUp==1) detID=1216; //P1
+    if(layerUp==2) detID=1214; //P3
+    if(layerUp==3) detID=1212; //P5
+    if(layerUp==4) detID=1210; //P7
+    if(layerUp==5) detID=1208; //P9
+    if(layerUp==6) detID=1206; //P11
+    if(layerUp==7) detID=1204; //P13
+    if(layerUp==8) detID=1202; //P15
+    //detID= 1E3 + 2*1E2 + (layerUp+2);
+  }
+  if(!volumeID.compare("ActiveLayerScintEven")){
+    if(layerUp==1) detID=1215; //P2
+    if(layerUp==2) detID=1213; //P4
+    if(layerUp==3) detID=1211; //P6
+    if(layerUp==4) detID=1209; //P8
+    if(layerUp==5) detID=1207; //P10
+    if(layerUp==6) detID=1205; //P12
+    if(layerUp==7) detID=1203; //P14
+  }
+  
   if(!volumeID.compare("ActiveLastLayerScint"))
-    detID= 1E3 + 2*1E2 + 1;
+    detID= 1E3 + 2*1E2 + 1; //P16
   if(!volumeID.compare("ActiveBlockCrystal"))
     detID= 1E3 + 1*1E2 + (layer2Up+1)*1E1 + (layerUp+1)*1E0;
   return detID;
@@ -88,15 +111,15 @@ G4int CalorimeterSD::GetDetID(G4Step*aStep){
 G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   G4double edep = aStep->GetTotalEnergyDeposit();
   G4int tkID = aStep->GetTrack()->GetTrackID();
-  G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition(); 
+  G4int partID = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
+  G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition();
   G4ThreeVector theEntryPoint = aStep->GetPreStepPoint()->GetPosition();
-  G4double theProperTime = aStep->GetTrack()->GetProperTime();
   G4double theKE      = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
   //  G4cout << "Calo step edep(MeV) = " << edep/MeV <<" ; given by Track = "<<tkID<< G4endl;
+  // if(verboseLevel>1) G4cout << "Calo step edep(MeV) = " << edep/MeV <<" ; given by Track = "<<tkID<< G4endl;
   if(edep==0.) return false;
-  if(useBirks)
-    //    G4cout << "Birks Law applique" << G4endl;
-    edep*=BirksAttenuation(aStep);
+  //if(useBirks)
+    //edep*=BirksAttenuation(aStep);  //it's not Birks' law!
   //  G4VPhysicalVolume* physVol = aStep->GetPreStepPoint()->GetPhysicalVolume();
   
   //  std::stringstream ss;
@@ -113,12 +136,11 @@ G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   detID=GetDetID(aStep);
 
    //  if(verboseLevel>1) G4cout << "Calo step on Volume = " << volumeID << G4endl;
-   // if(verboseLevel>1) 
-  //   G4cout << "Calo step on Volume = "<< detID << " tkID " << tkID << G4endl;
+   if(verboseLevel>1) G4cout << "Calo step on Volume = "<< detID << G4endl;
   
    if(LayerID.find(detID)==LayerID.end() || LayerTrkID.find(detID)->second!=tkID){
     //    CaloHit* calHit = new CaloHit(volumeID);
-    CaloHit* calHit = new CaloHit(detID,theEntryPoint,theExitPoint,theProperTime,theKE);
+     CaloHit* calHit = new CaloHit(partID,detID,theEntryPoint,theExitPoint,theKE);
     calHit->SetEdep(edep/MeV,tkID);
     calHit->SetStepPos(theExitPoint,tkID);
     G4int icell = CaloCollection->insert(calHit);
@@ -126,20 +148,17 @@ G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
     LayerTrkID[detID] = tkID;
     if(verboseLevel>1){ 
        G4cout << " New  Hit on Calo Layer " 
-          << detID <<" with deposited energy = "<<edep/MeV<< G4endl;
-    }
- 
-   }else{ 
-
+          << detID <<" with deposited energy = "<<edep/MeV<< G4endl; 
+     }
+     }else{ 
      (*CaloCollection)[LayerID[detID]]->AddEdep(edep/MeV,tkID);
      (*CaloCollection)[LayerID[detID]]->SetStepPos(theExitPoint,tkID);
 
-     if(verboseLevel>1){ 
+    if(verboseLevel>1){ 
       G4cout << " Energy added to Calo Layer " 
 	     << detID <<" adding this energy deposit = "<<edep/MeV<< G4endl; 
-     }
-   }
- 
+    }
+ }
   return true;
 }
 
@@ -158,7 +177,7 @@ void CalorimeterSD::DrawAll(){
 
 void CalorimeterSD::PrintAll(){
 } 
-
+/*
 G4double CalorimeterSD::BirksAttenuation(const G4Step* aStep){
   double weight = 1.;
   double charge = aStep->GetPreStepPoint()->GetCharge();
@@ -180,3 +199,4 @@ G4double CalorimeterSD::BirksAttenuation(const G4Step* aStep){
   }
   return weight;
 }
+*/

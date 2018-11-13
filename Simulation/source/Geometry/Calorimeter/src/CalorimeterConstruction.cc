@@ -34,7 +34,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-CalorimeterConstruction::CalorimeterConstruction(G4double ISOcenterZ, G4bool useProtonTB)
+CalorimeterConstruction::CalorimeterConstruction(G4double ISOcenterZ, G4bool useProtonTB)//,G4bool useNucleiTB)
 {
   theConfig1 = new CalorimeterConstructionConfig1();
   theConfig2 = new CalorimeterConstructionConfig2();
@@ -42,6 +42,7 @@ CalorimeterConstruction::CalorimeterConstruction(G4double ISOcenterZ, G4bool use
   theConfig4 = new CalorimeterConstructionConfig4();
   theConfig5 = new CalorimeterConstructionConfig5();
   theConfig6 = new CalorimeterConstructionConfig6(ISOcenterZ,useProtonTB);
+  theOptical = new CalorimeterConstructionOptical(); //OP
   theDummy   = new CalorimeterConstructionDummy();
   theDummyOptical   = new CalorimeterConstructionDummyOptical();
 }
@@ -56,6 +57,7 @@ CalorimeterConstruction::~CalorimeterConstruction()
   delete theConfig4;
   delete theConfig5; 
   delete theConfig6;
+  delete theOptical;  //OP
   delete theDummy;
   delete theDummyOptical;
 }
@@ -77,6 +79,8 @@ void CalorimeterConstruction::Builder(G4String config,G4VPhysicalVolume* motherV
     theConfig5->Builder(motherVolume); 
   else if(config=="Config6")
     theConfig6->Builder(motherVolume);
+  else if(config=="Optical") //OP
+    theOptical->Builder(motherVolume);
   else if(config=="Dummy")
     theDummy->Builder(motherVolume);
   else if(config=="DummyOptical")
@@ -112,6 +116,7 @@ void CalorimeterConstruction::SetCaloMaterial(G4String aMat1,G4String aMat2){
   theConfig4->SetCaloMaterial(aMat1,aMat2);
   theConfig5->SetCaloMaterial(aMat1,aMat2);
   theConfig6->SetCaloMaterial(aMat1,aMat2);
+  theOptical->SetCaloMaterial(aMat1,aMat2); //OP
   theDummy->SetCaloMaterial(aMat1,aMat2);
 }
 

@@ -42,6 +42,7 @@
 #include "CalorimeterConstruction.hh"
 #include "TrackerConstruction.hh"
 #include "DegraderConstruction.hh"
+#include "CollimatorConstruction.hh"
 
 
 class G4Box;
@@ -70,6 +71,8 @@ public:
   inline void SetHEPDBoxDetector(G4bool aDet){useHEPDBox=aDet;}
 
   inline void SetProtonTBDetector(G4bool aDet){useProtonTB=aDet;}
+  inline void SetNucleiTBDetector(G4bool aDet){useNucleiTB=aDet;}
+  inline void SetElectronTBDetector(G4bool aDet){useElectronTB=aDet;}
   inline void SetDegrader(G4bool aDet){useDegrader=aDet;}
   inline void SetProtonDegrader(G4double dz){degrader_dz=dz; fDegraderBuilder->Builder(fPhysiWorld,fworldHalfZ,degrader_dz); }
 
@@ -95,9 +98,9 @@ public:
 
   void HEPDBoxSetBlanketMaterial(G4String aMat1,G4String aMat2,G4String aMat3,G4String aMat4);
   void HEPDBoxSetBlanketMaterial(G4String aMat);
+  void HEPDBoxSetBlanketMaterial(G4String aMat1, G4String aMat2);
   void HEPDBoxSetWallMaterial(G4String aMat);
   void HEPDBoxSetWallMaterial(G4String aMat1,G4String aMat2);
-  
   void SatelliteSetBlanketMaterial(G4String aMat);
   void SatelliteSetWallMaterial(G4String aMat);
   
@@ -110,7 +113,9 @@ private:
   G4bool             useCalorimeter;
   G4bool             useTracker;
   G4bool             useDegrader;
-  G4bool             useProtonTB; 
+  G4bool             useProtonTB;
+  G4bool             useNucleiTB;
+  G4bool             useElectronTB;
 
   HEPDSWMaterial*      pMaterial;
   
@@ -126,15 +131,12 @@ private:
   G4LogicalVolume*   fLogicWorld;
   G4VPhysicalVolume* fPhysiWorld;
 
-  G4Box*             fSolidNormPlane;
-  G4LogicalVolume*   fLogicNormPlane;
-  G4VPhysicalVolume* fPhysiNormPlane;
-
   SatelliteConstruction*    fSatelliteBuilder;
   HEPDBoxConstruction*      fHEPDBoxBuilder;
   CalorimeterConstruction*  fCaloBuilder;
   TrackerConstruction*      fTrackerBuilder;
   DegraderConstruction*     fDegraderBuilder;
+  CollimatorConstruction*   fCollimatorBuilder;
 
   G4String theSatelliteConfig;
   G4String theHEPDBoxConfig;
@@ -142,7 +144,6 @@ private:
   G4String theTrackerConfig;
 
   HEPDSWDetectorMessenger* fDetectorMessenger;
-
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

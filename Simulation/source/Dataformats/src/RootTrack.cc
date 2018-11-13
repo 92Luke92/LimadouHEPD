@@ -15,16 +15,16 @@ RootTrack::RootTrack():theTrackId(0),thePDG(0),thePosition(0,0,0),theDirection(0
 ////////////////////////////////////////////////////////////////////////////////
 //
 RootTrack::RootTrack (int aTkId,int aPDG,TString aName,TVector3 aPos,TVector3 aDir,float aKinE,int aPTkId,TString aVertexVolumeName,TString aCreatorProcessName)
-{   
+{
   theTrackId = aTkId;	 	 
-  thePDG = aPDG;	 		 
-  theName = aName;	 		 
+  thePDG = aPDG;
+  theName = aName;
   thePosition = aPos;	 
   theDirection = aDir;	 
   theKinEnergy = aKinE;		 
   theParentTrackId = aPTkId;
   theVertexVolumeName = aVertexVolumeName;
-  theCreatorProcessName = aCreatorProcessName;	 
+  theCreatorProcessName = aCreatorProcessName;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //

@@ -10,6 +10,7 @@ ClassImp(RootEvent)
 RootEvent::RootEvent ():eventID(0)
 {
   theCaloHitCollection.clear();
+  thePmtHitsCollection.clear();
   theVetoHitCollection.clear();
   theTrackerHitCollection.clear();
   theDegraderHitCollection.clear();
@@ -21,14 +22,16 @@ RootEvent::RootEvent (int aEventID,
 		      std::vector<RootVertex> aVertex,
 		      std::vector<RootCaloHit> aCaloHit,
 		      std::vector<RootCaloHit> aVetoHit,
-		      std::vector<RootTrackerHit> aTrackerHit,  
-		      std::vector<RootDegraderHit> aDegraderHit)  
+		      std::vector<RootPmtHits> aPmtHits,
+		      std::vector<RootTrackerHit> aTrackerHit,
+		      std::vector<RootDegraderHit> aDegraderHit)
 { 
   eventID                 = aEventID;
   theTrackCollection      = aTracks;
   theVertexCollection     = aVertex;
   theCaloHitCollection    = aCaloHit;
   theVetoHitCollection    = aVetoHit;
+  thePmtHitsCollection    = aPmtHits;
   theTrackerHitCollection = aTrackerHit;
   theDegraderHitCollection = aDegraderHit;
 }
@@ -45,6 +48,7 @@ RootEvent::RootEvent (const RootEvent& right): TObject()
   theVertexCollection     = right.theVertexCollection;
   theCaloHitCollection    = right.theCaloHitCollection;
   theVetoHitCollection    = right.theVetoHitCollection;
+  thePmtHitsCollection    = right.thePmtHitsCollection;
   theTrackerHitCollection = right.theTrackerHitCollection;
   theDegraderHitCollection = right.theDegraderHitCollection;
   

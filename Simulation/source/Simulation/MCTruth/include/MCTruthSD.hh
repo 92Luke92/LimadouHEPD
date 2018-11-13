@@ -38,11 +38,11 @@ class G4TouchableHistory;
 
 class MCTruthSD : public G4VSensitiveDetector
 {
-
+  
 public:
   MCTruthSD(G4String name);
   ~MCTruthSD();
-
+  
   void Initialize(G4HCofThisEvent* HCE);
   G4bool ProcessHits(G4Step* aStep,G4TouchableHistory* ROhist);
   void EndOfEvent(G4HCofThisEvent* HCE);
@@ -54,8 +54,6 @@ public:
 private:
   TracksCollection* TrackCollection;
   VertexsCollection* VertexCollection;
-  char KaptonBlanket[21]; // entrance window of HEPD
-
   int verboseLevel;
 
 };

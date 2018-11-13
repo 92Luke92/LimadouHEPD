@@ -56,7 +56,7 @@ class CalorimeterConstructionConfig6
 {
 public:
   
-  CalorimeterConstructionConfig6(G4double tb_offset_Z, G4bool useProtonTB);
+  CalorimeterConstructionConfig6(G4double tb_offset_Z,G4bool useProtonTB);
   ~CalorimeterConstructionConfig6();
 
   inline void SetVetoMaterial(G4String aMat){vetoMaterial=aMat;}
@@ -71,7 +71,7 @@ public:
 private:
 
   G4UserLimits* fStepLimit;
-
+  
   void ComputeObjectsPositioning();
 
   G4String scintMaterial;
@@ -82,7 +82,7 @@ private:
 
   G4double proton_tb_offset_Z;
   G4bool use_ProtonTB;
-
+  
   G4double fS1_X;
   G4double fS1_Y;
   G4double fS1_Z;
@@ -140,6 +140,7 @@ private:
   G4String           cfiberMaterial;
   G4String           honeycombMaterial;
   G4String           teflonMaterial;
+  G4String           suppLYSOMaterial;
   
   G4double  fCaloLayer_X;
   G4double  fCaloLayer_Y;
@@ -428,6 +429,8 @@ private:
   G4double fSolidCFSuppStepFront_Z;
 
   G4double ShiftOrigin;
+
+  G4double suppLYSO_offset;
   
   G4double fPhysiS1_X;
   G4double fPhysiS1_Y;
@@ -843,6 +846,18 @@ private:
   G4Box* fSolidPoronPlateO;
   G4Box* fSolidPoronPlateV;
 
+  G4Box* fSolidSuppLYSO;
+  G4Box* fSolidSuppLYSOBox;
+  G4SubtractionSolid* fSolidSuppLYSOsub1;
+  G4SubtractionSolid* fSolidSuppLYSOsub2;
+  G4SubtractionSolid* fSolidSuppLYSOsub3;
+  G4SubtractionSolid* fSolidSuppLYSOsub4;
+  G4SubtractionSolid* fSolidSuppLYSOsub5;
+  G4SubtractionSolid* fSolidSuppLYSOsub6;
+  G4SubtractionSolid* fSolidSuppLYSOsub7;
+  G4SubtractionSolid* fSolidSuppLYSOsub8;
+  G4SubtractionSolid* fSolidSuppLYSOsub;
+
 
   G4LogicalVolume* fLogicS1;
   G4LogicalVolume* fLogicS1SuppBack;
@@ -903,6 +918,8 @@ private:
   G4LogicalVolume*  fLogicPoronPlateO;
   G4LogicalVolume*  fLogicPoronPlateV;
   G4LogicalVolume* fLogicLastScintLayer;
+
+  G4LogicalVolume* fLogicSuppLYSO;
 
   G4VPhysicalVolume* fPhysiS1;
   G4VPhysicalVolume* fPhysiS1SuppBack;
@@ -996,6 +1013,9 @@ private:
   G4VPhysicalVolume* fPhysiPoronPlateV2_Bottom;
 
   G4VPhysicalVolume* fPhysiCFSuppTop;
+
+
+  G4VPhysicalVolume* fPhysiSuppLYSO;
 
 };
 

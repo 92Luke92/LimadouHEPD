@@ -13,8 +13,7 @@ class RootTrack : public TObject
 {
 public:
   RootTrack ();
-  RootTrack (int aTkId,int aPDG,TString aName,TVector3 aPos,TVector3 aDir,float aKinE,int aPTkId,TString aVertexVolumeName, TString
-aCreatorProcessName);
+  RootTrack (int aTkId,int aPDG,TString aName, TVector3 aPos,TVector3 aDir,float aKinE,int aPTkId,TString aVertexVolumeName,TString aCreatorProcessName);
   
   ~RootTrack ();
   RootTrack (const RootTrack&);
@@ -34,12 +33,12 @@ aCreatorProcessName);
   
 private:
   int          theTrackId;	 	 
-  int          thePDG;	 		 
+  int          thePDG;
   TString      theName;
   TVector3     thePosition;	 
   TVector3     theDirection;		 
   float        theKinEnergy;
-  int          theParentTrackId;	 
+  int          theParentTrackId;
   TString      theVertexVolumeName;
   TString      theCreatorProcessName;
 };

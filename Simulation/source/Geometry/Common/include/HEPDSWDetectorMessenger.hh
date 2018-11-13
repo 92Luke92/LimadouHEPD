@@ -72,6 +72,9 @@ private:
   G4UIcmdWithABool* fHEPDDegraderActivateCmd;
   G4UIcmdWithADoubleAndUnit* fProtonDegraderCmd;
 
+  G4UIcmdWithABool* fHEPDNucleiTBCmd;
+  G4UIcmdWithABool* fHEPDElectronTBCmd;
+
   G4UIcmdWithAString* fCaloConfigCmd;
   //G4UIcmdWithAString* fScintConfigCmd;
   G4UIcmdWithAString* fTrackerConfigCmd;
@@ -95,7 +98,8 @@ private:
   G4UIcmdWithAString* fTrackerCarbonFiberMatConfigCmd;
 
   G4UIcommand*        fHEPDBoxMLBlanketMatConfigCmd;    
-  G4UIcmdWithAString* fHEPDBoxBlanketMatConfigCmd;    
+  G4UIcommand*        fHEPDBoxCompositeBlanketMatConfigCmd;    
+  G4UIcmdWithAString* fHEPDBoxBlanketMatConfigCmd;
   G4UIcmdWithAString* fHEPDBoxWallMatConfigCmd;    
   G4UIcommand*        fHEPDBoxWallTwoMatConfigCmd;    
 

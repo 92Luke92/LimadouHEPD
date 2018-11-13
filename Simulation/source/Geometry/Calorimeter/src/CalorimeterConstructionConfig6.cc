@@ -61,7 +61,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 CalorimeterConstructionConfig6::CalorimeterConstructionConfig6(G4double tb_offset_Z, G4bool useProtonTB)
   :fSolidS1(0),
-   fSolidS1SuppHoleBar(0),  
+   fSolidS1SuppHoleBar(0),
    fSolidS1SuppBack(0),
    fSolidS1SuppTopBase(0),
    fSolidS1SuppTopHole(0),
@@ -118,7 +118,6 @@ CalorimeterConstructionConfig6::CalorimeterConstructionConfig6(G4double tb_offse
 {
 
   pMaterial           = new HEPDSWMaterial();
-
 
   proton_tb_offset_Z = tb_offset_Z;
   use_ProtonTB = useProtonTB;
@@ -531,6 +530,8 @@ CalorimeterConstructionConfig6::CalorimeterConstructionConfig6(G4double tb_offse
   cfiberMaterial    = "CarbonFiber";
   honeycombMaterial = "nomex";
   teflonMaterial    = "Teflon";
+  suppLYSOMaterial  = "Aluminium";
+
   /*
     poronMaterial     = "Galactic";
     cfiberMaterial    = "Galactic";
@@ -547,6 +548,7 @@ CalorimeterConstructionConfig6::~CalorimeterConstructionConfig6()
 
 void CalorimeterConstructionConfig6::ComputeObjectsPositioning(){
 
+  suppLYSO_offset = 5.*mm;
  
   ShiftOrigin = fCalo_Z/2. + 36.16*mm + 0.7*mm;
   G4cout << "ShiftOrigin " << ShiftOrigin << " use_ProtonTB " << use_ProtonTB << G4endl;
@@ -562,8 +564,7 @@ void CalorimeterConstructionConfig6::ComputeObjectsPositioning(){
 
   fPhysiS1_Y = 0;
   fPhysiS1_X = 0;
-  fPhysiS1_Z = fCalo_Z/2. + fS1_Z/2. + fCFSuppAV_Z +fCFSuppPorO_Z +7.22*mm;
-//   147.8*mm+18.28*mm+fS1_Z/2.;
+  fPhysiS1_Z = fCalo_Z/2. + fS1_Z/2. + fCFSuppAV_Z +fCFSuppPorO_Z +7.22*mm;//   147.8*mm+18.28*mm+fS1_Z/2.;
 
   fPhysiS1SuppHoleBar_Y  = 0;
   fPhysiS1SuppHoleBar_X  = 0;
@@ -998,12 +999,11 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   G4Material* porMat          = pMaterial->GetMaterial(poronMaterial);
   //  G4Material* hcMat           = pMaterial->GetMaterial(honeycombMaterial);
   G4Material* teflon          = pMaterial->GetMaterial(teflonMaterial);
+  G4Material* suppLYSOMat     = pMaterial->GetMaterial(suppLYSOMaterial);
 
 
 
   // S1 scintillator
-  
-  G4cout << " fSolidS1 dz mm " << fS1_Z << G4endl; 
   fSolidS1 = new G4Box("S1",fS1_X/2.,fS1_Y/2.,fS1_Z/2.);
 
   fSolidS1SuppHoleBar = new G4Box("CFSupportHoleBar",fS1SuppHoleBar_X/2.,fS1SuppHoleBar_Y/2.,fS1SuppHoleBar_Z/2.);
@@ -1037,25 +1037,20 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
  
   fSolidS1ScintContainer = new G4Box("ScintContainer",fS1ScintContainer_X/2.,fS1ScintContainer_Y/2.,fS1ScintContainer_Z/2.);
 
-  G4cout << "fSolidS1Scint dz mm " << fS1Scint_Z << G4endl;
   fSolidS1Scint = new G4Box("S1Scint",fS1Scint_X/2.,fS1Scint_Y/2.,fS1Scint_Z/2.);
   ///////////////////////////////////////////////////////
 
 
 
   // Calorimeter
-  G4cout << "fSolidCaloBox dz mm " << fCalo_Z << G4endl;
-  fSolidCaloBox = new G4Box("Calorimeter",fCalo_X/2.,fCalo_Y/2.,fCalo_Z/2.);
+  fSolidCaloBox = new G4Box("Calorimeter",fCalo_X/2.,fCalo_Y/2.,fCalo_Z/2.+suppLYSO_offset/2.);
    
-  G4cout << "fSolidScintBox dz mm " << fScint_Z << G4endl;
   fSolidScintBox = new G4Box("CalorimeterScint",fScint_X/2.,fScint_Y/2.,fScint_Z/2.);
 
   fSolidCrystalBox = new G4Box("CalorimeterCrystal",fCrystal_X/2.,fCrystal_Y/2.,fCrystal_Z/2.);
 
-  G4cout << "fSolidScinLayer dz mm " << fCaloLayer_Z << G4endl;
   fSolidLayer = new G4Box("Layer",fCaloLayer_X/2.,fCaloLayer_Y/2.,fCaloLayer_Z/2.);
   
-  G4cout << "fSolidScinLastLayer dz mm " << fCaloLastLayer_Z << G4endl;
   fSolidLastLayer = new G4Box("LastActiveLayer", fCaloLastLayer_X/2., fCaloLastLayer_Y/2., fCaloLastLayer_Z/2.);
 
   G4RotationMatrix * _rot90 = new G4RotationMatrix;
@@ -1076,10 +1071,9 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   _rot180ZY->rotateY(180 * deg);
   _rot180ZY->rotateZ(180 * deg);
   
-  G4cout << "fSolidActiveTrapLayer dx1 dx2 dy1 dy2 dz mm " << fActiveTrapLayerX1 << " " <<fActiveTrapLayerX2<< " " <<fActiveTrapLayerY1<< " " <<fActiveTrapLayerY2<< " " <<fActiveTrapLayerZ << G4endl;  
+  
   fSolidActiveTrapLayer = new G4Trap ("TrapezoidalLayer", fActiveTrapLayerX1/2., fActiveTrapLayerX2/2., fActiveTrapLayerY1/2., fActiveTrapLayerY2/2., fActiveTrapLayerZ/2.); 
 
-  G4cout << "fSolidActiveRectLayer dx dy dz mm " << fActiveRectLayer_X << " "<< fActiveRectLayer_Y<< " " << fActiveRectLayer_Z << G4endl;  
   fSolidActiveRectLayer = new G4Box("RectangularLayer", fActiveRectLayer_X/2.,fActiveRectLayer_Y/2.,fActiveRectLayer_Z/2.);  
   
   fSolidActiveLayer_1 = new G4UnionSolid("ActiveLayer1",  fSolidActiveRectLayer,  fSolidActiveTrapLayer, _rot90, G4ThreeVector(0, fActiveLayer_Y/2. -fActiveTrapLayerZ/2. ,0));     
@@ -1099,15 +1093,15 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   fSolidRealTrapCFLayer = new G4UnionSolid("RealTrapCFLayer",fSolidTrapCFLayer,fSolidTrapCFLayer, _rot180,G4ThreeVector(0,0,-fTrapCFZ));
  
-  fSolidExternalPoronSupportA = new G4Box("ExternalPoronSupportA", fExternalPoronSupportA_X/2.,fExternalPoronSupportA_Y/2.,fExternalPoronSupportA_Z/2.);
+  fSolidExternalPoronSupportA = new G4Box("ExternalPoronSupportA", fExternalPoronSupportA_X/2.,fExternalPoronSupportA_Y/2.,fExternalPoronSupportA_Z/2.+suppLYSO_offset/2.);
 
-  fSolidExternalPoronSupportB = new G4Box("ExternalPoronSupportB", fExternalPoronSupportB_X/2.,fExternalPoronSupportB_Y/2.,fExternalPoronSupportB_Z/2.);
+  fSolidExternalPoronSupportB = new G4Box("ExternalPoronSupportB", fExternalPoronSupportB_X/2.,fExternalPoronSupportB_Y/2.,fExternalPoronSupportB_Z/2.+suppLYSO_offset/2.);
 
-  fSolidExternalPoronSupportC = new G4Box("ExternalPoronSupportC", fExternalPoronSupportC_X/2.,fExternalPoronSupportC_Y/2.,fExternalPoronSupportC_Z/2.);
+  fSolidExternalPoronSupportC = new G4Box("ExternalPoronSupportC", fExternalPoronSupportC_X/2.,fExternalPoronSupportC_Y/2.,fExternalPoronSupportC_Z/2.+suppLYSO_offset/2.);
 
-  fSolidExternalPoronSupportD = new G4Box("ExternalPoronSupportD", fExternalPoronSupportD_X/2.,fExternalPoronSupportD_Y/2.,fExternalPoronSupportD_Z/2.);
+  fSolidExternalPoronSupportD = new G4Box("ExternalPoronSupportD", fExternalPoronSupportD_X/2.,fExternalPoronSupportD_Y/2.,fExternalPoronSupportD_Z/2.+suppLYSO_offset/2.);
   
-  fSolidExternalPoronSupportE = new G4Box("ExternalPoronSupportE", fExternalPoronSupportE_X/2.,fExternalPoronSupportE_Y/2.,fExternalPoronSupportE_Z/2.);
+  fSolidExternalPoronSupportE = new G4Box("ExternalPoronSupportE", fExternalPoronSupportE_X/2.,fExternalPoronSupportE_Y/2.,fExternalPoronSupportE_Z/2.+suppLYSO_offset/2.);
 
   fSolidExternalPoronSupport1 = new G4UnionSolid("ExternalPoronSupport1",fSolidExternalPoronSupportE,fSolidExternalPoronSupportD,0,G4ThreeVector(fExternalPoronSupport1_X,fExternalPoronSupport1_Y,0));
 
@@ -1123,7 +1117,6 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   fSolidSingleCrystalBlockContainer = new G4Box("SingleCrystalBlockContainer",fCFBlockContainerExt_X/2.,fCFBlockContainerExt_Y/2.,fCFBlockContainerExt_Z/2.);
 
-  G4cout << "fSolidCrystalActiveBlock dx dy dz mm " << fCrystalBlock_X << " " << fCrystalBlock_Y << " " << fCrystalBlock_Z << " " << G4endl; 
   fSolidCrystalActiveBlock = new G4Box("CrystalActiveBlock",fCrystalBlock_X/2.,fCrystalBlock_Y/2.,fCrystalBlock_Z/2.);
   
   fSolidTeflonContainerExt = new G4Box("TeflonContainerExt",TeflonContainerExt_X/2.,TeflonContainerExt_Y/2.,TeflonContainerExt_Z/2.);
@@ -1190,10 +1183,9 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   fSolidPanelDown2          = new G4SubtractionSolid("SquadreHole8", fSolidSquarePanelDown8, fSolidCFCrystalPanelDownHole, 0, G4ThreeVector(posX[2], posY[2], 0));
   
 
-  G4cout << "fSolidCrystalBlockContainer dz mm " <<  fCrystalBlockContainer_Z << G4endl; 
+  
   fSolidCrystalBlockContainer = new G4Box("CrystalBlockContainer",fCrystalBlockContainer_X/2.,fCrystalBlockContainer_Y/2.,fCrystalBlockContainer_Z/2.);
   
-  G4cout << "fSolidCrystalBlockRawContainer dz mm " <<  fCrystalBlockRawContainer_Z << G4endl; 
   fSolidCrystalBlockRawContainer = new G4Box("CrystalBlockRawContainer",fCrystalBlockRawContainer_X/2.,fCrystalBlockRawContainer_Y/2.,fCrystalBlockRawContainer_Z/2.);
   fSolidCFCrystalSideX = new G4Box("CFCrystalSideX",fCFCrystalSideX_X/2.,fCFCrystalSideX_Y/2.,fCFCrystalSideX_Z/2.);
   
@@ -1266,18 +1258,28 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   fSolidPoronFrontPO = new G4Box("PoronPO",fPoronFrontPO_X/2.,fPoronFrontPO_Y/2.,fPoronFrontPO_Z/2.);
  
 
-
+fSolidSuppLYSO = new G4Box("SolidSuppLYSO",177./2.*mm,177./2.*mm, suppLYSO_offset/2.);
+  fSolidSuppLYSOBox = new G4Box("SolidSuppLYSOBox",44./2.*mm,44./2.*mm,suppLYSO_offset/2.);
+  fSolidSuppLYSOsub1 = new G4SubtractionSolid("SolidSuppLYSOsub1",fSolidSuppLYSO,fSolidSuppLYSOBox,0,G4ThreeVector(44.*mm+7.*mm,44.*mm+7.*mm,0));
+  fSolidSuppLYSOsub2 = new G4SubtractionSolid("SolidSuppLYSOsub2",fSolidSuppLYSOsub1,fSolidSuppLYSOBox,0,G4ThreeVector(0,44.*mm+7.*mm,0));
+  fSolidSuppLYSOsub3 = new G4SubtractionSolid("SolidSuppLYSOsub3",fSolidSuppLYSOsub2,fSolidSuppLYSOBox,0,G4ThreeVector(-44.*mm-7.*mm,44.*mm+7.*mm,0));
+  fSolidSuppLYSOsub4 = new G4SubtractionSolid("SolidSuppLYSOsub4",fSolidSuppLYSOsub3,fSolidSuppLYSOBox,0,G4ThreeVector(44.*mm+7.*mm,0,0));
+  fSolidSuppLYSOsub5 = new G4SubtractionSolid("SolidSuppLYSOsub5",fSolidSuppLYSOsub4,fSolidSuppLYSOBox,0,G4ThreeVector(0,0,0));
+  fSolidSuppLYSOsub6 = new G4SubtractionSolid("SolidSuppLYSOsub6",fSolidSuppLYSOsub5,fSolidSuppLYSOBox,0,G4ThreeVector(-44.*mm-7.*mm,0,0));
+  fSolidSuppLYSOsub7 = new G4SubtractionSolid("SolidSuppLYSOsub7",fSolidSuppLYSOsub6,fSolidSuppLYSOBox,0,G4ThreeVector(44.*mm+7.*mm,-44.*mm-7.*mm,0));
+  fSolidSuppLYSOsub8 = new G4SubtractionSolid("SolidSuppLYSOsub8",fSolidSuppLYSOsub7,fSolidSuppLYSOBox,0,G4ThreeVector(0,-44.*mm-7.*mm,0));
+  fSolidSuppLYSOsub = new G4SubtractionSolid("SolidSuppLYSOsub",fSolidSuppLYSOsub8,fSolidSuppLYSOBox,0,G4ThreeVector(-44.*mm-7.*mm,-44.*mm-7.*mm,0));
 
 
 
   // VETO STRUCTURES
-  fSolidPoronLatX = new G4Box("Poron",fPoronLatX_X/2.,fPoronLatX_Y/2.,fPoronLatX_Z/2.);
+  fSolidPoronLatX = new G4Box("Poron",fPoronLatX_X/2.,fPoronLatX_Y/2.,fPoronLatX_Z/2.+suppLYSO_offset/2.);
 
-  fSolidPoronLatXRight = new G4Box("Poron",fPoronLatXRight_X/2.,fPoronLatXRight_Y/2.,fPoronLatXRight_Z/2.);
+  fSolidPoronLatXRight = new G4Box("Poron",fPoronLatXRight_X/2.,fPoronLatXRight_Y/2.,fPoronLatXRight_Z/2.+suppLYSO_offset/2.);
 
-  fSolidPoronLatXHole = new G4Box("Poron",fPoronLatXHole_X/2.,fPoronLatXHole_Y/2.,fPoronLatXHole_Z/2.);
+  fSolidPoronLatXHole = new G4Box("Poron",fPoronLatXHole_X/2.,fPoronLatXHole_Y/2.,fPoronLatXHole_Z/2.+suppLYSO_offset/2.);
 
-  fSolidPoronLatXHoleLeft = new G4Box("Poron",fPoronLatXHoleLeft_X/2.,fPoronLatXHoleLeft_Y/2.,fPoronLatXHoleLeft_Z/2.);
+  fSolidPoronLatXHoleLeft = new G4Box("Poron",fPoronLatXHoleLeft_X/2.,fPoronLatXHoleLeft_Y/2.,fPoronLatXHoleLeft_Z/2.+suppLYSO_offset/2.);
 
   fSolidPoronLatX_1 = new G4UnionSolid("SolidPoronLatX_1",fSolidPoronLatX ,fSolidPoronLatXRight,0,G4ThreeVector(fPoronLat1X_X,0,fPoronLat1X_Z));
   
@@ -1285,23 +1287,23 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   fSolidPoronLatX_3 = new G4UnionSolid("SolidPoronLatX_3",fSolidPoronLatX_2 ,fSolidPoronLatXHoleLeft,0,G4ThreeVector(fPoronLat3X_X,0,0));
 
-  fSolidVetoLatX = new G4Box("Veto",fVetoLatX_X/2.,fVetoLatX_Y/2.,fVetoLatX_Z/2.);
+  fSolidVetoLatX = new G4Box("Veto",fVetoLatX_X/2.,fVetoLatX_Y/2.,fVetoLatX_Z/2.+suppLYSO_offset/2.);
 
-  fSolidVetoLatXRight = new G4Box("Veto",fVetoLatXRight_X/2.,fVetoLatXRight_Y/2.,fVetoLatXRight_Z/2.);
+  fSolidVetoLatXRight = new G4Box("Veto",fVetoLatXRight_X/2.,fVetoLatXRight_Y/2.,fVetoLatXRight_Z/2.+suppLYSO_offset/2.);
 
-  fSolidVetoLatXLeft = new G4Box("Veto",fVetoLatXLeft_X/2.,fVetoLatXLeft_Y/2.,fVetoLatXLeft_Z/2.);
+  fSolidVetoLatXLeft = new G4Box("Veto",fVetoLatXLeft_X/2.,fVetoLatXLeft_Y/2.,fVetoLatXLeft_Z/2.+suppLYSO_offset/2.);
 
   fSolidVetoLatX_1 = new G4UnionSolid("SolidVetoLatX_1",fSolidVetoLatX ,fSolidVetoLatXRight,0,G4ThreeVector(fVetoLat1X_X,0,fVetoLat1X_Z));
 
   fSolidVetoLatX_2 = new G4UnionSolid("SolidVetoLatX_2",fSolidVetoLatX_1 ,fSolidVetoLatXLeft,0,G4ThreeVector(fVetoLat2X_X,0,fVetoLat2X_Z));
 
-  fSolidPoronLatY = new G4Box("Poron",fPoronLatY_X/2.,fPoronLatY_Y/2.,fPoronLatY_Z/2.);
+  fSolidPoronLatY = new G4Box("Poron",fPoronLatY_X/2.,fPoronLatY_Y/2.,fPoronLatY_Z/2.+suppLYSO_offset/2.);
 
-  fSolidPoronLatYUp = new G4Box("Poron",fPoronLatYUp_X/2.,fPoronLatYUp_Y/2.,fPoronLatYUp_Z/2.);
+  fSolidPoronLatYUp = new G4Box("Poron",fPoronLatYUp_X/2.,fPoronLatYUp_Y/2.,fPoronLatYUp_Z/2.+suppLYSO_offset/2.);
 
-  fSolidPoronLatYHole = new G4Box("Poron",fPoronLatYHole_X/2.,fPoronLatYHole_Y/2.,fPoronLatYHole_Z/2.);
+  fSolidPoronLatYHole = new G4Box("Poron",fPoronLatYHole_X/2.,fPoronLatYHole_Y/2.,fPoronLatYHole_Z/2.+suppLYSO_offset/2.);
 
-  fSolidPoronLatYHoleDown = new G4Box("Poron",fPoronLatYHoleDown_X/2.,fPoronLatYHoleDown_Y/2.,fPoronLatYHoleDown_Z/2.);
+  fSolidPoronLatYHoleDown = new G4Box("Poron",fPoronLatYHoleDown_X/2.,fPoronLatYHoleDown_Y/2.,fPoronLatYHoleDown_Z/2.+suppLYSO_offset/2.);
  
   fSolidPoronLatY_1 = new G4UnionSolid("SolidPoronLatY_1",fSolidPoronLatY ,fSolidPoronLatYUp,0,G4ThreeVector(0, fPoronLat1Y_Y, fPoronLat1Y_Z));
   
@@ -1309,31 +1311,31 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   fSolidPoronLatY_3 = new G4UnionSolid("SolidPoronLatY_3",fSolidPoronLatY_2 ,fSolidPoronLatYHoleDown,0,G4ThreeVector(0,fPoronLat3Y_Y,0));
 
-  fSolidVetoLatY = new G4Box("Veto",fVetoLatY_X/2.,fVetoLatY_Y/2.,fVetoLatY_Z/2.);
-
-  fSolidVetoLatYUp = new G4Box("Veto",fVetoLatYUp_X/2.,fVetoLatYUp_Y/2.,fVetoLatYUp_Z/2.);
-
-  fSolidVetoLatYDown = new G4Box("Veto",fVetoLatYDown_X/2.,fVetoLatYDown_Y/2.,fVetoLatYDown_Z/2.);
+  fSolidVetoLatY = new G4Box("Veto",fVetoLatY_X/2.,fVetoLatY_Y/2.,fVetoLatY_Z/2.+suppLYSO_offset/2.);
+  
+  fSolidVetoLatYUp = new G4Box("Veto",fVetoLatYUp_X/2.,fVetoLatYUp_Y/2.,fVetoLatYUp_Z/2.+suppLYSO_offset/2.);
+  
+  fSolidVetoLatYDown = new G4Box("Veto",fVetoLatYDown_X/2.,fVetoLatYDown_Y/2.,fVetoLatYDown_Z/2.+suppLYSO_offset/2.);
 
   fSolidVetoLatY_1 = new G4UnionSolid("SolidVetoLatX_1",fSolidVetoLatY ,fSolidVetoLatYUp,0,G4ThreeVector(0,fVetoLat1Y_Y, fVetoLat1Y_Z));
 
   fSolidVetoLatY_2 = new G4UnionSolid("SolidVetoLatX_2",fSolidVetoLatY_1 ,fSolidVetoLatYDown,0,G4ThreeVector(0,fVetoLat2Y_Y,fVetoLat2Y_Z));
 
-  fSolidCFVetoLatX = new G4Box("CFSupport",fCFVetoLatX_X/2.,fCFVetoLatX_Y/2.,fCFVetoLatX_Z/2.);
+  fSolidCFVetoLatX = new G4Box("CFSupport",fCFVetoLatX_X/2.,fCFVetoLatX_Y/2.,fCFVetoLatX_Z/2.+suppLYSO_offset/2.);
 
-  fSolidCFVetoLatXHole = new G4Box("CFSupport",fCFVetoLatXHole_X/2.,fCFVetoLatXHole_Y/2.,fCFVetoLatXHole_Z/2.);
+  fSolidCFVetoLatXHole = new G4Box("CFSupport",fCFVetoLatXHole_X/2.,fCFVetoLatXHole_Y/2.,fCFVetoLatXHole_Z/2.+suppLYSO_offset/2.);
 
-  fSolidCFVetoLatXHoleRight = new G4Box("CFSupport",fCFVetoLatXHoleRight_X/2.,fCFVetoLatXHoleRight_Y/2.,fCFVetoLatXHoleRight_Z/2.);
+  fSolidCFVetoLatXHoleRight = new G4Box("CFSupport",fCFVetoLatXHoleRight_X/2.,fCFVetoLatXHoleRight_Y/2.,fCFVetoLatXHoleRight_Z/2.+suppLYSO_offset/2.);
 
   fSolidCFVetoLatX_1 = new G4UnionSolid("SolidCFLatX_1",fSolidCFVetoLatX , fSolidCFVetoLatXHole,0,G4ThreeVector(fCFVetoLat1X_X,0,fCFVetoLat1X_Z));
 
   fSolidCFVetoLatX_2 = new G4UnionSolid("SolidCFLatX_2",fSolidCFVetoLatX_1 , fSolidCFVetoLatXHoleRight,0,G4ThreeVector(fCFVetoLat2X_X,0,0));
 
-  fSolidCFVetoLatY = new G4Box("CFSupport",fCFVetoLatY_X/2.,fCFVetoLatY_Y/2.,fCFVetoLatY_Z/2.);
+  fSolidCFVetoLatY = new G4Box("CFSupport",fCFVetoLatY_X/2.,fCFVetoLatY_Y/2.,fCFVetoLatY_Z/2.+suppLYSO_offset/2.);
 
-  fSolidCFVetoLatYHole = new G4Box("CFSupport",fCFVetoLatYHole_X/2.,fCFVetoLatYHole_Y/2.,fCFVetoLatYHole_Z/2.);
+  fSolidCFVetoLatYHole = new G4Box("CFSupport",fCFVetoLatYHole_X/2.,fCFVetoLatYHole_Y/2.,fCFVetoLatYHole_Z/2.+suppLYSO_offset/2.);
 
-  fSolidCFVetoLatYHoleDown = new G4Box("CFSupport",fCFVetoLatYHoleDown_X/2.,fCFVetoLatYHoleDown_Y/2.,fCFVetoLatYHoleDown_Z/2.);
+  fSolidCFVetoLatYHoleDown = new G4Box("CFSupport",fCFVetoLatYHoleDown_X/2.,fCFVetoLatYHoleDown_Y/2.,fCFVetoLatYHoleDown_Z/2.+suppLYSO_offset/2.);
    
   fSolidCFVetoLatY_1 = new G4UnionSolid("SolidCFLatY_1",fSolidCFVetoLatY , fSolidCFVetoLatYHole,0,G4ThreeVector(0, fCFVetoLat1Y_Y ,fCFVetoLat1Y_Z));
 
@@ -1532,7 +1534,9 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   //  fLogicHoneyCombBottom = new G4LogicalVolume(fSolidHoneyCombBottom,hcMat,"HoneyCombCore"); 
 
-  //fLogicHoneyCombSkinBottom = new G4LogicalVolume(fSolidHoneyCombSkinBottom,cfMat,"HoneyCombSkin"); 
+  //fLogicHoneyCombSkinBottom = new G4LogicalVolume(fSolidHoneyCombSkinBottom,cfMat,"HoneyCombSkin");
+
+  fLogicSuppLYSO = new G4LogicalVolume(fSolidSuppLYSOsub, suppLYSOMat, "LogicSuppLYSO");
 
   G4double maxStep = 0.25*fActiveTrapLayerZ;
   fStepLimit = new G4UserLimits(maxStep);
@@ -1548,11 +1552,12 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   fLogicVetoLatY2->SetSensitiveDetector(vetoSD);
   // bisogna separare i due piani
 
- 
-  G4cout << " fPhysiS1 z mm " << fPhysiS1_Z+ShiftOrigin << G4endl; 
+
+
+  
 
   fPhysiS1 = new G4PVPlacement(0,
-			       G4ThreeVector(fPhysiS1_X,fPhysiS1_Y,fPhysiS1_Z + ShiftOrigin ),
+			       G4ThreeVector(fPhysiS1_X,fPhysiS1_Y,fPhysiS1_Z + ShiftOrigin+suppLYSO_offset),
 			       "S1",
 			       fLogicS1,                
 			       motherVolume,                
@@ -1675,27 +1680,21 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   // CALO 
   
-  G4cout << " fPhysiCaloBox z mm dans mere " << ShiftOrigin << G4endl; 
-
   fPhysiCaloBox = new G4PVPlacement(0,                        
-				    G4ThreeVector(0,0,ShiftOrigin),   
+				    G4ThreeVector(0,0,ShiftOrigin + suppLYSO_offset/2.),   
 				    "Calorimeter",               
 				    fLogicCaloBox,                
 				    motherVolume,                
 				    false,                       
 				    0,true);       
-
-  G4cout << " fPhysiScintBox z mm dans fPhysiCaloBox " << fPhysiScintBox_Z << G4endl; 
   
   fPhysiScintBox = new G4PVPlacement(0,                        
-				     G4ThreeVector(fPhysiScintBox_X,fPhysiScintBox_Y,fPhysiScintBox_Z),
+				     G4ThreeVector(fPhysiScintBox_X,fPhysiScintBox_Y,fPhysiScintBox_Z+0.5*suppLYSO_offset),
 				     "CalorimeterScint",               
 				     fLogicScintBox,                
 				     fPhysiCaloBox,                
 				     false,                       
-				     0,true);
-       
-  G4cout << " fPhysiScintLayer dz mm rep dans fPhysiScintBox " << fCaloLayer_Z << G4endl; 
+				     0,true);       
   
   fPhysiScintLayer = new G4PVReplica("LayerScint", 
 				     fLogicScintLayer,            
@@ -1704,10 +1703,8 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 				     fNbOfReplicatedScintLayers,        
 				     fCaloLayer_Z);
 
-  G4cout << " fPhysiLastScintLayer z mm dans fPhysiCalobox " << fPhysiLastScintLayer_Z << G4endl; 
-
   fPhysiLastScintLayer = new G4PVPlacement(0,                        
-					   G4ThreeVector(fPhysiLastScintLayer_X,fPhysiLastScintLayer_Y,fPhysiLastScintLayer_Z),
+					   G4ThreeVector(fPhysiLastScintLayer_X,fPhysiLastScintLayer_Y,fPhysiLastScintLayer_Z+0.5*suppLYSO_offset),
 					   "LastScintLayer",               
 					   fLogicLastScintLayer,                
 					   fPhysiCaloBox,                
@@ -1715,7 +1712,6 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					   0,true); 
   
 
-  G4cout << " fPhysiScintActiveLayer z mm dans fPhysiScintLayer " << fPhysiActiveLayer_Z << G4endl; 
   
   // piani scintillatore
   fPhysiScintActiveLayer = new G4PVPlacement(0,                   
@@ -1730,7 +1726,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   /*######################  Costole Poron angoli calorimetro ################################*/
   fPhysiExternalPoronSupport1 = new G4PVPlacement(0,                   
-						  G4ThreeVector(fPhysiExternalPoronSupport_X,fPhysiExternalPoronSupport_Y,fPhysiExternalPoronSupport_Z + ShiftOrigin),     
+						  G4ThreeVector(fPhysiExternalPoronSupport_X,fPhysiExternalPoronSupport_Y,fPhysiExternalPoronSupport_Z + ShiftOrigin+0.5*suppLYSO_offset),    //NEW  
 						  "ExternalPoronBar1",
 						  fLogicExternalPoronSupport,
 						  motherVolume,        
@@ -1739,7 +1735,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   fPhysiExternalPoronSupport2 = new G4PVPlacement(_rot180Y,                   
-						  G4ThreeVector(-fPhysiExternalPoronSupport_X,fPhysiExternalPoronSupport_Y,fPhysiExternalPoronSupport_Z + ShiftOrigin),     
+						  G4ThreeVector(-fPhysiExternalPoronSupport_X,fPhysiExternalPoronSupport_Y,fPhysiExternalPoronSupport_Z + ShiftOrigin+0.5*suppLYSO_offset),     //NEW
 						  "ExternalPoronBar2",
 						  fLogicExternalPoronSupport,
 						  motherVolume,        
@@ -1748,7 +1744,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   fPhysiExternalPoronSupport3 = new G4PVPlacement(_rot180ZY,                   
-						  G4ThreeVector(fPhysiExternalPoronSupport_X,-fPhysiExternalPoronSupport_Y,fPhysiExternalPoronSupport_Z + ShiftOrigin),     
+						  G4ThreeVector(fPhysiExternalPoronSupport_X,-fPhysiExternalPoronSupport_Y,fPhysiExternalPoronSupport_Z + ShiftOrigin+0.5*suppLYSO_offset),     //NEW
 						  "ExternalPoronBar3",
 						  fLogicExternalPoronSupport,
 						  motherVolume,        
@@ -1757,7 +1753,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   fPhysiExternalPoronSupport4 = new G4PVPlacement(_rot180Z,                   
-						  G4ThreeVector(-fPhysiExternalPoronSupport_X,-fPhysiExternalPoronSupport_Y,fPhysiExternalPoronSupport_Z + ShiftOrigin),     
+						  G4ThreeVector(-fPhysiExternalPoronSupport_X,-fPhysiExternalPoronSupport_Y,fPhysiExternalPoronSupport_Z + ShiftOrigin+0.5*suppLYSO_offset),     //NEW
 						  "ExternalPoronBar4",
 						  fLogicExternalPoronSupport,
 						  motherVolume,        
@@ -1937,7 +1933,6 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   /*###################################    Ultimo piano di scintillatore plastico    ###################################################*/
   
-  G4cout << " fPhysiScintActiveLayer z mm dans fPhysiLastScintLayer " << fPhysiActiveLayer_Z-fPoronFrontPO_Z/2. << G4endl; 
   fPhysiScintActiveLayer = new G4PVPlacement(0,                   
 					     G4ThreeVector(fPhysiActiveLayer_X,fPhysiActiveLayer_Y,fPhysiActiveLayer_Z-fPoronFrontPO_Z/2.),     
 					     // G4ThreeVector(0 , 0 , 0),     
@@ -2034,9 +2029,8 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   /* ################################     Cristalli di LYSO     ##################################*/
   
-  G4cout << "fPhysiCrystalBox z mm dans fPhysiCaloBox " << fPhysiCrystalBox_Z << G4endl; 
   fPhysiCrystalBox = new G4PVPlacement(0,                        
-				       G4ThreeVector(fPhysiCrystalBox_X,fPhysiCrystalBox_Y,fPhysiCrystalBox_Z),   
+				       G4ThreeVector(fPhysiCrystalBox_X,fPhysiCrystalBox_Y,fPhysiCrystalBox_Z-0.5*suppLYSO_offset),   
 				       "CalorimeterCrystal",               
 				       fLogicCrystalBox,                
 				       fPhysiCaloBox,                
@@ -2092,7 +2086,6 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					       false,
 					       0,true);
 					      
-  G4cout << "fPhysiCrystalBlockPlaneContainer z mm dans fPhysiCrystalBox" << fPhysiCrystalBlockPlaneContainer_Z << G4endl;
   fPhysiCrystalBlockPlaneContainer = new G4PVPlacement(0,
 						       G4ThreeVector(fPhysiCrystalBlockPlaneContainer_X,fPhysiCrystalBlockPlaneContainer_Y,fPhysiCrystalBlockPlaneContainer_Z),
 						       "CristalBlockPlaneContainer",
@@ -2109,15 +2102,13 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					0,true); 
   				        
 
-  G4cout << "fPhysiCrystalBlockRaw rep dans fPhysiCrystalBlockPlaneContainer" << G4endl;
   fPhysiCrystalBlockRaw = new G4PVReplica("CrystalBlockRaw", 
 					  fLogicCrystalBlockRawContainer,            
 					  fPhysiCrystalBlockPlaneContainer,
 					  kYAxis,                 
 					  3,
-					  fCrystalBlockRawContainer_Y); 
-  
-  G4cout << "fPhysiTeflonLYSO rep dans fPhysiCrystalBlockRaw" << G4endl;
+					  fCrystalBlockRawContainer_Y);   
+
   fPhysiTeflonLYSO = new G4PVReplica("CrystalBlock", 
 				     fLogicTeflonLYSO,            
 				     fPhysiCrystalBlockRaw,
@@ -2126,7 +2117,6 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 				     fCFBlockContainerExt_X);   
 
   
-  G4cout << "fPhysiCrystalActiveBlock z mm dans fPhysiTeflonLYSO 0 " << G4endl; 
   fPhysiCrystalActiveBlock = new G4PVPlacement(0,                   
 					       G4ThreeVector(0 , 0 ,0),
 					       "ActiveBlockCrystal",
@@ -2154,7 +2144,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
  
   
   fPhysiPoronLatXRight_3 = new G4PVPlacement(0,
-					     G4ThreeVector(fPhysiPoronLatX3_X,fPhysiPoronLatX3_Y,fPhysiPoronLatX3_Z+ ShiftOrigin),
+					     G4ThreeVector(fPhysiPoronLatX3_X,fPhysiPoronLatX3_Y,fPhysiPoronLatX3_Z+ ShiftOrigin+0.5*suppLYSO_offset), //NEW
 					     "VetoPoronXRight_Ext",              
 					     fLogicPoronLatX,       
 					     motherVolume,        
@@ -2163,7 +2153,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   
   
   fPhysiPoronLatXLeft_3 = new G4PVPlacement(_rot180Z,
-					    G4ThreeVector(-fPhysiPoronLatX3_X, -fPhysiPoronLatX3_Y,fPhysiPoronLatX3_Z+ ShiftOrigin),
+					    G4ThreeVector(-fPhysiPoronLatX3_X, -fPhysiPoronLatX3_Y,fPhysiPoronLatX3_Z+ ShiftOrigin+0.5*suppLYSO_offset), //NEW
 					    "VetoPoronXLeft_Ext",              
 					    fLogicPoronLatX,       
 					    motherVolume,        
@@ -2172,7 +2162,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   fPhysiPoronLatYUp_3 = new G4PVPlacement(0,
-					  G4ThreeVector(fPhysiPoronLatY3_X,fPhysiPoronLatY3_Y,fPhysiPoronLatY3_Z+ ShiftOrigin),
+					  G4ThreeVector(fPhysiPoronLatY3_X,fPhysiPoronLatY3_Y,fPhysiPoronLatY3_Z+ ShiftOrigin+0.5*suppLYSO_offset), //NEW
 					  "VetoPoronYUp_Ext",              
 					  fLogicPoronLatY,       
 					  motherVolume,        
@@ -2181,7 +2171,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   fPhysiPoronLatYDown_3 = new G4PVPlacement(_rot180Z,
-					    G4ThreeVector(-fPhysiPoronLatY3_X,-fPhysiPoronLatY3_Y,fPhysiPoronLatY3_Z+ ShiftOrigin),
+					    G4ThreeVector(-fPhysiPoronLatY3_X,-fPhysiPoronLatY3_Y,fPhysiPoronLatY3_Z+ ShiftOrigin+0.5*suppLYSO_offset), //NEW
 					    "VetoPoronYDown_Ext",              
 					    fLogicPoronLatY,       
 					    motherVolume,        
@@ -2195,7 +2185,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   fPhysiPoronLatXRightInt_3 = new G4PVPlacement(0,
-						G4ThreeVector(fPhysiPoronLatX3Int_X,fPhysiPoronLatX3Int_Y,fPhysiPoronLatX3_Z+ ShiftOrigin),
+						G4ThreeVector(fPhysiPoronLatX3Int_X,fPhysiPoronLatX3Int_Y,fPhysiPoronLatX3_Z+ ShiftOrigin+0.5*suppLYSO_offset),  //NEW
 						"VetoPoronXRight_Int",              
 						fLogicPoronLatX,       
 						motherVolume,        
@@ -2204,7 +2194,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
  
  
   fPhysiPoronLatXLeftInt_3 = new G4PVPlacement(_rot180Z,
-					       G4ThreeVector(-fPhysiPoronLatX3Int_X,-fPhysiPoronLatX3Int_Y,fPhysiPoronLatX3_Z+ ShiftOrigin),
+					       G4ThreeVector(-fPhysiPoronLatX3Int_X,-fPhysiPoronLatX3Int_Y,fPhysiPoronLatX3_Z+ ShiftOrigin+0.5*suppLYSO_offset), //NEW
 					       "VetoPoronXLeft_Int",              
 					       fLogicPoronLatX,       
 					       motherVolume,        
@@ -2213,7 +2203,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   fPhysiPoronLatYUpInt_3 = new G4PVPlacement(0,
-					     G4ThreeVector(fPhysiPoronLatY3Int_X,fPhysiPoronLatY3Int_Y,fPhysiPoronLatY3_Z+ ShiftOrigin),
+					     G4ThreeVector(fPhysiPoronLatY3Int_X,fPhysiPoronLatY3Int_Y,fPhysiPoronLatY3_Z+ ShiftOrigin+0.5*suppLYSO_offset), //NEW
 					     "VetoPoronYUp_Int",              
 					     fLogicPoronLatY,       
 					     motherVolume,        
@@ -2221,8 +2211,8 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					     0,true);
  
   fPhysiPoronLatYDownInt_3 = new G4PVPlacement(_rot180Z,
-					       G4ThreeVector(-fPhysiPoronLatY3Int_X,-fPhysiPoronLatY3Int_Y,fPhysiPoronLatY3_Z+ ShiftOrigin),
-					       "VetoPoronYDown_Int",              
+					       G4ThreeVector(-fPhysiPoronLatY3Int_X,-fPhysiPoronLatY3Int_Y,fPhysiPoronLatY3_Z+ ShiftOrigin+0.5*suppLYSO_offset), //NEW
+					       "VetoPoronYDown_Int",
 					       fLogicPoronLatY,       
 					       motherVolume,        
 					       false,               
@@ -2233,15 +2223,15 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
  
  
   fPhysiVetoLatXRight_2 = new G4PVPlacement(0,
-					    G4ThreeVector(-fPhysiVetoLatX2_X, fPhysiVetoLatX2_Y,fPhysiVetoLatX2_Z+ ShiftOrigin),
-					    "VetoXRight",              
+					    G4ThreeVector(-fPhysiVetoLatX2_X, fPhysiVetoLatX2_Y,fPhysiVetoLatX2_Z+ ShiftOrigin + 0.5*suppLYSO_offset), //NEW
+					    "VetoXRight",             
 					    fLogicVetoLatX,       
 					    motherVolume,        
 					    false,               
 					    0,true);
  
   fPhysiVetoLatXLeft_2 = new G4PVPlacement(_rot180Z,
-					   G4ThreeVector(fPhysiVetoLatX2_X, -fPhysiVetoLatX2_Y, fPhysiVetoLatX2_Z+ ShiftOrigin),
+					   G4ThreeVector(fPhysiVetoLatX2_X, -fPhysiVetoLatX2_Y, fPhysiVetoLatX2_Z+ ShiftOrigin + 0.5*suppLYSO_offset),  //NEW
 					   "VetoXLeft",              
 					   fLogicVetoLatX2,       
 					   motherVolume,        
@@ -2251,7 +2241,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   fPhysiVetoLatYUp_2 = new G4PVPlacement(0,
-					 G4ThreeVector(fPhysiVetoLatY2_X, -fPhysiVetoLatY2_Y,fPhysiVetoLatY2_Z+ ShiftOrigin),
+					 G4ThreeVector(fPhysiVetoLatY2_X, -fPhysiVetoLatY2_Y,fPhysiVetoLatY2_Z+ ShiftOrigin+0.5*suppLYSO_offset),
 					 "VetoYUp",              
 					 fLogicVetoLatY,       
 					 motherVolume,        
@@ -2259,7 +2249,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					 0,true);
 
   fPhysiVetoLatYDown_2 = new G4PVPlacement(_rot180Z,
-					   G4ThreeVector(-fPhysiVetoLatY2_X, fPhysiVetoLatY2_Y,fPhysiVetoLatY2_Z+ ShiftOrigin),
+					   G4ThreeVector(-fPhysiVetoLatY2_X, fPhysiVetoLatY2_Y,fPhysiVetoLatY2_Z+ ShiftOrigin+0.5*suppLYSO_offset),
 					   "VetoYDown",              
 					   fLogicVetoLatY2,       
 					   motherVolume,        
@@ -2268,7 +2258,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   fPhysiCFVetoLatXRight_2 = new G4PVPlacement(0,
-					      G4ThreeVector(fPhysiCFVetoLatX2_X, fPhysiCFVetoLatX2_Y, fPhysiCFVetoLatX2_Z+ ShiftOrigin),
+					      G4ThreeVector(fPhysiCFVetoLatX2_X, fPhysiCFVetoLatX2_Y, fPhysiCFVetoLatX2_Z+ ShiftOrigin+0.5*suppLYSO_offset),
 					      "VetoCFXRight",              
 					      fLogicCFVetoLatX,       
 					      motherVolume,        
@@ -2276,7 +2266,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					      0,true);
  
   fPhysiCFVetoLatXLeft_2 = new G4PVPlacement(_rot180Z,
-					     G4ThreeVector(-fPhysiCFVetoLatX2_X, -fPhysiCFVetoLatX2_Y, fPhysiCFVetoLatX2_Z+ ShiftOrigin),
+					     G4ThreeVector(-fPhysiCFVetoLatX2_X, -fPhysiCFVetoLatX2_Y, fPhysiCFVetoLatX2_Z+ ShiftOrigin+0.5*suppLYSO_offset),
 					     "VetoCFXLeft",              
 					     fLogicCFVetoLatX,       
 					     motherVolume,        
@@ -2285,7 +2275,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
  
 
   fPhysiCFVetoLatYUp_2 = new G4PVPlacement(0,
-					   G4ThreeVector(fPhysiCFVetoLatY2_X,fPhysiCFVetoLatY2_Y,fPhysiCFVetoLatY2_Z+ ShiftOrigin),
+					   G4ThreeVector(fPhysiCFVetoLatY2_X,fPhysiCFVetoLatY2_Y,fPhysiCFVetoLatY2_Z+ ShiftOrigin+0.5*suppLYSO_offset),
 					   "VetoCFYUp",              
 					   fLogicCFVetoLatY,       
 					   motherVolume,        
@@ -2293,7 +2283,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					   0,true);
 
   fPhysiCFVetoLatYDown_2 = new G4PVPlacement(_rot180Z,
-					     G4ThreeVector(-fPhysiCFVetoLatY2_X,-fPhysiCFVetoLatY2_Y,fPhysiCFVetoLatY2_Z+ ShiftOrigin),
+					     G4ThreeVector(-fPhysiCFVetoLatY2_X,-fPhysiCFVetoLatY2_Y,fPhysiCFVetoLatY2_Z+ ShiftOrigin+0.5*suppLYSO_offset),
 					     "VetoCFYDown",              
 					     fLogicCFVetoLatY,       
 					     motherVolume,        
@@ -2350,7 +2340,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   
   fPhysiPoronPlateV1_Top = new G4PVPlacement(0,
-					     G4ThreeVector(fPhysiPoronPlateVTop_X, fPhysiPoronPlateVTop_Y, fPhysiPoronPlateVTop_Z+ ShiftOrigin),
+					     G4ThreeVector(fPhysiPoronPlateVTop_X, fPhysiPoronPlateVTop_Y, fPhysiPoronPlateVTop_Z+ ShiftOrigin+suppLYSO_offset),
 					     "PoronPlateV_Top",              
 					     fLogicPoronPlateV,
 					     motherVolume,        
@@ -2358,7 +2348,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					     0,true);  
   
   fPhysiPoronPlateO1_Top = new G4PVPlacement(0,
-					     G4ThreeVector(fPhysiPoronPlateOTop_X, fPhysiPoronPlateOTop_Y, fPhysiPoronPlateOTop_Z+ ShiftOrigin),
+					     G4ThreeVector(fPhysiPoronPlateOTop_X, fPhysiPoronPlateOTop_Y, fPhysiPoronPlateOTop_Z+ ShiftOrigin+suppLYSO_offset),
 					     "PoronPlateO_Top",              
 					     fLogicPoronPlateO,
 					     motherVolume,        
@@ -2367,7 +2357,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   
 
   fPhysiPoronPlateV2_Top = new G4PVPlacement(0,
-					     G4ThreeVector(-fPhysiPoronPlateVTop_X, -fPhysiPoronPlateVTop_Y, fPhysiPoronPlateVTop_Z+ ShiftOrigin),
+					     G4ThreeVector(-fPhysiPoronPlateVTop_X, -fPhysiPoronPlateVTop_Y, fPhysiPoronPlateVTop_Z+ ShiftOrigin+suppLYSO_offset),
 					     "PoronPlateV_Top",              
 					     fLogicPoronPlateV,
 					     motherVolume,        
@@ -2375,7 +2365,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					     0,true);  
   
   fPhysiPoronPlateO2_Top = new G4PVPlacement(0,
-					     G4ThreeVector(-fPhysiPoronPlateOTop_X, -fPhysiPoronPlateOTop_Y, fPhysiPoronPlateOTop_Z+ ShiftOrigin),
+					     G4ThreeVector(-fPhysiPoronPlateOTop_X, -fPhysiPoronPlateOTop_Y, fPhysiPoronPlateOTop_Z+ ShiftOrigin+suppLYSO_offset),
 					     "PoronPlateO_Top",              
 					     fLogicPoronPlateO,
 					     motherVolume,        
@@ -2413,7 +2403,15 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 						fLogicPoronPlateO,
 						motherVolume,        
 						false,               
-						0,true);  
+						0,true);
+
+  fPhysiSuppLYSO = new G4PVPlacement(0,
+				     G4ThreeVector(0.,0.,-fCalo_Z/2. + fCrystal_Z/2. + 2.*cm + suppLYSO_offset/2.),
+				     "SuppLYSO",
+				     fLogicSuppLYSO,
+				     fPhysiCaloBox,
+				     false,
+				     0,true);
 
 
   
@@ -2543,25 +2541,25 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
  
   fPhysiCFSuppTop = new G4PVPlacement(0,      // prima croce all'inizio del calorimetro
-				      G4ThreeVector(fPhysiCFSuppTop_X,fPhysiCFSuppTop_Y,fPhysiCFSuppTop_Z+ ShiftOrigin),
+				      G4ThreeVector(fPhysiCFSuppTop_X,fPhysiCFSuppTop_Y,fPhysiCFSuppTop_Z+ ShiftOrigin + suppLYSO_offset),
 				      "CFSupportTop",
-				      fLogicCFSuppTop, 
+				      fLogicCFSuppTop,
  				      motherVolume,
 				      false,
 				      0,true);
 
 
   fPhysiCFSuppTop = new G4PVPlacement(0,      // prima croce poron all'inizio del calorimetro
-				      G4ThreeVector(fPhysiPORSuppTop_X, fPhysiPORSuppTop_Y, fPhysiPORSuppTop_Z+ ShiftOrigin),
+				      G4ThreeVector(fPhysiPORSuppTop_X, fPhysiPORSuppTop_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset),
 				      "PORSupportTop",
-				      fLogicCFSuppPoron, 
+				      fLogicCFSuppPoron,
  				      motherVolume,
 				      false,
 				      0,true);
 
   // blocco carbonio sopra croce poron
   fPhysiScintCFFrontPPO = new G4PVPlacement(0,                   
-					    G4ThreeVector(fPhysiCFFrontPO_X, fPhysiCFFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					    G4ThreeVector(fPhysiCFFrontPO_X, fPhysiCFFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
 					    "CFSupportFPsmall",              
 					    fLogicCFFrontPO,       
 					    motherVolume,        
@@ -2569,7 +2567,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					    0,true); 
   // blocco carbonio sotto croce  poron
   fPhysiScintCFFrontMPO = new G4PVPlacement(0,                   
-					    G4ThreeVector(fPhysiCFFrontPO_X,-fPhysiCFFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					    G4ThreeVector(fPhysiCFFrontPO_X,-fPhysiCFFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
 					    "CFSupportFMsmall",              
 					    fLogicCFFrontPO,       
 					    motherVolume,        
@@ -2577,7 +2575,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					    0,true); 
   // blocco carbonio destra croce poron
   fPhysiScintCFLatPPO = new G4PVPlacement(0,                   
-					  G4ThreeVector(fPhysiCFLatPO_X,fPhysiCFLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					  G4ThreeVector(fPhysiCFLatPO_X,fPhysiCFLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
 					  "CFSupportLPsmall",              
 					  fLogicCFLatPO,       
 					  motherVolume,        
@@ -2585,7 +2583,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					  0,true); 
   // blocco carbonio sinistra croce poron
   fPhysiScintCFLatMPO = new G4PVPlacement(0,                   
-					  G4ThreeVector(-fPhysiCFLatPO_X,fPhysiCFLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					  G4ThreeVector(-fPhysiCFLatPO_X,fPhysiCFLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin + suppLYSO_offset), 
 					  "CFSupportLMsmall",              
 					  fLogicCFLatPO,       
 					  motherVolume,        
@@ -2594,7 +2592,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   
   // poron parete laterale sinistra croce poron
   fPhysiScintPoronLatPPO = new G4PVPlacement(0,
-					     G4ThreeVector(fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					     G4ThreeVector(fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin+suppLYSO_offset), 
 					     "PoronLPsmall",              
 					     fLogicPoronLatPO,       
 					     motherVolume,        
@@ -2603,7 +2601,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   
   // poron parete laterla destra croce poron				  
   fPhysiScintPoronLatMPO = new G4PVPlacement(0,                   
-					     G4ThreeVector(-fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					     G4ThreeVector(-fPhysiPoronLatPO_X,fPhysiPoronLatPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin+suppLYSO_offset), 
 					     "PoronLMsmall",              
 					     fLogicPoronLatPO,       
 					     motherVolume,        
@@ -2611,7 +2609,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					     0,true); 
   // poron parete sopra croce poron
   fPhysiScintPoronLatUpPO = new G4PVPlacement(0,
-					      G4ThreeVector(fPhysiPoronFrontPO_X,-fPhysiPoronFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+					      G4ThreeVector(fPhysiPoronFrontPO_X,-fPhysiPoronFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin+suppLYSO_offset), 
 					      "PoronFPsmall",              
 					      fLogicPoronFrontPO,     
 					      motherVolume,        
@@ -2619,12 +2617,13 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 					      0,true);
   // poron parete sotto croce poron
   fPhysiScintPoronLatDownPO = new G4PVPlacement(0,
-						G4ThreeVector(fPhysiPoronFrontPO_X,fPhysiPoronFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin), 
+						G4ThreeVector(fPhysiPoronFrontPO_X,fPhysiPoronFrontPO_Y, fPhysiPORSuppTop_Z+ ShiftOrigin+suppLYSO_offset), 
 						"PoronFMsmall",              
 						fLogicPoronFrontPO,     
 						motherVolume,        
 						false,               
 						0,true);
+  
 
   //  ///////////////////////////////////////////////////////////////////////////////////
 
@@ -2632,7 +2631,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
   //Visualization Attribute
   G4VisAttributes* attCyan = new G4VisAttributes(G4Colour::Cyan());
-  attCyan->SetVisibility(false);
+  attCyan->SetVisibility(true);
   attCyan->SetForceAuxEdgeVisible(true);
   
   
@@ -2644,7 +2643,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
     
   G4VisAttributes* attYellow = new G4VisAttributes(G4Colour::Yellow());
-  attYellow->SetVisibility(false);
+  attYellow->SetVisibility(true);
   attYellow->SetForceAuxEdgeVisible(true); 
   fLogicS1SuppPoronFront->SetVisAttributes(attYellow);
   fLogicPoronLat->SetVisAttributes(attYellow);
@@ -2661,7 +2660,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   G4VisAttributes* attBrown = new G4VisAttributes(G4Colour::Brown());
-  attBrown->SetVisibility(false);
+  attBrown->SetVisibility(true);
   attBrown->SetForceAuxEdgeVisible(true);
   fLogicS1SuppBack->SetVisAttributes(attBrown);
   fLogicS1SuppFront->SetVisAttributes(attBrown);
@@ -2693,13 +2692,13 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
 
 
   G4VisAttributes* attRed = new G4VisAttributes(G4Colour::Red());
-  attRed->SetVisibility(false);
+  attRed->SetVisibility(true);
   attRed->SetForceAuxEdgeVisible(true);
   
 
 
   G4VisAttributes* attBlue = new G4VisAttributes(G4Colour::Blue());
-  attBlue->SetVisibility(false);
+  attBlue->SetVisibility(true);
   attBlue->SetForceAuxEdgeVisible(true);
   fLogicCrystalActiveBlock->SetVisAttributes(attBlue);
   fLogicVetoLatX->SetVisAttributes(attBlue);
@@ -2707,6 +2706,7 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   fLogicVetoLatY->SetVisAttributes(attBlue);
   fLogicVetoLatY2->SetVisAttributes(attBlue);
   fLogicRealTrapVetoLayer->SetVisAttributes(attBlue);
+  fLogicSuppLYSO->SetVisAttributes(attBlue);
 
  
   
@@ -2716,14 +2716,14 @@ void CalorimeterConstructionConfig6::Builder(G4VPhysicalVolume* motherVolume)
   fLogicS1->SetVisAttributes(attInvisible);  
   fLogicS1ScintContainerP->SetVisAttributes(attInvisible);
   fLogicS1ScintContainerM->SetVisAttributes(attInvisible);
-  fLogicCaloBox->SetVisAttributes(attInvisible); 
+  fLogicCaloBox->SetVisAttributes(attCyan); 
   fLogicScintBox->SetVisAttributes(attInvisible); 
   fLogicScintLayer->SetVisAttributes(attInvisible); 
   fLogicLastScintLayer->SetVisAttributes(attInvisible); 
   fLogicCrystalBlockPlaneContainer->SetVisAttributes(attInvisible); 
   fLogicCrystalBlockRawContainer->SetVisAttributes(attInvisible); 
   fLogicCrystalBlockContainer->SetVisAttributes(attInvisible); 
-  fLogicCrystalBox->SetVisAttributes(attInvisible); 
+  fLogicCrystalBox->SetVisAttributes(attCyan); 
 
 }
 

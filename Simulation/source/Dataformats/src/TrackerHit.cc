@@ -119,7 +119,7 @@ void TrackerHit::Print()
   std::cout<<"TrackerHit = "<<std::endl;
   std::cout<<"EntryPoint = "<<theEntryPoint<<"; "<<std::endl;
   std::cout<<"ExitPoint = "<<theExitPoint<<"; "<<std::endl;
-  std::cout<<"KinEnergy = "<<theKinEnergy<<"; "<<std::endl;
+  std::cout<<"KinEnergy " <<theKinEnergy<<"; "<<std::endl;
   std::cout<<"Time Of Flight = "<<theTimeOfFlight<<"; "<<std::endl;
   std::cout<<"Energy Loss= "<<theEnergyLoss<<"; "<<std::endl;
   std::cout<<"Particle Type = "<<theParticleType<<"; "<<std::endl;

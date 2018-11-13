@@ -38,7 +38,7 @@ public:
 
   CaloHit();
   //  CaloHit(G4String volume);
-  CaloHit(G4int DetID,G4ThreeVector aEntry,G4ThreeVector aExit,G4double aDeltaTime,G4double aKE);
+  CaloHit(G4int aPartID, G4int DetID,G4ThreeVector aEntry, G4ThreeVector aExit, G4double aKE);
   ~CaloHit();
   CaloHit(const CaloHit &right);
   const CaloHit& operator=(const CaloHit &right);
@@ -52,14 +52,15 @@ public:
 
 private:
   //  G4String VolumeID;
+  G4int thePartID;
   G4int DetID;
   G4ThreeVector theEntryPoint;
   G4ThreeVector theExitPoint;
-  G4double theGlobalTime;
   G4double theKinEnergy;
   G4double totalEdep;
   std::map<G4int,G4double> edep;
   std::map<G4int,G4ThreeVector> steppos;
+  G4int totalPhot[53];  //OP
 
 public:
   //  inline void SetVolumeID(G4String volume)
@@ -70,14 +71,16 @@ public:
   }
   void SetEdep(G4double de,G4int tkID);
   void AddEdep(G4double de,G4int tkID);
+  void AddPhot(G4int detID);  //OP
   void SetStepPos(G4ThreeVector StepPos,G4int tkID);
-  inline G4double GetTotalEdep(){return totalEdep;}
+  inline G4double GetTotalEdep()
+  { return totalEdep; }
 
+  inline G4int GetPartID(){return thePartID;}
   inline G4ThreeVector GetEntryPoint(){return theEntryPoint;}
   inline G4ThreeVector GetExitPoint(){return theExitPoint;}
-  inline G4double GetGlobalTime(){return theGlobalTime;}
   inline G4double GetKinEnergy(){return theKinEnergy;}
-
+  
   inline std::map<int,double> GetEdepMap(){return edep;}
   inline std::map<int,G4ThreeVector> GetStepPosMap(){return steppos;}
   G4double GetEdep(G4int tkID);  
@@ -85,6 +88,7 @@ public:
   inline G4int GetVolume()
   { return DetID; }
   //  { return VolumeID; }
+  inline G4int GetNPhot(G4int npmt) {return totalPhot[npmt];}  //OP
   
 };
 

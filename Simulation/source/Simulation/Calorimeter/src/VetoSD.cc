@@ -54,6 +54,7 @@ void VetoSD::Initialize(G4HCofThisEvent*){
   VetoCollection = new CaloHitsCollection(SensitiveDetectorName,collectionName[0]); 
   
   VetoID.clear();
+  VetoTrkID.clear();
 
   verboseLevel = 0;
 }
@@ -83,9 +84,9 @@ G4int VetoSD::GetDetID(G4Step* aStep){
 G4bool VetoSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   G4double edep = aStep->GetTotalEnergyDeposit();
   G4int tkID = aStep->GetTrack()->GetTrackID();
+  G4int partID = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
   G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition(); 
   G4ThreeVector theEntryPoint = aStep->GetPreStepPoint()->GetPosition();
-  G4double theProperTime      = aStep->GetTrack()->GetProperTime();
   G4double theKE      = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
   if(verboseLevel>1) G4cout << "Next step edep(MeV) = " << edep/MeV << G4endl;
   if(edep==0.) return false;
@@ -98,12 +99,11 @@ G4bool VetoSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   
   G4int detID;
   detID=GetDetID(aStep);
-  G4cout << "Calo Veto on Volume = "<< detID << " tkID " << tkID << G4endl;
-
+  //G4cout << "Calo Veto on Volume = "<< detID << " tkID " << tkID << G4endl;
   
-  if(VetoID.find(detID)==VetoID.end() || VetoTrkID.find(detID)->second!=tkID) {
+  if(VetoID.find(detID)==VetoID.end() || VetoTrkID.find(detID)->second!=tkID){
     //    CaloHit* vetoHit = new CaloHit(volume);
-    CaloHit* vetoHit = new CaloHit(detID,theEntryPoint,theExitPoint,theProperTime,theKE);
+    CaloHit* vetoHit = new CaloHit(partID,detID,theEntryPoint,theExitPoint,theKE);
     vetoHit->SetEdep(edep/MeV,tkID);
     vetoHit->SetStepPos(theExitPoint,tkID);
     G4int icell = VetoCollection->insert(vetoHit);

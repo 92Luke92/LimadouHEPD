@@ -57,7 +57,7 @@ public:
   inline void SetKaptonMaterial(G4String aMat){kaptonMaterial=aMat;}
   inline void SetCarbonFiberMaterial(G4String aMat){cfiberMaterial=aMat;}
   inline void SetPoronMaterial(G4String aMat){poronMaterial=aMat;}
- 
+
   void Builder(G4VPhysicalVolume* motherVolume);
   
 private:
@@ -276,7 +276,7 @@ private:
 
   G4double  proton_tb_offset_Z;
   G4bool    use_ProtonTB;
-
+  
   HEPDSWMaterial* pMaterial;
 
   G4Box* fSolidTracker;

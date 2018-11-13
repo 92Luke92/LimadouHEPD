@@ -11,19 +11,18 @@ RootCaloHit::RootCaloHit():theEntryPoint(0,0,0),theExitPoint(0,0,0),theTotalEdep
   //  theVolume="";
   theDet=-1000;
   theKinEnergy = 0;
-  theGlobalTime = 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //
 //RootCaloHit::RootCaloHit(TString aVolume,double aTotalEdep,std::map<int,double> aEdep) 
-RootCaloHit::RootCaloHit(int aDetID,TVector3 aEntry,TVector3 aExit,double aGlobalTime,float aKE,double aTotalEdep,std::map<int,double> aEdep,std::map<int,TVector3> aStepPos)
+RootCaloHit::RootCaloHit(int aPartID, int aDetID, TVector3 aEntry, TVector3 aExit, float aKE, double aTotalEdep,std::map<int,double> aEdep, std::map<int,TVector3> aStepPos, int aTotalNphot)  //OP
 //RootCaloHit::RootCaloHit(int aDetID,TVector3 aEntry,TVector3 aExit,float aKE,double aTotalEdep,std::map<int,double> aEdep,std::map<int,double> bEdep) 
 { 
   //  theVolume     = aVolume;
+  thePartID  = aPartID;
   theDet     = aDetID;
   theEntryPoint = aEntry;
   theExitPoint = aExit;
-  theGlobalTime = aGlobalTime;
   theKinEnergy = aKE;
   theTotalEdep  = aTotalEdep;	  
   theEdep       = aEdep;
@@ -31,6 +30,7 @@ RootCaloHit::RootCaloHit(int aDetID,TVector3 aEntry,TVector3 aExit,double aGloba
   for(std::map<int,double>::iterator i = theEdep.begin();i!=theEdep.end();i++){
     theParticleList.push_back(i->first);
   }
+  theTotalNphot = aTotalNphot;  //OP
 }
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -41,15 +41,16 @@ RootCaloHit::~RootCaloHit()
 RootCaloHit::RootCaloHit(const RootCaloHit& right) : TObject()
 {
   //  theVolume       = right.theVolume;
+  thePartID    = right.thePartID;
   theDet       = right.theDet;
   theEntryPoint = right.theEntryPoint;
   theExitPoint = right.theExitPoint;
-  theGlobalTime = right.theGlobalTime;
   theKinEnergy = right.theKinEnergy;
   theTotalEdep    = right.theTotalEdep;	 
   theEdep         = right.theEdep;
   theStepPos      = right.theStepPos;
   theParticleList = right.theParticleList;
+  theTotalNphot = right.theTotalNphot; //OP
 }
 ////////////////////////////////////////////////////////////////////////////////
 //

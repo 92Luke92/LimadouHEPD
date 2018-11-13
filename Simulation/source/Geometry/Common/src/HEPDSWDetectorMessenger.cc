@@ -47,9 +47,7 @@
 
 HEPDSWDetectorMessenger::HEPDSWDetectorMessenger(HEPDSWDetectorConstruction * Det)
 :Detector(Det)
-{
-
-  G4cout << "DetectorMessenger" << G4endl; 
+{ 
   G4UIparameter* param;
   fHepdDir = new G4UIdirectory("/hepd/");
   fHepdDir->SetGuidance("UI commands specific to this example");
@@ -98,15 +96,23 @@ HEPDSWDetectorMessenger::HEPDSWDetectorMessenger(HEPDSWDetectorConstruction * De
   fHEPDProtonTBCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   fHEPDDegraderActivateCmd = new G4UIcmdWithABool("/hepd/ActivateHEPDDegrader",this);
-  fHEPDDegraderActivateCmd->SetGuidance("Enable or disable the Proton Test Beam configuration");
+  fHEPDDegraderActivateCmd->SetGuidance("Enable or disable degrader in the Proton Test Beam configuration");
   fHEPDDegraderActivateCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
  
   fProtonDegraderCmd = new G4UIcmdWithADoubleAndUnit("/hepd/ProtonDegrader",this);
   fProtonDegraderCmd->SetGuidance("Set the thickness of the degrader");
   fProtonDegraderCmd->SetParameterName("Thickness",false);
   fProtonDegraderCmd->SetUnitCategory("Length");
-  fProtonDegraderCmd->AvailableForStates(G4State_Idle);  
+  fProtonDegraderCmd->AvailableForStates(G4State_Idle);
 
+  fHEPDNucleiTBCmd = new G4UIcmdWithABool("/hepd/ActivateHEPDNucleiTB",this);
+  fHEPDNucleiTBCmd->SetGuidance("Enable or disable the Nuclei Test Beam configuration");
+  fHEPDNucleiTBCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  fHEPDElectronTBCmd = new G4UIcmdWithABool("/hepd/ActivateHEPDElectronTB",this);
+  fHEPDElectronTBCmd->SetGuidance("Enable or disable the electron Test Beam configuration");
+  fHEPDElectronTBCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
   fCaloConfigCmd = new G4UIcmdWithAString("/hepd/CaloConfiguration",this);
   fCaloConfigCmd->SetGuidance("Select the calorimeter configuration");
   fCaloConfigCmd->SetParameterName("CaloConfiguration",false);
@@ -219,11 +225,21 @@ HEPDSWDetectorMessenger::HEPDSWDetectorMessenger(HEPDSWDetectorConstruction * De
   fHEPDBoxMLBlanketMatConfigCmd->SetParameter(param);
   fHEPDBoxMLBlanketMatConfigCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  fHEPDBoxCompositeBlanketMatConfigCmd = new G4UIcommand("/hepd/HEPDBox/CompositeBlanketMaterialConfiguration",this);
+  fHEPDBoxCompositeBlanketMatConfigCmd->SetGuidance("Set the Thermal blanket material");
+  param = new G4UIparameter("Kapton",'s',false);
+  param->SetGuidance("Kapton");
+  fHEPDBoxCompositeBlanketMatConfigCmd->SetParameter(param);
+  param = new G4UIparameter("Copper",'s',false);
+  param->SetGuidance("Copper");
+  fHEPDBoxCompositeBlanketMatConfigCmd->SetParameter(param);
+  fHEPDBoxCompositeBlanketMatConfigCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+//
   fHEPDBoxBlanketMatConfigCmd = new G4UIcmdWithAString("/hepd/HEPDBox/BlanketMaterialConfiguration",this);
   fHEPDBoxBlanketMatConfigCmd->SetGuidance("Set the hepd blanket material");
   fHEPDBoxBlanketMatConfigCmd->SetParameterName("Blanket Material",false);
   fHEPDBoxBlanketMatConfigCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
+  
   fHEPDBoxWallMatConfigCmd = new G4UIcmdWithAString("/hepd/HEPDBox/WallMaterialConfiguration",this);
   fHEPDBoxWallMatConfigCmd->SetGuidance("Set the hepd box wall material");
   fHEPDBoxWallMatConfigCmd->SetParameterName("Wall Material",false);
@@ -267,6 +283,8 @@ HEPDSWDetectorMessenger::~HEPDSWDetectorMessenger()
   delete fSatelliteConfigCmd;
   delete fHEPDBoxConfigCmd;
   delete fHEPDProtonTBCmd;
+  delete fHEPDNucleiTBCmd;
+  delete fHEPDElectronTBCmd;
   delete fProtonDegraderCmd;
   delete fHepdDir;
   //  delete fCaloCaloMatConfigCmd;	
@@ -283,7 +301,8 @@ HEPDSWDetectorMessenger::~HEPDSWDetectorMessenger()
   delete fTrackerKaptonMatConfigCmd;     
   delete fTrackerCarbonFiberMatConfigCmd;
   delete fHEPDBoxMLBlanketMatConfigCmd;    
-  delete fHEPDBoxBlanketMatConfigCmd;    
+  delete fHEPDBoxCompositeBlanketMatConfigCmd;    
+  delete fHEPDBoxBlanketMatConfigCmd; 
   delete fHEPDBoxWallMatConfigCmd;    
   delete fHEPDBoxWallTwoMatConfigCmd;    
   delete fSatelliteBlanketMatConfigCmd;    
@@ -294,7 +313,6 @@ HEPDSWDetectorMessenger::~HEPDSWDetectorMessenger()
 
 void HEPDSWDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
-  G4cout << "SetNewValue command " << command << " " << fProtonDegraderCmd << G4endl;
   if (command == fWorldSizeCmd)
     {
       G4double Xdim,Ydim,Zdim;
@@ -321,7 +339,8 @@ void HEPDSWDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue
 //   if (command == fScintConfigCmd)
 //     Detector->SetScintConfiguration(newValue);
   if (command == fTrackerConfigCmd)
-    Detector->SetTrackerConfiguration(newValue);  
+    Detector->SetTrackerConfiguration(newValue);
+  if (command == fHEPDDegraderActivateCmd) Detector->SetDegrader(fHEPDDegraderActivateCmd->GetNewBoolValue);
   if (command == fSatelliteConfigCmd)
     Detector->SetSatelliteConfiguration(newValue);  
   if (command == fHEPDBoxConfigCmd)
@@ -330,16 +349,21 @@ void HEPDSWDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue
   if (command == fHEPDProtonTBCmd)
     Detector->SetProtonTBDetector(fHEPDProtonTBCmd->GetNewBoolValue(newValue));  
 
-  if (command == fHEPDDegraderActivateCmd)
-    Detector->SetDegrader(fHEPDDegraderActivateCmd->GetNewBoolValue(newValue));  
-
   if(command == fProtonDegraderCmd ) {
     G4cout << "fProtonDegraderCmd" << "newValue " << newValue << G4endl;
-    Detector->SetProtonDegrader(fProtonDegraderCmd->GetNewDoubleValue(newValue));  
+    Detector->SetProtonDegrader(fProtonDegraderCmd->GetNewDoubleValue(newValue));
   }
   if (command == fHEPDProtonTBCmd)
-    Detector->SetProtonTBDetector(fHEPDProtonTBCmd->GetNewBoolValue(newValue));  
+    Detector->SetProtonTBDetector(fHEPDProtonTBCmd->GetNewBoolValue(newValue));
 
+  if (command == fHEPDNucleiTBCmd) {
+    Detector->SetNucleiTBDetector(fHEPDNucleiTBCmd->GetNewBoolValue(newValue));
+  }
+
+  if (command == fHEPDElectronTBCmd) {
+    Detector->SetElectronTBDetector(fHEPDElectronTBCmd->GetNewBoolValue(newValue));
+  }
+  
 //   if(command == fCaloCaloMatConfigCmd)
 //     Detector->CaloSetCaloMaterial(newValue);
   if(command == fCaloCalo2MatConfigCmd){
@@ -382,7 +406,13 @@ void HEPDSWDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue
   }   
   if(command == fHEPDBoxWallMatConfigCmd)    
     Detector->HEPDBoxSetWallMaterial(newValue);    
-  if(command == fHEPDBoxBlanketMatConfigCmd)    
+  if(command == fHEPDBoxCompositeBlanketMatConfigCmd){
+    G4String mat1,mat2;
+    std::istringstream is(newValue);
+    is >> mat1 >> mat2;
+    Detector->HEPDBoxSetBlanketMaterial(mat1,mat2);
+  }
+  if(command == fHEPDBoxBlanketMatConfigCmd)
     Detector->HEPDBoxSetBlanketMaterial(newValue); 
   if(command == fHEPDBoxWallTwoMatConfigCmd){
     G4String mat1,mat2;

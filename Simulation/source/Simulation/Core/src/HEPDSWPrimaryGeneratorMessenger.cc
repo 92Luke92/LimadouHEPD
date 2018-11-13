@@ -40,6 +40,8 @@
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4IonTable.hh"
+#include "G4ParticleDefinition.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -59,6 +61,16 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
   fPntngCmd = new G4UIcmdWithoutParameter("/hepd/gun/toCenter",this);
   fPntngCmd->SetGuidance("direction of particle always pointing to center");
   fPntngCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  //for nuclei test beam
+  fSpotCmd = new G4UIcmdWithoutParameter("/hepd/gun/spot",this);
+  fSpotCmd->SetGuidance("enable or disable the beam spot");
+  fSpotCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  //for electron test beam
+  fElectronSpotCmd = new G4UIcmdWithoutParameter("/hepd/gun/electronspot",this);
+  fElectronSpotCmd->SetGuidance("enable or disable the beam spot in electron configuration");
+  fElectronSpotCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
   
   fEnrgCmd = new G4UIcmdWithADoubleAndUnit("/hepd/gun/energy",this);
   fEnrgCmd->SetGuidance("Set the energy of the particle");
@@ -93,9 +105,9 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
 
   fTBeamCmd = new G4UIcommand("/hepd/gun/tbeam",this);
   fTBeamCmd->AvailableForStates(G4State_Idle);  
-  fTBeamCmd->SetParameter(param);
   param = new G4UIparameter("position",'s',false);
   param->SetGuidance("beam position A1 - D6");
+  fTBeamCmd->SetParameter(param);
   param = new G4UIparameter("Theta",'d',false);
   param->SetGuidance("Theta angle");
   fTBeamCmd->SetParameter(param);
@@ -103,12 +115,18 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
   param->SetGuidance("angle unit");
   fTBeamCmd->SetParameter(param);
 
-  fBeamEResoCmd = new G4UIcommand("/hepd/gun/ereso",this);
-  fBeamEResoCmd->SetGuidance("Set energy resolution ERESO (percent)");
-  fBeamEResoCmd->AvailableForStates(G4State_Idle);  
-  param = new G4UIparameter("EResolution %",'d',false);
-  param->SetGuidance("beam energy resolution");
-  fBeamEResoCmd->SetParameter(param);
+  //fBeamEResoCmd = new G4UIcommand("/hepd/gun/ereso",this);
+  //fBeamEResoCmd->SetGuidance("Set energy resolution ERESO (percent)");
+  //fBeamEResoCmd->AvailableForStates(G4State_Idle);  
+  //param = new G4UIparameter("EResolution %",'d',false);
+  //param->SetGuidance("beam energy resolution");
+  //fBeamEResoCmd->SetParameter(param);
+  fBeamEResoCmd = new G4UIcmdWithADoubleAndUnit("/hepd/gun/ereso",this);
+  fBeamEResoCmd->SetGuidance("Set energy resolution DeltaE (MeV)");
+  fBeamEResoCmd->SetParameterName("Energy",false);
+  fBeamEResoCmd->SetUnitCategory("Energy");
+  fBeamEResoCmd->AvailableForStates(G4State_Idle);
+  
 
   fMuonCmd = new G4UIcommand("/hepd/gun/muon",this);
   fMuonCmd->AvailableForStates(G4State_Idle);  
@@ -131,6 +149,7 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
   param->SetGuidance("energy unit");
   fMuonCmd->SetParameter(param);
 
+
   fPowerLawCmd = new G4UIcommand("/hepd/gun/powerlaw",this);
   fPowerLawCmd->SetGuidance("Set the power law with Emin Emax [unit]  Gamma");
   fPowerLawCmd->AvailableForStates(G4State_Idle);  
@@ -149,7 +168,7 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
 
   fFlatCmd = new G4UIcommand("/hepd/gun/flat",this);
   fFlatCmd->SetGuidance("Flat Spectra between Emin Emax [unit]");
-  fFlatCmd->AvailableForStates(G4State_Idle);  
+  fFlatCmd->AvailableForStates(G4State_Idle);
   param = new G4UIparameter("Emin",'d',false);
   param->SetGuidance("E min");
   fFlatCmd->SetParameter(param);
@@ -159,7 +178,7 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
   param = new G4UIparameter("unit",'s',false);
   param->SetGuidance("E unit");
   fFlatCmd->SetParameter(param);
-
+  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -170,6 +189,8 @@ HEPDSWPrimaryGeneratorMessenger::~HEPDSWPrimaryGeneratorMessenger()
   delete fMuonCmd;
   delete fRndmCmd;
   delete fEnrgCmd;
+  delete fSpotCmd;
+  delete fElectronSpotCmd;
   delete fPntngCmd;
   delete fBeamCmd;
   delete fPowerLawCmd;
@@ -188,9 +209,25 @@ void HEPDSWPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String 
   if( command == fPntngCmd )
     { fAction->SetDirectionToCenter();}
   if( command == fEnrgCmd )
-    { fAction->SetEnergy(fEnrgCmd->GetNewDoubleValue(newValue));}  
+    { fAction->SetEnergy(fEnrgCmd->GetNewDoubleValue(newValue));}
+  if( command == fSpotCmd )
+    { fAction->SetSpot();}
+  if( command == fElectronSpotCmd )
+    { fAction->SetElectronSpot();}
   if( command == fPartCmd )
-    { fAction->SetParticle(newValue);}
+    {
+      if(newValue=="He"||newValue=="C"||newValue=="O"){
+        G4IonTable* ionTable = (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
+        G4int Z,A;
+        if(newValue=="He"){Z=2; A=4;}
+        if(newValue=="C"){Z=6;A=12;}
+        if(newValue=="O"){Z=8;A=16;}
+        G4ParticleDefinition* ion = ionTable->GetIon(Z,A,0.);
+        fAction->SetParticle(ion->GetParticleName());
+      }
+      else{fAction->SetParticle(newValue);}
+    }
+  
   if( command == fMuonCmd )
     {
       G4double dX,dY,Emin,Emax;
@@ -215,6 +252,7 @@ void HEPDSWPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String 
       theta*= G4UIcommand::ValueOf(unit_a);
       fAction->SetBeam(Xpos,Ypos,theta);
     }
+
   if( command == fTBeamCmd )
     {
       G4double Xpos = -999;
@@ -313,16 +351,16 @@ void HEPDSWPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String 
         Xpos = -57.5;
         Ypos = +18.0;
       }
-      if (pos == "d5" || pos == "D4" ) {
+      if (pos == "d5" || pos == "D5" ) {
         Xpos = -57.5;
         Ypos = +48.0;
       }
-      if (pos == "d6" || pos == "D4" ) {
+      if (pos == "d6" || pos == "D6" ) {
         Xpos = -57.5;
         Ypos = +78.0;
       }
       if (Xpos == -999 || Ypos == -999)
-	G4cout << "erreur non valid test beam position !!!!" << G4endl;
+        G4cout << "erreur non valid test beam position !!!!" << G4endl;
       else
         fAction->SetBeam(Xpos,Ypos,theta);
     }

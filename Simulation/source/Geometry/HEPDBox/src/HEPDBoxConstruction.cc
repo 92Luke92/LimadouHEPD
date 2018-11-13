@@ -29,9 +29,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "HEPDBoxConstruction.hh"
-#include <iomanip>
 
-class MCTruthSD;
+#include <iomanip>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -74,8 +73,13 @@ void HEPDBoxConstruction::Builder(G4String config,G4VPhysicalVolume* motherVolum
 void HEPDBoxConstruction::SetBlanketMaterial(G4String aMat){
   theConfig1->SetBlanketMaterial(aMat);
   theConfig2->SetBlanketMaterial(aMat);
-  theConfig4->SetBlanketMaterial(aMat);
+  //theConfig4->SetBlanketMaterial(aMat);
 }
+void HEPDBoxConstruction::SetBlanketMaterial(G4String aMat1, G4String aMat2){
+  theConfig4->SetBlanketOutMaterial(aMat1);
+  theConfig4->SetBlanketInMaterial(aMat2);
+}
+
 
 void HEPDBoxConstruction::SetBlanketMaterial(G4String aMat1, G4String aMat2, G4String aMat3,G4String aMat4){
   theConfig3->SetBlanketMaterial(aMat1,aMat2,aMat3,aMat4);

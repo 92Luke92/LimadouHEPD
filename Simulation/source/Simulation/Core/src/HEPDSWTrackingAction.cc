@@ -81,7 +81,7 @@ void HEPDSWTrackingAction::PreUserTrackingAction (const G4Track* aTrack)
       creatorProcessName = aTrack->GetCreatorProcess()->GetProcessName();
     }
     Track* storeTrack = new Track(TrackId,PDG,name,position,dir,kinE,motherTrackId,vertexVolumeName,creatorProcessName);
-   
+    
     MCTruthSD* sd = dynamic_cast<MCTruthSD*>(G4SDManager::GetSDMpointer()->FindSensitiveDetector("/hepd/mctruth"));
     sd->GetTrackCollection()->insert(storeTrack);
   }

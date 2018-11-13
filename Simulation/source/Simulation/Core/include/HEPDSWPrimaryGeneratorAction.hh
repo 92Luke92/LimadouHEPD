@@ -48,26 +48,28 @@ class HEPDSWPrimaryGeneratorMessenger;
 class HEPDSWPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-  HEPDSWPrimaryGeneratorAction(HEPDSWDetectorConstruction*);    
+  HEPDSWPrimaryGeneratorAction(HEPDSWDetectorConstruction*);
   ~HEPDSWPrimaryGeneratorAction();
-  
+
 public:
   void SetDefaultKinematic();
   void SetParticle(G4String part);
   void SetEnergy(G4double ene);
+  void SetSpot();
+  void SetElectronSpot();
   void SetBeam(G4double Xpos,G4double Ypos,G4double theta);
   void SetBeamEReso(G4double ereso);
   void SetPowerLaw(G4double aEmin,G4double aEmax,G4double aGamma);
   void SetFlat(G4double aEmin,G4double aEmax);
   void SetMuonGeneration(G4double adX, G4double adY, G4double aEmin, G4double aEmax);
-  
+
   inline void SetRandomPosition() { random = true;}
   inline void SetDirectionToCenter() { centerpointing = true;}
 
-  virtual 
-  void GeneratePrimaries(G4Event*);  
+  virtual
+  void GeneratePrimaries(G4Event*);
   G4ParticleGun* GetParticleGun() {return fParticleGun;};
-  
+
 private:
   G4double SpectrumPowerLaw(G4double Emin,G4double Emax, G4double gamma);
   G4double FlatSpectrum(G4double Emin,G4double Emax);
@@ -75,9 +77,11 @@ private:
   G4ThreeVector          position;
   G4ThreeVector          direction;
   G4ParticleGun*         fParticleGun;
-  HEPDSWDetectorConstruction*  fDetector;   
+  HEPDSWDetectorConstruction*  fDetector;
   G4bool                 muon;
   G4bool                 random;
+  G4bool                 nuclei_beam;
+  G4bool                 electron_beam;
   G4bool                 centerpointing;
   G4bool                 beam;
   G4bool                 beam_reso;
@@ -96,7 +100,7 @@ private:
   G4double               beam_energy;
   G4double               beam_ereso;
 
-  HEPDSWPrimaryGeneratorMessenger* fGunMessenger; 
+  HEPDSWPrimaryGeneratorMessenger* fGunMessenger;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

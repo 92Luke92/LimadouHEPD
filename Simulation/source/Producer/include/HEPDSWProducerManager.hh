@@ -20,11 +20,13 @@
 #include "TVector3.h"
 
 #include "RootEvent.hh"
+#include "RootPmtHits.hh"
 #include "RootCaloHit.hh"
 #include "RootTrackerHit.hh"
 #include "RootDegraderHit.hh"
 #include "RootTrack.hh"
 #include "RootVertex.hh"
+#include "PmtHits.hh"
 #include "CaloHit.hh"
 #include "TrackerHit.hh"
 #include "DegraderHit.hh"
@@ -54,6 +56,7 @@ public:
   inline void SaveDegraderInfo(G4bool aVal){saveDegrader=aVal;}
   inline void SaveMCTruthInfo(G4bool aVal){saveMCTruth=aVal;}
   inline void SaveCalorimeterInfo(G4bool aVal){saveCalo=aVal;}
+  inline G4int GetTrackCollID(){return trackCollID;}
 
   inline void SetAutoSaveLimit(G4int aAutoSave){theAutoSaveLimit=aAutoSave;}
 
@@ -74,6 +77,7 @@ private:
   G4bool saveCalo;
 
   G4int caloHitCollID;
+  G4int pmtHitsCollID;
   G4int vetoHitCollID;
   G4int trackerHitCollID;
   G4int degraderHitCollID;
@@ -84,10 +88,11 @@ private:
 
   G4int eventID;
 
+  std::vector<RootPmtHits> thePmtHitsContainer;
   std::vector<RootCaloHit> theCaloHitContainer;
   std::vector<RootCaloHit> theVetoHitContainer;
   std::vector<RootTrackerHit> theTrackerHitContainer;
-  std::vector<RootDegraderHit> theDegraderHitContainer;
+   std::vector<RootDegraderHit> theDegraderHitContainer;
   std::vector<RootTrack> theTrackContainer;
   std::vector<RootVertex> theVertexContainer;
 

@@ -41,6 +41,7 @@
 #include "CalorimeterConstructionConfig4.hh"
 #include "CalorimeterConstructionConfig5.hh"
 #include "CalorimeterConstructionConfig6.hh"
+#include "CalorimeterConstructionOptical.hh"
 #include "CalorimeterConstructionDummy.hh"
 #include "CalorimeterConstructionDummyOptical.hh"
 
@@ -74,6 +75,7 @@ private:
   CalorimeterConstructionConfig4* theConfig4;
   CalorimeterConstructionConfig5* theConfig5;
   CalorimeterConstructionConfig6* theConfig6;
+  CalorimeterConstructionOptical* theOptical;
   CalorimeterConstructionDummy* theDummy;
   CalorimeterConstructionDummyOptical* theDummyOptical;
 

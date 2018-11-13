@@ -60,8 +60,8 @@ private:
   G4UIdirectory*             fGunDir;      
   G4UIcmdWithoutParameter*   fDefaultCmd;
   G4UIcmdWithoutParameter*   fRndmCmd;
-  G4UIcmdWithoutParameter*   fMuonCmd;
   G4UIcmdWithoutParameter*   fPntngCmd;
+  G4UIcmdWithoutParameter*   fMuonCmd;
   G4UIcmdWithADoubleAndUnit* fEnrgCmd;
   G4UIcmdWithAString*        fPartCmd;
   G4UIcommand*               fDummyCmd;

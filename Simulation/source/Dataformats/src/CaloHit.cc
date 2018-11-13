@@ -37,13 +37,12 @@ CaloHit::CaloHit()
 // CaloHit::CaloHit(G4String volume)
 //   : VolumeID(volume)
 // {;}
-CaloHit::CaloHit(G4int det,G4ThreeVector aEntry,G4ThreeVector aExit,G4double aGlobalTime,G4double aKE)
+CaloHit::CaloHit(G4int aPartID, G4int det,G4ThreeVector aEntry, G4ThreeVector aExit, G4double aKE)
   : DetID(det)
-{ theEntryPoint = aEntry;
+{thePartID = aPartID;
+  theEntryPoint = aEntry;
   theExitPoint = aExit;
-  theGlobalTime = aGlobalTime;
-  theKinEnergy = aKE;
-}
+  theKinEnergy = aKE;}
 
 
 CaloHit::~CaloHit()
@@ -53,25 +52,27 @@ CaloHit::CaloHit(const CaloHit &right)
   : G4VHit()
 {
   //  VolumeID = right.VolumeID;
+  thePartID = right.thePartID;
   DetID = right.DetID;
   theEntryPoint = right.theEntryPoint;
   theExitPoint = right.theExitPoint;
-  theGlobalTime = right.theGlobalTime;
   theKinEnergy = right.theKinEnergy;
   edep = right.edep;
   totalEdep = right.totalEdep;
+  for (int i=0; i<53; i++) totalPhot[i] = right.totalPhot[i];  //OP
 }
 
 const CaloHit& CaloHit::operator=(const CaloHit &right)
 {
   //  VolumeID = right.VolumeID;
+  thePartID = right.thePartID;
   DetID = right.DetID;
   theEntryPoint = right.theEntryPoint;
   theExitPoint = right.theExitPoint;
-  theGlobalTime = right.theGlobalTime;
   theKinEnergy = right.theKinEnergy;
   edep = right.edep;
   totalEdep = right.totalEdep;
+  for (int i=0; i<53; i++) totalPhot[i] = right.totalPhot[i];  //OP
   return *this;
 }
 
@@ -97,6 +98,11 @@ void CaloHit::AddEdep(G4double aEdep,G4int aTkID){
     edep[aTkID]+=aEdep;
   else
     edep[aTkID]=aEdep;
+}
+
+void CaloHit::AddPhot(G4int detID){  //OP
+  totalPhot[detID]+=1;
+  G4cout << " AddPhot detID " << detID << " total " << totalPhot[detID] << G4endl;
 }
 
 G4int CaloHit::operator==(const CaloHit &right) const

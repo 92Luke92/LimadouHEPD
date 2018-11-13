@@ -56,7 +56,7 @@ Double_t Muon_Flux(Double_t *x, Double_t *par) {
   Double_t costheta = par[0];
 
   Double_t ppar[5] = { 0.102573, -0.068287, 0.958633, 0.0407253, 0.817285 };
-
+  
   Double_t arg = costheta*costheta + ppar[0]*ppar[0] + ppar[1]*TMath::Power(costheta,ppar[2])+ ppar[3]*TMath::Power(costheta,ppar[4]);
   arg /= (1 + ppar[0]*ppar[0] + ppar[1]*ppar[1] + ppar[3]*ppar[3]);
 
@@ -77,7 +77,6 @@ Double_t Muon_Flux(Double_t *x, Double_t *par) {
 
 HEPDSWPrimaryGeneratorAction::HEPDSWPrimaryGeneratorAction(HEPDSWDetectorConstruction* det)
   :position(0),direction(0),fDetector(det)
-
 {
   G4int n_particle = 1;
   fParticleGun  = new G4ParticleGun(n_particle);
@@ -92,19 +91,21 @@ HEPDSWPrimaryGeneratorAction::HEPDSWPrimaryGeneratorAction(HEPDSWDetectorConstru
   fun_mu_costhe->SetParameter(2,costhe_par[2]);
 
   xrange_Muon_gen = 0;
-  yrange_Muon_gen = 0;
+  yrange_Muon_gen = 0; 
   emin_Muon = 0.05;
-  emax_Muon = 1000;
+  emax_Muon = 1000;  
 
   //  fun_mu_ke = new TF1("muflux",&HEPDSWPrimaryGeneratorAction::Muon_Flux,0.05,1000,1);
 
   muon= false;
   random=false;
   beam=false;
-  beam_reso = false;
+  beam_reso=false;
+  nuclei_beam=false;
+  electron_beam=false;
   centerpointing=false;
   powerlaw = false;
-  flat = false;
+  flat=false;
   //create a messenger for this class
   fGunMessenger = new HEPDSWPrimaryGeneratorMessenger(this);
 }
@@ -127,8 +128,8 @@ void HEPDSWPrimaryGeneratorAction::SetDefaultKinematic()
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,-1.));
   fParticleGun->SetParticleEnergy(1.*GeV);
-  G4double position = 0.5*(fDetector->GetWorldSizeZ());
-  fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm,position));
+  G4double zposition = 0.5*(fDetector->GetWorldSizeZ());
+  fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm, zposition));
 }
 
 void HEPDSWPrimaryGeneratorAction::SetEnergy(G4double ene)
@@ -140,7 +141,7 @@ void HEPDSWPrimaryGeneratorAction::SetEnergy(G4double ene)
 void HEPDSWPrimaryGeneratorAction::SetBeamEReso(G4double ereso){
   //  G4cout << "set beam reso " << G4endl;
   beam_reso = true;
-  beam_ereso = (0.01)*ereso;
+  beam_ereso = ereso;
 }
 
 void HEPDSWPrimaryGeneratorAction::SetParticle(G4String part)
@@ -159,6 +160,14 @@ void HEPDSWPrimaryGeneratorAction::SetBeam(G4double Xpos,G4double Ypos,G4double 
 
 }
 
+
+//for nuclei test beam
+void HEPDSWPrimaryGeneratorAction::SetSpot(){nuclei_beam=true;}
+
+//for electron test beam
+void HEPDSWPrimaryGeneratorAction::SetElectronSpot(){electron_beam=true;}
+
+
 void HEPDSWPrimaryGeneratorAction::SetMuonGeneration(G4double dX,G4double dY, G4double Emin, G4double Emax){
   muon=true;
   xrange_Muon_gen = dX;
@@ -171,7 +180,6 @@ void HEPDSWPrimaryGeneratorAction::SetMuonGeneration(G4double dX,G4double dY, G4
   G4String particleName = "mu+";
   G4ParticleDefinition* particle = particleTable->FindParticle(particleName);
   fParticleGun->SetParticleDefinition(particle);
-
 }
 
 void HEPDSWPrimaryGeneratorAction::SetPowerLaw(G4double aEmin,G4double aEmax,G4double aGamma){
@@ -203,7 +211,7 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     G4double Xmax = 0.5*(fDetector->GetWorldSizeX());
     G4double Ymax = 0.5*(fDetector->GetWorldSizeY());
     G4double Zmax = 0.5*(fDetector->GetWorldSizeZ());
-    //    G4cout << "xmax " << Xmax << " ymax " << Ymax << " theta " << theta << " cos theta " << theta << " cos theta " << cos(theta) << G4endl;
+    //    G4cout << "xmax " << Xmax << " ymax " << Ymax << " theta " << theta << " cos theta " << atheta << " cos theta " << cos(theta) << G4endl;
     position = G4ThreeVector(-Xmax+2*Xmax*G4RandFlat::shoot(),-Ymax+2*Ymax*G4RandFlat::shoot(),Zmax);
     if(powerlaw)
       fParticleGun->SetParticleEnergy(SpectrumPowerLaw(eminPL,emaxPL,gammaPL));
@@ -217,29 +225,102 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fParticleGun->SetParticleMomentumDirection(direction.unit());
     fParticleGun->GeneratePrimaryVertex(anEvent);
   }
-  if(beam){
+  else if(beam){
     G4String particleName;
     G4ParticleDefinition* particle = fParticleGun->GetParticleDefinition();
     const G4String& nome = particle->GetParticleName();
     G4double masse = particle->GetPDGMass();
     G4double charge = particle->GetPDGCharge();
-    G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
+    //G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
     fParticleGun->SetParticlePosition(position);
     if(flat)
       fParticleGun->SetParticleEnergy(FlatSpectrum(eminFlat,emaxFlat));
     if (beam_reso) {
-      G4double denergy = (beam_energy*beam_ereso)*G4RandGauss::shoot();
-      printf("beam energy %6.2lf MeV de %6.2lf MeV\n",beam_energy,denergy);
-      G4double new_beam_energy = beam_energy + denergy;
+      G4double new_beam_energy = G4RandGauss::shoot(beam_energy,beam_ereso);
+      G4double denergy = new_beam_energy - beam_energy;
+      //printf("beam energy %6.2lf MeV de %6.2lf MeV\n",beam_energy,denergy);
       fParticleGun->SetParticleEnergy(new_beam_energy);
     }
     fParticleGun->SetParticleMomentumDirection(direction.unit());
     fParticleGun->GeneratePrimaryVertex(anEvent);
-  }else{
+  }
+  else if(nuclei_beam){
+    G4String particleName;
+    G4ParticleDefinition* particle = fParticleGun->GetParticleDefinition();
+    const G4String& nome = particle->GetParticleName();
+    G4double masse = particle->GetPDGMass();
+    G4double charge = particle->GetPDGCharge();
+    //G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
+    G4double Xmax = 2.5*mm;
+    G4double Ymax = 2.5*mm;
+    G4double Xpos = 999.*cm;
+    G4double Ypos = 999.*cm;
+    Xpos = -Xmax+2.*Xmax*G4RandFlat::shoot();
+    Ypos = -Ymax+2.*Ymax*G4RandFlat::shoot();
+    while (sqrt(pow(Xpos,2)+pow(Ypos,2))>2.5*mm){
+      Xpos = -Xmax+2.*Xmax*G4RandFlat::shoot();
+      Ypos = -Ymax+2.*Ymax*G4RandFlat::shoot();
+    }
+    G4double Zpos = 196.*cm;
+    Xpos-=1.75*cm;
+    Ypos-=1.8*cm;
+    position = G4ThreeVector(Xpos,Ypos,Zpos);
+    G4double theta = 0.*deg;
+    G4double phi = 0.*deg;
+    direction = G4ThreeVector(cos(phi)*sin(theta),sin(phi)*sin(theta),-cos(theta));
+    
+    fParticleGun->SetParticlePosition(position);
+    if(flat)
+      fParticleGun->SetParticleEnergy(FlatSpectrum(eminFlat,emaxFlat));
+    if (beam_reso) {
+      G4double new_beam_energy = G4RandGauss::shoot(beam_energy,beam_ereso);
+      G4double denergy = new_beam_energy - beam_energy;
+      printf("beam energy %6.2lf MeV de %6.2lf MeV\n",beam_energy,denergy);
+      fParticleGun->SetParticleEnergy(new_beam_energy);
+    }
+    fParticleGun->SetParticleMomentumDirection(direction.unit());
     fParticleGun->GeneratePrimaryVertex(anEvent);
   }
 
-  if(muon){
+  else if(electron_beam){
+    G4String particleName;
+    G4ParticleDefinition* particle = fParticleGun->GetParticleDefinition();
+    const G4String& nome = particle->GetParticleName();
+    G4double masse = particle->GetPDGMass();
+    G4double charge = particle->GetPDGCharge();
+    //G4cout << nome << " masse " << masse << " charge " << charge << G4endl;
+    G4double Xmax = 0.5*mm;
+    G4double Ymax = 0.5*mm;
+    G4double Xpos = 999.*cm;
+    G4double Ypos = 999.*cm;
+    Xpos = -Xmax+2.*Xmax*G4RandFlat::shoot();
+    Ypos = -Ymax+2.*Ymax*G4RandFlat::shoot();
+    while (sqrt(pow(Xpos,2)+pow(Ypos,2))>0.5*mm){
+      Xpos = -Xmax+2.*Xmax*G4RandFlat::shoot();
+      Ypos = -Ymax+2.*Ymax*G4RandFlat::shoot();
+    }
+    Xpos-=1.75*cm;
+    Ypos-=1.8*cm;
+    G4double Zpos = 140.*cm; //check the correct number
+    position = G4ThreeVector(Xpos,Ypos,Zpos);
+    G4double theta = 0.*deg;
+    G4double phi = 0.*deg;
+    direction = G4ThreeVector(cos(phi)*sin(theta),sin(phi)*sin(theta),-cos(theta));
+    
+    fParticleGun->SetParticlePosition(position);
+    if(flat)
+      fParticleGun->SetParticleEnergy(FlatSpectrum(eminFlat,emaxFlat));
+    if (beam_reso) {
+      G4double new_beam_energy = G4RandGauss::shoot(beam_energy,beam_ereso);
+      G4double denergy = new_beam_energy - beam_energy;
+      printf("beam energy %6.2lf MeV de %6.2lf MeV\n",beam_energy,denergy);
+      fParticleGun->SetParticleEnergy(new_beam_energy);
+    }
+    fParticleGun->SetParticleMomentumDirection(direction.unit());
+    fParticleGun->GeneratePrimaryVertex(anEvent);
+  }
+
+  else if(muon){
     G4double phi = 2*CLHEP::pi*G4RandFlat::shoot();
     Double_t cosang = fun_mu_costhe->GetRandom(0.65,1.00);
     G4double theta = ((G4double) TMath::ACos(cosang));
@@ -258,9 +339,13 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fParticleGun->SetParticlePosition(position);
     fParticleGun->SetParticleMomentumDirection(direction.unit());
     fParticleGun->GeneratePrimaryVertex(anEvent);
-    G4cout << "ev " << anEvent->GetEventID() << " x " << position.x() << " y " << position.y() << " z " << position.z() << " ke " << ke << " dir x " << direction.x() << " dir y " << direction.y() << " dir z " << direction.z() << G4endl;
+    //G4cout << "ev " << anEvent->GetEventID() << " x " << position.x() << " y " << position.y() << " z " << position.z() << " ke " << ke << " dir x " << direction.x() << " dir y " << direction.y() << " dir z " << direction.z() << G4endl; 
   }
 
+  else{
+    fParticleGun->GeneratePrimaryVertex(anEvent);
+  }
+  
 }
 
 G4double HEPDSWPrimaryGeneratorAction::SpectrumPowerLaw(G4double Emin,G4double Emax, G4double gamma){
@@ -279,18 +364,15 @@ G4double HEPDSWPrimaryGeneratorAction::SpectrumPowerLaw(G4double Emin,G4double E
     energy = pow((CLHEP::RandFlat::shoot(0., 1.) * (pow(Emax, alpha) - pow(Emin, alpha)) + pow(Emin, alpha)),1./alpha);
   }
   return energy;
+
 }
 
 G4double HEPDSWPrimaryGeneratorAction::FlatSpectrum(G4double Emin,G4double Emax)
 {
   G4double energy;
   energy = CLHEP::RandFlat::shoot(Emin, Emax);
-  G4cout << " energie " << energy << G4endl;
+  //G4cout << " energie " << energy << G4endl;
   return energy;
 }
-
-
-
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

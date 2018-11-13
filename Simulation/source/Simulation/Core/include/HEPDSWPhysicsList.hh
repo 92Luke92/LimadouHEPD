@@ -76,7 +76,7 @@ private:
   G4double fCutForElectron;
   G4double fCutForPositron;    
   G4bool   fUseOpticalProcesses;
-  
+
   G4bool helIsRegistered;
   G4bool hinIsRegistered;
   G4bool bicIsRegistered;
@@ -88,7 +88,6 @@ private:
   G4bool inclxxiIsRegistered;
   G4bool radioactiveDecayIsRegistered;
   G4bool ionElasticIsRegistered;
-
 
 };
 

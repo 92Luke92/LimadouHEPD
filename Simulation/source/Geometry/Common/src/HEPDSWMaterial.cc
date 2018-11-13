@@ -51,8 +51,8 @@
 #include "G4ElementTable.hh"
 
 HEPDSWMaterial::HEPDSWMaterial():
-  matAir(0), matAl(0), matTi(0), matGraphite(0),matCarbonFiber(0),matH2O(0),matMgB2(0),matGlass(0),matCu(0),
-  nylon(0), teflon(0), mylar(0), matH2O_solid(0), 
+  matAir(0), matAl(0), matTi(0), matGraphite(0),matCarbonFiber(0),matH2O(0),matH2O_solid(0),matMgB2(0),matGlass(0),matCu(0),
+  nylon(0), teflon(0), mylar(0), 
   beta(0), nextel(0), kevlar(0),
   vacuum(0), betaCloth(0), eterogeneousNextel(0), kevlarVacuum(0),
   polyethylene(0), polyacrylate(0), evoh(0), nomex(0), 
@@ -81,6 +81,7 @@ HEPDSWMaterial::~HEPDSWMaterial()
   delete matH2O_solid;
   delete matAir;
   delete matAl;
+  delete AluminiumOpt;
   delete matTi;
   delete matGraphite;
   delete matGlass;
@@ -180,7 +181,22 @@ void HEPDSWMaterial::DefineMaterials()
   // Air material
   matAir = manager->FindOrBuildMaterial("G4_AIR");
   // Aluminium
-  matAl =  new G4Material("Aluminium",13.,26.98*g/mole,2.700*g/cm3);  
+  matAl =  new G4Material("Aluminium",13.,26.98*g/mole,2.700*g/cm3);
+
+  // Aluminium optical
+  AluminiumOpt =  new G4Material("AluminiumOpt",13.,26.98*g/mole,2.700*g/cm3);  
+  const G4int NUMENTRIES_Al = 3;
+  G4double aluminium_PP[NUMENTRIES_Al]   = { 0.5*eV, 6.69*eV, 7.50*eV }; // lambda range 4 ri
+  G4double aluminium_RIND[NUMENTRIES_Al] = { 1.0972, 1.0972, 1.0972 };     // ref index
+  //  G4double quartz_RIND[NUMENTRIES_Al] = { 1.45, 1.51, 1.54 };     // ref index
+  G4double aluminium_ABSL[NUMENTRIES_Al] = { 0.0000007*cm, 0.00000007*cm, 0.0000007*cm };// atten length
+  G4double REFL_Al[NUMENTRIES_Al] = { 0.0003, 0.0003, 0.0003 };
+  MPTAluminiumOpt = new G4MaterialPropertiesTable();
+  MPTAluminiumOpt->AddProperty("RINDEX", aluminium_PP, aluminium_RIND, NUMENTRIES_Al);
+  MPTAluminiumOpt->AddProperty("ABSLENGTH", aluminium_PP, aluminium_ABSL, NUMENTRIES_Al);
+  MPTAluminiumOpt->AddProperty("REFLECTIVITY", aluminium_PP, REFL_Al, NUMENTRIES_Al);
+  AluminiumOpt->SetMaterialPropertiesTable(MPTAluminiumOpt);
+  
   //Titanium
   matTi = new G4Material("Titanium",22.,47.867*g/mole,4.54*g/cm3);
   //MgB2
