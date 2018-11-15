@@ -49,6 +49,7 @@ unsigned short energy;
 short gen[3];
 short theta;
 short phi;
+short SIL1_point[3];
 float SILEdep[2];
 float TEdep[6];
 float PEdep[16];
@@ -72,6 +73,7 @@ int main (int argc, char** argv) {
     Tmct->Branch("gen[3]", &gen[0]);
     Tmct->Branch("theta", &theta);
     Tmct->Branch("phi", &phi);
+    Tmct->Branch("SIL1_point[3]", &SIL1_point[0]);
     Tmct->Branch("SILEdep[2]", &SILEdep[0]);
     Tmct->Branch("TEdep[6]", &TEdep[0]);
     Tmct->Branch("PEdep[16]", &PEdep[0]);
@@ -81,7 +83,7 @@ int main (int argc, char** argv) {
     Tmct->Branch("TOWEREdep", &TOWEREdep);
     Tmct->Branch("TOTALEdep", &TOTALEdep);
     Tmct->Branch("pmt[53]", &pmt[0]);
-    
+        
     
     LoopOnEvents (&lvl0writer, Tmc);
     Tmct->Write();
@@ -135,9 +137,14 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 	theta = trackHits[0].GetDirection().Theta()*180/TMath::Pi();//vertical part. theta = 0
 	if(theta>90) theta=180-theta;
 	phi = trackHits[0].GetDirection().Phi()*180/TMath::Pi();
-
+	
 	for(size_t th=0; th<trackerHits.size(); th++){
 	  Int_t layerTrack = trackerHits[th].GetDetectorId();
+	  if(layerTrack == 2221){
+	    SIL1_point[0]=trackerHits[th].GetEntryPoint().X();
+	    SIL1_point[1]=trackerHits[th].GetEntryPoint().Y();
+	    SIL1_point[2]=trackerHits[th].GetEntryPoint().Z();
+	  }
 	  //1st plane silicon: layerTrack = 2221
 	  //2nd plane silicon: layerTrack = 2121
 	  checkIDTrack = layerTrack / 100;
@@ -204,6 +211,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 	for (int i=0; i<5; i++) VEdep[i] = 0.;
 	TOTALEdep = 0.;
 	for (int i=0; i<53; i++) pmt[i] = 0;
+	for (int i=0; i<3; i++) SIL1_point[i]=0.;
 
 	
         lvl0writer->Fill();
