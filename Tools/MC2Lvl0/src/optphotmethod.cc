@@ -7,7 +7,7 @@
 
 /*
 The structure of OptPhot_HG.csv and OptPhot_LG.csv is as follows:
-PMTid,    pedestal mean,    pedestal sigma,    p0,    p1,    p2 of quadratic fit
+PMTid,    pedestal mean,    pedestal sigma,    p0,    p1,   of quadratic fit (p0+p1*x)
 */
 
 #include "optphotmethod.hh"
@@ -36,7 +36,6 @@ void OptPhotMethod::init()
 	pmt.Sigma = line[2];
 	pmt.p0 = line[3];
 	pmt.p1 = line[4];
-	pmt.p2 = line[5];
 	pmtParameters[iPMT] = pmt;
     }	     
     return;
@@ -47,7 +46,7 @@ float OptPhotMethod::adcFromMevNoPed (float mev, int sensor)
 {
     PMTnumbersOptPhot thisPMT = pmtParameters[sensor];
 
-    float fadc = Rand->Gaus(thisPMT.Ped,thisPMT.Sigma) + thisPMT.p0 + thisPMT.p1*mev + thisPMT.p2*mev*mev;
+    float fadc = Rand->Gaus(thisPMT.Ped,thisPMT.Sigma) + thisPMT.p0*mev + thisPMT.p1*mev*mev;
 
     double thesigma = 0.;
     float gaus_fadc = fadc + Rand->Gaus(0.,thesigma);
