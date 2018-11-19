@@ -140,13 +140,13 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 	
 	for(size_t th=0; th<trackerHits.size(); th++){
 	  Int_t layerTrack = trackerHits[th].GetDetectorId();
-	  if(layerTrack == 2221){
+	  if(layerTrack == 2211 || layerTrack == 2212 || layerTrack == 2221 || layerTrack == 2222 || layerTrack == 2231 || layerTrack == 2232){
 	    SIL1_point[0]=trackerHits[th].GetEntryPoint().X();
 	    SIL1_point[1]=trackerHits[th].GetEntryPoint().Y();
 	    SIL1_point[2]=trackerHits[th].GetEntryPoint().Z();
 	  }
-	  //1st plane silicon: layerTrack = 2221
-	  //2nd plane silicon: layerTrack = 2121
+	  //1st plane silicon: layerTrack = 22xx
+	  //2nd plane silicon: layerTrack = 21xx
 	  checkIDTrack = layerTrack / 100;
 	  TOTALEdep+=trackerHits[th].GetELoss();
 	  SILEdep[22-checkIDTrack] += trackerHits[th].GetELoss();
