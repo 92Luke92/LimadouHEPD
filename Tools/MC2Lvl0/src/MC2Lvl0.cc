@@ -45,11 +45,11 @@ int getMCTrackHitsEnergy(std::vector<RootTrackerHit> trHits);
 
 TTree* Tmct = new TTree("TMCTruth","TMCTruth");
 int particleid;
-unsigned short energy;
-short gen[3];
-short theta;
-short phi;
-short SIL1_point[3];
+float energy;
+float gen[3];
+float theta;
+float phi;
+float SIL1_point[3];
 float SILEdep[2];
 float TEdep[6];
 float PEdep[16];
