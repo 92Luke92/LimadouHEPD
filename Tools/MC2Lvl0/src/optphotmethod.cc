@@ -7,7 +7,7 @@
 
 /*
 The structure of OptPhot_HG.csv and OptPhot_LG.csv is as follows:
-PMTid,    pedestal mean,    pedestal sigma,    p0,    p1,   of quadratic fit (p0+p1*x)
+PMTid,    pedestal mean,    pedestal sigma,    p0,    p1    of quadratic fit (p0*x+p1*x*x)
 */
 
 #include "optphotmethod.hh"

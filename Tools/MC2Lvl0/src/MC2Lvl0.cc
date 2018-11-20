@@ -45,11 +45,11 @@ int getMCTrackHitsEnergy(std::vector<RootTrackerHit> trHits);
 
 TTree* Tmct = new TTree("TMCTruth","TMCTruth");
 int particleid;
-unsigned short energy;
-short gen[3];
-short theta;
-short phi;
-short SIL1_point[3];
+float energy;
+float gen[3];
+float theta;
+float phi;
+float SIL1_point[3];
 float SILEdep[2];
 float TEdep[6];
 float PEdep[16];
@@ -128,7 +128,7 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
         else getPMTs (caloHits, ev->pmt_high, ev->pmt_low, ecaladc);
         getStrips (trackerHits, ev->strip, trkadc);
 
-	
+
 	particleid = trackHits[0].GetPDG();
 	energy = trackHits[0].GetKinEnergy();
 	gen[0] = trackHits[0].GetPosition().X();
@@ -137,16 +137,16 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 	theta = trackHits[0].GetDirection().Theta()*180/TMath::Pi();//vertical part. theta = 0
 	if(theta>90) theta=180-theta;
 	phi = trackHits[0].GetDirection().Phi()*180/TMath::Pi();
-	
+
 	for(size_t th=0; th<trackerHits.size(); th++){
 	  Int_t layerTrack = trackerHits[th].GetDetectorId();
-	  if(layerTrack == 2221){
+	  if(layerTrack == 2211 || layerTrack == 2212 || layerTrack == 2221 || layerTrack == 2222 || layerTrack == 2231 || layerTrack == 2232){
 	    SIL1_point[0]=trackerHits[th].GetEntryPoint().X();
 	    SIL1_point[1]=trackerHits[th].GetEntryPoint().Y();
 	    SIL1_point[2]=trackerHits[th].GetEntryPoint().Z();
 	  }
-	  //1st plane silicon: layerTrack = 2221
-	  //2nd plane silicon: layerTrack = 2121
+	  //1st plane silicon: layerTrack = 22xx
+	  //2nd plane silicon: layerTrack = 21xx
 	  checkIDTrack = layerTrack / 100;
 	  TOTALEdep+=trackerHits[th].GetELoss();
 	  SILEdep[22-checkIDTrack] += trackerHits[th].GetELoss();
