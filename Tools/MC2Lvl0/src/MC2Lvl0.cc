@@ -49,7 +49,10 @@ float energy;
 float gen[3];
 float theta;
 float phi;
-float SIL1_point[3];
+float SIL1_EntryPoint[3];
+float SIL1_ExitPoint[3];
+float SIL2_EntryPoint[3];
+float SIL2_ExitPoint[3];
 float SILEdep[2];
 float TEdep[6];
 float PEdep[16];
@@ -73,7 +76,10 @@ int main (int argc, char** argv) {
     Tmct->Branch("gen[3]", &gen[0]);
     Tmct->Branch("theta", &theta);
     Tmct->Branch("phi", &phi);
-    Tmct->Branch("SIL1_point[3]", &SIL1_point[0]);
+    Tmct->Branch("SIL1_EntryPoint[3]", &SIL1_EntryPoint[0]);
+    Tmct->Branch("SIL1_ExitPoint[3]", &SIL1_ExitPoint[0]);
+    Tmct->Branch("SIL2_EntryPoint[3]", &SIL2_EntryPoint[0]);
+    Tmct->Branch("SIL2_ExitPoint[3]", &SIL2_ExitPoint[0]);
     Tmct->Branch("SILEdep[2]", &SILEdep[0]);
     Tmct->Branch("TEdep[6]", &TEdep[0]);
     Tmct->Branch("PEdep[16]", &PEdep[0]);
@@ -83,7 +89,7 @@ int main (int argc, char** argv) {
     Tmct->Branch("TOWEREdep", &TOWEREdep);
     Tmct->Branch("TOTALEdep", &TOTALEdep);
     Tmct->Branch("pmt[53]", &pmt[0]);
-        
+    
     
     LoopOnEvents (&lvl0writer, Tmc);
     Tmct->Write();
@@ -141,10 +147,23 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 	for(size_t th=0; th<trackerHits.size(); th++){
 	  Int_t layerTrack = trackerHits[th].GetDetectorId();
 	  if(layerTrack == 2211 || layerTrack == 2212 || layerTrack == 2221 || layerTrack == 2222 || layerTrack == 2231 || layerTrack == 2232){
-	    SIL1_point[0]=trackerHits[th].GetEntryPoint().X();
-	    SIL1_point[1]=trackerHits[th].GetEntryPoint().Y();
-	    SIL1_point[2]=trackerHits[th].GetEntryPoint().Z();
+	    SIL1_EntryPoint[0]=trackerHits[th].GetEntryPoint().X();
+	    SIL1_EntryPoint[1]=trackerHits[th].GetEntryPoint().Y();
+	    SIL1_EntryPoint[2]=trackerHits[th].GetEntryPoint().Z();
+	    SIL1_ExitPoint[0]=trackerHits[th].GetExitPoint().X();
+	    SIL1_ExitPoint[1]=trackerHits[th].GetExitPoint().Y();
+	    SIL1_ExitPoint[2]=trackerHits[th].GetExitPoint().Z();
 	  }
+	  
+	  if(layerTrack == 2111 || layerTrack == 2112 || layerTrack == 2121 || layerTrack == 2122 || layerTrack == 2131 || layerTrack == 2132){
+	    SIL2_EntryPoint[0]=trackerHits[th].GetEntryPoint().X();
+	    SIL2_EntryPoint[1]=trackerHits[th].GetEntryPoint().Y();
+	    SIL2_EntryPoint[2]=trackerHits[th].GetEntryPoint().Z();
+	    SIL2_ExitPoint[0]=trackerHits[th].GetExitPoint().X();
+	    SIL2_ExitPoint[1]=trackerHits[th].GetExitPoint().Y();
+	    SIL2_ExitPoint[2]=trackerHits[th].GetExitPoint().Z();
+	  }
+
 	  //1st plane silicon: layerTrack = 22xx
 	  //2nd plane silicon: layerTrack = 21xx
 	  checkIDTrack = layerTrack / 100;
@@ -211,8 +230,12 @@ void LoopOnEvents (LEvRec0Writer* lvl0writer, TTree* Tmc)
 	for (int i=0; i<5; i++) VEdep[i] = 0.;
 	TOTALEdep = 0.;
 	for (int i=0; i<53; i++) pmt[i] = 0;
-	for (int i=0; i<3; i++) SIL1_point[i]=0.;
-
+	for (int i=0; i<3; i++) {
+	  SIL1_EntryPoint[i]=0.;
+	  SIL1_ExitPoint[i]=0.;
+	  SIL2_EntryPoint[i]=0.;
+	  SIL2_ExitPoint[i]=0.;
+	}
 	
         lvl0writer->Fill();
 	std::cout << ie << " out of " << ne << "\r" << std::flush;
