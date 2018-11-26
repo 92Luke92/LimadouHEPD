@@ -1,4 +1,4 @@
-//
+///
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -446,7 +446,7 @@ void HEPDSWMaterial::DefineMaterials()
   matLYSOOpt->AddElement(elSi, 6.37*perCent);
   matLYSOOpt->AddElement(elO, 18.14*perCent);
   matLYSOOpt->AddElement(elCe, 0.02*perCent);
-
+  matLYSOOpt->GetIonisation()->SetBirksConstant(0.011*mm/MeV);
 
   const G4int lysonum = 19;
   G4double lyso_Energy[lysonum]={1.91*eV,2.07*eV,2.16*eV,2.25*eV,2.37*eV,2.48*eV,2.68*eV,2.76*eV,2.86*eV,2.95*eV,2.97*eV,3.02*eV,3.05*eV,3.08*eV,3.16*eV,3.21*eV,3.28*eV,3.35*eV,3.54};
