@@ -446,6 +446,7 @@ void HEPDSWMaterial::DefineMaterials()
   matLYSOOpt->AddElement(elSi, 6.37*perCent);
   matLYSOOpt->AddElement(elO, 18.14*perCent);
   matLYSOOpt->AddElement(elCe, 0.02*perCent);
+  //Koba, Iwamoto et al., "Scintillation Efficiency of Inorganic Scintillators for Intermediate-Energy Charged Particles", Progress in Nuclear Science and Technology, 2011
   matLYSOOpt->GetIonisation()->SetBirksConstant(0.011*mm/MeV);
 
   const G4int lysonum = 19;
