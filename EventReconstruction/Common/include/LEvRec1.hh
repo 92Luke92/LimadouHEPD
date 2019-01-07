@@ -40,12 +40,14 @@ public:
   double GetMSPlaneToMSBarRatio(const double threshold_sn) const;
   double GetScintCounts(const double threshold_sn) const;
   double GetTriggerCounts(const double threshold_sn) const;
-   bool PreSelection(const double threshold_sn, const int mostSigPaddle,
-		     const double numOfPlanesInTrig) const;
-  bool AutoVeto(const double threshold_veto, const int mostSigPaddle) const ;
-  bool isLatVetoHit(const double threshold_sn) const;
+  int GetTheMostSignificantPlane() const;
+ bool PreSelection(const double threshold_sn, const int mostSigPaddle,
+		     const double numOfPlanesInTrig, const bool isHG) const;
+  bool AutoVeto(const double threshold_veto, const int mostSigPaddle,
+		const bool isHG) const ;
+  bool isLatVetoHit(const double threshold_sn, const bool isHG) const;
   bool LysoVeto(const double threshold_sn) const ;
-  bool isBotVetoHit(const double threshold_sn) const ;
+  bool isBotVetoHit(const double threshold_sn, const bool isHG) const ;
 
   int triggerMultiplicity(const double threshold_sn) const;
   int planeMultiplicity(const double threshold_sn) const ;

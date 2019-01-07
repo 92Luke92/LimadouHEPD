@@ -471,63 +471,101 @@ double LEvRec1::GetTriggerCounts(const double threshold_sn) const {
 }
 
 
-// return false if the s/n of the PMTs in the online trigger is not > 10 
-bool LEvRec1::PreSelection(const double threshold_sn, 
-			   const int mostSigPaddle, 
-			   const double numOfPlanesInTrig) const { // 10 sigma
+// return false if the s/n of the PMTs in the online trigger is not > threshold
+bool LEvRec1::PreSelection(const double threshold_sn, const int mostSigPaddle, 
+			   const double numOfPlanesInTrig, const bool isHG) const{ //6 sigma
    bool planeHit = true;
    bool trigHit = true;
    
-   if(mostSigPaddle < 0 )
+   if(mostSigPaddle < 0 || mostSigPaddle > 5)
       return false;
-   
-   if(trig.sn_hg[mostSigPaddle][0] < threshold_sn  ||
-      trig.sn_hg[mostSigPaddle][1] < threshold_sn    )
-      trigHit = false;
-   
-   for (int i=0; i<numOfPlanesInTrig;i++)
-   {
-      if(scint.sn_hg[i][0] < threshold_sn  || 
-	 scint.sn_hg[i][1] < threshold_sn   )  
-      {
-	 planeHit = false;
-	 break;
+      
+   if(isHG) {
+      if(trig.sn_hg[mostSigPaddle][0] < threshold_sn  ||
+	 trig.sn_hg[mostSigPaddle][1] < threshold_sn    )
+     	 trigHit = false;
+      
+      for (int i=0; i<numOfPlanesInTrig;i++)      {
+	 if(scint.sn_hg[i][0] < threshold_sn  || 
+	    scint.sn_hg[i][1] < threshold_sn   )   {
+	    planeHit = false;
+	    break;
+	 }
       }
    }
-	 
+   else
+   {
+      if(trig.sn_lg[mostSigPaddle][0] < threshold_sn  ||
+	 trig.sn_lg[mostSigPaddle][1] < threshold_sn    )
+	 trigHit = false;
+   
+      for (int i=0; i<numOfPlanesInTrig;i++)   {
+	 if(scint.sn_lg[i][0] < threshold_sn  || 
+	    scint.sn_lg[i][1] < threshold_sn   )  {
+	    planeHit = false;
+	    break;
+	 }
+      }
+	    
+   }
    return (trigHit & planeHit);
 }
 
+int LEvRec1::GetTheMostSignificantPlane() const {
+  int result=-999;
+  double sn_max=-999.;
+  double sn;
+  for(int i=0; i<NSCINTPLANES; i++)
+  {
+     if(i != 4)
+	sn = scint.sn_hg[i][0] + scint.sn_hg[i][1] ;
+     else
+	sn = scint.sn_hg[i][1]*2;
+     
+    if(sn > sn_max) {
+      sn_max = sn;
+      result = i;
+    }
+  }
+  return result;  
+}
 
 // return true if more than 1 trigger paddle is hit (s/n > 3)
-bool LEvRec1::AutoVeto(const double threshold_veto, const int mostSigPaddle) const { // 3 sigma
+bool LEvRec1::AutoVeto(const double threshold_veto, const int mostSigPaddle,
+		       const bool isHG) const { // 3 sigma
    bool ret = false;
    
    for (int i=0; i<NTRIGSCINT;i++)
    {
       if(i==mostSigPaddle)
 	 continue;
-      if(trig.sn_hg[i][0] > threshold_veto  || 
-	 trig.sn_hg[i][1] > threshold_veto    )
-      {
-	 ret = true;
-	 break;
+      if (isHG){
+	 if(trig.sn_hg[i][0] > threshold_veto  && trig.sn_hg[i][1] > threshold_veto)
+	    return true;
+      }
+      else{
+	 if(trig.sn_lg[i][0] > threshold_veto  && trig.sn_lg[i][1] > threshold_veto)
+	    return true;
       }
    }
-	 
    return ret;
 }
 
 
 // return true  if at least one PMT of the lateral veto has s/n > 3
-bool LEvRec1::isLatVetoHit(const double threshold_sn) const { // 3 sigma
+bool LEvRec1::isLatVetoHit(const double threshold_sn, const bool isHG) const { // 3 sigma
    bool ret = false;
 
    for(int i = 0; i<(NVETOSCINT-1) ; i++) // no bottom veto
    {
-      if(veto.sn_hg[i][0] > threshold_sn || 
-	 veto.sn_hg[i][1] > threshold_sn   )
-	 return true;
+      if (isHG){
+	 if(veto.sn_hg[i][0] > threshold_sn && veto.sn_hg[i][1] > threshold_sn)
+	    return true;
+      }
+      else {
+	 if(veto.sn_lg[i][0] > threshold_sn && veto.sn_lg[i][1] > threshold_sn)
+	    return true;
+      }
    }
    return ret;
 }
@@ -546,12 +584,17 @@ bool LEvRec1::LysoVeto(const double threshold_sn) const { // 3 sigma
 }
 
 // return true  if at least one PMT of the bottom veto has s/n > 3
-bool LEvRec1::isBotVetoHit(const double threshold_sn) const { // 3 sigma
+bool LEvRec1::isBotVetoHit(const double threshold_sn, const bool isHG) const { // 3 sigma
    bool ret = false;
-   if(veto.sn_hg[4][0] > threshold_sn || 
-      veto.sn_hg[4][1] > threshold_sn   )
-      return true;
 
+   if(isHG){
+      if(veto.sn_hg[4][0] > threshold_sn && veto.sn_hg[4][1] > threshold_sn)
+	 return true;
+   }
+   else{
+      if(veto.sn_lg[4][0] > threshold_sn && veto.sn_lg[4][1] > threshold_sn)
+	 return true;
+   }
    return ret;
 }
 
@@ -611,26 +654,26 @@ int LEvRec1::lastPlaneHit(const double threshold_sn) const
    {
       if (i == 4)
 	 if (scint.sn_hg[i][1] >= threshold_sn)    // P5se correction
-	    lastPlane=i+1;
+	    lastPlane=i;
 	 else;
       else if(i!=4)
     	 if(scint.sn_hg[i][0] >= threshold_sn && 
 	    scint.sn_hg[i][1] >= threshold_sn   )
-	    lastPlane=i+1;
+	    lastPlane=i;
    }
    
    for (int i=0; i<NLYSOCRYSTALS;i++)
    { 
       if( lyso.sn_lg[i][0] >= threshold_sn )
       {
-	 lastPlane = 17;
+	 lastPlane = 16;
 	 break;
       }
    }
 
    if(veto.sn_hg[4][0] >= threshold_sn  && 
       veto.sn_hg[4][1] >= threshold_sn    )
-      lastPlane = 18;
+      lastPlane = 17;
 
    return lastPlane;
 }
@@ -643,7 +686,7 @@ bool LEvRec1::areallPlaneHit(const double threshold_sn) const // 10 sigma
    {
       if(i!=4)
       {
-	 if( scint.sn_hg[i][0] < threshold_sn ||
+	 if( scint.sn_hg[i][0] < threshold_sn &&
 	     scint.sn_hg[i][1] < threshold_sn   )
 	    return false;
       }
