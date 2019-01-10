@@ -127,8 +127,8 @@ int main(int argc, char **argv) {
    fin.SetMDPointer(ev);
 
    // eq files and calibration numbers must be read in the reco12manager
-   std::string eqHGFileName = "/home/fool/LIMADOU/Analysis/protons/L1_flightEQ/eqHG_MIPcut.txt";
-   std::string eqLGFileName = "/home/fool/LIMADOU/Analysis/protons/L1_flightEQ/eqLG_MIPcut.txt";
+   std::string eqHGFileName="/software/source/LimadouHEPD/EventReconstruction/data/eqHG-Flight.txt";
+   std::string eqLGFileName="/software/source/LimadouHEPD/EventReconstruction/data/eqLG-Flight.txt";
 
    LCaloEqualization *eqHG = LCaloEqualization::Read(eqHGFileName);
    LCaloEqualization *eqLG = LCaloEqualization::Read(eqLGFileName);
@@ -136,18 +136,19 @@ int main(int argc, char **argv) {
    eqHG->Dump();
    eqLG->Dump();
 
-   std::string outfile(argv[1]);
-   size_t index = outfile.rfind("/");
-   if(index != std::string::npos)
-      outfile.erase(outfile.begin(), outfile.begin()+index+1);
-   index = outfile.find("_L1");
-   if(index != std::string::npos)
-      outfile.replace(index, 3, "_L2");
-   else
-      std::cout << "L1 string NOT found in file: " << std::endl;
+   // std::string outfile(argv[1]);
+   // size_t index = outfile.rfind("/");
+   // if(index != std::string::npos)
+   //    outfile.erase(outfile.begin(), outfile.begin()+index+1);
+   // index = outfile.find("_L1");
+   // if(index != std::string::npos)
+   //    outfile.replace(index, 3, "_L2");
+   // else
+   //    std::cout << "L1 string NOT found in file: " << std::endl;
    
-   TFile fout(outfile.c_str(), "recreate"); // NEW
-
+   // TFile fout(outfile.c_str(), "recreate"); // NEW
+   TFile fout(argv[2], "recreate"); // NEW
+   
    Double_t         TrackerMSCounts, TrackerMSSN;
 
    // plane/bar signals
@@ -567,7 +568,7 @@ int main(int argc, char **argv) {
       for(int i=0; i<3; i++)
       {
 	 if(LastPlane[i]>=16)
-	    Etot_R[i] = 0;
+	    Etot_R[i] = -999;
 	 else
 	 {
 	    index_Erange[i] = 2*LastPlane[i];

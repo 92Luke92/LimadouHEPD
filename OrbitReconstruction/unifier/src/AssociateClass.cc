@@ -29,12 +29,17 @@ void AssociateClass::Associate(const char* infileL2, const char* outfileL2){
   fTreeOrb = (TTree*)fin->Get("OrbitalInfo");
 
   fTree->SetBranchAddress("hepd_time",&hepd_time);
-  fTreeMD->SetBranchAddress("orbitZone",&orbitZone);
+  fTree->SetBranchAddress("event_index",&event_index);
 
+  fTreeMD->SetBranchAddress("orbitZone",&orbitZone);
   OBDH_struct_t OBDH;
   fTreeMD->SetBranchAddress("OBDH_info",&OBDH.sec);
-
+  unsigned int      CPU_time[2];
+  fTreeMD->SetBranchAddress("CPU_time_start_stop_Run[2]", &CPU_time[0]);
+  CPUtimestamp_t    timestamp;
+  fTreeMD->SetBranchAddress("CPU_timestamp", &timestamp.OBDH);
   fTreeMD->SetBranchAddress("AOCC_info", &AOCC.sec);
+
   fTreeOrb->SetBranchAddress("rig",&rig);
   fTreeOrb->SetBranchAddress("abstime",&abstime);
   fTreeOrb->SetBranchAddress("B",&B);
@@ -86,17 +91,21 @@ void AssociateClass::Associate(const char* infileL2, const char* outfileL2){
   fTree->GetEntry(0);  
   fTreeOrb->GetEntry(0);    // B components of the first event 
   fTreeMD->GetEntry(0);
+  UInt_t sec_OBDH = OBDH.sec;
+    
   runStartTime = hepd_time;  // first event time
   // std::cout << " runstarttime  =  " << hepd_time << std::endl;
   HEPDangleStart = HEPDangle(AOCC);  // first event angle
   // std::cout << " starting angle  =  " <<  HEPDangleStart<< std::endl;
 
   fTreeMD->GetEntry(1);
+  unsigned int startRun_sec =  CPU_time[0];
   fTreeOrb->GetEntry(fTreeOrb->GetEntries()-1); // B components for the last event
   fTree->GetEntry(fTree->GetEntries()-1); 
+
   HEPDangleStep = HEPDangle(AOCC) - HEPDangleStart;   // last event angle
   // std::cout << " last angle  =  " << HEPDangle(AOCC)  << std::endl;
-  runDuration = hepd_time-runStartTime;          // last event time
+  runDuration = hepd_time - runStartTime;          // last event time
   // std::cout << " run duration  =  " << runDuration << std::endl;
 
   HEPDangleStep /= (double)runDuration;
@@ -107,18 +116,23 @@ void AssociateClass::Associate(const char* infileL2, const char* outfileL2){
      newtreeMD->Fill();
   }
 
+
+  UInt_t time_s; 
+  UInt_t timestamp_s;
+  
   for(UInt_t entry=0; entry<nentriesT; entry++) {
     fTree->GetEntry(entry);
       
-    double time_s = hepd_time/100000;
-
+    time_s = hepd_time/100000;
+    timestamp_s = timestamp.OBDH/1000.;
+      
     for(UInt_t entryorb=0; entryorb<nentriesOrb; entryorb++) {
-
+      
       fTreeOrb->GetEntry(entryorb);
       fTreeMD->GetEntry(0);
 
-      UInt_t time = time_s+OBDH.sec;
-   
+      UInt_t time = time_s + OBDH.sec + (startRun_sec-timestamp.OBDH)/1000;
+      
       n_abstime = abstime;
       n_rig = rig;
       n_lat = lat;
@@ -135,10 +149,10 @@ void AssociateClass::Associate(const char* infileL2, const char* outfileL2){
       if(time==abstime){
 
 	newtree->Fill();
-     
+
       }
-      
     }
+
   }
   
   
