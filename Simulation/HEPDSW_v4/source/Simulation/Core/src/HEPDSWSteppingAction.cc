@@ -57,7 +57,7 @@ HEPDSWSteppingAction::~HEPDSWSteppingAction()
 {
 }
 
-void HEPDSWSteppingAction::UserSteppingAction(const G4Step* )
+void HEPDSWSteppingAction::UserSteppingAction(const G4Step*)
 {
   /*
 void HEPDSWSteppingAction::UserSteppingAction(const G4Step* aStep)

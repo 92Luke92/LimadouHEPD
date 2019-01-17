@@ -42,6 +42,7 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4IonTable.hh"
 #include "G4ParticleDefinition.hh"
+#include "Randomize.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -104,7 +105,7 @@ HEPDSWPrimaryGeneratorMessenger::HEPDSWPrimaryGeneratorMessenger(HEPDSWPrimaryGe
   fBeamCmd->SetParameter(param);
 
   fTBeamCmd = new G4UIcommand("/hepd/gun/tbeam",this);
-  fTBeamCmd->AvailableForStates(G4State_Idle);  
+  fTBeamCmd->AvailableForStates(G4State_Idle);
   param = new G4UIparameter("position",'s',false);
   param->SetGuidance("beam position A1 - D6");
   fTBeamCmd->SetParameter(param);
@@ -361,8 +362,7 @@ void HEPDSWPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String 
       }
       if (Xpos == -999 || Ypos == -999)
         G4cout << "erreur non valid test beam position !!!!" << G4endl;
-      else
-        fAction->SetBeam(Xpos,Ypos,theta);
+      else fAction->SetBeam(Xpos,Ypos,theta);
     }
   if( command == fBeamEResoCmd )
     {

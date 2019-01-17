@@ -88,6 +88,9 @@ private:
   G4bool                 powerlaw;
   G4bool                 flat;
 
+  G4double theXpos, theYpos;
+  G4double thetheta;
+  
   G4double eminPL,emaxPL,gammaPL;
   G4double eminFlat,emaxFlat;
 
