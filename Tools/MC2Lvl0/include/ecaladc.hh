@@ -48,7 +48,6 @@ class EcalADC {
 
 
 
-
   private:
 
     int mcEnergy;

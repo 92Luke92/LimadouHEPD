@@ -33,8 +33,8 @@ public:
   
 private:
   unsigned int theNPmt;
-  int theTotalPhot[53];
-  char thePmtName[53][6];
+   int theTotalPhot[64];
+  char thePmtName[64][6];
 };
 
 #endif

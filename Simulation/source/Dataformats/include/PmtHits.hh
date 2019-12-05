@@ -60,7 +60,7 @@ public:
 
 private:
   size_t theNPmt;
-  G4int theTotalPhot[53]; 
+  G4int theTotalPhot[64]; 
 
 public:
   inline G4int GetNPmt(){return theNPmt;}

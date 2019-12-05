@@ -59,7 +59,7 @@ CaloHit::CaloHit(const CaloHit &right)
   theKinEnergy = right.theKinEnergy;
   edep = right.edep;
   totalEdep = right.totalEdep;
-  for (int i=0; i<53; i++) totalPhot[i] = right.totalPhot[i];  //OP
+  for (int i=0; i<64; i++) totalPhot[i] = right.totalPhot[i];  //OP
 }
 
 const CaloHit& CaloHit::operator=(const CaloHit &right)
@@ -72,7 +72,7 @@ const CaloHit& CaloHit::operator=(const CaloHit &right)
   theKinEnergy = right.theKinEnergy;
   edep = right.edep;
   totalEdep = right.totalEdep;
-  for (int i=0; i<53; i++) totalPhot[i] = right.totalPhot[i];  //OP
+  for (int i=0; i<64; i++) totalPhot[i] = right.totalPhot[i];  //OP
   return *this;
 }
 

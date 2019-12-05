@@ -8,7 +8,7 @@ ClassImp(RootPmtHits)
 //
 RootPmtHits::RootPmtHits ()
 {
-  theNPmt = 53;
+  theNPmt = 64;
   for (int i=0; i<theNPmt; i++) {
     theTotalPhot[i]=0;
     switch (i) {

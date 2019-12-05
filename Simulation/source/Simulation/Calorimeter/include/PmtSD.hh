@@ -54,11 +54,11 @@ public:
   inline PmtHitsCollection* GetPmtHitsCollection(){return PmtCollection;}
 
 private:
-  const G4int nPmt = 53;
+  const G4int nPmt = 64;
   PmtSDMessenger* fMessenger;
   PmtHitsCollection* PmtCollection;
   G4int verboseLevel;
-  G4int totalPhotEvent[53];
+  G4int totalPhotEvent[64];
 };
 
 

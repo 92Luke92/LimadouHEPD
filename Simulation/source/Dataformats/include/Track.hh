@@ -60,7 +60,7 @@ private:
   G4int          theMotherTrackId;
   G4String       theVertexVolumeName;
   G4String       theCreatorProcessName;
-  G4int          totalPhot[53];  //OP
+  G4int          totalPhot[64];  //OP
 };
 
 typedef G4THitsCollection<Track> TracksCollection;

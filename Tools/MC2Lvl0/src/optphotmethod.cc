@@ -45,11 +45,11 @@ void OptPhotMethod::init()
 float OptPhotMethod::adcFromMevNoPed (float mev, int sensor)
 {
     PMTnumbersOptPhot thisPMT = pmtParameters[sensor];
-
+    
     float fadc = Rand->Gaus(thisPMT.Ped,thisPMT.Sigma) + thisPMT.p0*mev + thisPMT.p1*mev*mev;
-
+    
     double thesigma = 0.;
     float gaus_fadc = fadc + Rand->Gaus(0.,thesigma);
-
+    
     return gaus_fadc;
 }

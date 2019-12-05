@@ -128,9 +128,10 @@ void EcalADC::NormalizePMT_OP (std::vector<RootPmtHits> pmtHits, ushort* pmt_out
   uint Di;
   for(size_t ph=0; ph<pmtHits.size(); ph++){
     Di=999;
-    for (uint i = 0; i < 53; i++) {
+    for (uint i = 0; i < 64; i++) {
       correctedPMTs[i] = pmtHits[ph].GetNPhot(i); //i: PMTid of MC
       float FcorrectedPMTs = correctedPMTs[i];
+       if(i>=44 && i<=52) FcorrectedPMTs *= 4;
       //mapping PMTid: MC --> DATA
       if(i==0) Di=32; //T1w
       if(i==1) Di=0; //T1e
@@ -177,7 +178,7 @@ void EcalADC::NormalizePMT_OP (std::vector<RootPmtHits> pmtHits, ushort* pmt_out
       if(i==41) Di=20; //P15se
       if(i==42) Di=21; //P16sw
       if(i==43) Di=53; //P16ne
-  
+      
       if(i==44) Di=29; //L1ne
       if(i==45) Di=62; //L4n
       if(i==46) Di=28; //L7nw
@@ -187,7 +188,8 @@ void EcalADC::NormalizePMT_OP (std::vector<RootPmtHits> pmtHits, ushort* pmt_out
       if(i==50) Di=59; //L3se
       if(i==51) Di=61; //L6s
       if(i==52) Di=27; //L9sw
-
+      if(i>52 && i<64) continue;
+	 
       ushort adc=method->adcFromMev( FcorrectedPMTs, Di ); //Di: PMTid of DATA
         pmt_out[Di] = adc;
     }

@@ -32,8 +32,8 @@
 G4Allocator<PmtHits> PmtHitsAllocator;
 
 PmtHits::PmtHits(){
-  theNPmt = 53;
-  for (int i=0; i<53; i++) theTotalPhot[i] = 0;
+  theNPmt = 64;
+  for (int i=0; i<64; i++) theTotalPhot[i] = 0;
 }
 
 PmtHits::~PmtHits()

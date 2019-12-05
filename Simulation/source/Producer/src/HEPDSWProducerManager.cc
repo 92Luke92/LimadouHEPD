@@ -270,10 +270,10 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
     if(!(pmtHitsCollID<0)){
       pmtHC = (PmtHitsCollection*)(HCE->GetHC(pmtHitsCollID));
       for(int i=0;i<pmtHC->entries();i++){
-        int TotalNPhot[53];
-	char PmtName[53][6];
+        int TotalNPhot[64];
+	char PmtName[64][6];
 	//	G4cout << " entree " << i << " NPmt " << (*pmtHC)[i]->GetNPmt() << G4endl;
-        for (int j=0; j<53; j++) {
+        for (int j=0; j<64; j++) {
 	  TotalNPhot[j] = (*pmtHC)[i]->GetNPhot(j);
 	  //	  G4cout << " pmt " << j << " TotalNPhot " << TotalNPhot[j] << G4endl;
           switch (j) {
