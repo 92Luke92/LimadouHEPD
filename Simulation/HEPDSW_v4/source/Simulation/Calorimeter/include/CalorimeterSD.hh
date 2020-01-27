@@ -60,15 +60,17 @@ private:
   G4int verboseLevel;
   std::map<int,int> LayerID;
   std::map<int,int> LayerTrkID;
-  G4bool useBirks;
-
-  G4double birk1scint;
-  G4double birk2scint;
-  G4double birk3scint;
-
-  G4double birk1crystal;
-  G4double birk2crystal;
-  G4double birk3crystal;
+   G4bool useBirks;
+   
+   G4int GenPhotEvent[36];
+   
+   G4double birk1scint;
+   G4double birk2scint;
+   G4double birk3scint;
+   
+   G4double birk1crystal;
+   G4double birk2crystal;
+   G4double birk3crystal;
 };
 
 

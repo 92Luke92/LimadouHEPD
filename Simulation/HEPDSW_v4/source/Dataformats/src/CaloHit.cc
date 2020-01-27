@@ -59,7 +59,9 @@ CaloHit::CaloHit(const CaloHit &right)
   theKinEnergy = right.theKinEnergy;
   edep = right.edep;
   totalEdep = right.totalEdep;
+  totalGenPhot = right.totalGenPhot;
   for (int i=0; i<53; i++) totalPhot[i] = right.totalPhot[i];  //OP
+    for (int i=0; i<53; i++) totalPhot_noqe[i] = right.totalPhot_noqe[i];  //OP
 }
 
 const CaloHit& CaloHit::operator=(const CaloHit &right)
@@ -72,7 +74,9 @@ const CaloHit& CaloHit::operator=(const CaloHit &right)
   theKinEnergy = right.theKinEnergy;
   edep = right.edep;
   totalEdep = right.totalEdep;
+  totalGenPhot = right.totalGenPhot;
   for (int i=0; i<53; i++) totalPhot[i] = right.totalPhot[i];  //OP
+  for (int i=0; i<53; i++) totalPhot_noqe[i] = right.totalPhot_noqe[i];  //OP
   return *this;
 }
 
@@ -83,6 +87,15 @@ void CaloHit::SetEdep(G4double aEdep,G4int aTkID){
     edep[aTkID]+=aEdep;
   else
     edep[aTkID]=aEdep;
+}
+
+void CaloHit::SetGenPhot(G4int aGenPhot,G4int aTkID){
+  totalGenPhot=0;
+  totalGenPhot=aGenPhot;
+  if(genphot.find(aTkID)!=genphot.end())
+    genphot[aTkID]+=aGenPhot;
+  else
+    genphot[aTkID]=aGenPhot;
 }
 
 void CaloHit::SetStepPos(G4ThreeVector StepPos,G4int aTkID){
@@ -100,9 +113,23 @@ void CaloHit::AddEdep(G4double aEdep,G4int aTkID){
     edep[aTkID]=aEdep;
 }
 
+void CaloHit::AddGenPhot(G4int aGenPhot, G4int aTkID){
+  totalGenPhot+=aGenPhot;
+  if(genphot.find(aTkID)!=genphot.end())
+    genphot[aTkID]+=aGenPhot;
+  else
+    genphot[aTkID]=aGenPhot;
+}
+
+
 void CaloHit::AddPhot(G4int detID){  //OP
   totalPhot[detID]+=1;
   G4cout << " AddPhot detID " << detID << " total " << totalPhot[detID] << G4endl;
+}
+
+void CaloHit::AddPhot_noqe(G4int detID){  //OP
+  totalPhot_noqe[detID]+=1;
+  G4cout << " AddPhot_noqe detID " << detID << " total " << totalPhot_noqe[detID] << G4endl;
 }
 
 G4int CaloHit::operator==(const CaloHit &right) const

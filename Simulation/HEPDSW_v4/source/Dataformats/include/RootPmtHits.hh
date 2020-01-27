@@ -15,7 +15,7 @@ class RootPmtHits : public TObject
 {
 public:
   RootPmtHits ();
-  RootPmtHits (int aTotalPhot[], char NamePmt[][6], unsigned int aNPmt);
+   RootPmtHits (int aTotalPhot[], int aTotalPhot_noqe[], char NamePmt[][6], unsigned int aNPmt);
   
   ~RootPmtHits ();
   RootPmtHits (const RootPmtHits&);
@@ -23,6 +23,9 @@ public:
   inline int GetNPmt(){return theNPmt;}
   inline int GetNPhot(int npmt){
     int val = theTotalPhot[npmt];
+    return val;}
+   inline int GetNPhot_noqe(int npmt){
+    int val = theTotalPhot_noqe[npmt];
     return val;}
   inline TString GetNamePmt(int npmt) {
     TString pmtname(thePmtName[npmt]);
@@ -34,6 +37,7 @@ public:
 private:
   unsigned int theNPmt;
   int theTotalPhot[53];
+  int theTotalPhot_noqe[53];
   char thePmtName[53][6];
 };
 

@@ -35,6 +35,7 @@
 #include "G4TouchableHistory.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4ios.hh"
+#include "G4OpticalPhoton.hh"
 
 CalorimeterSD::CalorimeterSD(G4String name):G4VSensitiveDetector(name){
   collectionName.insert("caloCollection");
@@ -115,6 +116,18 @@ G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   G4ThreeVector theExitPoint = aStep->GetPostStepPoint()->GetPosition();
   G4ThreeVector theEntryPoint = aStep->GetPreStepPoint()->GetPosition();
   G4double theKE      = aStep->GetPreStepPoint()->GetKineticEnergy()/MeV;
+
+  G4int genphot;
+  const std::vector<const G4Track*> *tVec = aStep->GetSecondaryInCurrentStep();
+  if(tVec)
+  {
+     size_t n_tVec = (*tVec).size();
+     for(size_t i=0; i<n_tVec; i++)
+     {
+	if((*tVec)[i]->GetParticleDefinition()->GetParticleName()=="opticalphoton") genphot += 1;
+     }
+  }
+  
   //  G4cout << "Calo step edep(MeV) = " << edep/MeV <<" ; given by Track = "<<tkID<< G4endl;
   // if(verboseLevel>1) G4cout << "Calo step edep(MeV) = " << edep/MeV <<" ; given by Track = "<<tkID<< G4endl;
   if(edep==0.) return false;
@@ -134,7 +147,55 @@ G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
   
   G4int detID;
   detID=GetDetID(aStep);
+  
+  G4Track* aTrack = aStep->GetTrack();
+  G4ParticleDefinition* particleType = aTrack->GetDefinition();
+  G4int detectorID;
+  if(particleType==G4OpticalPhoton::OpticalPhotonDefinition())
+    {
+      if(detID == 1311) detectorID = 0; //T1        
+      if(detID == 1312) detectorID = 1; //T2
+      if(detID == 1313) detectorID = 2; //T3
+      if(detID == 1321) detectorID = 3; //T4
+      if(detID == 1322) detectorID = 4; //T5
+      if(detID == 1323) detectorID = 5; //T6
 
+      if(detID == 1216) detectorID = 6; //P1
+      if(detID == 1215) detectorID = 7; //P2
+      if(detID == 1214) detectorID = 8; //P3
+      if(detID == 1213) detectorID = 9; //P4
+      if(detID == 1212) detectorID = 10; //P5
+      if(detID == 1211) detectorID = 11; //P6
+      if(detID == 1210) detectorID = 12; //P7
+      if(detID == 1209) detectorID = 13; //P8
+      if(detID == 1208) detectorID = 14; //P9
+      if(detID == 1207) detectorID = 15; //P10
+      if(detID == 1206) detectorID = 16; //P11
+      if(detID == 1205) detectorID = 17; //P12
+      if(detID == 1204) detectorID = 18; //P13
+      if(detID == 1203) detectorID = 19; //P14
+      if(detID == 1202) detectorID = 20; //P15
+      if(detID == 1201) detectorID = 21; //P16
+      if(detID == 1411) detectorID = 22; //VE
+      if(detID == 1412) detectorID = 23; //VW
+      if(detID == 1421) detectorID = 24; //VN
+      if(detID == 1422) detectorID = 25; //VS
+      if(detID == 1430) detectorID = 26; //VB
+
+      if(detID == 1111) detectorID = 27; //L1
+      if(detID == 1112) detectorID = 28; //L4
+      if(detID == 1113) detectorID = 29; //L7
+      if(detID == 1121) detectorID = 30; //L2
+      if(detID == 1122) detectorID = 31; //L5
+      if(detID == 1123) detectorID = 32; //L8
+      if(detID == 1131) detectorID = 33; //L3
+      if(detID == 1132) detectorID = 34; //L6
+      if(detID == 1133) detectorID = 35; //L9
+    }
+
+
+  
+  
    //  if(verboseLevel>1) G4cout << "Calo step on Volume = " << volumeID << G4endl;
    if(verboseLevel>1) G4cout << "Calo step on Volume = "<< detID << G4endl;
   
@@ -142,6 +203,7 @@ G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
     //    CaloHit* calHit = new CaloHit(volumeID);
      CaloHit* calHit = new CaloHit(partID,detID,theEntryPoint,theExitPoint,theKE);
     calHit->SetEdep(edep/MeV,tkID);
+    calHit->SetGenPhot(genphot,tkID);
     calHit->SetStepPos(theExitPoint,tkID);
     G4int icell = CaloCollection->insert(calHit);
     LayerID[detID] = icell - 1;
@@ -152,6 +214,7 @@ G4bool CalorimeterSD::ProcessHits(G4Step*aStep,G4TouchableHistory*){
      }
      }else{ 
      (*CaloCollection)[LayerID[detID]]->AddEdep(edep/MeV,tkID);
+     (*CaloCollection)[LayerID[detID]]->AddGenPhot(genphot,tkID);
      (*CaloCollection)[LayerID[detID]]->SetStepPos(theExitPoint,tkID);
 
     if(verboseLevel>1){ 

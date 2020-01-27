@@ -41,8 +41,10 @@ public:
   inline G4String       GetCreatorProcessName(){return theCreatorProcessName;} 
   inline void           AddPhot(G4int detID){
   totalPhot[detID]+=1;
-  G4cout << " AddPhot detID " << detID << " total " << totalPhot[detID] << G4endl;} //OP 
-  
+  totalPhot_noqe[detID]+=1;
+  G4cout << " AddPhot detID " << detID << " total " << totalPhot[detID] << G4endl; //OP 
+    G4cout << " AddPhot_noqe detID " << detID << " total " << totalPhot_noqe[detID] << G4endl;} //OP
+   
   void Draw () {};
   void Print () {};
   void clear () {};
@@ -61,6 +63,7 @@ private:
   G4String       theVertexVolumeName;
   G4String       theCreatorProcessName;
   G4int          totalPhot[53];  //OP
+  G4int          totalPhot_noqe[53];  //OP
 };
 
 typedef G4THitsCollection<Track> TracksCollection;

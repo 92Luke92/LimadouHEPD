@@ -209,17 +209,21 @@ void HEPDSWPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if(random){
     //G4double phi = 0;
     //G4double theta = 0;
-    G4double Xmax = 12.*cm;
-    G4double Ymax = 11.*cm;
     G4double phi = 2*CLHEP::pi*G4RandFlat::shoot();
-    G4double theta = std::sqrt(G4RandFlat::shoot());
-    theta = std::acos(theta);
-    //G4double Xmax = 0.5*(fDetector->GetWorldSizeX());
-    //G4double Ymax = 0.5*(fDetector->GetWorldSizeY());
+    G4double costheta = std::sqrt(G4RandFlat::shoot());
+    //G4double costheta = G4RandFlat::shoot();
+    G4double theta = std::acos(costheta);
+    G4double Xmax = 0.5*(fDetector->GetWorldSizeX());
+    G4double Ymax = 0.5*(fDetector->GetWorldSizeY());
     G4double Zmax = 0.5*(fDetector->GetWorldSizeZ());
+    //G4double Xmax = 12.*cm;
+    //G4double Ymax = 11.*cm;
+    G4double Xmax_p = 20.*cm;
+    G4double Ymax_p = 20.*cm;
+    G4double Zmax_p = 0.5*(fDetector->GetWorldSizeZ());
     
     //    G4cout << "xmax " << Xmax << " ymax " << Ymax << " theta " << theta << " cos theta " << atheta << " cos theta " << cos(theta) << G4endl;
-    position = G4ThreeVector(-Xmax+2*Xmax*G4RandFlat::shoot(),-Ymax+2*Ymax*G4RandFlat::shoot(),Zmax);
+    position = G4ThreeVector(-Xmax_p+2*Xmax_p*G4RandFlat::shoot(),-Ymax_p+2*Ymax_p*G4RandFlat::shoot(),Zmax_p);
     if(powerlaw)
       fParticleGun->SetParticleEnergy(SpectrumPowerLaw(eminPL,emaxPL,gammaPL));
     if(flat)

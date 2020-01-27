@@ -59,6 +59,7 @@ private:
   PmtHitsCollection* PmtCollection;
   G4int verboseLevel;
   G4int totalPhotEvent[53];
+   G4int totalPhotEvent_noqe[53];
 };
 
 

@@ -53,6 +53,7 @@ void PmtSD::Initialize(G4HCofThisEvent*){
   
   verboseLevel = 0;
   for (int i=0; i<nPmt; i++) totalPhotEvent[i]=0;
+  for (int i=0; i<nPmt; i++) totalPhotEvent_noqe[i]=0;
   //G4cout << " init PmtSD " << G4endl;
 }
 
@@ -307,7 +308,7 @@ void PmtSD::PmtAnalysis(G4String detname, G4double energy){
     G4double prob = rand() % 101;  //random number between 0 and 100
     prob = prob/100.;
     if(energy > ph_energy[i] && energy < ph_energy[i+1]){
-    if(prob < pmt_qe[i]+(pmt_qe[i+1]-pmt_qe[i])/(ph_energy[i+1]-ph_energy[i])*(energy-ph_energy[i])) {
+
       //        G4cout << " photon detecte " << G4endl;
         if(detname=="T1Pmt1") { detectorID = 13111; detID = 0; sprintf(PmtName,"%s","T1w");}
 	if(detname=="T1Pmt2") { detectorID = 13112; detID = 1; sprintf(PmtName,"%s","T1e");}
@@ -366,13 +367,16 @@ void PmtSD::PmtAnalysis(G4String detname, G4double energy){
 	if(detname=="L8Pmt") { detectorID = 11231; detID = 51; sprintf(PmtName,"%s","L6s");}
 	if(detname=="L9Pmt") { detectorID = 11331; detID = 52; sprintf(PmtName,"%s","L9sw");}
 
+	totalPhotEvent_noqe[detID] += 1;
+
+	if(prob < pmt_qe[i]+(pmt_qe[i+1]-pmt_qe[i])/(ph_energy[i+1]-ph_energy[i])*(energy-ph_energy[i])) {
 	//	G4cout << "detectID " << detectorID << " detID " << detID << " detname " << detname << " PmtName " << PmtName << G4endl;
 	totalPhotEvent[detID] += 1;
 	//	G4cout << " detID " << detID << " totalPhotEvent " << totalPhotEvent[detID] << G4endl;
 	//	G4cout << " ok " << G4endl;
-    }
-    }
-  }
+	} //if energy
+    }//for number
+  }//for pmt_qe
   
 }
 
@@ -383,8 +387,9 @@ void PmtSD::EndOfEvent(G4HCofThisEvent*HCE){
   //  }
   size_t tnPmt = ((size_t) nPmt);
   G4int aTotalPhot[tnPmt];
-  for (int i=0; i<nPmt; i++) aTotalPhot[i] = totalPhotEvent[i];
-  PmtHits* store_pmtHits = new PmtHits(aTotalPhot,tnPmt);
+  G4int aTotalPhot_noqe[tnPmt];
+  for (int i=0; i<nPmt; i++) {aTotalPhot[i] = totalPhotEvent[i]; aTotalPhot_noqe[i] = totalPhotEvent_noqe[i];}
+  PmtHits* store_pmtHits = new PmtHits(aTotalPhot,aTotalPhot_noqe,tnPmt);
   PmtSD* sd = dynamic_cast<PmtSD*>(G4SDManager::GetSDMpointer()->FindSensitiveDetector("/hepd/pmt"));
   sd->GetPmtHitsCollection()->insert(store_pmtHits);
   G4int* TotalPhot_ptr = store_pmtHits->GetTotalPhotpt();

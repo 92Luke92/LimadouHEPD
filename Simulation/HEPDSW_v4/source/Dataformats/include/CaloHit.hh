@@ -58,9 +58,12 @@ private:
   G4ThreeVector theExitPoint;
   G4double theKinEnergy;
   G4double totalEdep;
+   G4double totalGenPhot;
   std::map<G4int,G4double> edep;
+   std::map<G4int,G4int> genphot;
   std::map<G4int,G4ThreeVector> steppos;
   G4int totalPhot[53];  //OP
+   G4int totalPhot_noqe[53];  //OP
 
 public:
   //  inline void SetVolumeID(G4String volume)
@@ -69,12 +72,17 @@ public:
     //    VolumeID = volume;
     DetID = det;
   }
-  void SetEdep(G4double de,G4int tkID);
-  void AddEdep(G4double de,G4int tkID);
-  void AddPhot(G4int detID);  //OP
+   void SetEdep(G4double de,G4int tkID);
+   void SetGenPhot(G4int gp,G4int tkID);
+   void AddEdep(G4double de,G4int tkID);
+   void AddGenPhot(G4int gp,G4int tkID);
+   void AddPhot(G4int detID);  //OP
+   void AddPhot_noqe(G4int detID);  //OP
   void SetStepPos(G4ThreeVector StepPos,G4int tkID);
   inline G4double GetTotalEdep()
   { return totalEdep; }
+   inline G4double GetGenPhot()
+  { return totalGenPhot; }
 
   inline G4int GetPartID(){return thePartID;}
   inline G4ThreeVector GetEntryPoint(){return theEntryPoint;}
@@ -89,7 +97,7 @@ public:
   { return DetID; }
   //  { return VolumeID; }
   inline G4int GetNPhot(G4int npmt) {return totalPhot[npmt];}  //OP
-  
+   inline G4int GetNPhot_noqe(G4int npmt) {return totalPhot_noqe[npmt];}  //OP
 };
 
 typedef G4THitsCollection<CaloHit> CaloHitsCollection;

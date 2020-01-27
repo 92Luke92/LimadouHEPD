@@ -33,17 +33,18 @@ G4Allocator<PmtHits> PmtHitsAllocator;
 
 PmtHits::PmtHits(){
   theNPmt = 53;
-  for (int i=0; i<53; i++) theTotalPhot[i] = 0;
+  for (int i=0; i<53; i++) {theTotalPhot[i] = 0; theTotalPhot_noqe[i] = 0;}
 }
 
 PmtHits::~PmtHits()
 {;}
 
 //PmtHits::PmtHits(std::vector<G4int> aTotalPhot, size_t aNPmt) {
-PmtHits::PmtHits(int aTotalPhot[], size_t aNPmt) {
+PmtHits::PmtHits(int aTotalPhot[], int aTotalPhot_noqe[], size_t aNPmt) {
   theNPmt = aNPmt;
   for (int i=0; i<((int)theNPmt); i++) {
     theTotalPhot[i] = aTotalPhot[i];
+    theTotalPhot_noqe[i] = aTotalPhot_noqe[i];
   }  
 }
 
@@ -52,12 +53,14 @@ PmtHits::PmtHits(const PmtHits &right)
 {
   theNPmt = right.theNPmt;
   for (int i=0; i<((int) theNPmt); i++) theTotalPhot[i] = right.theTotalPhot[i];  //OP
+  for (int i=0; i<((int) theNPmt); i++) theTotalPhot_noqe[i] = right.theTotalPhot_noqe[i];  //OP
 }
 
 const PmtHits& PmtHits::operator=(const PmtHits &right)
 {
   theNPmt = right.theNPmt;
   for (int i=0; i<((int) theNPmt); i++) theTotalPhot[i] = right.theTotalPhot[i];  //OP
+  for (int i=0; i<((int) theNPmt); i++) theTotalPhot_noqe[i] = right.theTotalPhot_noqe[i];  //OP
   return *this;
 }
 

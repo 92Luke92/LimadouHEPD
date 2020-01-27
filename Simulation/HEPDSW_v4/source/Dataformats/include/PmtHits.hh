@@ -44,7 +44,7 @@ class PmtHits : public G4VHit
 public:
 
   PmtHits();
-  PmtHits(G4int aTotalPhot[], size_t aNPmt);
+   PmtHits(G4int aTotalPhot[], G4int aTotalPhot_noqe[], size_t aNPmt);
   //  CaloHit(G4String volume);
   //  PmtHits(G4int DetID);
   ~PmtHits();
@@ -60,14 +60,22 @@ public:
 
 private:
   size_t theNPmt;
-  G4int theTotalPhot[53]; 
+  G4int theTotalPhot[53];
+   G4int theTotalPhot_noqe[53]; 
 
 public:
   inline G4int GetNPmt(){return theNPmt;}
   inline G4int* GetTotalPhotpt(){return theTotalPhot;}
+   inline G4int* GetTotalPhotpt_noqe(){return theTotalPhot_noqe;}
   inline G4int GetNPhot(G4int npmt) {
     //    G4cout << "npmt " << npmt << G4endl;
     G4int val = theTotalPhot[npmt];
+    //    G4cout << "val " << val << G4endl;
+    return val;}  //OP
+   
+     inline G4int GetNPhot_noqe(G4int npmt) {
+    //    G4cout << "npmt " << npmt << G4endl;
+    G4int val = theTotalPhot_noqe[npmt];
     //    G4cout << "val " << val << G4endl;
     return val;}  //OP
   

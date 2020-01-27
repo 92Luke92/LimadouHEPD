@@ -454,7 +454,7 @@ void HEPDSWMaterial::DefineMaterials()
   G4double lyso_SCINT[lysonum] = {0,0.04,0.08,0.16,0.32,0.48,0.84,0.94,0.96,1,0.92,0.84,0.72,0.6,0.36,0.2,0.08,0.04,0.00};
   G4double lyso_RIND[lysonum]  = {1.81,1.81,1.81,1.81,1.81,1.81,1.81,1.81,1.81,1.81,1.81,1.81,1.81,1.81,1.81,1.81,1.81,1.81,1.81};
   //Attenuation length come from this paper "Optimization of the effective light attenuation length of YAP:Ce and LYSO:Ce crystals for a novel geometrical PET concept"
-  G4double lyso_ABSL[lysonum]  = { 20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm,20*cm};
+  G4double lyso_ABSL[lysonum]  = { 174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm,174*cm};
 
   MPTLyso = new G4MaterialPropertiesTable();
   MPTLyso->AddProperty("FASTCOMPONENT", lyso_Energy, lyso_SCINT, lysonum);

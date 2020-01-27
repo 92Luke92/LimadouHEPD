@@ -11,6 +11,7 @@ RootPmtHits::RootPmtHits ()
   theNPmt = 53;
   for (int i=0; i<theNPmt; i++) {
     theTotalPhot[i]=0;
+    theTotalPhot_noqe[i]=0;
     switch (i) {
     case 0: sprintf(thePmtName[i],"%s","T1w"); break;
     case 1: sprintf(thePmtName[i],"%s","T1e"); break;
@@ -74,11 +75,12 @@ RootPmtHits::RootPmtHits ()
 }
 ////////////////////////////////////////////////////////////////////////////////
 //
-RootPmtHits::RootPmtHits(int aTotalPhot[], char PmtName[][6], unsigned int aNPmt)  
+RootPmtHits::RootPmtHits(int aTotalPhot[], int aTotalPhot_noqe[], char PmtName[][6], unsigned int aNPmt)  
 { 
   theNPmt   = aNPmt;
   for (int i=0; i<theNPmt; i++) {
     theTotalPhot[i] = aTotalPhot[i];
+    theTotalPhot_noqe[i] = aTotalPhot_noqe[i];
     sprintf(thePmtName[i],"%s",PmtName[i]);
   }  
 }
@@ -91,7 +93,8 @@ RootPmtHits::~RootPmtHits ()
 RootPmtHits::RootPmtHits (const RootPmtHits& right) : TObject()
 {
   theNPmt = right.theNPmt;
-  for (int i=0; i<((int) theNPmt); i++) theTotalPhot[i] = right.theTotalPhot[i];  
+  for (int i=0; i<((int) theNPmt); i++) theTotalPhot[i] = right.theTotalPhot[i];
+  for (int i=0; i<((int) theNPmt); i++) theTotalPhot_noqe[i] = right.theTotalPhot_noqe[i];  
   for (int i=0; i<((int) theNPmt); i++) sprintf(thePmtName[i],"%s",right.thePmtName[i]);  
 }
 ////////////////////////////////////////////////////////////////////////////////

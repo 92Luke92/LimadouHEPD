@@ -211,7 +211,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 	  aStepPosMap[itkid]=tv;
 	}
         if (arret) break;
-	theCaloHitContainer.push_back( RootCaloHit((*caloHC)[i]->GetPartID(),(*caloHC)[i]->GetVolume(),Entry,Exit,(*caloHC)[i]->GetKinEnergy(),(*caloHC)[i]->GetTotalEdep()/CLHEP::MeV,(*caloHC)[i]->GetEdepMap(),aStepPosMap,(*caloHC)[i]->GetNPhot((*caloHC)[i]->GetVolume())) ); // OP
+	theCaloHitContainer.push_back( RootCaloHit((*caloHC)[i]->GetPartID(),(*caloHC)[i]->GetVolume(),Entry,Exit,(*caloHC)[i]->GetKinEnergy(),(*caloHC)[i]->GetTotalEdep()/CLHEP::MeV,(*caloHC)[i]->GetGenPhot(),(*caloHC)[i]->GetEdepMap(),aStepPosMap,(*caloHC)[i]->GetNPhot((*caloHC)[i]->GetVolume()),(*caloHC)[i]->GetNPhot_noqe((*caloHC)[i]->GetVolume()) ) ); // OP
 	  if(verboseLevel>0) std::cout <<"CaloHit  # "<<i<<" ; Volume = "<<(*caloHC)[i]->GetVolume()<<" ; Edep = "<<(*caloHC)[i]->GetTotalEdep()/CLHEP::MeV<<" MeV"<< std::endl;
       }
     }
@@ -234,7 +234,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
             TVector3 tv(g4tv.getX(),g4tv.getY(),g4tv.getZ());
 	    aStepPosMap[itkid]=tv;
 	  }
-	  theVetoHitContainer.push_back(RootCaloHit(0,(*vetoHC)[i]->GetVolume(),Entry,Exit,(*vetoHC)[i]->GetKinEnergy(),(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV,(*vetoHC)[i]->GetEdepMap(),aStepPosMap,(*vetoHC)[i]->GetNPhot((*vetoHC)[i]->GetVolume())) ); // OP
+	  theVetoHitContainer.push_back(RootCaloHit(0,(*vetoHC)[i]->GetVolume(),Entry,Exit,(*vetoHC)[i]->GetKinEnergy(),(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV,(*vetoHC)[i]->GetGenPhot(),(*vetoHC)[i]->GetEdepMap(),aStepPosMap,(*vetoHC)[i]->GetNPhot((*vetoHC)[i]->GetVolume()),(*vetoHC)[i]->GetNPhot_noqe((*vetoHC)[i]->GetVolume()) ) ); // OP
 	  if(verboseLevel>0) std::cout<<"VetoHit  # "<<i<<" ; Volume = "<<(*vetoHC)[i]->GetVolume()<<" ; Edep = "<<(*vetoHC)[i]->GetTotalEdep()/CLHEP::MeV<<" MeV"<<std::endl;
       }
     }
@@ -271,10 +271,12 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
       pmtHC = (PmtHitsCollection*)(HCE->GetHC(pmtHitsCollID));
       for(int i=0;i<pmtHC->entries();i++){
         int TotalNPhot[53];
+	int TotalNPhot_noqe[53];
 	char PmtName[53][6];
 	//	G4cout << " entree " << i << " NPmt " << (*pmtHC)[i]->GetNPmt() << G4endl;
         for (int j=0; j<53; j++) {
 	  TotalNPhot[j] = (*pmtHC)[i]->GetNPhot(j);
+	  TotalNPhot[j] = (*pmtHC)[i]->GetNPhot_noqe(j);
 	  //	  G4cout << " pmt " << j << " TotalNPhot " << TotalNPhot[j] << G4endl;
           switch (j) {
           case 0: sprintf(PmtName[j],"%s","T1w"); break;
@@ -333,7 +335,7 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
           default: break;
           }
         }	
-	thePmtHitsContainer.push_back(RootPmtHits(TotalNPhot,&PmtName[0],
+	thePmtHitsContainer.push_back(RootPmtHits(TotalNPhot,TotalNPhot_noqe,&PmtName[0],
 						  (*pmtHC)[i]->GetNPmt()));
       }
     }
