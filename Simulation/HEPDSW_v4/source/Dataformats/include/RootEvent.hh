@@ -10,6 +10,7 @@
 #include "RootPmtHits.hh"
 #include "RootTrackerHit.hh"
 #include "RootDegraderHit.hh"
+#include "RootInteraction.hh"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,14 +19,15 @@ class RootEvent : public TObject
 {
 public:
   RootEvent ();
-  RootEvent (int aEventID,
-		 std::vector<RootTrack> aTracks,
-		 std::vector<RootVertex> aVertex,
-		 std::vector<RootCaloHit> aCaloHit,
-		 std::vector<RootCaloHit> aVetoHit,
-	         std::vector<RootPmtHits> aPmtHits,
-    	         std::vector<RootTrackerHit> aTkHit,
-	         std::vector<RootDegraderHit> aDgHit);
+   RootEvent (int aEventID,
+	      std::vector<RootTrack> aTracks,
+	      std::vector<RootVertex> aVertex,
+	      std::vector<RootCaloHit> aCaloHit,
+	      std::vector<RootCaloHit> aVetoHit,
+	      std::vector<RootPmtHits> aPmtHits,
+	      std::vector<RootTrackerHit> aTkHit,
+	      std::vector<RootDegraderHit> aDgHit,
+	      std::vector<RootInteraction> aInt);
   
   ~RootEvent ();
   RootEvent (const RootEvent&);
@@ -38,6 +40,7 @@ public:
   inline std::vector<RootPmtHits>  GetPmtHits(){return thePmtHitsCollection;} //OP
   inline std::vector<RootTrackerHit>  GetTrackerHit(){return theTrackerHitCollection;}
   inline std::vector<RootDegraderHit>  GetDegraderHit(){return theDegraderHitCollection;}
+  inline std::vector<RootInteraction>  GetInteraction(){return theInteractionCollection;}
 
   inline void SetEventID(int aEventID) {eventID=aEventID;}
   inline void SetTracks(std::vector<RootTrack> aTracks) {theTrackCollection=aTracks;}
@@ -47,6 +50,7 @@ public:
   inline void SetPmtHits(std::vector<RootPmtHits> aPmtHits) {thePmtHitsCollection=aPmtHits;} // OP
   inline void SetTrackerHit(std::vector<RootTrackerHit> aTrackerHit) {theTrackerHitCollection=aTrackerHit;}
   inline void SetDegraderHit(std::vector<RootDegraderHit> aDegraderHit) {theDegraderHitCollection=aDegraderHit;}
+  inline void SetInteraction(std::vector<RootInteraction> aInteraction) {theInteractionCollection=aInteraction;}
 
   ClassDef(RootEvent,2);
   
@@ -60,6 +64,7 @@ private:
   std::vector<RootPmtHits> thePmtHitsCollection; // OP
   std::vector<RootTrackerHit> theTrackerHitCollection;
   std::vector<RootDegraderHit> theDegraderHitCollection;
+   std::vector<RootInteraction> theInteractionCollection;
 
 };
 

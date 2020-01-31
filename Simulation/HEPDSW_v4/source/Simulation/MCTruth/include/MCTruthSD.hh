@@ -30,6 +30,7 @@
 #include "G4VSensitiveDetector.hh"
 #include "Track.hh"
 #include "Vertex.hh"
+#include "Interaction.hh"
 #include <map>
 
 class G4Step;
@@ -51,9 +52,11 @@ public:
   void PrintAll();
   inline TracksCollection* GetTrackCollection(){return TrackCollection;}
   inline VertexsCollection* GetVertexCollection(){return VertexCollection;}
+   inline InteractionsCollection* GetInteractionCollection(){return InteractionCollection;}
 private:
   TracksCollection* TrackCollection;
   VertexsCollection* VertexCollection;
+   InteractionsCollection* InteractionCollection;
   int verboseLevel;
 
 };

@@ -14,6 +14,7 @@ RootEvent::RootEvent ():eventID(0)
   theVetoHitCollection.clear();
   theTrackerHitCollection.clear();
   theDegraderHitCollection.clear();
+  theInteractionCollection.clear();
 }
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -24,7 +25,8 @@ RootEvent::RootEvent (int aEventID,
 		      std::vector<RootCaloHit> aVetoHit,
 		      std::vector<RootPmtHits> aPmtHits,
 		      std::vector<RootTrackerHit> aTrackerHit,
-		      std::vector<RootDegraderHit> aDegraderHit)
+		      std::vector<RootDegraderHit> aDegraderHit,
+		      std::vector<RootInteraction> aInteractionCollection)
 { 
   eventID                 = aEventID;
   theTrackCollection      = aTracks;
@@ -34,6 +36,7 @@ RootEvent::RootEvent (int aEventID,
   thePmtHitsCollection    = aPmtHits;
   theTrackerHitCollection = aTrackerHit;
   theDegraderHitCollection = aDegraderHit;
+  theInteractionCollection = aInteractionCollection;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -51,6 +54,7 @@ RootEvent::RootEvent (const RootEvent& right): TObject()
   thePmtHitsCollection    = right.thePmtHitsCollection;
   theTrackerHitCollection = right.theTrackerHitCollection;
   theDegraderHitCollection = right.theDegraderHitCollection;
+  theInteractionCollection = right.theInteractionCollection;
   
 }
 ////////////////////////////////////////////////////////////////////////////////

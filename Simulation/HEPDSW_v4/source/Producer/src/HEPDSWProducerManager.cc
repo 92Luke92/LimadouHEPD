@@ -42,6 +42,7 @@ HEPDSWProducerManager::HEPDSWProducerManager():theEvent(0),theRootFile(0),theEve
   pmtHitsCollID=-1;
   vetoHitCollID=-1;
   trackerHitCollID=-1;
+  interactionCollID=-1;
   degraderHitCollID=-1;
   trackCollID=-1;
   vertexCollID=-1;
@@ -52,6 +53,7 @@ HEPDSWProducerManager::HEPDSWProducerManager():theEvent(0),theRootFile(0),theEve
   saveMCTruth=true;
   saveCalo=true;
   saveDegrader=true;
+  saveInteraction=true;
   theEvent = new RootEvent();
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +93,7 @@ HEPDSWProducerManager* HEPDSWProducerManager::GetInstance()
 void HEPDSWProducerManager::BeginOfEventAction(const G4Event*)
 {
   G4SDManager * SDman = G4SDManager::GetSDMpointer();
-  if(caloHitCollID<0||vetoHitCollID<0||trackerHitCollID<0||trackCollID<0){
+  if(caloHitCollID<0||vetoHitCollID<0||trackerHitCollID<0||trackCollID<0||interactionCollID<0){
     if(saveCalo){
       caloHitCollID = SDman->GetCollectionID("caloCollection");
       vetoHitCollID = SDman->GetCollectionID("vetoCollection");
@@ -104,6 +106,9 @@ void HEPDSWProducerManager::BeginOfEventAction(const G4Event*)
     if(saveMCTruth){
       trackCollID = SDman->GetCollectionID("trackCollection");
       vertexCollID = SDman->GetCollectionID("vertexCollection");
+    }
+    if(saveInteraction){
+      interactionCollID = SDman->GetCollectionID("interactionCollection");
     }
   }
 }
@@ -139,13 +144,15 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
   G4cout << " caloHitCollID " << caloHitCollID << G4endl;  
   G4cout << " vetoHitCollID " << vetoHitCollID << G4endl;  
   G4cout << " trackCollID " << trackCollID << G4endl;  
-  G4cout << " vertexCollID " << vertexCollID << G4endl;  
+  G4cout << " vertexCollID " << vertexCollID << G4endl;
+  G4cout << " interactionCollID " << interactionCollID << G4endl;  
   }
 
   PmtHitsCollection * pmtHC  = 0;
   CaloHitsCollection * caloHC  = 0;
   CaloHitsCollection * vetoHC  = 0;
   TrackerHitsCollection * trackerHC   = 0;
+  InteractionsCollection * interactionHC   = 0;
   DegraderHitsCollection * degraderHC   = 0;
   TracksCollection * trackHC   = 0;
   VertexsCollection * vertexHC   = 0;
@@ -158,6 +165,8 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
     theVetoHitContainer.clear();
   if(theTrackerHitContainer.size())
     theTrackerHitContainer.clear();
+  if(theInteractionContainer.size())
+    theInteractionContainer.clear();
   if(theDegraderHitContainer.size())
     theDegraderHitContainer.clear();
   if(theTrackContainer.size())
@@ -190,7 +199,15 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
 	//std::cout<<"TrackerHit  # "<<i<<" ; Edep = "<<(*trackerHC)[i]->GetELoss()<<" MeV"<<std::endl;
       }
     }
-
+    
+    if(!(interactionCollID<0)){
+       interactionHC = (InteractionsCollection*)(HCE->GetHC(interactionCollID));
+       for(int i=0;i<interactionHC->entries();i++){
+	  TVector3 IntPoint((*interactionHC)[i]->GetIntPoint().getX(),(*interactionHC)[i]->GetIntPoint().getY(),(*interactionHC)[i]->GetIntPoint().getZ());
+	  theInteractionContainer.push_back(RootInteraction(IntPoint,(*interactionHC)[i]->GetParticleType(),(*interactionHC)[i]->GetKinEnergy(),(*interactionHC)[i]->GetDetName(),(*interactionHC)[i]->GetDetID(),(*interactionHC)[i]->GetIntName(),(*interactionHC)[i]->GetIntNameID()));
+       }
+    }
+    
     if(!(caloHitCollID<0)){
       caloHC = (CaloHitsCollection*)(HCE->GetHC(caloHitCollID));
       //G4cout << " caloHC entries " << caloHC->entries() << G4endl;
@@ -359,6 +376,8 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
   }
   if(saveTracker)
     theEvent->SetTrackerHit(theTrackerHitContainer);
+if(saveInteraction)
+    theEvent->SetInteraction(theInteractionContainer);
   if(saveDegrader)
     theEvent->SetDegraderHit(theDegraderHitContainer);
   if(saveMCTruth){
@@ -372,4 +391,3 @@ void HEPDSWProducerManager::EndOfEventAction(const G4Event* evt)
     G4cout << "leaving in EndOfEventAction..." << G4endl;
 
 }
-

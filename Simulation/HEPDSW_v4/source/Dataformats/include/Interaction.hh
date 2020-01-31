@@ -23,51 +23,68 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-//
-// $Id$
-// 
-// Author: Susanna Guatelli (guatelli@ge.infn.it)
-//
-// History:
-// -----------
-// 27 May  2003   S.Guatelli    first code review 
-// 17 May  2003   S. Guatelli   1st implementation
-//
-// -------------------------------------------------------------------
 
-#ifndef HEPDSWSteppingAction_h
-#define HEPDSWSteppingAction_h 1
+#ifndef Interaction_h
+#define Interaction_h 1
 
-#include "Interaction.hh"
-#include "G4UserSteppingAction.hh"
-#include "G4Event.hh"
-#include "G4EventManager.hh"
-#include "G4ios.hh"
-#include "globals.hh"
+#include "G4VHit.hh"
+#include "G4THitsCollection.hh"
+#include "G4Allocator.hh"
+#include "G4ThreeVector.hh"
 
-class G4Step;
-class HEPDSWPrimaryGeneratorAction;
-
-class HEPDSWSteppingAction : public G4UserSteppingAction
+class Interaction : public G4VHit
 {
 public:
 
-  HEPDSWSteppingAction(HEPDSWPrimaryGeneratorAction*);
+  Interaction();
+   Interaction(G4ThreeVector,G4int,G4double,G4String,G4int,G4String,G4int);
+  ~Interaction();
+  Interaction(const Interaction &right);
+  const Interaction& operator=(const Interaction &right);
+  G4int operator==(const Interaction &right) const;
+   
+  inline void *operator new(size_t);
+  inline void operator delete(void *aHit);
 
-  ~HEPDSWSteppingAction();
+  void Draw();
+  void Print();
 
-  void UserSteppingAction(const G4Step* aStep);
+  void SetIntPoint(G4ThreeVector aIntPoint);
+  void AddKinEnergy(G4double aKin);
+   inline G4ThreeVector GetIntPoint(){return theIntPoint;}
+   inline G4int GetParticleType(){return theParticleType;}
+   inline G4double GetKinEnergy(){return theKinEnergy;}
+   inline G4String GetDetName(){return theDetName;}
+   inline G4int GetDetID(){return theDetID;}
+   inline G4String GetIntName(){return theIntName;}
+   inline G4int GetIntNameID(){return theIntNameID;}
 
 private:
-  //PrimaryGeneratorAction* primaryAction; 
-  //G4int step;
-
-   InteractionsCollection* IntCollection;
-  G4int stepNumber;
-  G4double Xpos;
-  G4double Ypos;
-  G4double Zpos;
-  G4int TrackID;
-   G4bool saveInteraction;
+   G4ThreeVector theIntPoint;
+   G4int theParticleType;
+   G4double theKinEnergy;
+   G4String theDetName;
+   G4int theDetID;
+   G4String theIntName;
+   G4int theIntNameID;
 };
+
+typedef G4THitsCollection<Interaction> InteractionsCollection;
+
+extern G4Allocator<Interaction> InteractionAllocator;
+
+inline void* Interaction::operator new(size_t)
+{
+  void *aHit;
+  aHit = (void *) InteractionAllocator.MallocSingle();
+  return aHit;
+}
+
+inline void Interaction::operator delete(void *aHit)
+{
+  InteractionAllocator.FreeSingle((Interaction*) aHit);
+}
+
 #endif
+
+

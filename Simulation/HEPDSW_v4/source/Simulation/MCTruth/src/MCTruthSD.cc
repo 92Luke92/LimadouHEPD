@@ -30,6 +30,7 @@
 #include "G4Track.hh"
 #include "Track.hh"
 #include "Vertex.hh"
+#include "Interaction.hh"
 #include "G4Step.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4VTouchable.hh"
@@ -42,6 +43,7 @@ MCTruthSD::MCTruthSD(G4String name)
 {
   collectionName.insert("trackCollection");
   collectionName.insert("vertexCollection");
+  collectionName.insert("interactionCollection");
 }
 
 MCTruthSD::~MCTruthSD()
@@ -50,7 +52,8 @@ MCTruthSD::~MCTruthSD()
 void MCTruthSD::Initialize(G4HCofThisEvent*)
 {
   TrackCollection = new TracksCollection(SensitiveDetectorName,collectionName[0]); 
-  VertexCollection = new VertexsCollection(SensitiveDetectorName,collectionName[1]); 
+  VertexCollection = new VertexsCollection(SensitiveDetectorName,collectionName[1]);
+  InteractionCollection = new InteractionsCollection(SensitiveDetectorName,collectionName[2]); 
   verboseLevel = 0;
     
 }
@@ -71,6 +74,11 @@ void MCTruthSD::EndOfEvent(G4HCofThisEvent* HCE)
   if(HCID1<0)
     HCID1 = GetCollectionID(1);  
   HCE->AddHitsCollection(HCID1, VertexCollection );
+  
+  static G4int HCID2 = -1;
+  if(HCID2<0)
+    HCID2 = GetCollectionID(2);  
+  HCE->AddHitsCollection(HCID2, InteractionCollection );
 }
 
 void MCTruthSD::clear()
